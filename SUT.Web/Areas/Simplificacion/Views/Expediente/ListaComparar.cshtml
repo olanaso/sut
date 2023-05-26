@@ -1,0 +1,345 @@
+﻿@using Sut.Security
+@model UsuarioInfo
+@{ ViewBag.Title = "Lista Expedientes a Comparar";
+    ViewBag.Descripcion = "Comparación de Procedimientos Administrativos de expedientes seleccionados";
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo; }
+<div id="mensajes">
+    @{Html.RenderPartial("_Error");}
+</div>
+<div class="box box-danger">
+    <div style="position: absolute;right: 15px;top: -60px; margin-bottom: 0;">
+        <div id="divBotones">
+            <div class="box-body">
+                <div class="btn-group pull-right">
+                    <a href="javascript:sut.Miembro.salir('@Url.Content("~/Simplificacion/Expediente/Lista")')" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Expediente Base :</label>
+            <div class="col-sm-5 col-xs-12">
+                @Html.DropDownList("FiltroExpedienteid1", ViewBag.listaexpedientesCompara as List<SelectListItem>, new { @id = "cbFilterExpediente1", @class = "form-control" })
+            </div>
+        </div>
+        <br> </br>
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Expediente Comparar :</label>
+            <div class="col-sm-5 col-xs-12">
+                @Html.DropDownList("FiltroExpedienteid2", ViewBag.listaexpedientesCompara as List<SelectListItem>, new { @id = "cbFilterExpediente2", @class = "form-control" })
+            </div>
+        </div>
+        <br> </br>
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Entidad :</label>
+            <div class="col-sm-5 col-xs-12">
+                @if (Model.Rol == 1)
+                {
+                @Html.DropDownList("FiltroEntidad1", new SelectList(ViewBag.listaentidades, "Value", "Text", Model.EntidadId), new { @id = "cbFilterEntidad1", @class = "form-control" })
+                }
+                else
+                {
+                @Html.DropDownList("FiltroEntidad1", new SelectList(ViewBag.listaentidades, "Value", "Text", Model.EntidadId), new { @id = "cbFilterEntidad1", @class = "form-control", @disabled = "disabled" })
+                }
+            </div>
+        </div>
+    </div>
+    <div class="box-footer">
+        <a href="javascript:sut.Miembro.listar(1)" class="btn btn-success  pull-right"><i class="fa fa-ambulance"></i> Comparar Expedientes</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body">
+                <table id="tblLista" class="table table-bordered table-striped table-hover"
+                       data-pagesize="100"
+                       data-page="1"
+                       data-totalrows="0"
+                       data-function="sut.Miembro.listar"
+                       data-paginator="paginator">
+                    <thead>
+                        <tr>
+                            <th colspan="6" align="center" style="background-color: #CCCC;">Expediente Base</th>
+                            <th colspan="5" align="center" style="background-color: #AAA;">Expediente a  Comparar</th>
+                        </tr>
+                        <tr>
+                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 4px;" class="colAction">Nro</th>
+                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 40px ">Codigo</th>
+                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 250px ">Denominacion</th>
+                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 250px">Objetivo</th>
+                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle" width: 50px">Cargo Resp.</th>
+                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 130px;">Unidad Organica</th>
+                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 40px ">Codigo</th>
+                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 250px ">Denominacion</th>
+                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 250px ">Objetivo</th>
+                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle " width: 50px">Cargo Resp.</th>
+                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 130px; ">Unidad Organica</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr><td colspan="11"><div id="paginator"></div></td></tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+    </div>
+</div>
+<div class="minmaxConayuda">
+    <div class="modal fade mymodal" id="modalAyudaAvatar1">
+        <div class="modal-dialog  ">
+            <div class="modal-content">
+                <div class="modal-body" id="contenido" style="padding:0px">
+                    <div class="bar-title" id="tituloocultar">
+                        <a class="close modalMinimize" style="padding:110px; right: 20px;  top: -100px; background: transparent"> <i class='fa fa-clone '></i> </a>
+                        <span>
+                            <h3 id="ihtitulo1" style="font-size: x-large;text-align: center;font-family: initial;"> Hola</h3>
+                        </span>
+                    </div>
+                    <div>
+                        <div id="idtitulo1" style="text-align:left">
+                            <div class="col-sm-3 col-xs-2">
+                                <a class="modalMinimize" title="Minimizar" style="color:black"> <i class='fa fa-minus fa-2x'></i> </a>
+                                <img src="~/dist/img/hola.png" class="img-rounded" alt="Cinque Terre" />
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje1" style="display: none; width:409px;height:100%;top:137px">
+                                <sp style="text-align: left;font-family: initial;"> Clic en</sp>
+                                <a class="btn btn-success btn-xs" href="#">Comparacion de Expedientes</a>
+                                <l style="text-align: left;font-family: initial;"> ¡Suerte!</l>
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje2" style="width:440px;height:100%;top:103px">
+                                <j2 style="text-align: left;font-family: initial;">!Consulta de comparacion exitosa¡</j2>
+                                <a id="clic" style="display: none;" class="btn btn-primary" href="#"><i class="fa fa-floppy-o"></i>Comparar</a>
+                                <l1 style="text-align: left;font-family: initial;"> ahora a continuar registrando </l1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="minmaxCon"></div>
+@*<div id="miembroContainer" data-entidadid=@Model.EntidadId></div>
+    var entidadid = $('#miembroContainer').data('entidadid');*@
+
+@section Script {
+    <script>
+    sut.Miembro = {
+        listar: (page) => {
+                table = $('#tblLista');
+                var model = {
+                    'filtro.entidadid': $('#cbFilterEntidad1').val(),
+                    'filtro.procedimientoidb': $('#cbFilterExpediente1').val(),
+                    'filtro.procedimientoidc': $('#cbFilterExpediente2').val(),
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+                debugger;
+                $.ajax({
+                    url: '@Url.Content("~/Simplificacion/Expediente/GetProcedimientoCompararAll")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.Miembro.generar(data.lista);
+                        if (data.totalRows == 0)  $('#tblLista tbody').append("<tr><td colspan='11' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+
+                        debugger;
+                        if (data.totalRows < 2)
+                        {
+                            $('#mensaje2').hide();
+                            $('#mensaje1').show();
+                        }else
+                        {
+                            $('#mensaje2').show();
+                            $('#mensaje1').hide();
+                        }
+                    },
+                    error: (data) => {
+                        sut.error.show('mensajes', data.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+        },
+        generar: (lista) => {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, (i, r) => {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    if (r.c1 == 'Iguales 1') {
+                        rows += sut.string.format('<td style="background-color: #A1DCD2;">{0}</td>', r.Camp1_Base);
+                    } else {
+                        rows += sut.string.format('<td>{0}</td>', r.Camp1_Base);
+                    }
+                    if (r.c2 == 'Iguales 2') {
+                        rows += sut.string.format('<td style="background-color: #A1DCD9;">{0}</td>', r.Camp2_Base);
+                    } else {
+                        rows += sut.string.format('<td>{0}</td>', r.Camp2_Base);
+                    }
+                    if (r.c6 == 'Iguales 6') {
+                        rows += sut.string.format('<td style="background-color: #A1DCE5;">{0}</td>', r.Camp6_Base);
+                    } else {
+                        rows += sut.string.format('<td>{0}</td>', r.Camp6_Base);
+                    }
+                    if (r.c7 == 'Iguales 7') {
+                        rows += sut.string.format('<td style="background-color: #A1DCF2;">{0}</td>', r.Camp7_Base);
+                    } else {
+                        rows += sut.string.format('<td>{0}</td>', r.Camp7_Base);
+                    }
+                    if (r.c5 == 'Iguales 5') {
+                        rows += sut.string.format('<td style="background-color: #A1DCF9;">{0}</td>', r.Camp5_Base);
+                    } else {
+                        rows += sut.string.format('<td>{0}</td>', r.Camp5_Base);
+                    }
+                    if (r.c1 == 'Iguales 1') {
+                        rows += sut.string.format('<td style="background-color: #A1DCD2;">{0}</td>', r.Campo1_Comp);
+                    } else {
+                        rows += sut.string.format('<td>{0}</td>', r.Campo1_Comp);
+                    }
+                    if (r.c2 == 'Iguales 2') {
+                        rows += sut.string.format('<td style="background-color: #A1DCD9;">{0}</td>', r.Campo2_Comp);
+                    } else {
+                        rows += sut.string.format('<td>{0}</td>', r.Campo2_Comp);
+                    }
+                    if (r.c6 == 'Iguales 6') {
+                        rows += sut.string.format('<td style="background-color: #A1DCE5;">{0}</td>', r.Campo6_Comp);
+                    } else {
+                        rows += sut.string.format('<td>{0}</td>', r.Campo6_Comp);
+                    }
+                    if (r.c7 == 'Iguales 7') {
+                        rows += sut.string.format('<td style="background-color: #A1DCF2;">{0}</td>', r.Campo7_Comp);
+                    } else {
+                        rows += sut.string.format('<td>{0}</td>', r.Campo7_Comp);
+                    }
+                    if (r.c5 == 'Iguales 5') {
+                        rows += sut.string.format('<td style="background-color: #A1DCF9;">{0}</td>', r.Campo5_Comp);
+                    } else {
+                        rows += sut.string.format('<td>{0}</td>', r.Campo5_Comp);
+                    }
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+        },
+        salidaop: function (expediente) {
+            $(location).attr('href', expediente);
+        },
+        salir: function (expediente) {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Content("~/Simplificacion/Expediente/Lista")',
+                    data: { idexp: expediente },
+                    cache: false,
+                    beforeSend: function () {
+                    },
+                    success: function (data) {
+
+                        $(location).attr('href', expediente);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+        },
+    };
+
+        $(document).ready(function () {
+            $("#submit").one('click', function (event) {
+                event.preventDefault();
+                alert("Eventoclicked");
+            });
+        });
+        $(function () {
+            /*minimizar un modal*/
+            //sut.Miembro.listar(1);
+
+            var $content, $modal, $apnData, $modalCon;
+            $content = $(".min");
+
+            //To fire modal
+            $(".mdlFire").click(function (e) {
+                debugger;
+                e.preventDefault();
+                var $id = $(this).attr("data-target");
+                $($id).modal({ backdrop: false, keyboard: false });
+
+            });
+            $('#cbFilterEntidad1').on('change', (e) => {
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Content("~/Simplificacion/Expediente/GetExpedientesEntidadGrid")',
+                    data: { id: $('#cbFilterEntidad1').val() },
+                    dataType: 'json',
+                    beforeSend: function () {
+                    },
+                    complete: function () {
+                    },
+                    success: function (result) {
+                        var sel = $('#cbFilterExpediente1');
+                        sel.find('option').remove();
+                        $.each(result.data, (i, r) => {
+                            sel.append($('<option></option>').attr('value', r.ExpedienteId).html(r.Codigo));
+                        });
+                        var sel = $('#cbFilterExpediente2');
+                        sel.find('option').remove();
+                        $.each(result.data, (i, r) => {
+                            sel.append($('<option></option>').attr('value', r.ExpedienteId).html(r.Codigo));
+                        });
+                    },
+                    error: function (result) {
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            });
+
+
+            debugger;
+            $(".modalMinimize").on("click", function(){
+                debugger;
+                $modalCon = $(this).closest(".mymodal").attr("id");
+                $apnData = $(this).closest(".mymodal");
+                $modal = "#" + $modalCon;
+                $(".modal-backdrop").addClass("display-none");
+
+                $($modal).toggleClass("min2");
+                if ( $($modal).hasClass("min2") ){
+                    $('#tituloocultar').show();
+                    $(".minmaxCon").append($apnData);
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                }
+                else {
+                    $('#tituloocultar').hide();
+                    $(".minmaxConayuda").append($apnData);
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                };
+            });
+
+        });
+    </script>
+}

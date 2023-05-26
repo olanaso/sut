@@ -1,8 +1,10 @@
 ﻿
 using CarlosAg.ExcelXmlWriter;
 using iTextSharp.text;
+using iTextSharp.text.html.simpleparser;
 using iTextSharp.text.pdf;
 using Microsoft.Reporting.WebForms;
+using Remotion.Collections;
 using Sut.Entities;
 using Sut.IApplicationServices;
 using Sut.Log;
@@ -159,7 +161,7 @@ namespace Sut.Web.Areas.General.Controllers
 
             _inductorValorService = inductorValorService;
         }
-       
+
         public ActionResult RptActividades(long ExpedienteId, int ptiporeporte, string pcampo4, string pcampo5, string pcampo7, string pcampo9, string pcampo12, string pcampo10, string pcampo11)
         {
             try
@@ -174,12 +176,12 @@ namespace Sut.Web.Areas.General.Controllers
                 filtro.campo5 = pcampo5;
                 filtro.campo7 = pcampo7;
                 filtro.campo9 = pcampo9;
-                if(pcampo12 == "")
+                if (pcampo12 == "")
                 {
                     filtro.campo12 = 0;
                 }
                 else { filtro.campo12 = Convert.ToInt32(pcampo12); }
-               
+
                 filtro.campo10 = pcampo10;
                 filtro.campo11 = pcampo11;
 
@@ -192,7 +194,7 @@ namespace Sut.Web.Areas.General.Controllers
                 for (int i = 0; i < data.Count(); i++)
                 {
                     DataRow dr = ds.NewRow();
-                    dr["campo1"] = data[i].campo1; 
+                    dr["campo1"] = data[i].campo1;
                     dr["campo2"] = data[i].campo2;
                     dr["campo3"] = data[i].campo3;
                     dr["campo4"] = data[i].campo4;
@@ -2604,7 +2606,7 @@ namespace Sut.Web.Areas.General.Controllers
                 throw ex;
             }
         }
-        private void AdicionarCabecera(Document Doc,long ExpedienteId)
+        private void AdicionarCabecera(Document Doc, long ExpedienteId)
         {
             //string pathImagen = Server.MapPath("/dist/img/logo_pcm.png");
             //Image logo = Image.GetInstance(pathImagen);
@@ -2617,20 +2619,22 @@ namespace Sut.Web.Areas.General.Controllers
             var expediente = _expedienteService.GetOne(ExpedienteId);
             var entidad = _entidadService.GetOne(expediente.EntidadId);
             string nombreArchivo = entidad.Logoentidad;
-            string rutalogo = Path.Combine(pathlogoentidad, nombreArchivo);
-            //string pathImagen = Server.MapPath(rutalogo);
-            Image logo = Image.GetInstance(rutalogo);
+            string rutalogo = "";
             Paragraph p = new Paragraph();
-            logo.BorderWidth = 0;
-            logo.ScalePercent(13f);
-
+            if (nombreArchivo != null || nombreArchivo != "")
+            {
+                rutalogo = Path.Combine(pathlogoentidad, nombreArchivo);
+                //string pathImagen = Server.MapPath(rutalogo);
+                Image logo = Image.GetInstance(rutalogo);
+                logo.BorderWidth = 0;
+                logo.ScalePercent(13f);
+                p.Add(new Chunk(logo, 0, 0, true));
+            }
             string pathImagen2 = Server.MapPath("/dist/img/logo_pcm.png");
             Image logo2 = Image.GetInstance(pathImagen2);
             logo2.BorderWidth = 0;
             logo2.ScalePercent(25f);
-            p.Add(new Chunk(logo, 0, 0, true));
-            p.Add(new Chunk(logo2, logo.Width + 130, 0, true));
-
+            p.Add(new Chunk(logo2, logo2.Width + 130, 0, true));
             HeaderFooter header1 = new HeaderFooter(p, false);
             header1.Border = 0;
             //header1.Alignment = Element.ALIGN_RIGHT;
@@ -2788,7 +2792,7 @@ namespace Sut.Web.Areas.General.Controllers
             Doc.Add(tcuerpo);
 
         }
-        private void IndiceConteo(long ExpedienteId,List<long> ProcedimientoIds, string servicio)
+        private void IndiceConteo(long ExpedienteId, List<long> ProcedimientoIds, string servicio)
         {
             var dataProc = _procedimientoService.GetByExpediente(ExpedienteId).ToList().Where(x => ProcedimientoIds.Contains(x.ProcedimientoId)).OrderBy(x => x.Numero);
 
@@ -3787,7 +3791,7 @@ namespace Sut.Web.Areas.General.Controllers
             Doc.Add(list);
             Doc.Close();
         }
-        private void GenerarIndiceCompleto(long ExpedienteId,List<long> ProcedimientoIds)
+        private void GenerarIndiceCompleto(long ExpedienteId, List<long> ProcedimientoIds)
         {
 
 
@@ -4374,7 +4378,7 @@ namespace Sut.Web.Areas.General.Controllers
 
 
         }
-        private void TituloProceAdmCompleto(long ExpedienteId,List<long> ProcedimientoIds)
+        private void TituloProceAdmCompleto(long ExpedienteId, List<long> ProcedimientoIds)
         {
 
 
@@ -5356,7 +5360,7 @@ namespace Sut.Web.Areas.General.Controllers
                                             decimal derechotram = Math.Truncate((proc.TablaAsme[i].CostoUnitario) * 10) / 10;
                                             tramite = tramite + "\n" + desp + '\n' + "Monto - S/ " + string.Format("{0:0.00}", derechotram) + "\n";
                                         }
-                                        else  
+                                        else
                                         {
 
                                             decimal derechotram = Math.Truncate((proc.TablaAsme[i].CostoUnitario) * 10) / 10;
@@ -8079,7 +8083,7 @@ namespace Sut.Web.Areas.General.Controllers
         }
 
 
-        private void GenerarProceAdmCompleto(long ExpedienteId,List<long> ProcedimientoIds, PdfWriter writer)
+        private void GenerarProceAdmCompleto(long ExpedienteId, List<long> ProcedimientoIds, PdfWriter writer)
         {
 
             //caratula 
@@ -8198,7 +8202,7 @@ namespace Sut.Web.Areas.General.Controllers
                     for (int i = 0; i < pagcabhoja; i++)
                     {
                         Doc.Open();
-					}
+                    }
                     celda = new Cell();
                     celda.Border = 0;
                     celda.BorderColor = new Color(242, 242, 242);
@@ -8211,7 +8215,7 @@ namespace Sut.Web.Areas.General.Controllers
                     Doc.Add(tcab);
 
 
-                    
+
                     //--- NoSe,nose, ancho,alto
                     PdfContentByte cb = writer1.DirectContent;
                     cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
@@ -11824,7 +11828,7 @@ namespace Sut.Web.Areas.General.Controllers
                     PdfWriter writer1 = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_P" + contpag + ".pdf", FileMode.Create));
                     //PdfContentByte cb = writer.DirectContent;
 
-					AdicionarCabecera(Doc, ExpedienteId);
+                    AdicionarCabecera(Doc, ExpedienteId);
 
                     //Phrase obje = new Phrase(fnChunk("", (int)Fuente.FuenteCabFooter));
                     //HeaderFooter footer = new HeaderFooter(obje, new Phrase(""));
@@ -23904,7 +23908,7 @@ namespace Sut.Web.Areas.General.Controllers
                         {
                             GenerarPresExc(Doc, ExpedienteId, procedimientoidproc, writer);
                             if (estadoformulario != "")
-                            {   
+                            {
                                 TituloForm(Doc, ExpedienteId, procedimientoidproc, "FORMULARIOS");
                                 Doc.NewPage();
                             }
@@ -23926,7 +23930,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     }
                     Doc.Close();
-               }
+                }
                 else
                 {
 
@@ -23983,7 +23987,7 @@ namespace Sut.Web.Areas.General.Controllers
                     //footer2.BackgroundColor = new Color(242, 242, 242);
                     //Doc3.Header = footer2;
                     //fin
-                    
+
                     //if (ProcedimientoId != 0)
                     if (ProcedimientoIds[0] != 0)
                     {
@@ -24211,7 +24215,7 @@ namespace Sut.Web.Areas.General.Controllers
                 {
                     foreach (Procedimiento proc2 in dataProc)
                     {
-                        List<long> procedimientoidproc = new List<long>(); 
+                        List<long> procedimientoidproc = new List<long>();
                         procedimientoidproc.Add(proc2.ProcedimientoId);
                         if (proc2.TipoProcedimiento == TipoProcedimiento.Servicio || proc2.TipoProcedimiento == TipoProcedimiento.EstandarServicio)
                         {
@@ -25175,7 +25179,7 @@ namespace Sut.Web.Areas.General.Controllers
 
 
         }
-        public ActionResult FSLT(long tipo,List <long> ids)
+        public ActionResult FSLT(long tipo, List<long> ids)
         {
 
 
@@ -28220,15 +28224,15 @@ namespace Sut.Web.Areas.General.Controllers
                 row = shMaestros.Table.Rows.Add();
                 row.Cells.Add(new WorksheetCell("CODIGO DEL PA/SPE", "Cabecera_Celeste") { Index = 1 });
                 row.Cells.Add(new WorksheetCell("NOMBRE DEL PA/SPE", "Cabecera_Celeste") { Index = 2 });
-                row.Cells.Add(new WorksheetCell("SUBSECCION - CAMPO OBSERVADO", "Cabecera_Celeste") { Index = 3 });    
+                row.Cells.Add(new WorksheetCell("SUBSECCION - CAMPO OBSERVADO", "Cabecera_Celeste") { Index = 3 });
                 row.Cells.Add(new WorksheetCell("DETALLE DE LA OBSERVACIÓN", "Cabecera_Celeste") { Index = 4, MergeAcross = 3 });
 
-  
+
 
                 var listaDatosGenerales = _AuditoriaService.listaObs_DatoGenerales(ExpedienteId, entidadid);
 
 
-                for (int i = 0; i < listaDatosGenerales.Count; i++) 
+                for (int i = 0; i < listaDatosGenerales.Count; i++)
                 {
                     rowMaestros = shMaestros.Table.Rows.Add();
                     rowMaestros.Cells.Add(new WorksheetCell(listaDatosGenerales[i].Campo1, "Default_Font8_Borde"));
@@ -28463,7 +28467,7 @@ namespace Sut.Web.Areas.General.Controllers
                 for (int i = 0; i < listaVALORESINDUCTORES.Count; i++)
                 {
                     rowMaestros = shMaestros.Table.Rows.Add();
-                    rowMaestros.Cells.Add(new WorksheetCell(listaVALORESINDUCTORES[i].Campo2, "Default_Font8_Borde") { Index = 2, MergeAcross = 5 }); 
+                    rowMaestros.Cells.Add(new WorksheetCell(listaVALORESINDUCTORES[i].Campo2, "Default_Font8_Borde") { Index = 2, MergeAcross = 5 });
                 }
 
                 row = shMaestros.Table.Rows.Add();

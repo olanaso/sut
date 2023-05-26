@@ -6,7 +6,7 @@
     Sut.Entities.Observacion obs = ViewBag.Observacion as Sut.Entities.Observacion;
     Sut.Security.Filtros fil = ViewBag.filtro as Sut.Security.Filtros;
 
- 
+
     List<Usuario>  usub = ViewBag.DatosUsuario as List<Usuario>;
 
     ViewBag.Icon = "fa fa-file-text-o";
@@ -414,7 +414,7 @@ else
                         $("#idFiltros").hide();
                         $("#quitarfiltro").hide();
                         $("#filtro").show();
-    });
+                    });
                 </script>
                 }
                 else
@@ -437,10 +437,10 @@ else
                         $("#idFiltros").hide();
                         $("#quitarfiltro").hide();
                         $("#filtro").show();
-    });
+                    });
                 </script>
                 }
-                }
+            }
             </div>
 
             <div class="box-body">
@@ -493,9 +493,6 @@ else
                                 </th>
                                 <th style="width:160px">
                                     Órgano/Unidad Orgánica
-                                </th>
-                                <th style="width:80px">
-                                    Código
                                 </th>
                                 <th>
                                     Denominación
@@ -576,7 +573,6 @@ else
                                 </td>
                                 <td><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></td>
                                 <td><input id="txtFilterOrgano" type="text" class="form-control input-sm" /></td>
-                                <td><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></td>
                                 <td><input id="txtFilterNombre" type="text" class="form-control input-sm" /></td>
                                 <td>
                                     <select id="cbFilterTipoProcedimiento" class="form-control input-sm">
@@ -599,9 +595,7 @@ else
                                             <a class="btn btn-danger btn-xs" id="filtro" title="Observar Total" href="javascript:sut.Procedimiento.ObservarTotal(@Model.ExpedienteId,1)"><i class="fa fa-eye"></i></a> }
                                         else
                                         {
-                                            <a class="btn btn-facebook btn-xs" id="filtro" title="Validar Total" href="javascript:sut.Procedimiento.ValidarTotal(@Model.ExpedienteId,1)"><i class="fa fa-eye"></i></a>
-
-                                        }        
+                                            <a class="btn btn-facebook btn-xs" id="filtro" title="Validar Total" href="javascript:sut.Procedimiento.ValidarTotal(@Model.ExpedienteId,1)"><i class="fa fa-eye"></i></a>}
                                     }
 
                                 </td>
@@ -628,9 +622,7 @@ else
                                             <a class="btn btn-danger btn-xs" id="filtro" title="Observar Total" href="javascript:sut.Procedimiento.ObservarTotal(@Model.ExpedienteId,3)"><i class="fa fa-eye"></i></a> }
                                         else
                                         {
-                                            <a class="btn btn-facebook btn-xs" id="filtro" title="Validar Total" href="javascript:sut.Procedimiento.ValidarTotal(@Model.ExpedienteId,2)"><i class="fa fa-eye"></i></a>
-
-                                        }
+                                            <a class="btn btn-facebook btn-xs" id="filtro" title="Validar Total" href="javascript:sut.Procedimiento.ValidarTotal(@Model.ExpedienteId,3)"><i class="fa fa-eye"></i></a>}
                                     }
 
                                 </td>

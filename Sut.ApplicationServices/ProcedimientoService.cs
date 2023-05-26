@@ -183,7 +183,7 @@ namespace Sut.ApplicationServices
             }
         }
 
-        public List<Procedimiento> GetAllLikePagin(Procedimiento filtro, int pageIndex, int pageSize, ref int totalRows)
+        public List<Procedimiento> GetAllLikePagin_(Procedimiento filtro, int pageIndex, int pageSize, ref int totalRows)
         {
             try
             {
@@ -316,7 +316,84 @@ namespace Sut.ApplicationServices
                 throw ex;
             }
         }
+        /*Modificado por ESEO*/
+        public List<Procedimiento> GetAllLikePagin(Procedimiento filtro, int pageIndex, int pageSize, ref int totalRows)
+        {
+            try
+            {
+                var query = _procedimientoRepository.GetByExpediente(filtro.ExpedienteId).AsQueryable();
 
+                if (filtro.Expediente.OrdenPa == TipoOrdenPa.Sistema)
+                {
+                    query = filtro.Ascendente == 1 ? query.OrderByDescending(x => x.Numero) : query.OrderBy(x => x.Numero);
+                }
+                else if (filtro.Expediente.OrdenPa == TipoOrdenPa.UnidadOrganica)
+                {
+                    query = query.OrderBy(x => x.UndOrgResponsable.Nombre);
+                }
+                else if (filtro.Expediente.OrdenPa == TipoOrdenPa.Bloque)
+                {
+                    query = query.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.Bloque);
+                }
+                else if (filtro.Expediente.OrdenPa == TipoOrdenPa.UnidadOrganicaBloque)
+                {
+                    query = query.OrderBy(x => x.UndOrgResponsable.Nombre).ThenBy(x => x.Bloque);
+                }
+
+                query = query.Where(x => x.Denominacion.ToUpper().Contains((string.IsNullOrEmpty(filtro.Denominacion) ? x.Denominacion : filtro.Denominacion).ToUpper()));
+
+                if (filtro.CodigoCorto != null)
+                {
+                    query = query.Where(x => x.CodigoCorto != null && x.CodigoCorto.ToUpper().Contains((string.IsNullOrEmpty(filtro.CodigoCorto) ? x.CodigoCorto : filtro.CodigoCorto).ToUpper()));
+                }
+
+                if (filtro.FiltroOperacion > 0)
+                {
+                    query = query.Where(x => (short)x.Operacion == filtro.FiltroOperacion);
+                }
+                else
+                {
+                    query = query.Where(x => (short)x.Operacion != 3);
+                }
+
+                if (filtro.UndOrgResponsable?.Nombre != null)
+                {
+                    query = query.Where(x => x.UndOrgResponsable.Nombre.ToUpper().Contains((string.IsNullOrEmpty(filtro.UndOrgResponsable.Nombre) ? x.UndOrgResponsable.Nombre : filtro.UndOrgResponsable.Nombre).ToUpper()));
+                }
+
+                if (filtro.FiltroTipoProcedimiento > 0)
+                {
+                    if (filtro.FiltroTipoProcedimiento == 4)
+                    {
+                        query = query.Where(x => x.CodigoACR != "0");
+                    }
+                    else if (filtro.FiltroTipoProcedimiento == 6)
+                    {
+                        query = query.Where(x => x.CodigoACR == "0");
+                    }
+                    else
+                    {
+                        query = query.Where(x => (short)x.TipoProcedimiento == filtro.FiltroTipoProcedimiento);
+                    }
+                }
+                if (filtro.CodigoACR != null) /*JJJMSP2*/
+                {
+                    query = query.Where(x => x.CodigoACR == filtro.CodigoACR).OrderByDescending(x => x.ProcedimientoId);
+                }
+
+                totalRows = query.Count();
+
+                var result = query.Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public List<Procedimiento> GetAllLikePaginACR(Procedimiento filtro, int pageIndex, int pageSize, ref int totalRows)
         {
             try
