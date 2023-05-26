@@ -1,0 +1,385 @@
+﻿@model Sut.Entities.Expediente
+@{
+    ViewBag.Title = "Reportes de actividades";
+    ViewBag.Descripcion = "Reporte - " + @ViewBag.NOMBRE;
+}
+
+<div id="mensajes"></div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body">
+
+                <div class="col-sm-12 col-xs-12">
+
+                    <div class="table-responsive">
+
+                        <div style="margin: 1rem;padding: 1rem; border-top-color: #dd4b39;border: 3px solid #d2d6de;">
+
+                            <label style="padding: 0.5rem;" class="col-sm-1 col-xs-2 control-label">Tipo de Reporte :</label>
+                            <div class="col-sm-2 col-xs-2">
+                                @Html.DropDownList("filtroEstado", ViewBag.publicarTipo as List<SelectListItem>, new { @id = "cbFilterEstado", @class = "form-control" })
+                            </div>
+
+                            <label style="padding: 0.5rem;" class="col-sm-1 col-xs-2 control-label">Código PA/SPE :</label>
+                            <div class="col-sm-2 col-xs-2">
+                                <input id="txtFilterCodigo" type="text" class="form-control input-sm" />
+                            </div>
+
+                            <label style="padding: 0.5rem;" class="col-sm-1 col-xs-2 control-label">Denominación PA/SPE :</label>
+                            <div class="col-sm-2 col-xs-2">
+                                <input id="txtFilterDenominacion" type="text" class="form-control input-sm" />
+                            </div>
+
+                            <label style="padding: 0.5rem;" class="col-sm-1 col-xs-2 control-label">Unidad Orgánica :</label>
+                            <div class="col-sm-2 col-xs-2">
+                                <input id="txtFilterUnidad" type="text" class="form-control input-sm" />
+                            </div>
+                            <br />
+                            <br />
+                            <br />
+                            <label style="padding: 0.5rem;" class="col-sm-1 col-xs-2 control-label" id="lblactividad">Actividad :</label>
+                            <div class="col-sm-2 col-xs-2">
+                                <input id="txtFilterActividad" type="text" class="form-control input-sm" />
+                            </div>
+                            <label style="padding: 0.5rem;" class="col-sm-1 col-xs-2 control-label" id="lblduracion">Duración :</label>
+                            <div class="col-sm-2 col-xs-2">
+                                <input id="txtFilterDuracion" type="text" class="form-control input-sm" />
+                            </div>
+
+                            <a class="btn btn-facebook" id="aplicarfiltro" href="javascript:sut.Expedienterpt.listar(1)"><i class="fa fa-filter"></i> Buscar</a>
+                            <a class="btn btn-danger" id="aplicarfiltro" href="javascript:sut.Expedienterpt.Reporte()"><i class="fa fa-filter"></i> Imprimir</a>
+                        </div>
+
+                         
+                        <table id="tblLista" class="table table-bordered table-striped table-hover"
+                               data-pagesize="5000"
+                               data-page="1"
+                               data-totalrows="0"
+                               data-function="sut.Expedienterpt.listar"
+                               data-paginator="paginator">
+                            <thead>
+                                <tr>
+                                    <th  style="margin: 0.5rem;padding: 1rem;" class="colAction">Nro.</th>
+                                    <th style="margin: 0.5rem;padding: 1rem;">Código PA/SPE</th>
+                                    <th style="margin: 0.5rem;padding: 1rem;">Denominación del PA/SPE</th>
+                                    <th style="margin: 0.5rem;padding: 1rem;">Unidad orgánica</th>
+                                    <th style="margin: 0.5rem;padding: 1rem;">N° de actividad</th>
+                                    <th style="margin: 0.5rem;padding: 1rem;">Actividad</th>
+                                    <th style="margin: 0.5rem;padding: 1rem;">Tipo</th>
+                                    <th style="margin: 0.5rem;padding: 1rem;"> <label class="  control-label" id="lblactividad1">Actividad :</label></th>
+                                    <th style="margin: 0.5rem;padding: 1rem;"><label class="  control-label" id="lblduracion1">Duración :</label></th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr><td colspan="9"><div id="paginator"></div></td></tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;z-index: 5;">
+    <a href="javascript:sut.Expedienterpt.salir('@Url.Content("~/Simplificacion/Expediente/Lista")')" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+</div>
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="6"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 30px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        }
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.Expedienterpt = {
+
+            listar: (page) => {
+
+
+
+                if ($('#cbFilterEstado').val()== 0)
+                {
+                    showNotification('top', 'right', 'Seleccionar Tipo de Reporte', 2);
+                    return;
+                }
+
+
+
+
+                table = $('#tblLista');
+                var model = {
+
+
+                    'filtro.campo4': $('#txtFilterCodigo').val(),
+                    'filtro.campo5': $('#txtFilterDenominacion').val(),
+                    'filtro.campo7': $('#txtFilterUnidad').val(),
+
+                    // PRIMER FILTRO
+                    'filtro.campo9': $('#txtFilterActividad').val(),
+                    'filtro.campo12': $('#txtFilterDuracion').val(),
+
+
+                    // SEGUNDO FILTRO
+                    'filtro.campo10': $('#txtFilterActividad').val(),
+                    'filtro.campo11': $('#txtFilterDuracion').val(),
+
+
+
+                    'filtro.ExpedienteId': @Model.ExpedienteId,
+                    'filtro.ptiporeporte': $('#cbFilterEstado').val(),
+                    pageIndex: page,
+                    pageSize: table.data('pagesize'),
+                    usuarioId: @ViewBag.UsuarioID
+                };
+                $.ajax({
+                    //url: "/Seguridad/Usuario/GetAllLikePagin",
+                   url: '@Url.Content("~/Simplificacion/Expediente/GetAllLikePaginRptActividad")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: () => {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: (data) => {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.Expedienterpt.generar(data.lista);
+                        if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='6' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+
+
+                    },
+                    error: (data) => {
+                        sut.error.show('mensajes', data.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+
+
+            salir: function (expediente) {
+                $(location).attr('href', expediente);
+            },
+
+            Reporte: function (expediente) {
+
+
+                if ($('#cbFilterEstado').val() == 0) {
+                    showNotification('top', 'right', 'Seleccionar Tipo de Reporte', 2);
+                    return;
+                }
+
+
+
+
+
+                var campo4 = $('#txtFilterCodigo').val();
+                var campo5 = $('#txtFilterDenominacion').val();
+                var campo7 = $('#txtFilterUnidad').val();
+
+                    // PRIMER FILTRO
+                var campo9 = $('#txtFilterActividad').val();
+                var campo12 = $('#txtFilterDuracion').val();
+
+
+                    // SEGUNDO FILTRO
+                var campo10 = $('#txtFilterActividad').val();
+                var campo11 = $('#txtFilterDuracion').val();
+
+                var ExpedienteId = @Model.ExpedienteId;
+                var ptiporeporte = $('#cbFilterEstado').val();
+
+
+
+
+                    if ($('#cbFilterEstado').val() == 1) {
+
+
+                        window.location = '@Url.Content("~/General/Reporte/RptActividades")?ExpedienteId=@Model.ExpedienteId&ptiporeporte=' + ptiporeporte + '&pcampo4=' + campo4 + '&pcampo5=' + campo5 + '&pcampo7=' + campo7 + '&pcampo9=' + campo9 + '&pcampo12=' + campo12 + '&pcampo10=' + campo10 + '&pcampo11=' + campo11 +'';
+
+                    } else if ($('#cbFilterEstado').val() == 2) {
+
+
+                        window.location = '@Url.Content("~/General/Reporte/RptActividades")?ExpedienteId=@Model.ExpedienteId&ptiporeporte=' + ptiporeporte + '&pcampo4=' + campo4 + '&pcampo5=' + campo5 + '&pcampo7=' + campo7 + '&pcampo9=' + campo9 + '&pcampo12=' + campo12 + '&pcampo10=' + campo10 + '&pcampo11=' + campo11 +'';
+                    }
+
+
+
+
+
+
+            },
+            generar: (lista) => {
+                debugger;
+                var roltitulo = '';
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, (i, r) => {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += sut.string.format('<td>{0}</td>', r.campo4);
+                    rows += sut.string.format('<td>{0}</td>', r.campo5);
+                    rows += sut.string.format('<td>{0}</td>', r.campo7);
+                    rows += sut.string.format('<td>{0}</td>', r.campo8);
+                    rows += sut.string.format('<td>{0}</td>', r.campo9);
+                    rows += sut.string.format('<td>{0}</td>', r.campo10);
+                    rows += sut.string.format('<td>{0}</td>', r.campo11);
+                    rows += sut.string.format('<td>{0}</td>', r.campo12);
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            },
+
+
+            editar: (id) => {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Seguridad/Entidad/Editar',
+                    url: '@Url.Content("~/Seguridad/Entidad/Editar")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+        };
+
+        $(() => {
+            //sut.Expedienterpt.listar(1);
+
+            $('#txtFilterNombre, #txtFilterAcronimo').keypress((e) => {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.Expedienterpt.listar(1);
+            });
+
+
+            $('#cbFilterSector').change((e) => {
+                sut.Expedienterpt.listar(1);
+            });
+
+
+            $('#cbFilterDepartamento').change((e) => {
+                sut.Expedienterpt.listar(1);
+            });
+
+
+            $('#cbFilterEstado').change((e) => {
+
+                if ($('#cbFilterEstado').val() == 1) {
+
+
+                    document.getElementById('lblactividad').innerHTML = 'Actividad :';
+                    document.getElementById('lblduracion').innerHTML = 'Duración :';
+                    document.getElementById('lblactividad1').innerHTML = 'Personal directo';
+                    document.getElementById('lblduracion1').innerHTML = 'Duración';
+
+
+                } else if ($('#cbFilterEstado').val() == 2)
+                {
+                    document.getElementById('lblactividad').innerHTML = 'Tipo Recurso :';
+                    document.getElementById('lblduracion').innerHTML = 'Recurso :';
+                    document.getElementById('lblactividad1').innerHTML = 'Recurso';
+                    document.getElementById('lblduracion1').innerHTML = 'Cantidad';
+
+                }
+                sut.Expedienterpt.listar(1);
+            });
+
+
+
+
+
+
+            $('#cbFilterDepartamento').on('change', (e) => {
+
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/Entidad/GetProvincias",
+                    url: '@Url.Content("~/Seguridad/Miembro/GetProvincias")',
+                    data: { id: $('#cbFilterDepartamento').val() },
+                    dataType: 'json',
+                    beforeSend: function () {
+                    },
+                    complete: function () {
+                    },
+                    success: function (result) {
+
+                        var sel = $('#cbFilterProvincia');
+                        sel.find('option').remove();
+                        $.each(result.data, (i, r) => {
+                            sel.append($('<option></option>').attr('value', r.ProvinciaId).html(r.Nombre));
+                        });
+
+                    },
+                    error: function (result) {
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            });
+
+            $('#cbFilterProvincia').change((e) => {
+                sut.Expedienterpt.listar(1);
+            });
+
+
+        });
+
+        function toggle15(source) {
+            checkboxes = document.getElementsByName('dinamico');
+            for (var i = 0, n = checkboxes.length; i < n; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+
+    </script>
+}

@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{146C2418-3106-41FB-BE95-92E0771465BD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sut.Entities</RootNamespace>
+    <AssemblyName>Sut.Entities</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actividad.cs" />
+    <Compile Include="ActividadRecurso.cs" />
+    <Compile Include="AnexoIdentificable.cs" />
+    <Compile Include="AnexoNoIdentificable.cs" />
+    <Compile Include="AnexoPersonal.cs" />
+    <Compile Include="ArchivoAdjunto11.cs" />
+    <Compile Include="ArchivoAdjunto2.cs" />
+    <Compile Include="ArchivoAdjunto4.cs" />
+    <Compile Include="ArchivoAdjunto10.cs" />
+    <Compile Include="ArchivoAdjunto7.cs" />
+    <Compile Include="ArchivoAdjunto6.cs" />
+    <Compile Include="ArchivoAdjunto5.cs" />
+    <Compile Include="ArchivoAdjunto3.cs" />
+    <Compile Include="ArMotivoAdjunto.cs" />
+    <Compile Include="ArchivoAdjunto.cs" />
+    <Compile Include="Asignacion.cs" />
+    <Compile Include="Dashboard.cs" />
+    <Compile Include="GrupoEntidad.cs" />
+    <Compile Include="CalendarioActividades.cs" />
+    <Compile Include="FeriadosAnuales.cs" />
+    <Compile Include="UsuarioAsignacion.cs" />
+    <Compile Include="IncentivosCorte.cs" />
+    <Compile Include="IncentivosFormulasCorte.cs" />
+    <Compile Include="IncentivosFormulas.cs" />
+    <Compile Include="Bandeja.cs" />
+    <Compile Include="IngresoSUT.cs" />
+    <Compile Include="BaseLegal.cs" />
+    <Compile Include="BaseLegalNorma.cs" />
+    <Compile Include="Comentario.cs" />
+    <Compile Include="ComentarioSeccion.cs" />
+    <Compile Include="MenuPrincipal.cs" />
+    <Compile Include="Menu.cs" />
+    <Compile Include="NotificacionExpedientes.cs" />
+    <Compile Include="PreguntasFrecuentes.cs" />
+    <Compile Include="DocumentosNorma.cs" />
+    <Compile Include="Auditoria.cs" />
+    <Compile Include="Comunicado.cs" />
+    <Compile Include="Observacion.cs" />
+    <Compile Include="ProcedimientoUndOrgResponsable.cs" />
+    <Compile Include="ProcedimientoCargosOtros.cs" />
+    <Compile Include="ProcedimientoCargosApe.cs" />
+    <Compile Include="ProcedimientoCategoria.cs" />
+    <Compile Include="DetalleMaestro.cs" />
+    <Compile Include="Menuayuda.cs" />
+    <Compile Include="PlazoAtencion.cs" />
+    <Compile Include="Incentivos.cs" />
+    <Compile Include="Notificacion.cs" />
+    <Compile Include="Correos.cs" />
+    <Compile Include="SedeGrupo.cs" />
+    <Compile Include="TablaAsmeReproduccion.cs" />
+    <Compile Include="RolMenu.cs" />
+    <Compile Include="Roles.cs" />
+    <Compile Include="ProcedimientoCargos.cs" />
+    <Compile Include="InformeDocumentos.cs" />
+    <Compile Include="Informe.cs" />
+    <Compile Include="UsuarioRol.cs" />
+    <Compile Include="VCalidadEXANTE.cs" />
+    <Compile Include="VCalidad.cs" />
+    <Compile Include="VCalidadRequisitos_4_2EXANTE.cs" />
+    <Compile Include="VCalidadRequisitos_4_2.cs" />
+    <Compile Include="VCalidadRequisitos_5_4EXANTE.cs" />
+    <Compile Include="VCalidadRequisitos_5_4.cs" />
+    <Compile Include="VCalidadRequisitos_CABECERAEXANTE.cs" />
+    <Compile Include="VCalidadRequisitos_CABECERA.cs" />
+    <Compile Include="VCalidadRequisitos.cs" />
+    <Compile Include="VListaEntidadACREXANTE.cs" />
+    <Compile Include="VListaEntidadACR.cs" />
+    <Compile Include="UIT.cs" />
+    <Compile Include="Dato.cs" />
+    <Compile Include="Departamento.cs" />
+    <Compile Include="Distrito.cs" />
+    <Compile Include="Entidad.cs" />
+    <Compile Include="Enumerado.cs" />
+    <Compile Include="Expediente.cs" />
+    <Compile Include="ExpedienteNorma.cs" />
+    <Compile Include="FactorDedicacion.cs" />
+    <Compile Include="Inductor.cs" />
+    <Compile Include="InductorValor.cs" />
+    <Compile Include="MaestroFijo.cs" />
+    <Compile Include="MaestroFijoDatoAdicional.cs" />
+    <Compile Include="MaestroFijoNotaCiudadano.cs" />
+    <Compile Include="MaestroFijoPasoSeguir.cs" />
+    <Compile Include="MaestroFijoSede.cs" />
+    <Compile Include="MaestroFijoUndOrgRecepcionDocum.cs" />
+    <Compile Include="MapaProcedimiento.cs" />
+    <Compile Include="MetaDato.cs" />
+    <Compile Include="MiembroEquipo.cs" />
+    <Compile Include="Norma.cs" />
+    <Compile Include="NotaCiudadano.cs" />
+    <Compile Include="PasoSeguir.cs" />
+    <Compile Include="PlanTrabajo.cs" />
+    <Compile Include="Procedimiento.cs" />
+    <Compile Include="ProcedimientoDatoAdicional.cs" />
+    <Compile Include="ProcedimientoSede.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Provincia.cs" />
+    <Compile Include="Recurso.cs" />
+    <Compile Include="RecursoCosto.cs" />
+    <Compile Include="Requisito.cs" />
+    <Compile Include="RequisitoFormulario.cs" />
+    <Compile Include="RequisitoProcedimiento.cs" />
+    <Compile Include="ResolucionEquipo.cs" />
+    <Compile Include="Sede.cs" />
+    <Compile Include="SedeUnidadOrganica.cs" />
+    <Compile Include="StatusResponse.cs" />
+    <Compile Include="TablaAsme.cs" />
+    <Compile Include="Tupa.cs" />
+    <Compile Include="Ubigeo.cs" />
+    <Compile Include="UndOrgRecepcionDocumentos.cs" />
+    <Compile Include="Usuario.cs" />
+    <Compile Include="Util\Tipos.cs" />
+    <Compile Include="UnidadMedida.cs" />
+    <Compile Include="UnidadOrganica.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,151 @@
+﻿@model Sut.Entities.MapaProcedimiento
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">Mapa</h4>
+        </div>
+        <div class="modal-body form-horizontal">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-editar" }))
+            {
+                @Html.HiddenFor(model => model.MapaProcedimientoId)
+                <div id="divCategoria" class="form-group" style="display:none">
+                    <label class="control-label col-sm-3 col-xs-12">Categoría</label>
+                    <div class="col-sm-9 col-xs-12">
+
+                    </div>
+                </div>
+                <div id="divTematica" class="form-group" style="display:none">
+                    <label class="control-label col-sm-3 col-xs-12">Temática</label>
+                    <div class="col-sm-9 col-xs-12">
+
+                    </div>
+                </div>
+                <div id="divTipo" class="form-group" style="display:none">
+                    <label class="control-label col-sm-3 col-xs-12">Tipo</label>
+                    <div class="col-sm-9 col-xs-12">
+
+                    </div>
+                </div>
+                <div id="divSubTipo" class="form-group" style="display:none">
+                    <label class="control-label col-sm-3 col-xs-12">SubTipo</label>
+                    <div class="col-sm-9 col-xs-12">
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Código</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.Codigo, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Nombre</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+            }
+        </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success btn-sm" onclick="sut.editPlanTrabajo.guardar()"><i class="fa fa-save"></i> Guardar</button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+
+<script>
+    sut.editMapaProcedimiento = {
+        tipo: @Html.Raw(ViewBag.Tipo) ,
+
+        init: () => {
+            if (sut.editMapaProcedimiento.tipo > 1) {
+                $('#divCategoria').css('display', 'block');
+
+            }
+            if (sut.editMapaProcedimiento.tipo > 2) {
+                $('#divTematica').css('display', 'block');
+            }
+            if (sut.editMapaProcedimiento.tipo > 3) {
+                $('#divTipo').css('display', 'block');
+            }
+            if (sut.editMapaProcedimiento.tipo > 4) {
+                $('#divSubTipo').css('display', 'block');
+            }
+        },
+
+        guardar: () => {
+            if ($("#form-editar").valid()) {
+                $('#form-editar input[name="ArchivoAdjuntoId"]').val($('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val());
+
+                var model = $('#form-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/PlanTrabajo/Guardar",
+                    url: '@Url.Content("~/Seguridad/PlanTrabajo/Guardar")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-editar button').eq(0).removeAttr("disabled");
+                        $('#form-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, function () {
+                            sut.PlanTrabajo.listar(1);
+                        });
+                    },
+                    error: function (result) {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-editar button').eq(0).removeAttr("disabled");
+                        $('#form-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            }
+        }
+    };
+
+    $(function () {
+
+        sut.editMapaProcedimiento.init();
+
+        $('#form-editar').validate({
+            errorPlacement: function (error, element) {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                Descripcion: 'required'
+            },
+            messages: {
+
+            }
+        });
+    });
+
+</script>
+
+
+
+

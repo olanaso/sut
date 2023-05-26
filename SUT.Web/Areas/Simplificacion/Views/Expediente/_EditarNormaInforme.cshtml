@@ -1,0 +1,407 @@
+﻿@model Sut.Entities.Informe 
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title" style="text-align: center;">FORMATO - INFORME SGP - SUT</h4>
+        </div>
+        <div class="modal-body form-horizontal">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-editar" }))
+            {
+                @Html.HiddenFor(model => model.InformeID)
+                @Html.HiddenFor(model => model.ExpedienteId)
+                @Html.HiddenFor(model => model.Titulo)
+                @Html.HiddenFor(model => model.valor)
+                @Html.HiddenFor(model => model.valor2)
+                @Html.HiddenFor(model => model.valor3)
+                @Html.HiddenFor(model => model.valor4)
+                @Html.HiddenFor(model => model.valor5)
+                <div class="form-group">
+                    <label class="control-label col-sm-12 col-xs-12" style="text-align: left;">INFORMACIÓN GENERAL</label>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-12 col-xs-12" style="text-align: left;">Secretaria de Gestión Pública - Subsecretaria de Simplificación y Análisis Regulatorio</label>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2 col-xs-12" style="text-align: left;">Informe N° </label>
+                    <label class="control-label col-sm-6 col-xs-12" style="text-align: left;">@ViewBag.InformeNo</label>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2 col-xs-12" style="text-align: left;">Revisor </label>
+                    <label class="control-label col-sm-6 col-xs-12" style="text-align: left;">@ViewBag.revisor</label>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2 col-xs-12" style="text-align: left;">Entidad </label>
+                    <label class="control-label col-sm-6 col-xs-12" style="text-align: left;">@ViewBag.Entidad </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-1 col-xs-12">Código</label>
+                    <label class="control-label col-sm-1 col-xs-12"></label>
+                    <div class="col-sm-6 col-xs-12">
+                        @Html.TextBoxFor(model => model.Codigo, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-1 col-xs-12">Fecha</label>
+                    <label class="control-label col-sm-1 col-xs-12"></label>
+                    <div class="col-sm-6 col-xs-12">
+                        @if (Model.InformeID == 0)
+                        {
+                            <input type="text" name="Fecha" class="form-control input-sm" value="" />
+
+                        }
+                        else
+                        {
+                            <input type="text" name="Fecha" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fecha == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fecha.Value.Day, Model.Fecha.Value.Month, Model.Fecha.Value.Year))" />
+
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-12 col-xs-12" style="text-align: left;">ANTEDECENTES</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-12 col-xs-12" style="text-align: left;">Documentos presentados por la entidad</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-1 col-xs-12" style="text-align: left;">N°</label>
+                    <label class="control-label col-sm-9 col-xs-12" style="text-align: left;">DOCUMENTOS PARA REVISION DEL PROYECTO DE TUPA</label>
+                    <label class="control-label col-sm-1 col-xs-12" style="text-align: left;">E</label>
+                    <label class="control-label col-sm-1 col-xs-12" style="text-align: left;">NO</label>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-1 col-xs-12" style="text-align: left;">1</label>
+                    <label class="control-label col-sm-9 col-xs-12" style="text-align: left;">Proyecto de Decreto Supremo</label>
+                    @for (var k = 1; k <= 2; k++)
+                    {
+                        <label class="control-label col-sm-1 col-xs-12" style="text-align: left;"><input type="radio" name="Documento1" id="Documento1_@k" value="@k" class="checkTipoActividad" /></label>
+                    }
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-1 col-xs-12" style="text-align: left;">2</label>
+                    <label class="control-label col-sm-9 col-xs-12" style="text-align: left;">Proyecto de TUPA</label>
+                    @for (var k = 1; k <= 2; k++)
+                    {
+                        <label class="control-label col-sm-1 col-xs-12" style="text-align: left;"><input type="radio" name="Documento2" id="Documento2_@k" value="@k" class="checkTipoActividad" /></label>
+                    }
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-1 col-xs-12" style="text-align: left;">3</label>
+                    <label class="control-label col-sm-9 col-xs-12" style="text-align: left;">Formato A: Informe Resumen para la aprobación del TUPA</label>
+                    @for (var k = 1; k <= 2; k++)
+                    {
+                        <label class="control-label col-sm-1 col-xs-12" style="text-align: left;"><input type="radio" name="Documento3" id="Documento3_@k" value="@k" class="checkTipoActividad" /></label>
+                    }
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-1 col-xs-12" style="text-align: left;">4</label>
+                    <label class="control-label col-sm-9 col-xs-12" style="text-align: left;">Formato C: Formato de sustentación legal y técnica de procedimientos administrativos ratificados o validados por el Analisis de Calidad Regulatoria</label>
+                    @for (var k = 1; k <= 2; k++)
+                    {
+                        <label class="control-label col-sm-1 col-xs-12" style="text-align: left;"><input type="radio" name="Documento4" id="Documento4_@k" value="@k" class="checkTipoActividad" /></label>
+                    }
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-1 col-xs-12" style="text-align: left;">5</label>
+                    <label class="control-label col-sm-9 col-xs-12" style="text-align: left;">Sustentación de la tabla ASME y Formularios</label>
+                    @for (var k = 1; k <= 2; k++)
+                    {
+                        <label class="control-label col-sm-1 col-xs-12" style="text-align: left;"><input type="radio" name="Documento5" id="Documento5_@k" value="@k" class="checkTipoActividad" /></label>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-12 col-xs-12" style="text-align: left;">CONCLUSIONES</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12 col-xs-12">
+                        @Html.TextBoxFor(model => model.Conclusiones, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-12 col-xs-12" style="text-align: left;">RECOMENDACIONES</label>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-12 col-xs-12">
+                        @Html.TextBoxFor(model => model.Recomendacion, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+
+
+            }
+
+        </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer">
+            @if (ViewBag.User.rolmenu[0].Guardar == true)
+            {
+               <button type="button" class="btn btn-success btn-sm" onclick="sut.imforme.guardar()"><i class="fa fa-save"></i> Generar</button>
+            }
+            <button type="button" class="btn btn-danger btn-sm" onclick="sut.imforme.cancelar()"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+    </div>
+</div>
+<script>
+
+
+    sut.imforme = {
+        @*listar: function (page) {
+            table = $('#tblListaArchivos');
+            var model = {
+                'filtro.NombreArchivo': $('#txtFilterNombre').val(),
+                'filtro.ExpedienteId': @Model.ExpedienteId,
+                'filtro.NormaId': @Model.NormaId,
+                pageIndex: page,
+                pageSize: table.data('pagesize')
+            };
+
+
+                $.ajax({
+                    //url: "/Simplificacion/Inductor/GetAllLikePagin",
+                    url: '@Url.Content("~/Simplificacion/Expediente/GetAllLikePaginArchivos")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.ArchivoMod.generar(data.lista);
+                        if (data.totalRows == 0) $('#tblListaArchivos tbody').append("<tr><td colspan='3' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+
+
+        },*@
+
+         generar: function (lista) {
+            var table = $('#tblListaArchivos');
+            var tabla = table.children('tbody');
+            tabla.children('tr').remove();
+            var rows = '';
+            var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+            $.each(lista, function (i, r) {
+                rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                rows += sut.string.format('<td>{0}</td>', r.NombreArchivo);
+                rows += '<td>';
+                rows += '<div class="btn-group">';
+                rows += sut.string.format('<a class="btn btn-primary btn-xs" data-placement="left" title="Archivo" href="@Url.Content("~/General/MotivoAdjunto/Descargar/"){0}" ><i class="fa fa-download"></i></a>', r.ArMotivoAdjuntoId);
+                rows += '</div>';
+                rows += '</td>';
+                rows += '<td>';
+                rows += '<div class="btn-group">';
+                rows += sut.string.format('<a class="btn btn-danger btn-xs"  data-placement="left" title="Borrar" href="javascript:sut.ArchivoMod.eliminar({0})" ><i class="fa fa-close"></i></a>', r.ArMotivoAdjuntoId);
+                rows += '</div>';
+                rows += '</td>';
+                rows += '</tr>';
+            });
+            sut.pagination.update(table);
+            tabla.append(rows);
+        },
+        eliminar: function (id) {
+
+            var model = {
+                ArMotivoAdjuntoId: id
+            }
+            sut.msg.confirm("Desea Eliminar", function () {
+
+                $.ajax({
+                    //url: "/Simplificacion/UnidadOrganica/Eliminar",
+                    url: '@Url.Content("~/Simplificacion/Expediente/Eliminar")',
+                    type: "POST",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        sut.ArchivoMod.listar(1);
+                    },
+                    error: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            });
+
+        },
+        eliminarmasivo: function () {
+            var model = {
+                ExpedienteId:  @Model.ExpedienteId,
+            }
+            $.ajax({
+                //url: "/Simplificacion/UnidadOrganica/Eliminar",
+                url: '@Url.Content("~/Simplificacion/Expediente/EliminarMasivo")',
+                type: "POST",
+                data: model,
+                dataType: "json",
+                beforeSend: function () {
+                    sut.wait.appendOverlay('#boxLista');
+                },
+                success: function (data) {
+                    sut.wait.removeOverlay('#boxLista');
+                    sut.ArchivoMod.listar(1);
+                },
+                error: function (data) {
+                    sut.wait.removeOverlay('#boxLista');
+                    sut.error.show('mensajes', data.responseText);
+                }
+            });
+        },
+            guardar: () => {
+            debugger;
+            if ($("#form-editar").valid()) {
+
+                //var codarchivo = $('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val();
+                //if (codarchivo == "" || codarchivo == 0) {
+                //    sut.error.clientErrorShow('msgEditar', "Favor de seleccionar un archivo");
+                //    return;
+                //}
+                debugger;
+
+
+
+                var valor = '';
+                $("input[name=Documento1]").each(function (index) {
+                    if ($(this).is(':checked')) {
+                        valor += $(this).val();
+                    }
+                });
+
+                var valor2 = '';
+                $("input[name=Documento2]").each(function (index) {
+                    if ($(this).is(':checked')) {
+                        valor2 += $(this).val();
+                    }
+                });
+
+                var valor3 = '';
+                $("input[name=Documento3]").each(function (index) {
+                    if ($(this).is(':checked')) {
+                        valor3 += $(this).val();
+                    }
+                });
+
+                var valor4 = '';
+                $("input[name=Documento4]").each(function (index) {
+                    if ($(this).is(':checked')) {
+                        valor4 += $(this).val();
+                    }
+                });
+
+                var valor5 = '';
+                $("input[name=Documento5]").each(function (index) {
+                    if ($(this).is(':checked')) {
+                        valor5 += $(this).val();
+                    }
+                });
+
+                //$('#form-editar input[name="ArchivoAdjuntoId"]').val($('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val());
+                $('#form-editar input[id="valor"]').val(valor);
+                $('#form-editar input[id="valor2"]').val(valor2);
+                $('#form-editar input[id="valor3"]').val(valor3);
+                $('#form-editar input[id="valor4"]').val(valor4);
+                $('#form-editar input[id="valor5"]').val(valor5);
+
+                //$('#form-editar input[name="ArchivoAdjuntoId"]').val($('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val());
+                $('#form-editar input[id="Titulo"]').val("@ViewBag.InformeNo");
+                debugger;
+                var model = $('#form-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/PlanTrabajo/Guardar",
+                    url: '@Url.Content("~/Simplificacion/Expediente/GuardarInforme")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-editar button').eq(0).removeAttr("disabled");
+                        $('#form-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        debugger;
+                        showNotification('top', 'right', 'Procesando descarga del informe!', 2);
+                        alert(result.codigo)
+
+                         $.ajax({ 
+                            url: '@Url.Content("~/General/Reporte/InformeTupa")',
+                            type: "POST",
+                             data: { InformeId: result.codigo},
+                            beforeSend: function () {
+                                sut.wait.appendOverlay('#boxLista');
+                            },
+                            success: function (data) {
+                                debugger;
+                                sut.wait.removeOverlay('#boxLista');
+                                if (data.valid) {
+                                    //window.location = '/Simplificacion/Expediente/Lista';
+                                    showNotification('top', 'right', 'Descarga Completada', 1);
+                                    document.location.target='_blank';
+                                    window.location.href = "@Url.Content("~/General/Reporte/descargarArchivos")?Nombre=" +data.nombre +'&Ruta=' + data.ruta;
+                                }
+                                else
+                                {
+                                    showNotification('top', 'right', 'Descarga Completada', 1);
+                                    document.location.target='_blank';
+                                    window.location.href = "@Url.Content("~/General/Reporte/descargarArchivos")?Nombre=" +data.nombre +'&Ruta=' + data.ruta;
+                                    showNotification('top', 'right', 'Favor de volver a generar en 3 minutos, si el problema persiste comunicarse con el administrador del sut', 3);
+                                }
+                            },
+                            error: function (data) {
+                                debugger;
+                                sut.wait.removeOverlay('#boxLista');
+                                //sut.error.show('mensajes', data.responseText);
+                                //console.log(data.responseText);
+                                showNotification('top', 'right', 'Favor de volver a generar en 3 minutos, si el problema persiste comunicarse con el administrador del sut', 3);
+                            }
+                        });
+
+                    },
+                    error: function (result) {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-editar button').eq(0).removeAttr("disabled");
+                        $('#form-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            }
+        },
+        cancelar: () => {
+                $('#modal-ventana').modal('hide');
+        },
+    };
+
+    $(function () {
+        //sut.ArchivoMod.eliminarmasivo();
+        //sut.ArchivoMod.listar(1);
+
+        $('input[name="Fecha"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es' });
+
+        debugger;
+        var model = $('#form-editar').serialize();
+        debugger;
+    });
+</script>

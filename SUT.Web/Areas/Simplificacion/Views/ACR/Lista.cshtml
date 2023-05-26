@@ -1,0 +1,287 @@
+﻿
+@model Sut.Entities.VListaEntidadACR
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    ViewBag.Title = "Análisis de Calidad Regulatoria - ACR (STOCK)";
+    ViewBag.Descripcion = "Enlazar Información del ACR al SUT";
+}
+
+<div id="mensajes"></div>
+<div class="row">
+    <div class="col-xs-12">
+        @if (@user.EntidadId == 4105)
+        {
+            <div id="boxLista" class="box box-danger">
+                <div class="box-body">
+                    <div id="divLista"></div>
+                </div>
+            </div>
+
+            <div id="boxLista" class="box box-danger">
+                <br /> <br />
+                <div class="form-group">
+
+                    <label class="control-label col-sm-1 col-xs-12">Entidad :</label>
+                    <div class="col-sm-6 col-xs-12">
+                        @Html.DropDownListFor(model => model.Codigo, ViewBag.ListaEntidadACR as List<SelectListItem>, new { @class = "form-control", @style = "width: 100 %" })
+                    </div>
+
+                    <a class="btn btn-success" href="javascript:sut.ACR.procesar()"><i class="fa fa-plus"></i> Generar</a>
+
+                    <br /> <br /> <br />
+                </div>
+
+            </div>
+
+        }
+        else if (@user.EntidadId == 0)
+        {
+            <div id="boxLista" class="box box-danger">
+                <div class="box-body">
+                    <div id="divLista"></div>
+                </div>
+            </div>
+
+            <div id="boxLista" class="box box-danger">
+                <br /> <br />
+                <div class="form-group">
+
+                    <label class="control-label col-sm-1 col-xs-12">Entidad :</label>
+                    <div class="col-sm-6 col-xs-12">
+                        @Html.DropDownListFor(model => model.Codigo, ViewBag.ListaEntidadACR as List<SelectListItem>, new { @class = "form-control", @style = "width: 100 %" })
+                    </div>
+
+                    <a class="btn btn-success" href="javascript:sut.ACR.procesar()"><i class="fa fa-plus"></i> Generar</a>
+                    <br /> <br /> <br />
+                </div>
+
+            </div>
+
+        }
+        else
+        {
+            <div id="boxLista" class="box box-danger">
+                <br /> <br />
+                <div class="form-group">
+
+                    <label class="control-label col-sm-1 col-xs-12">Entidad :</label>
+                    <div class="col-sm-6 col-xs-12">
+                        @Html.DropDownListFor(model => model.Codigo, ViewBag.ListaEntidadACR as List<SelectListItem>, new { @class = "form-control", @style = "width: 100 %" })
+                    </div>
+                    @if (@user.rolmenu[0].Generar == true)
+                    {
+                        <a class="btn btn-success" href="javascript:sut.ACR.procesar()"><i class="fa fa-plus"></i> Generar</a>
+                    }
+                    <br /> <br /> <br />
+                </div>
+
+            </div>
+        }
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+    </div>
+</div>
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="9"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 10px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 30px;
+        }
+
+        /*tfoot .pagination {
+            margin: 0px 0px;
+        }*/
+    </style>
+}
+@section Script {
+    <script>
+
+        sut.ACR = {
+            procesar: function () {
+                debugger;
+                var estado = $("#Codigo").val();
+                if (estado == 0) {
+                    showNotification('top', 'right', 'Favor de Seleccionar una Entidad', 1);
+                    return;
+                }
+
+                $.ajax({
+                    //url: "/Simplificacion/ACR/Generar",
+                    url: '@Url.Content("~/Simplificacion/ACR/Generar")',
+                    type: "POST",
+                    data: { codigo: $("#Codigo").val() },
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        //alert(data.mensaje);
+                        debugger;
+                        if (data.valid) {
+                            //sut.Resumen.listar(1);
+                        } else {
+                            //sut.error.clientErrorShow('mensajes', data.mensaje);
+
+                            window.setTimeout
+                            if (data.mensaje == "0") {
+                                showNotification('top', 'right', "La entidad no cuenta con un expediente en proceso o el expediente es carga inicial", 2);
+                            } else
+                            {
+                               
+                                showNotification('top', 'right', data.mensaje, 1); 
+                            }
+                            
+                            setTimeout("reFresh()", 2000);
+                        }
+
+                    },
+                    error: function (data) {
+                        sut.error.clientErrorShow('mensajes', [data.responseText]);
+                    }
+                });
+            },
+            init: () => {
+
+                jcd.create('Grid', {
+                    id: 'gridLista',
+                    store: jcd.create('JsonStore', {
+                        id: 'stLista',
+                        recordId: 'EntidadId',
+                        fields: [
+                            { name: 'EntidadId' },
+                            { name: 'Nombre' },
+                            { name: 'Codigo' },
+                            { name: 'Acronimo' },
+                            { name: 'ActivarACR' },
+                            { name: 'Ejecucion' },
+                        ],
+                        pageIndex: 1,
+                        pageSize: 500,
+                        ajax: {
+                            url: '@Url.Action("GetAllLikePagin", "ACR", new { area = "Simplificacion" })',
+                            data: {
+                                'filtro.Codigo': () => App.txtFilterCodigo.$().val(),
+                                'filtro.Nombre': () => App.txtFilterNombre.$().val(),
+                                'filtro.Acronimo': () => App.txtFilterAcronimo.$().val(),
+                            },
+                            autoLoad: false
+                        },
+                    }),
+                    header: [
+                        jcd.create('Button', {
+                            icon: 'fa fa-filter', aditionalClass: 'btn-xs', handler: {
+                                click: (e) => {
+                                    App.txtFilterCodigo.$().val('');
+                                    App.txtFilterNombre.$().val('');
+                                    App.txtFilterAcronimo.$().val('');
+                                    App.stLista.reload({ pageIndex: 1 });
+                                }
+                            }
+                        }),
+                        jcd.create('TextBox', {
+                            id: 'txtFilterCodigo',
+                            aditionalClass: 'input-sm',
+                            handler: {
+                                keypress: (e) => {
+                                    if (e.which == 13)
+                                        App.stLista.reload({ pageIndex: 1 });
+                                }
+                            }
+                        }),
+                        jcd.create('TextBox', {
+                            id: 'txtFilterNombre',
+                            aditionalClass: 'input-sm',
+                            handler: {
+                                keypress: (e) => {
+                                    if (e.which == 13)
+                                        App.stLista.reload({ pageIndex: 1 });
+                                }
+                            }
+                        }),
+                        jcd.create('TextBox', {
+                            id: 'txtFilterAcronimo',
+                            aditionalClass: 'input-sm',
+                            handler: {
+                                keypress: (e) => {
+                                    if (e.which == 13)
+                                        App.stLista.reload({ pageIndex: 1 });
+                                }
+                            }
+                        }),
+                    ],
+                    columns: [
+                        jcd.create('RowNumberColumn', { width: 50 }),
+                        jcd.create('GridColumn', { name: 'Código', dataIndex: 'Codigo' }),
+                        jcd.create('GridColumn', { name: 'Nombre' }),
+                        jcd.create('GridColumn', { name: 'Acrónimo', dataIndex: 'Acronimo' }),
+                        jcd.create('GridColumn', { name: 'Proceso ACR', dataIndex: 'ActivarACR' }),
+                        jcd.create('GridColumn', { name: 'Ejecución', dataIndex: 'Ejecucion' }),
+                        jcd.create('ActionColumn', {
+                            width: 50,
+                            commands: [
+                                { icon: 'fa fa-cog', color: 'btn-success', callback: (e) => { sut.ACR.Generar(e.record.EntidadId); } }
+                            ]
+                        })
+                    ],
+                    footer: [jcd.create('Paginator', { id: 'pagLista', store: 'stLista' })]
+                });
+
+                App.gridLista.renderTo($('#divLista'));
+                App.stLista.reload();
+            },
+
+            Generar: (id) => {
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/ACR/Guardar',
+                    url: '@Url.Content("~/Simplificacion/ACR/Guardar")',
+                    data: { id: id },
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        //alert(data.mensaje);
+                        debugger;
+                        if (data.valid) {
+                        } else {
+                            location.reload();
+                        }
+
+                    },
+                    error: function (data) {
+
+                        sut.error.clientErrorShow('mensajes', [data.responseText]);
+                    }
+                });
+
+            },
+        };
+
+        function reFresh() {
+            location.reload();
+        }
+
+        $(() => {
+            sut.ACR.init();
+        });
+    </script>
+}

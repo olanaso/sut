@@ -1,0 +1,156 @@
+﻿@using Sut.Entities;
+@model Sut.Entities.TablaAsme
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">Seleccionar Archivo Excel para importación</h4>
+        </div>
+
+        <div class="modal-body form-horizontal">
+            @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-modal", @enctype = "multipart/form-data" }))
+            {
+                @Html.HiddenFor(model => model.TablaAsmeId)
+                <div class="form-group">
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBox("fileExcel", "", new { @id = "fileExcel", @type = "file", @class = "form-control", @accept = "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
+                    </div>
+                    <div class="col-sm-3 col-xs-12">
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> Importar</button>
+                    </div>
+                </div>
+                <div id="msgEditar"></div>
+            }
+            @*<hr />
+            <p>*@
+                @*Para la importación descargue la plantilla <a href="/Content/importacionASME.xlsx")">Aquí</a>.*@
+                @*Para la importación descargue la plantilla <a href="@Url.Content("~/Content/importacionASME.xlsx")">Aquí</a>.*@
+                @*Para la importación descargue la plantilla <a href="@Url.Content("~/General/Reporte/TablaAsmeFormato")?TablaAsmeId=@ViewBag.TablaAsmeId" target="_blank"> Aquí </a>.*@
+
+            @*</p>
+            <hr />*@
+            <div style="height: 600px; overflow-y: scroll;" >
+                <strong>Considerar como Unidades Orgánicas a las siguientes equivalencias:</strong>
+                <ul id="ulUndOrganicas" class="list-group"></ul>
+                <br />
+                @*<strong>Considerar como Tipo de Actividad:</strong>
+                <ul class="list-group">
+                    <li class="list-group-item">Operacion</li>
+                    <li class="list-group-item">Revision</li>
+                    <li class="list-group-item">Traslado</li>
+                    <li class="list-group-item">Espera</li>
+                    <li class="list-group-item">Archivo</li>
+                </ul>
+                <br />
+                <strong>Considerar como Tipo de Valor:</strong>
+                <ul class="list-group">
+                    <li class="list-group-item">VA</li>
+                    <li class="list-group-item">Control</li>
+                    <li class="list-group-item">SVA</li>
+                </ul>*@
+            </div>
+            <div class="modal-footer">
+                 
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(() => {
+
+        $.each(sut.Asme.UnidadesOrganicas, (i, r) => {
+            if (i > 0) {
+                $('#ulUndOrganicas')
+                    .append($('<li>')
+                        .addClass('list-group-item')
+                        .html(r.Numero + ' = ' + r.Nombre)
+                    );
+            }
+        });
+
+        $('#form-modal').submit((e) => {
+            e.preventDefault();
+            debugger;
+
+            var model = new FormData();
+            model.append("fileExcel", document.getElementById('fileExcel').files[0]);
+            model.append("tablaAsmeId", @ViewBag.TablaAsmeId);
+
+            if ($("#form-modal").valid()) { 
+
+
+                $.ajax({
+                    type: "POST",
+                    //url: "/Simplificacion/TablaAsme/ImportarActividades",
+                    url: '@Url.Content("~/Simplificacion/TablaAsme/ImportarActividades")',
+                    data: model,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    //dataType: 'json',
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    complete: () => {
+                        debugger;
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal button').eq(0).removeAttr("disabled");
+                    },
+                    success: (result) => {
+
+                        $('#modal-ventana').modal('hide');
+                        debugger;
+                        //console.log(result);
+                        //if (result.valid) sut.Asme.addImportAct(result.data);
+                        if (result.mensaje != undefined) {
+                            sut.error.clientErrorShow('mensajes', result.mensaje);
+                            var texto = "";
+                            for (var i = 0; i < result.mensaje.length; i++) {
+                                texto = result.mensaje[i] + '\n' + texto;
+                            }
+
+                            sut.msg.msgUsuario(texto, 'Error al cargar el archivo');
+                        }
+                        if (result.valid) location.reload();
+
+
+                    },
+                    error: (result) => {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+                        //sut.wait.removeProgress('.modal-footer');
+                        //$('#form-modal button').eq(0).removeAttr("disabled");
+                        //sut.error.show('msgEditar', result.responseText);
+                        showNotification('top', 'right', 'Verifique que las cabeceras de la plantilla en excel existan en los maestros ', 3);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            }
+        });
+
+        $('#form-modal').validate({
+            errorPlacement: (error, element) => {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                fileExcel: 'required',
+            },
+            messages: {
+
+            }
+        });
+    });
+
+</script>
+

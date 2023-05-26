@@ -1,0 +1,797 @@
+﻿@model Sut.Entities.Procedimiento
+@{
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Nuevo";
+    ViewBag.Descripcion = "";
+
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+}
+
+<div id="mensajes">
+    @{Html.RenderPartial("_Error");}
+</div>
+
+
+<div class="box box-danger">
+    <div style="position: absolute;right: 15px;top: -60px; margin-bottom: 0;">
+        <div id="divBotones">
+            <div class="box-body">
+                <div class="btn-group pull-right">
+                    @*<a href="javascript:sut.editarProcedimiento.salir('~/Simplificacion/Expediente/Editar/@Model.ExpedienteId')" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+                    <a href="javascript:sut.editarProcedimiento.salir('@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId')" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @using (Html.BeginForm("Nuevo", "Procedimiento", FormMethod.Post, new { @id = "form-nuevo", @class = "form-horizontal" }))
+    { 
+<div class="box-body">
+    @Html.HiddenFor(model => model.ExpedienteId)
+    <div class="form-group">
+        <label class="col-sm-2 col-xs-12 control-label">Denominación :</label>
+        <div class="col-sm-10 col-xs-12">
+            @Html.TextBoxFor(model => model.Denominacion, new { @class = "form-control input-sm" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 col-xs-12 control-label">Tipo :</label>
+        <div class="col-sm-5 col-xs-12">
+            @Html.DropDownListFor(model => model.TipoProcedimiento, ViewBag.ListTipo as List<SelectListItem>, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 col-xs-12 control-label">Categoría Principal :</label>
+        <div class="col-sm-5 col-xs-6">
+            @Html.DropDownListFor(model => model.CategoriaProcedimientoId, ViewBag.ListaCategoria as List<SelectListItem>, new { @class = "form-control" })
+        </div>
+        <div class="col-sm-1 col-xs-2">
+            @*<button type="submit" class="btn btn-primary pull-right"><i class="fa fa-save"></i> Agregar </button>*@
+            <a id="add_fieldPersonal" class="btn btn-success" data-toggle="modal" data-target="#exampleModal" style="padding: 1px 9px;"><i class="fa fa-plus"></i></a>
+            @*<button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#exampleModal" >
+                    Agregar Más Categorias
+                </button>*@
+        </div>
+
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 col-xs-12 control-label">Tipo Trámite :</label>
+        <div class="col-sm-5 col-xs-12">
+            @Html.DropDownListFor(model => model.TipoProcedimientoId, ViewBag.ListaSubTipo as List<SelectListItem>, new { @class = "form-control" })
+        </div>
+    </div>
+
+    @if ((ViewBag.Entidad as Sut.Entities.Entidad).TipoTupa != Sut.Entities.TipoTupa.Estandar)
+    {
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Dependencia a Cargo 1:</label>
+            <div class="col-sm-10 col-xs-12">
+                <div class="input-group">
+                    @Html.HiddenFor(model => model.UndOrgResponsableId)
+                    @Html.TextBoxFor(model => model.UndOrgResponsable.Nombre, new { @class = "form-control", @readonly = "readonly" })
+                    <div class="input-group-btn">
+                        <a href="javascript:sut.editarProcedimiento.openSelectUndOrg()" class="btn btn-success"><i class="fa fa-ellipsis-h"></i></a>
+                    </div>
+                    @*<div class="col-sm-1 col-xs-2" style="right: -25px;top: -32px;margin-bottom: -27px;">
+                        <a href="javascript:sut.editarProcedimiento.addcargo()" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
+                    </div>*@
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <a href="javascript:sut.editarProcedimiento.addcargo()" class=" btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
+            <div class="col-sm-1 col-xs-12"> 
+            </div>
+        </div>
+        <table class="table table-condensed table-bordered table-striped" id="tablaReconsideracion1" style="margin-bottom: 0px;">
+            <tbody>
+            </tbody>
+        </table>
+
+
+
+        @*<div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Dependencia a Cargo 2 :</label>
+                <div class="col-sm-10 col-xs-12">
+                    <div class="input-group">
+                        @Html.HiddenFor(model => model.UndOrgResponsableId2)
+                        @Html.TextBoxFor(model => model.UndOrgResponsable.Nombre2, new { @class = "form-control", @readonly = "readonly" })
+                        <div class="input-group-btn">
+                            <a href="javascript:sut.editarProcedimiento.openSelectUndOrg2()" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                        </div>
+                    </div>   (No es obligatorio )
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Dependencia a Cargo 3 :</label>
+                <div class="col-sm-10 col-xs-12">
+                    <div class="input-group">
+                        @Html.HiddenFor(model => model.UndOrgResponsableId3)
+                        @Html.TextBoxFor(model => model.UndOrgResponsable.Nombre3, new { @class = "form-control", @readonly = "readonly" })
+                        <div class="input-group-btn">
+                            <a href="javascript:sut.editarProcedimiento.openSelectUndOrg3()" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                        </div>
+                    </div>   (No es obligatorio )
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Dependencia a Cargo 4 :</label>
+                <div class="col-sm-10 col-xs-12">
+                    <div class="input-group">
+                        @Html.HiddenFor(model => model.UndOrgResponsableId4)
+                        @Html.TextBoxFor(model => model.UndOrgResponsable.Nombre4, new { @class = "form-control", @readonly = "readonly" })
+                        <div class="input-group-btn">
+                            <a href="javascript:sut.editarProcedimiento.openSelectUndOrg4()" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                        </div>
+                    </div>   (No es obligatorio )
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Dependencia a Cargo 5 :</label>
+                <div class="col-sm-10 col-xs-12">
+                    <div class="input-group">
+                        @Html.HiddenFor(model => model.UndOrgResponsableId5)
+                        @Html.TextBoxFor(model => model.UndOrgResponsable.Nombre5, new { @class = "form-control", @readonly = "readonly" })
+                        <div class="input-group-btn">
+                            <a href="javascript:sut.editarProcedimiento.openSelectUndOrg5()" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                        </div>
+                    </div>   (No es obligatorio )
+                </div>
+            </div>*@
+    }
+</div>
+<div class="box-footer">
+    @*<button type="submit" id="submit" class="btn btn-primary pull-right"><i class="fa fa-save"></i> Guardar</button>*@
+    <a href="javascript:sut.editarProcedimiento.nuevo()" class="btn btn-success  pull-right"><i class="fa fa-save"></i> Guardar</a>
+
+</div> 
+
+    }
+</div>
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar Categorias</h5>
+                @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>*@
+            </div>
+            <div class="modal-body"> 
+                   
+                    <div class="table-responsive">
+                        <table id="tblBuscarUndOrganicacat" class="table table-bordered table-striped table-hover"
+                               data-pagesize="40"
+                               data-page="1"
+                               data-totalrows="0"
+                               data-function="sut.editarProcedimiento.listarcategoria"
+                               data-paginator="paginator">
+                            <thead>
+                                <tr>
+                                    <th class="colCheck">
+
+
+                                    </th>
+                                    <th>Categorias</th>
+                                </tr>
+
+                            </thead>
+                            <tbody></tbody> 
+                        </table>
+                    </div> 
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>  
+                <a href="javascript:sut.editarProcedimiento.guardarcategoria()" class="btn btn-primary pull-right"> Guardar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="minmaxConayuda">
+    <div class="modal fade mymodal" id="modalAyudaAvatar1">
+        <div class="modal-dialog  ">
+            <div class="modal-content">
+                <div class="modal-body" id="contenido" style="padding:0px">
+                    <div class="bar-title" id="tituloocultar">
+                        <a class="close modalMinimize" style="padding:110px; right: 20px;  top: -100px; background: transparent"> <i class='fa fa-clone '></i> </a>
+                        <span>
+                            <h3 id="ihtitulo1" style="font-size: x-large;text-align: center;font-family: initial;"> Hola @user.Nombres </h3>
+                        </span>
+                    </div>
+                    <div>
+                        <div id="idtitulo1" style="text-align:left">
+                            <div class="col-sm-3 col-xs-2">
+                                <a class="modalMinimize" title="Minimizar" style="color:black"> <i class='fa fa-minus fa-2x'></i> </a>
+                                <img src="~/dist/img/hola.png" class="img-rounded" alt="Cinque Terre" />
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje2" style="width:440px;height:100%;top:103px">
+                                <j2 style="text-align: left;font-family: initial;">¡Hola! Registra todo la información y luego clic </j2>
+                                <a id="clic" style="display: none;" class="btn btn-primary" href="#"><i class="fa fa-floppy-o"></i>Guardar</a>
+                                <l1 style="text-align: left;font-family: initial;"> para continuar. ¡Tú puedes! </l1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="minmaxCon"></div>
+
+
+@section Script {
+    <script>
+        var div = document.getElementById('capa');
+        var but = document.getElementById('boton');
+
+        //la funcion que oculta y muestra
+        function showHide(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (div.style.display == "none") {
+                div.style.display = "block"; sut.editarProcedimiento.listarcategoria('tblBuscarUndOrganicacat', 1);
+            } else if (div.style.display == "block") {
+                div.style.display = "none";
+            }
+        }
+        //al hacer click en el boton
+        //but.addEventListener("click", showHide, false);
+
+        ////funcion para cualquier clic en el documento
+        //document.addEventListener("click", function (e) {
+
+
+        //}, false);
+
+        sut.editarProcedimiento = {
+            listarcategoria: function (table, page) {
+                debugger;
+                table = $('#' + table);
+                var model = {
+                    'pageIndex': page,
+                    'pageSize': table.data('pagesize')
+                };
+
+                $.ajax({
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/GetAllLikePagincategoria")',
+                    type: 'GET',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: function () {
+                        sut.wait.appendProgress('#buscarUnidadOrganicacat .modal-footer');
+                    },
+                    success: function (data) {
+                        sut.wait.removeProgress('#buscarUnidadOrganicacat .modal-footer');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+
+                        debugger;
+                        sut.editarProcedimiento.generar(table, data.lista);
+                        //if (data.totalRows == 0)
+                            //$('#tblBuscarUndOrganicacat tbody').append('<tr><td colspan="2" class="text-center text-bold">NO EXISTEN REGISTROS</td></td>');
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            },
+            generar: function (table, lista) {
+                debugger;
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+
+                        rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarUndOrg{1}" class="icheck" type="checkbox" value="{1}|{0}" /></td><td>{0}</td></tr>',
+                            r.Nombre, r.Codigo);
+
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+
+
+                 //   $('.icheck').iCheck({
+                 //       checkboxClass: 'icheckbox_square-red',
+                 //       radioClass: 'iradio_square-red',
+                 //       increaseArea: '20%' // optional
+                 //});
+
+            },
+
+            nuevo: function () {
+                var valid = true;
+
+                    sut.msg.confirm('Esta creando un nuevo procedimiento.', () => {
+                        if ($('#form-nuevo').valid()) {
+                            var model = $('#form-nuevo').serialize();
+                            model = model.replace(new RegExp('=on','gi'),'=true');
+                            $.ajax({
+                                type: 'POST',
+                                //url: '/Simplificacion/Procedimiento/DatosGenerales',
+                                url: '@Url.Content("~/Simplificacion/Procedimiento/Nuevo")',
+                                data: model,
+                                dataType: 'json',
+                                cache: false,
+                                beforeSend: function () {
+                                    sut.wait.modal('ventana-container');
+                                    $('#modal-ventana').modal('show');
+                                },
+                                success: function (result) {
+                                    debugger;
+                                    sut.wait.removeOverlay('#boxLista');
+                                    var ver = result.ExpedienteId;
+                                            sut.msg.success(result.mensaje, function () {
+
+                                                //window.location = '/Simplificacion/Procedimiento/DatosGenerales/@Model.ProcedimientoId';
+                                                window.location = '/Simplificacion/Expediente/Editar/'+ver;
+                                                @*window.location = '@Url.Action("Editar", "Expediente", new { @area = "Simplificacion", @id = ver })';*@
+                                            });
+
+                                },
+                                error: function (result) {
+                                    sut.error.show('mensajes', result.responseText);
+                                }
+                            });
+                        }
+                    });
+
+            },
+
+            openSelectUndOrg: function () {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/UnidadOrganica/Select',
+                    url: '@Url.Content("~/Simplificacion/UnidadOrganica/Select")',
+                    data: { multi: false, fnAdd: 'sut.editarProcedimiento.setUndOrg' },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+
+            @*openSelectUndOrg2: function () {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/UnidadOrganica/Select',
+                    url: '@Url.Content("~/Simplificacion/UnidadOrganica/Select")',
+                    data: { multi: false, fnAdd: 'sut.editarProcedimiento.setUndOrg2' },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            openSelectUndOrg3: function () {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/UnidadOrganica/Select',
+                    url: '@Url.Content("~/Simplificacion/UnidadOrganica/Select")',
+                    data: { multi: false, fnAdd: 'sut.editarProcedimiento.setUndOrg3' },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+
+            openSelectUndOrg4: function () {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/UnidadOrganica/Select',
+                    url: '@Url.Content("~/Simplificacion/UnidadOrganica/Select")',
+                    data: { multi: false, fnAdd: 'sut.editarProcedimiento.setUndOrg4' },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+
+            openSelectUndOrg5: function () {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/UnidadOrganica/Select',
+                    url: '@Url.Content("~/Simplificacion/UnidadOrganica/Select")',
+                    data: { multi: false, fnAdd: 'sut.editarProcedimiento.setUndOrg5' },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },*@
+
+             openSelectUndOrgDinamico: function (fnAdd,tipo,num) {
+
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/UnidadOrganica/Select',
+                    url: '@Url.Content("~/Simplificacion/UnidadOrganica/Select")',
+                    data: { multi: false, fnAdd: fnAdd, tipo: tipo, num: num },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            guardarcategoria: function () {
+                debugger;
+                var inputs = $('#tblBuscarUndOrganicacat tbody tr td input:checked');
+                var data = [];
+                if (inputs.length > 0) {
+                    $.each(inputs, function (i, r) {
+                        var v = $(r).val().split('|');
+                        data.push({ Codigo: v[0], Nombre: v[1] });
+                    });
+                }
+
+                if (data == 0){
+
+                    showNotification('top', 'right', 'Seleccionar por lo menos una categoria ', 2);
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Content("~/Simplificacion/procedimiento/guardarcategoria")',
+                    data: { idexp: @Model.ExpedienteId, idpro:0,  orden: data },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+
+                        $('#modal-ventana').modal('hide');
+                        $('#exampleModal').modal('hide');
+                        showNotification('top', 'right', 'Se Grabo la información correctamente', 1);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+
+            salir: function (expediente) {
+
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Content("~/Simplificacion/procedimiento/EliminarCategorias0")',
+                    data: { idexp: @Model.ExpedienteId },
+                    cache: false,
+                    beforeSend: function () {
+                    },
+                    success: function (data) {
+
+                        $(location).attr('href', expediente);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+
+
+            },
+            initcargo: function () {
+                var lista = @Html.Raw(ViewBag.ProcedimientoUndOrgResponsable != null ? ViewBag.ProcedimientoUndOrgResponsable : "[]");
+                var tabla = $('#tablaReconsideracion1 tbody');
+                var num = 1;
+                if (lista.length > 0) {
+                    var data = [];
+                    $.each(lista, function (i, r) {
+
+                        num = i ;
+                        var rows = '';
+
+                        rows += sut.string.format('<tr data-index="{0}" class="requisito" >', i);
+                        rows += '<td style="width: 310px;">';
+                        rows += '<div class="btn-group">';
+                        rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editarProcedimiento.deletecargo({0},{1},{2})" ><i class="fa fa-close" ></i></a>', r.ProcedimientoUndOrgResponsableID,r.ProcedimientoId,r.UndOrgResponsableId2);
+                        rows += '</div>';
+                        rows += sut.string.format('<input type="hidden" name="ProcedimientoUndOrgResponsable[{0}].ProcedimientoUndOrgResponsableID" value="{1}" />', i, r.ProcedimientoUndOrgResponsableID);
+                        rows += sut.string.format('<input type="hidden" name="ProcedimientoUndOrgResponsable[{0}].ProcedimientoId" value="{1}" />', i, r.ProcedimientoId);
+                        rows += '</td>';
+
+                        rows += sut.string.format('<td style="text-align: center;">');
+                        rows += sut.string.format('<div class="input-group">');
+                        rows += sut.string.format('<input type="hidden" name="ProcedimientoUndOrgResponsable[{0}].UndOrgResponsableId2" value="{1}" />', i, r.UndOrgResponsableId2);
+                        rows += sut.string.format('<input type="text" name="UndOrgReconsideracion[{0}].Nombre" value="{1}" class="form-control" readonly />', i, r.NombreUndOrg);
+                        rows += sut.string.format('<div class="input-group-btn">');
+                        rows += sut.string.format('<a href="javascript:sut.editarProcedimiento.openSelectUndOrgDinamico' + "('" + 'sut.editarProcedimiento.setUndOrgReconDinamico' + "',1,{0})" +'" class="btn btn-success"><i class="fa fa-ellipsis-h"></i></a>', i, 0);
+                        rows += sut.string.format('</div>');
+                        rows += sut.string.format('</div>');
+                        rows += sut.string.format('</td>');
+
+                        rows += '</tr>';
+
+
+                        tabla.append(rows);
+
+
+                    });
+                    sut.editarProcedimiento.updatecargo();
+
+                }
+            },
+            addcargo: (indexReq, indexForm,TablaAsmeId,ProcedimientoId) => {
+
+                debugger;
+                var tabla = $('#tablaReconsideracion1 tbody').eq(0);
+
+                var i = $('#tablaReconsideracion1 tbody').eq(0).children('tr.requisito').size();
+
+                var rows = '';
+                rows += sut.string.format('<tr data-index="{0}" class="requisito" >', i);
+                rows += '<td style="width: 310px;">';
+                rows += sut.string.format('<input type="hidden" name="ProcedimientoUndOrgResponsable[{0}].ProcedimientoId" value="{1}" />', i, @Model.ProcedimientoId);
+                rows += '</td>';
+
+                rows += sut.string.format('<td style="text-align: center;">');
+                rows += sut.string.format('<div class="input-group">');
+                rows += sut.string.format('<input type="hidden" name="ProcedimientoUndOrgResponsable[{0}].UndOrgResponsableId2" value="{1}" />', i, 0);
+                rows += sut.string.format('<input type="text" name="ProcedimientoUndOrgResponsable[{0}].Nombre" value="{1}" class="form-control" readonly />', i, '');
+                rows += sut.string.format('<div class="input-group-btn">');
+                rows += sut.string.format('<a href="javascript:sut.editarProcedimiento.openSelectUndOrgDinamico' + "('" + 'sut.editarProcedimiento.setUndOrgReconDinamico' + "',1,{0})" +'" class="btn btn-success"><i class="fa fa-ellipsis-h"></i></a>', i, 0);
+                rows += sut.string.format('</div>');
+                rows += sut.string.format('</div>');
+                rows += sut.string.format('</td>');
+                rows += '</tr>';
+
+                tabla.append(rows);
+                sut.editarProcedimiento.updatecargo();
+            },
+            deletecargo: function (id,procedimiento,num) {
+                debugger;
+                var model = {
+                    ProcedimientoCargosID: id,
+                    ProcedimientoID: procedimiento,
+                    orden: num
+                }
+
+                $.ajax({
+                    //url: "/Simplificacion/UnidadOrganica/Eliminar",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/EliminarReconsideracionProc")',
+                    type: "POST",
+                    data: model,
+                    dataType: "json",
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        showNotification('top', 'right', 'Elimino con Éxito ', 1);
+                        window.location = '@Url.Action("DatosGenerales", "Procedimiento", new { @area = "Simplificacion", @id = @Model.ProcedimientoId })' + '?tab=edit-info-basica';
+                    },
+                    error: function (data) {
+
+                        $('#modal-ventana').modal('hide');
+                        showNotification('top', 'right', 'Tienes Actividades Registradas que pertenecen a la Tablaasme favor de Eliminar ', 2);
+                    }
+                });
+
+            },
+            updatecargo: function () {
+
+                var cont = 0;
+                $.each($('#tablaReconsideracion1 tbody tr.requisito'), function (i, tr) {
+                    $(tr).data('index', i);
+                    $(tr).find('td span').html(i + 1);
+                    $(tr).find('td input[name$="ProcedimientoUndOrgResponsableID"]').attr('name', sut.string.format('ProcedimientoUndOrgResponsable[{0}].ProcedimientoUndOrgResponsableID', i));
+                    $(tr).find('td input[name$="ProcedimientoId"]').attr('name', sut.string.format('ProcedimientoUndOrgResponsable[{0}].ProcedimientoId', i));
+                    $(tr).find('td input[name$="UndOrgResponsableId2"]').attr('name', sut.string.format('ProcedimientoUndOrgResponsable[{0}].UndOrgResponsableId2', i));
+                });
+            },
+
+
+            setUndOrg: function (data) {
+                $('#modal-ventana').modal('hide');
+                $('input[name="UndOrgResponsableId"]').val(data.id);
+                $('input[name="UndOrgResponsable.Nombre"]').val(data.nombre);
+            },
+            setUndOrgReconDinamico: function (data) {
+                debugger;
+                $('#modal-ventana').modal('hide');
+                $('input[name="ProcedimientoUndOrgResponsable['+data.num+'].UndOrgResponsableId2"]').val(data.id);
+                $('input[name="ProcedimientoUndOrgResponsable['+data.num+'].Nombre"]').val(data.nombre);
+            },
+            //setUndOrg2: function (data) {
+            //    $('#modal-ventana').modal('hide');
+            //    $('input[name="UndOrgResponsableId2"]').val(data.id);
+            //    $('input[name="UndOrgResponsable.Nombre2"]').val(data.nombre);
+            //},
+            //setUndOrg3: function (data) {
+            //    $('#modal-ventana').modal('hide');
+            //    $('input[name="UndOrgResponsableId3"]').val(data.id);
+            //    $('input[name="UndOrgResponsable.Nombre3"]').val(data.nombre);
+            //},
+            //setUndOrg4: function (data) {
+            //    $('#modal-ventana').modal('hide');
+            //    $('input[name="UndOrgResponsableId4"]').val(data.id);
+            //    $('input[name="UndOrgResponsable.Nombre4"]').val(data.nombre);
+            //},
+            //setUndOrg5: function (data) {
+            //    $('#modal-ventana').modal('hide');
+            //    $('input[name="UndOrgResponsableId5"]').val(data.id);
+            //    $('input[name="UndOrgResponsable.Nombre5"]').val(data.nombre);
+            //}
+        };
+
+        $(document).ready(function () {
+            $("#submit").one('click', function (event) {
+                event.preventDefault();
+                //do something
+                //$(this).prop('disabled', true);
+                alert("sadasd");
+            });
+        });
+
+        $(function () {
+            //sut.editarProcedimiento.initcargo();
+            sut.editarProcedimiento.listarcategoria('tblBuscarUndOrganicacat', 1);
+            $.validator.addMethod('selUbigeo', $.validator.methods.min, 'Debe seleccionar una categoria principal');
+            $('#form-nuevo').validate({
+                errorPlacement: function (error, element) {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+                    Denominacion: {
+                        required: true,
+                    },
+                    'UndOrgResponsable.Nombre': {
+                        required: true
+                    },
+                    CategoriaProcedimientoId: { selUbigeo: 1 }
+                },
+                messages: {
+
+                }
+            });
+
+            /*desarrollo de la ayuda*/
+            /*minimizar un modal*/
+
+            sut.control.Actualizartexto();
+            var $content, $modal, $apnData, $modalCon;
+
+            $content = $(".min");
+
+
+            //To fire modal
+            $(".mdlFire").click(function (e) {
+                debugger;
+                e.preventDefault();
+
+                var $id = $(this).attr("data-target");
+
+                $($id).modal({ backdrop: false, keyboard: false });
+
+            });
+
+            debugger;
+
+            if(@user.Ayuda==1){
+                $('#edit-fase-preparatoria').addClass('active');
+                $('a[href="#edit-fase-preparatoria"]').parent().addClass('active');
+
+
+                $('#tituloocultar').hide();
+
+
+                $('#modalAyudaAvatar1').modal({backdrop: 'static', keyboard: false})
+                $modal = "#modalAyudaAvatar1"
+                $($modal).toggleClass("min");
+                $modal = "#modalAyudaAvatar1";
+                $(".modal-backdrop").addClass("display-none");
+                $(".minmaxConayuda").append($apnData);
+                $(".modal").css({
+                    backgroundColor: "transparent"
+                });
+
+            }
+
+
+
+            /*fin*/
+
+            $(".modalMinimize").on("click", function(){
+                debugger;
+                $modalCon = $(this).closest(".mymodal").attr("id");
+                $apnData = $(this).closest(".mymodal");
+                $modal = "#" + $modalCon;
+                $(".modal-backdrop").addClass("display-none");
+
+                $($modal).toggleClass("min2");
+                if ( $($modal).hasClass("min2") ){
+                    $('#tituloocultar').show();
+                    $(".minmaxCon").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-minus fa-2x').toggleClass( 'fa-clone fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                }
+                else {
+                    $('#tituloocultar').hide();
+                    $(".minmaxConayuda").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-clone fa-2x').toggleClass( 'fa-minus fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                };
+            });
+
+        });
+    </script>
+}

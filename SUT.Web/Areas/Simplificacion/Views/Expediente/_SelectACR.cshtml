@@ -1,0 +1,199 @@
+﻿<div id="buscarSede" class="modal-dialog"  style="width: 80%;">
+    <div class="modal-content" >
+        <div class="modal-header">
+            <h4 class="modal-title">Requisitos ACR</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-buscar-sede", @class = "form-horizontal" })) 
+            {
+                <div class="table-responsive">
+                    <table id="tblBuscarSede" class="table table-bordered table-striped table-hover"
+                           data-pagesize="20"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.Masivo.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th class="colCheck">
+                                    @if (ViewBag.Multi)
+                                    {
+                                        <input type="checkbox" id="buscarUndOrgTodo" class="icheck" />
+                                    }
+                                </th>
+                                <th rowspan="2" style="vertical-align: middle !important;">Código</th>
+                                <th>Descripción</th>
+                                <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
+                            </tr> 
+                            <tr>
+                                <th><button type="button" class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>                      
+                                <th><input name="Descripcion" type="text" class="form-control input-sm" /></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr><td colspan="4"><div id="paginator"></div></td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+
+            }
+        </div>
+        <div class="modal-footer">
+            @if (ViewBag.Multi)
+            {
+                <a class="btn btn-success btn-sm" href="javascript:sut.Masivo.aceptar();"><i class="fa fa-check"></i> Aceptar</a>
+            }
+            <button type="button" class="btn btn-danger btn-sm" onclick="$(this).parent().parent().parent().parent().parent().modal('hide');"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+</style>
+
+<script>
+
+    var multi = @Html.Raw(ViewBag.multi ? "true" : "false");
+    var ProcedimientoId = @Html.Raw(ViewBag.ProcedimientoId);
+
+    sut.Masivo = {
+        listar: function (table, page) {
+            debugger;
+            table = $('#' + table);
+            var model = {
+                'filtro.ProcedimientoId': ProcedimientoId,
+                'filtro.Nombre': $('#form-buscar-sede input[name="Descripcion"]').val(),
+                'pageIndex': page,
+                'pageSize': table.data('pagesize'),
+            };
+
+            //var sede1 = document.getElementsByName("ProcedimientoSede[0].SedeId");
+            //alert(sede1.value);
+
+            $.ajax({
+                //url: '/Simplificacion/Procedimiento/GetAllLikePaginMasivoObservacion',
+                url:'@Url.Content("~/Simplificacion/Expediente/GetAllLikePaginRequisitos")',
+                type: 'GET',
+                data: model,
+                dataType: 'json',
+                beforeSend: function () {
+                    sut.wait.appendProgress('#buscarSede .modal-footer');
+                },
+                success: function (data) {
+                    sut.wait.removeProgress('#buscarSede .modal-footer');
+                    table.data('page', page);
+                    table.data('totalrows', data.totalRows);
+                    sut.Masivo.generar(table, data.lista);
+                    if (data.totalRows == 0){
+                        $('#tblBuscarSede tbody').append('<tr><td colspan="4" class="text-center text-bold">NO EXISTEN REGISTROS</td></td>');
+                    }
+
+
+                },
+                error: function (data) {
+                    sut.error.show('mensajes', data.responseText);
+                }
+            });
+        },
+        generar: function (table, lista) {
+            var tabla = table.children('tbody');
+            tabla.children('tr').remove();
+            var rows = '';
+            var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+            $.each(lista, function (i, r) {
+                debugger;
+                var est="ACTIVO";
+                if(r.Activar==0){
+                    est="INACTIVO";
+                }
+                if (multi)
+                {
+                    rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarSede{0}"  class="icheck"  type="checkbox" value="{0}|{1}|{2}|{3}|{4}" /></td><td>{1}</td><td>{2}</td><td>{5}</td></tr>',
+                            r.RequisitoId, r.RecNum, r.Nombre,r.Activar,r.ProcedimientoId,est );
+                } else {
+                    rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarSede{0}"  class="icheck"  type="checkbox" value="{0}|{1}|{2}|{3}|{4}" /></td><td>{1}</td><td>{2}</td><td>{5}</td></tr>',
+                        r.RequisitoId, r.RecNum, r.Nombre,r.Activar,r.ProcedimientoId,est);
+                }
+
+
+
+            });
+            sut.pagination.update(table);
+            tabla.append(rows);
+
+        },
+        aceptar: function () {
+            debugger;
+            var inputs = $('#tblBuscarSede tbody tr td input:checked');
+            if (inputs.length > 0) {
+                var data = [];
+                $.each(inputs, function (i, r) {
+                    var v = $(r).val().split('|');
+                    data.push({ ProcedimientoId: Number(v[0]), Codigo: v[1], Denominacion: v[2],datocampo : datocampo , Texto1:texto1, Texto2:texto2});
+                });
+                fnAdd(data);
+
+
+            }
+        },
+        aceptarSingle: function (tr) {
+            debugger;
+            var input = $(tr).find('input[id^="chkbuscarSede"]');
+            var v = input.val().split('|');
+            var id=Number(v[0]);
+            sut.msg.confirm('Está seguro de otorgar permiso de edición', function () {
+
+                debugger;
+                $.ajax({
+                    type: "POST",
+                     url:'@Url.Content("~/Simplificacion/Expediente/GuardarRequisitos")',
+                    data: { RequisitoId:id},
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        //$('#modal-ventana').modal('hide');
+                        showNotification('top', 'right', 'Se activo correctamente', 1);
+                        sut.Masivo.listar('tblBuscarSede', 1);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        debugger;
+                        showNotification('top', 'right', 'Ya Existe Información en la tabla Asme, favor de eliminar las actividades para poder copiar', 2);
+                        //sut.error.show('mensajes', "Ya Existe Información en la tabla Asme favor de eliminar las actividades para poder copiar");
+                    }
+                });
+
+
+            });
+        }
+    };
+
+    $(function () {
+        debugger;
+        sut.Masivo.listar('tblBuscarSede', 1);
+
+        $('#form-buscar-sede input[name="Descripcion"]').keypress(function (e) {
+            var key = e.keyCode || event.keyCode
+            if (key == 13) {
+                sut.Masivo.listar('tblBuscarSede', 1);
+                e.preventDefault();
+            }
+        });
+
+
+
+        $('#tblBuscarSede button').eq(0).click(function (e) {
+            $('#form-buscar-sede input[name="Descripcion"]').val("")
+            sut.Masivo.listar('tblBuscarSede', 1);
+        });
+
+
+        sut.table.selectRow('#tblBuscarSede', multi, sut.Masivo.aceptarSingle);
+    });
+
+</script>

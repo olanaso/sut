@@ -1,0 +1,17 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Sut.Entities
+{
+    public class MaestroFijoPasoSeguir
+    {
+        [Key, Column(Order = 0), ForeignKey("MaestroFijo")]
+        public long MaestroFijoId { get; set; }
+        public MaestroFijo MaestroFijo { get; set; }
+
+        [Key, Column(Order = 1)]
+        public long PasoSeguirId { get; set; }
+
+        public string Descripcion { get; set; }
+    }
+}

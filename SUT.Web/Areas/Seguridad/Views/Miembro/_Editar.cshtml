@@ -1,0 +1,476 @@
+﻿@model Sut.Entities.MiembroEquipo
+ 
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">@ViewBag.Title</h4>
+        </div>
+        <div class="modal-body form-horizontal">
+            @using (Html.BeginForm("Guardar", "Seguridad/Miembro", FormMethod.Post, new { @id = "form-modal-editar" }))
+            {
+                @Html.HiddenFor(model => model.MiembroEquipoId)
+                @Html.HiddenFor(model => model.ArchivoAdjuntoId)
+                
+                <div class="callout callout-warning" style="height: inherit;padding: inherit;display: block;">
+                    Para efectos de comunicados y notificaciones formales: Los datos registrados en este apartado deben responder a la verdad y mantenerse actualizados, bajo responsabilidad de la Entidad y el Administrador del SUT
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12" for="TipoDoc">Tipo Doc:</label>
+                    <div class="col-sm-9 col-xs-12"> 
+                            @Html.DropDownListFor(model => model.TipoDoc, ViewBag.TipoDoc as List<SelectListItem>, new { @class = "form-control" }) 
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Nro. Doc. Identidad:</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.NroDocumento, new { @class = "form-control input-sm", type = "number", autocomplete = "off" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Ape. Paterno:</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.ApePaterno, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Ape. Materno:</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.ApeMaterno, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Nombres:</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.Nombres, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Departamento:</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => model.DepartamentoId, ViewBag.ListaDepartamento as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Provincia:</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => model.ProvinciaId, ViewBag.ListaProvincia as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Entidad:</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => model.EntidadId, ViewBag.ListaEntidad as List<SelectListItem>, new { @class = "form-control", @style = "width: 100 %" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12" for="RolEquipoId">Rol en el Equipo :</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => model.RolEquipoId, ViewBag.RolEquipo as List<SelectListItem>, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Cargo en la Entidad:</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.Cargo, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <hr />
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Correo Electrónico:</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.Correo, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Teléfono / Anexo:</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.TelefonoFijo, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Celular:</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.TelefonoMovil, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Estado: </label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => model.Estado, ViewBag.publicar as List<SelectListItem>, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Sexo: </label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => model.Sexo, ViewBag.Genero as List<SelectListItem>, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+
+
+            }
+            @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto", @enctype = "multipart/form-data" }))
+            {
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Documento de designación <br /> (de ser el caso)</label>
+
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.HiddenFor(model => model.ArchivoAdjuntoId)
+                        <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto != null ? "" : "file-empty")">
+                            <ul>
+                                <li>
+                                    <span class="text">
+                                        <i class="fa fa-file"></i> 
+                                        <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto.ArchivoAdjuntoId)) : "")" target="_blank">
+                                            @MvcHtmlString.Create(Model.ArchivoAdjunto != null ? Model.ArchivoAdjunto.NombreArchivo : "")
+                                        </a>
+                                    </span>
+                                    <div class="tools">
+                                        <i class="fa fa-remove"></i>
+                                    </div>
+                                </li>
+                            </ul>
+                            @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer">
+            @if (ViewBag.User.rolmenu[0].Guardar == true){
+            <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarMiembro.guardar()"><i class="fa fa-save"></i> Guardar</button>
+            }
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+    </div>
+</div>
+<script>
+
+    sut.editarMiembro = {
+        guardar: () => {
+            debugger;
+
+
+
+
+            var email = document.getElementById("Correo").value;
+
+            var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+
+
+            var entidad = $('select[name="EntidadId"]').val();
+            var entidadtext = $('select[name="EntidadId"] option:selected').text();
+            var rol = $('select[name="RolEquipoId"]').val();
+
+            if (rol==129)
+            {
+                if (entidad !=4105 && entidad != 18497 && entidadtext.indexOf("MINISTERIO") == -1)
+                {
+                    showNotification('top', 'right', 'El Rol Evaluador no puede ser asigando para esta entidad', 2);
+                    return;
+                }
+
+            }else if (rol==130)
+            {
+                if (entidad !=4105 && entidad != 18497 && entidad != 20553)
+                {
+                    showNotification('top', 'right', 'El Rol Entidad Fiscalizadora no puede ser asigando para esta entidad', 2);
+                    return;
+                }
+            } else if (rol==128)
+            {
+                if ( entidadtext.indexOf("PROVINCIAL") == -1) {
+
+                    showNotification('top', 'right', 'El Rol Ratificador no puede ser asigando para esta entidad', 2);
+                    return;
+                }
+            } else if (!expr.test(email)) {
+                showNotification('top', 'right', 'Por favor, escriba un correo electrónico válido.', 2);
+                return;
+            }
+
+
+
+
+
+            if ($("#form-modal-editar").valid()) {
+                $('#form-modal-editar input[name="ArchivoAdjuntoId"]').val($('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val());
+                var model = $('#form-modal-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/Miembro/Guardar",
+                    url:'@Url.Content("~/Seguridad/Miembro/Guardar")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: () => {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: () => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: (result) => {
+
+
+                        debugger;
+
+                        if (result.estad == 2) {
+                            sut.msg.alerta(result.mensaje, function () {
+
+                            });
+                        }
+                        else {
+                            $('#modal-ventana').modal('hide');
+                            sut.msg.success(result.mensaje, () => {
+                                sut.Miembro.listar(1);
+                            });
+                        }
+
+                    },
+                    error: (result) => {
+
+                        debugger;
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                 /*       sut.error.show('msgEditar', result.responseText);*/
+
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            }
+        },
+
+        selectSupervisor: (flag) => {
+            debugger;
+            var input = $('input[name="Cargo"]');
+            var select = $('select[name="Cargo"]');
+            var cargo = '';
+
+            if (flag) {
+                if (input != null) {
+                    cargo = input.val();
+                    select = $('<select />')
+                        .attr('name', 'Cargo')
+                        .addClass('form-control')
+                        .append($('<option />').html('Secretario General o quien haga sus veces').val('Secretario General o quien haga sus veces'))
+                        .append($('<option />').html('Gerente General o quien haga sus veces').val('Gerente General o quien haga sus veces'))
+                        .val(cargo);
+                    input.parent().append(select);
+                    input.remove();
+                }
+            } else {
+                if (select != null) {
+                    cargo = select.val();
+                    input = $('<input />')
+                        .attr('name', 'Cargo')
+                        .addClass('form-control input-sm')
+                        .val(cargo);
+                    select.parent().append(input);
+                    select.remove();
+                }
+            }
+        }
+    };
+
+    $(() => {
+
+
+        //$('select[name="EntidadId"]').select2();
+
+
+
+
+        $('select[name$="DepartamentoId"]').on('change', (e) => {
+            $.ajax({
+                type: "POST",
+                //url: "/Seguridad/Entidad/GetProvincias",
+                url: '@Url.Content("~/Seguridad/Miembro/GetProvincias")',
+                data: { id: $('select[name$="DepartamentoId"]').val() },
+                dataType: 'json',
+                beforeSend: function () {
+                },
+                complete: function () {
+                },
+                success: function (result) {
+                    var sel = $('select[name$="ProvinciaId"]');
+                    sel.find('option').remove();
+                    $.each(result.data, (i, r) => {
+                        sel.append($('<option></option>').attr('value', r.ProvinciaId).html(r.Nombre));
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        //url: "/Seguridad/Entidad/GetProvincias",
+                        url: '@Url.Content("~/Seguridad/Miembro/GetEntidades")',
+                        data: { id: $('select[name$="ProvinciaId"]').val() },
+                        dataType: 'json',
+                        beforeSend: function () {
+                        },
+                        complete: function () {
+                        },
+                        success: function (result) {
+                            var sel = $('select[name$="EntidadId"]');
+                            sel.find('option').remove();
+                            $.each(result.data, (i, r) => {
+                                sel.append($('<option></option>').attr('value', r.EntidadId).html(r.Nombre));
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('msgEditar', result.responseText);
+                        }
+                    });
+
+                },
+                error: function (result) {
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+        });
+
+
+        $('select[name$="ProvinciaId"]').on('change', (e) => {
+            debugger;
+            $.ajax({
+                type: "POST",
+                //url: "/Seguridad/Entidad/GetProvincias",
+                url: '@Url.Content("~/Seguridad/Miembro/GetEntidades")',
+                data: { id: $('select[name$="ProvinciaId"]').val() },
+                dataType: 'json',
+                beforeSend: function () {
+                },
+                complete: function () {
+                },
+                success: function (result) {
+                    var sel = $('select[name$="EntidadId"]');
+                    sel.find('option').remove();
+                    $.each(result.data, (i, r) => {
+                        sel.append($('<option></option>').attr('value', r.EntidadId).html(r.Nombre));
+                    });
+                },
+                error: function (result) {
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+        });
+
+
+
+        //document.getElementById("NroDocumento").maxLength = 8;
+        debugger;
+        var valor= $('select[name="TipoDoc"] option:selected').val();
+        if(valor==148)
+        {
+            document.getElementById("NroDocumento").maxLength = 8;
+        }
+        else  if(valor==149)
+        {
+            document.getElementById("NroDocumento").maxLength = 12;
+        }
+
+        if (Number($('input[name="MiembroEquipoId"]').val()) > 0) {
+            $('input[name="NroDocumento"]').attr('readonly', true);
+            $('select[name="TipoDoc"]').attr('readonly', true);
+        }
+
+        if (( @MvcHtmlString.Create(ViewBag.User.Rol == (short)Sut.Entities.Rol.Coordinador ? "true" : "false")))  {
+            $('select[name="DepartamentoId"]').attr('disabled', 'disabled');
+            $('select[name="ProvinciaId"]').attr('disabled', 'disabled');
+            $('select[name="EntidadId"]').attr('disabled', 'disabled');
+ 
+        }
+
+ 
+
+        $('select[name="RolEquipoId"]').on('change', (e) => {
+            sut.editarMiembro.selectSupervisor(Number($('select[name="RolEquipoId"] option:selected').val()) == 37);
+        });
+
+
+        $('select[name="TipoDoc"]').on('change', (e) => {
+            var valor= $('select[name="TipoDoc"] option:selected').val();
+            var input = document.getElementById("NroDocumento");
+            if(valor==148)
+            {
+                input.maxLength = 8;
+            }
+            else
+            {
+                input.maxLength = 12;
+            }
+            $('input[name="NroDocumento"]').val('');
+        });
+
+
+
+        $.validator.addMethod("selRolEquipo", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un Rol de Equipo"));
+        $.validator.addMethod("selEntidad", $.validator.methods.min,
+            $.validator.format("Debe seleccionar una Entidad"));
+
+        $.validator.addMethod("selSexo", $.validator.methods.min,
+            $.validator.format("Debe seleccionar el sexo de la persona"));
+
+        $('#form-modal-editar').validate({
+
+            errorPlacement: (error, element) => {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                NroDocumento: {
+                    required: true,
+                    digits: true,
+                    //minlength: 8,
+                    //maxlength: 8
+                },
+                RolEquipoId: {
+                    selRolEquipo: 1
+                },
+                EntidadId: {
+                    selEntidad: 1
+                },
+                Correo: {
+                    required: true,
+                    email: true,
+                },
+                ApePaterno: 'required',
+                ApeMaterno: 'required',
+                Nombres: 'required',
+                Cargo: 'required',
+                Sexo: {
+                    selSexo: 1
+                },
+
+            },
+            messages: {
+
+            }
+        });
+    });
+    $(function () {
+        sut.control.uploadfile('form-archivo-adjunto');
+
+    });
+
+</script>
+

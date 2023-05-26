@@ -1,0 +1,672 @@
+﻿@using Sut.Entities
+@{
+    Expediente exp = ViewBag.Expediente as Expediente;
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    List<Sut.Entities.Observacion> ObservacionCostoPersonal = ViewBag.ObservacionCostoPersonal as List<Sut.Entities.Observacion>; 
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Sustento de Costos - Expediente " + exp.Codigo;
+    ViewBag.Descripcion = ""; 
+}
+
+<div id="mensajes">
+    @{Html.RenderPartial("_Error");}
+</div>
+
+<div class="box box-default">
+    <div class="box-body">
+        @{Html.RenderPartial("_MenuCostos", exp);}
+
+        @*<div class="btn-group pull-right">
+                <a href="javascript:sut.FactorTupa.listarAutoCalc()" class="btn btn-warning"><i class="fa fa-calculator"></i> Auto Calcular</a>
+                <a href="javascript:sut.FactorTupa.guardar()" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</a>
+            </div>*@
+    </div>
+</div>
+@*/*Inicio CostoPersonal*/*@
+<div class="form-group">
+    <div class="col-sm-10 col-xs-12" style="text-align: left;">
+        @if (exp.EstadoExpediente == EstadoExpediente.Observado)
+        {
+            @*/*botones unicos*/*@
+
+            @*<a class="btn btn-warning btn-xs" id="aSustentarObservarExpCostoPersonal_1" data-placement="right" title="Sustentar Observación" href="javascript:sut.FactorTupa.sustentarObservarExpCostoPersonal(1);"><i class="fa fa-pencil-square-o"></i></a>
+                <a class="btn btn-primary btn-xs" style="display:none" id="aGuardarSustentarExpCostoPersonal_1" data-placement="right" title="Guardar Sustento" href="javascript:sut.FactorTupa.guardarSustentarExpCostoPersonal(@exp.ExpedienteId,1,1);"><i class="fa fa-floppy-o"></i></a>
+                <a class="btn btn-danger btn-xs" style="display:none" id="aCancelarSustentarExpCostoPersonal_1" data-placement="right" title="Quitar Sustento" href="javascript:sut.FactorTupa.CancelarSustentarExpCostoPersonal(@exp.ExpedienteId,1,1);"><i class="fa fa-power-off"></i></a>*@
+
+
+        }
+
+
+        @if (ObservacionCostoPersonal.Count != 0)
+        {
+            var cont = 0;
+            var texto1 = "";
+            foreach (var item in ObservacionCostoPersonal)
+            {
+                var nombre = "ConfiguraciondelInductordeAsignaciondeCostos";
+
+                if (@item.Pantalla == "Configuracion del Inductor de Asignacion de Costos" && @item.NombreCampo == nombre)
+                {
+                    cont = 1;
+
+                    if (@item.CodValidacion == "1")
+                    {
+                        texto1 = @item.Descripcion;
+                    }
+                    else
+
+                    if (@item.CodValidacion == "4")
+                    {
+                        <script>
+                            window.addEventListener("load", function () {
+                                valiarbotonesModalidad('CostoPersonal', 1);
+                                $("#mensajeCostoPersonal_1").show();
+                                document.querySelector("#mensajeCostoPersonal_1").innerText = 'Se valido con éxito';
+                            });
+                        </script>
+                    }
+                    else if (@item.CodValidacion == "2")
+                    {
+
+                        <script>
+
+                            window.addEventListener("load", function() {
+                                sut.FactorTupa.textoobservacionCostoPersonal("@texto1.Replace("\n", " ")", "@item.Descripcion.Replace("\n", " ")", 4, "@exp.EstadoExpediente", 1);
+
+                            });
+                        </script>
+                        <a class="btn btn-warning btn-xs" id="aSustentarObservarExpCostoPersonal_1" data-placement="right" title="Refutar Observación" href="javascript:sut.FactorTupa.sustentarObservarExpCostoPersonal(1);"><i class="fa fa-pencil-square-o"></i></a>
+                        <a class="btn btn-primary btn-xs" style="display:none" id="aGuardarSustentarExpCostoPersonal_1" data-placement="right" title="Guardar Sustento" href="javascript:sut.FactorTupa.guardarSustentarExpCostoPersonal(@exp.ExpedienteId,1,1);"><i class="fa fa-floppy-o"></i></a>
+                        <a class="btn btn-danger btn-xs" style="display:none" id="aCancelarSustentarExpCostoPersonal_1" data-placement="right" title="Quitar Sustento" href="javascript:sut.FactorTupa.CancelarSustentarExpCostoPersonal(@exp.ExpedienteId,1,1);"><i class="fa fa-power-off"></i></a>
+
+                    }
+
+                    else if (@item.CodValidacion == "5")
+                    {
+                        <script>
+                            window.addEventListener("load", function () {
+                                canceladobotonesModalidad('CostoPersonal');
+                            });
+                        </script>
+                    }
+                    else if (@item.CodValidacion == "3")
+                    {
+                        <script>
+
+                            window.addEventListener("load", function() {
+                                debugger;
+                                sustentobotones('CostoPersonal',1);
+                                $("#mensajeCostoPersonal_1").show();
+                                document.querySelector("#mensajeCostoPersonal_1").innerText  = 'Se refuto con éxito';
+                                sut.FactorTupa.textosustentoCostoPersonal("@item.Descripcion.Replace("\n", " ")", 4, "@exp.EstadoExpediente", 1);
+                            });
+                        </script>
+                    }
+                }
+            }
+        }
+        <label id="mensajeCostoPersonal_1" class="label-primary label" style="font-size: 100%;font-weight: normal;"></label>
+    </div>
+</div>
+
+<div id="divCostoPersonal" class="form-group">
+    <div id="divCostoPersonal0_1">
+
+    </div>
+</div>
+@*/*Fin*/*@
+<div class="callout callout-warning" style="display: inherit;height: inherit; padding: inherit;">
+   Si el factor TUPA sale mayor al 100% - Las horas hombre en la unidad orgánica son insuficientes para atender la demanda anual del procedimiento
+</div>
+<div id="boxLista" class="box box-danger">
+    @if (@user.rolmenu[0].Ver == true)
+    {
+        <div class="box-header with-border">
+            <h3 class="box-title">Configuración del Inductor de Asignación de Costos</h3> 
+            <div class="box-tools pull-right">
+                @*JJJMSP2 INI*@
+                <a href="javascript:sut.FactorTupa.listarTodoAutoCalc()" class="btn btn-warning"><i class="fa fa-calculator"></i> Calcular Todo</a>
+                <a href="javascript:sut.FactorTupa.listarAutoCalc()" class="btn btn-warning"><i class="fa fa-calculator"></i> Auto Calcular</a>
+                @if (@user.rolmenu[0].Guardar == true)
+                {
+                    @*<a href="javascript:sut.FactorTupa.guardar()" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</a>*@
+                }
+                <a href="javascript:void(0)" class="btn btn-box-tool" data-toggle="tooltip" data-placement="bottom" title="Seleccione una Unidad Orgánica e ingrese valores por cada Recurso.">
+                    <i class="fa fa-question-circle"></i>
+                </a>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="control-label col-sm-2 col-xs-12">Unidad Orgánica</label>
+                    <div class="col-sm-10 col-xs-12">
+                        <select id="cbUndOrganica" class="form-control">
+                            @foreach (UnidadOrganica item in (ViewBag.ListaUnidadOrganica as List<UnidadOrganica>))
+                            {
+                                <option value="@item.UnidadOrganicaId">@item.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <br /><br />
+            <div class="col-sm-12">
+                @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-factor" }))
+                {
+                    <div class="table-responsive">
+                        <table id="tblLista" class="table table-bordered table-condensed table-striped" style="margin-bottom: 0px;font-size: 16px;">
+                            <thead>
+                                <tr>
+                                    <th>Nro.</th>
+                                    <th>Tipo</th>
+                                    <th>Recurso</th>
+                                    <th>Valor TUPA (%)</th>
+                                    <th>Valor no TUPA (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    <div class="box-footer">
+        <div class="pull-right">
+            @*<a href="/Simplificacion/Configuracion/Resumen/@exp.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+            <a href="@Url.Content("~/Simplificacion/Configuracion/Resumen/")@exp.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+        </div>
+    </div>
+</div>
+
+@section Style {
+    <style type="text/css">
+        #tblLista thead tr th {
+            vertical-align: middle !important;
+            text-align: center !important;
+            font-size: 0.8em;
+        }
+
+        #tblLista tbody tr td {
+            text-align: center;
+        }
+
+            #tblLista tbody tr td:nth-child(1) {
+                width: 50px;
+                text-align: center;
+            }
+
+            #tblLista tbody tr td:nth-child(4),
+            #tblLista tbody tr td:nth-child(5) {
+                width: 100px;
+            }
+
+            #tblLista tbody tr td:nth-child(5) {
+                text-align: right !important;
+            }
+
+            #tblLista tbody tr td:nth-child(4) input[type="text"] {
+                text-align: right !important;
+            }
+
+        /*#tblLista tbody tr td:nth-child(4) div.progress div.progress-bar {
+            text-align: center !important;
+            color: #000000;
+        }*/
+    </style>
+}
+
+@section Script {
+    <script>
+        sut.FactorTupa = {
+            /*JJJMSP2 INI*/
+            listarTodoAutoCalc: function () {
+                var select = document.getElementById("cbUndOrganica");
+                for (var i = 0; i < select.length; i++) {
+                    select.selectedIndex = i;
+                    sut.error.show('mensajes', $('#cbUndOrganica').val());
+                    sut.FactorTupa.listarAutoCalc();
+                };
+            },/*JJJMSP2 FIN*/
+
+            listarAutoCalc: function () {
+
+                debugger;
+                table = $('#tblLista');
+                var model = {
+                    'filtro.ExpedienteId': @exp.ExpedienteId,
+                    'filtro.UnidadOrganicaId': $('#cbUndOrganica').val()
+                };
+                $.ajax({
+                    //url: "/Simplificacion/Configuracion/FactorTupaGetAutoCalculo",
+                    url:'@Url.Content("~/Simplificacion/Configuracion/FactorTupaGetAutoCalculo")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        sut.FactorTupa.generar(data.lista);
+                        sut.FactorTupa.updateCalc();
+                        debugger;
+                        if (data.mensaje != '') {
+
+                            sut.msg.msgUsuario(data.mensaje, 'Alerta');
+                        }
+                        if (data.lista.length == 0) $('#tblLista tbody').append("<tr><td colspan='5' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            },
+            listar: function () {
+                table = $('#tblLista');
+                var model = {
+                    'filtro.ExpedienteId': @exp.ExpedienteId,
+                    'filtro.UnidadOrganicaId': $('#cbUndOrganica').val()
+                };
+                $.ajax({
+                    //url: "/Simplificacion/Configuracion/FactorTupaGetAllLikePagin",
+                    url:'@Url.Content("~/Simplificacion/Configuracion/FactorTupaGetAllLikePagin")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        sut.FactorTupa.generar(data.lista);
+                        sut.FactorTupa.updateCalc();
+                        if (data.lista.length == 0) $('#tblLista tbody').append("<tr><td colspan='5' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            },
+            generar: function (lista) {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = 0;
+                $.each(lista, function (i, r) {
+                    rows += '<tr>';
+                    rows += sut.string.format('<td>{0}</td>', ++numero);
+                    rows += sut.string.format('<td>{0}</td>', r.Tipo);
+                    rows += sut.string.format('<td>{0}</td>', r.Nombre);
+                    rows += '<td>';
+                    rows += sut.string.format('<input type="hidden" name="[{0}].FactorDedicacionId" class="form-control" value="{1}" />', numero - 1, r.FactorDedicacionId);
+                    rows += sut.string.format('<input type="hidden" name="[{0}].ExpedienteId" class="form-control" value="{1}" />', numero - 1, r.ExpedienteId);
+                    rows += sut.string.format('<input type="hidden" name="[{0}].UnidadOrganicaId" class="form-control" value="{1}" />', numero - 1, r.UnidadOrganicaId);
+                    rows += sut.string.format('<input type="hidden" name="[{0}].RecursoId" class="form-control" value="{1}" />', numero - 1, r.RecursoId);
+                    rows += sut.string.format('<input type="hidden" name="[{0}].AutoCalculo" class="form-control" value="{1}" />', numero - 1, r.AutoCalculo);
+                    rows += sut.string.format('<input type="text" name="[{0}].ValorTupa" class="form-control input-sm" value="{1}" min="0" max="100" required readonly  />', numero - 1, sut.format.decimal(r.ValorTupa));
+                    rows += '</td>';
+                    rows += '<td></td>';
+                    rows += '</tr>';
+                });
+                tabla.append(rows);
+            },
+
+            updateCalc: function (input) {
+
+                debugger;
+                if (input != null) {
+                    input.parent().find('input[name$="AutoCalculo"]').val(false);
+                }
+
+                var filas = $('#tblLista tbody tr');
+                $.each(filas, function (i, tr) {
+                    var ver=Number($(tr).find('td:nth-child(4) input[type="text"]').val());
+                    var valor = 100 - Number($(tr).find('td:nth-child(4) input[type="text"]').val());
+                    $(tr).find('td:nth-child(5)').html(sut.format.decimal(valor));
+                });
+            },
+
+            guardar: function () {
+                if ($('#form-factor').valid()) {
+                    var model = $('#form-factor').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Configuracion/GuardarFactorTupa',
+                        url:'@Url.Content("~/Simplificacion/Configuracion/GuardarFactorTupa")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            debugger;
+
+                            if (result.mensaje == 'Auto Calcular') {
+
+                                sut.msg.msgUsuario(result.mensaje, 'Alerta');
+                            } else {
+                                sut.msg.success(result.mensaje, function () {
+                                    sut.FactorTupa.init();
+                                });
+                            }
+
+
+                        },
+                        error: function (result) {
+                            alert('ADSAD');
+                            sut.error.show('mensajes', result.responseText);
+                            sut.msg.msgUsuario(' Las horas hombre en la unidad orgánica son insuficientes para atender la demanda anual del procedimiento', 'Alerta');
+                        }
+                    });
+                }
+            },
+
+            init: function () {
+                sut.FactorTupa.listar();
+                sut.FactorTupa.updateCalc();
+            },
+            textoobservacionCostoPersonal: function (Descripcion, Descripcion2, estado, nomcampo, num) {
+                debugger;
+
+                var Des = Descripcion.split(";");
+
+
+
+
+                var NombreCampo='CostoPersonal';
+                var rows = '';
+
+
+                rows += '<div id="trdivCostoPersonal0_' + num + '">'
+                rows += sut.string.format('<div style="width:100px;"> Observado</div>');
+                //rows += sut.string.format('<div colspan="4" ><textarea name="CostoPersonal21" id="CostoPersonal21" class="form-control" style="border-color:red;background:#ff00002e;">{0}</textarea></div>', Descripcion2);
+                rows += sut.string.format('<div colspan="4" ><label class="form-control" name="CostoPersonal21" id="CostoPersonal21" style="border-color:red;background:#ff00002e;font-weight: 600;height: 100%;" >{0}</label></div>', Descripcion2);
+                rows += '</div>';
+                $('#divCostoPersonal0_1').append(rows);
+
+
+                $('#aAsignarGuardarObservarExp' + NombreCampo +'_'+ num + '').css({ "display": "" });
+                $('#aAsignarCancelarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+
+                $('#aValidarObservarExp' + NombreCampo +'_'+ num + '').css("display", "none");
+                $('#aCancelarGeneralExp' + NombreCampo +'_'+ num + '').css("display", "none");
+                $('#aObservarEditarExp' + NombreCampo +'_'+ num + '').css({ "display": "none" });
+                $('#aMasivoObservarExp' + NombreCampo +'_'+ num + '').css({ "display": "" });
+
+
+
+
+                //if (estado == 'Presentado') {
+                //    $('#' + nomcampo + '').hide();
+                //    //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                //    //visible
+                //    $('#' + nomcampo + 'label').hide();
+
+                //} else {
+                //    $('#' + nomcampo + '').show();
+                //    //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                //    //visible
+                //    $('#' + nomcampo + 'label').show();
+                //}
+
+
+            },
+            sustentarObservarExpCostoPersonal: function (num) {
+
+
+
+                var tabla = $('#divCostoPersonal0_' + num + ' tbody');
+                var rows = '';
+                var NombreCampo = 'CostoPersonal';
+
+                rows += '<div id="trdivCostoPersonal1_' + num + '">'
+                rows += sut.string.format('<div style="width:100px;">Refutar Observación: </div>');
+                rows += sut.string.format('<div colspan="5" ><textarea name="CostoPersonal3' + num + '" id="CostoPersonal3' + num + '" class="form-control"  style="border-color:#f39c12;background:#f39c1259;" >{0}</textarea></div>', '');
+                rows += '<br>';
+                rows += '</div>';
+                $('#divCostoPersonal0_1').append(rows);
+
+
+                $('#aSustentarObservarExp'+NombreCampo+'_'+num+'').css({ "display": "none" });
+                $('#aGuardarSustentarExp'+NombreCampo+'_'+num+'').css({ "display": "" });
+                $('#aCancelarSustentarExp'+NombreCampo+'_'+num+'').css({ "display": "" });
+
+            },
+            guardarSustentarExpCostoPersonal: function (idExpediente,procedimientoId,numero) {
+
+                if ($('#CostoPersonal3'+numero+'').val().trim() == "") {
+
+                    showNotification('top', 'right', 'No puedes Guardar una justificación en blanco', 2);
+                    return;
+                }
+
+
+                var NombreCampo = 'CostoPersonal';
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.Descripcion': $('#CostoPersonal3'+numero+'').val(),
+                    'filtro.CodValidacion': '3',
+                    'filtro.TipoEstado': '3',
+                    'filtro.NombreCampo': 'ConfiguraciondelInductordeAsignaciondeCostos',
+                    'filtro.Pantalla': 'Configuracion del Inductor de Asignacion de Costos',
+                    'filtro.Estado': '1',
+                };
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/AgregarObservacion',
+                    url:'@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+
+                        $('#modal-ventana').modal('hide');
+
+                        $('#mensajeCostoPersonal_'+numero+'').show();
+                        document.querySelector('#mensajeCostoPersonal_'+numero+'').innerText = 'Se refuto con éxito';
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            comentario: "",
+            CancelarSustentarExpCostoPersonal: function (idExpediente,procedimientoId,numero) {
+
+
+                var NombreCampo = 'CostoPersonal';
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.Descripcion': $('#CostoPersonal3'+numero+'').val(),
+                    'filtro.CodValidacion': '3',
+                    'filtro.TipoEstado': '3',
+                    'filtro.NombreCampo': 'ConfiguraciondelInductordeAsignaciondeCostos',
+                    'filtro.Pantalla': 'Configuracion del Inductor de Asignacion de Costos',
+                    'filtro.Estado': '1',
+                };
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                    url:'@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+
+                        $('#aSustentarObservarExp'+NombreCampo+'_'+numero+'').css({ "display": "" });
+                        $('#aGuardarSustentarExp'+NombreCampo+'_'+numero+'').css({ "display": "none" });
+                        $('#aCancelarSustentarExp'+NombreCampo+'_'+numero+'').css({ "display": "none" });
+
+                        $('#trdivCostoPersonal1_'+numero+'').remove();
+                        $('#mensajeCostoPersonal_'+numero+'').hide();
+                        document.querySelector('#mensajeCostoPersonal_'+numero+'').innerText = '';
+
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+
+            },
+            textosustentoCostoPersonal: function (Descripcion2, estado, nomcampo, num) {
+
+
+                var tabla = $('#divCostoPersonal0_' + num + ' tbody');
+
+                var rows = '';
+                var NombreCampo = 'CostoPersonal';
+
+                rows += '<div id="trdivCostoPersonal1_' + num + '">'
+                rows += sut.string.format('<div style="width:100px;"> Refutar Observación:</div>');
+                rows += sut.string.format('<div colspan="5" ><textarea name="CostoPersonal3' + num + '" id="CostoPersonal3' + num + '" class="form-control"  style="border-color:#f39c12;background:#f39c1259;" >{0}</textarea></div>', Descripcion2);
+                rows += '<br>';
+                rows += '</div>';
+
+                $('#divCostoPersonal0_1').append(rows);
+
+
+                $('#aSustentarObservarExp'+NombreCampo+'_'+num+'').css({ "display": "none" });
+                $('#aGuardarSustentarExp'+NombreCampo+'_'+num+'').css({ "display": "" });
+                $('#aCancelarSustentarExp'+NombreCampo+'_'+num+'').css({ "display": "" });
+            }
+        };
+
+        $(function () {
+            if ("@user.rolmenu[0].Ver" == "True")
+             {
+                 sut.FactorTupa.init();
+             }
+
+            $('#cbUndOrganica').on('change', function (e) {
+                         sut.FactorTupa.listar();
+                         sut.FactorTupa.updateCalc();
+                     });
+
+            $('#tblLista tbody').on('change', 'tr td:nth-child(4) input[type="text"]', function (e) {
+                     sut.FactorTupa.updateCalc($(this));
+                 });
+
+            $('#form-factor').validate({
+                     errorPlacement: function (error, element) {
+                         if (element.parent('div.input-group').length > 0) {
+                             error.insertAfter(element.parent('div.input-group'));
+                         } else {
+                             error.insertAfter(element);
+                         }
+                     },
+                rules: {
+
+                     },
+                messages: {
+
+                     }
+                 });
+             });
+        function observarbotonesModalidad(NombreCampo, num) {
+            $('#aAsignarGuardarObservarExp' + NombreCampo +'_'+ num + '').css({ "display": "" });
+            $('#aAsignarCancelarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+
+            //$('#aValidarObservarExp' + NombreCampo + '_' + num + '').css("display", "none");
+            $('#aCancelarGeneralExp' + NombreCampo + '_' + num + '').css("display", "none");
+            $('#aObservarEditarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+            $('#aMasivoObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+        }
+        function valiarbotonesModalidad(NombreCampo, num) {
+            //$('#aValidarObservarExp' + NombreCampo + '_' + num + '').css("display", "");
+            $('#aCancelarGeneralExp' + NombreCampo + '_' + num + '').css("display", "");
+            $('#aObservarEditarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+            $('#aMasivoObservarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+        }
+        function canceladobotonesModalidad(NombreCampo, num) {
+            $('#aAsignarGuardarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+            $('#aAsignarCancelarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+            //$('#aValidarObservarExp' + NombreCampo + '_' + num + '').css("display", "");
+            $('#aCancelarGeneralExp' + NombreCampo + '_' + num + '').css("display", "none");
+            $('#aObservarEditarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+            $('#aMasivoObservarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+        }
+        function sustentobotones(NombreCampo, num) {
+
+
+            $('#aSustentarObservarExp'+NombreCampo+'_' + num + '').css({ "display": "none" });
+            $('#aGuardarSustentarExp'+NombreCampo+'_' + num + '').css({ "display": "" });
+            $('#aCancelarSustentarExp'+NombreCampo+'_' + num + '').css({ "display": "" });
+
+        }
+
+        function openCity(evt, cityName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(cityName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+            sut.MenuCostos = {
+                visualizar: function (valor) {
+                    debugger;
+                    if(valor==0){
+                       @*window.location = '/Simplificacion/Configuracion/CostoPersonal/@exp.ExpedienteId';*@
+                       window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoPersonal/")@exp.ExpedienteId';
+                    } else  if(valor==1){
+                        @*window.location = '/Simplificacion/Configuracion/CostoMatFungible/@exp.ExpedienteId';*@
+                        window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoMatFungible/")@exp.ExpedienteId';
+                    } else  if(valor==2){
+                        @*window.location = '/Simplificacion/Configuracion/CostoServIdentificable/@exp.ExpedienteId';*@
+                        window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoServIdentificable/")@exp.ExpedienteId';
+                    } else  if(valor==3){
+                        @*window.location = '/Simplificacion/Configuracion/CostoMatNoFungible/@exp.ExpedienteId';*@
+                        window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoMatNoFungible/")@exp.ExpedienteId';
+                    } else  if(valor==4){
+                        @*window.location = '/Simplificacion/Configuracion/CostoServTerceros/@exp.ExpedienteId';*@
+                        window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoServTerceros/")@exp.ExpedienteId';
+                    } else  if(valor==5){
+                        @*window.location = '/Simplificacion/Configuracion/CostoDepreciacion/@exp.ExpedienteId';*@
+                        window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoDepreciacion/")@exp.ExpedienteId';
+                    } else  if(valor==6){
+                        @*window.location = '/Simplificacion/Configuracion/CostoFijo/@exp.ExpedienteId';*@
+                        window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoFijo/")@exp.ExpedienteId';
+                    } else  if(valor==7){
+                        @*window.location = '/Simplificacion/Configuracion/ConfigInductor/@exp.ExpedienteId';*@
+                        window.location = '@Url.Content("~/Simplificacion/Configuracion/ConfigInductor/")@exp.ExpedienteId';
+                    } else  if(valor==8){
+                        @*window.location = '/Simplificacion/Configuracion/FactorTupa/@exp.ExpedienteId';*@
+                        window.location = '@Url.Content("~/Simplificacion/Configuracion/FactorTupa/")@exp.ExpedienteId';
+                    } else  if(valor==9){
+                        @*window.location = '/Simplificacion/Configuracion/Resumen/@exp.ExpedienteId';*@
+                        window.location = '@Url.Content("~/Simplificacion/Configuracion/Resumen/")@exp.ExpedienteId';
+                    }
+                }
+            };
+    </script>
+}

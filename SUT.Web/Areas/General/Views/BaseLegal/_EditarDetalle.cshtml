@@ -1,0 +1,476 @@
+﻿@model Sut.Entities.BaseLegalNorma
+
+@{
+    if (Model.EstadoACR == null)
+    {
+        Model.EstadoACR = "0";
+    }
+}
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">Base Legal</h4>
+        </div>
+        @if (@ViewBag.CodigoACR != "0")
+        {
+            if (@Model.EstadoACR != "2")
+            {
+                <div align="center">
+                    Ordenar base legal : <input id="radio1" name="bedStatus" type="radio" checked value="1"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                    Mantener base legal (ACR) : <input id="radio2" name="bedStatus" type="radio" value="2">
+                </div>
+            }
+            else
+            {
+                <div align="center">
+                    Ordenar base legal : <input id="radio1" name="bedStatus" type="radio" value="1"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                    Mantener base legal (ACR) : <input id="radio2" name="bedStatus" type="radio" checked value="2">
+                </div>
+            }
+        }
+        <div class="modal-body form-horizontal">
+            @if (@ViewBag.CodigoACR == "0")
+            {
+                <div class="col-sm-12 col-xs-12">
+
+                    @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-bl-detalle" }))
+                    {
+                        @Html.HiddenFor(model => model.BaseLegalNormaId)
+
+                        <div class="form-group">
+                            <label class="col-sm-3 col-xs-12 control-label">Norma</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.HiddenFor(model => model.NormaId)
+                                <div class="input-group">
+                                    @Html.TextBoxFor(model => model.Norma.Descripcion, new { @class = "form-control input-sm", @readonly = "readonly" })
+                                    <div class="input-group-btn">
+                                        <a href="javascript:sut.BaseLegal.openSelectNorma()" class="btn btn-danger btn-sm"><i class="fa fa-ellipsis-h"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Tipo de Norma</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.DropDownListFor(model => model.TipoNormaId, ViewBag.listTipoNorma as List<SelectListItem>, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Número</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.Numero, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Denominación</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.TextAreaFor(model => model.Descripcion, new { @style = "scroll-behavior: smooth;resize:vertical;",  @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Artículo</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.TextAreaFor(model => model.Articulo, new { @style = "scroll-behavior: smooth;resize:vertical;", @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Fecha de Publicación </label>
+                            <div class="col-sm-9 col-xs-12">
+                                <input type="text" name="FechaPublicacion" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FechaPublicacion == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FechaPublicacion.Value.Day, Model.FechaPublicacion.Value.Month, Model.FechaPublicacion.Value.Year))"
+                                       required/>
+                                 (Obligatorio)@*(No es obligatorio si fue publicado en El Peruano)*@
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group" @MvcHtmlString.Create(Model.TipoBaseLegal != Sut.Entities.TipoBaseLegal.RutaInternet ? "style=\"display:none\"" : "")>
+                            <label class="control-label col-sm-3 col-xs-12">Url</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.Url, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group" style="visibility:hidden">
+                            <label class="col-sm-3 col-xs-12 control-label">Tipo de Documento</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.DropDownListFor(model => model.TipoBaseLegal, ViewBag.listTipoBL as List<SelectListItem>, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <hr />
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-8 col-xs-12">
+
+                    @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-bl-detalle" }))
+                    {
+                        @Html.HiddenFor(model => model.BaseLegalNormaId)
+                        <div class="form-group">
+                            <label class="col-sm-3 col-xs-12 control-label">Norma</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.HiddenFor(model => model.NormaId)
+                                <div class="input-group">
+                                    @Html.TextBoxFor(model => model.Norma.Descripcion, new { @class = "form-control input-sm", @readonly = "readonly" })
+                                    <div class="input-group-btn">
+                                        <a href="javascript:sut.BaseLegal.openSelectNorma()" class="btn btn-danger btn-sm"><i class="fa fa-ellipsis-h"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Tipo de Norma</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.DropDownListFor(model => model.TipoNormaId, ViewBag.listTipoNorma as List<SelectListItem>, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Número</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.Numero, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Denominación</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.TextAreaFor(model => model.Descripcion, new { @style = "scroll-behavior: smooth;resize:vertical;", @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Artículo</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.TextAreaFor(model => model.Articulo, new { @style = "scroll-behavior: smooth;resize:vertical;", @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Fecha de Publicación</label>
+                            <div class="col-sm-9 col-xs-12">
+                                <input type="text" name="FechaPublicacion" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FechaPublicacion == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FechaPublicacion.Value.Day, Model.FechaPublicacion.Value.Month, Model.FechaPublicacion.Value.Year))" />
+                            </div>
+                        </div>
+                        @*<hr />*@
+                        <div class="form-group" @MvcHtmlString.Create(Model.TipoBaseLegal != Sut.Entities.TipoBaseLegal.RutaInternet ? "style=\"display:none\"" : "")>
+                            <label class="control-label col-sm-3 col-xs-12">Url</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.Url, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="visibility:hidden">
+                            <label class="col-sm-3 col-xs-12 control-label">Tipo de Documento</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.DropDownListFor(model => model.TipoBaseLegal, ViewBag.listTipoBL as List<SelectListItem>, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        @*<hr />*@
+                    }
+
+                </div>
+            }
+
+            @if (@ViewBag.CodigoACR != "0")
+            {
+
+
+                if (@Model.EstadoACR != "2")
+                {
+                    <div class="col-sm-4 col-xs-12">
+                        <textarea rows="15" disabled class="form-control" id="txtaObservarExp" name="txtaObservarExp" style="border-color:red;background:#ff00002e;">@ViewBag.BaseLegalTexto  </textarea>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-sm-4 col-xs-12">
+                        <textarea rows="15" disabled class="form-control" id="txtaObservarExp" name="txtaObservarExpacr" style="border-color:red;background:#ff00002e;">@Model.DescripcionACR  </textarea>
+                    </div>
+                }
+
+            }
+            @if (@ViewBag.CodigoACR != "0" && @ViewBag.BaseLegalTexto2 != "")
+            {
+                if (@Model.EstadoACR != "2")
+                {
+                    <div>
+                        <textarea rows="10" disabled class="form-control" id="txtaObservarExp2" name="txtaObservarExp2" style="scroll-behavior: smooth;resize:vertical;border-color:red;background:#ff00002e;">@ViewBag.BaseLegalTexto2  </textarea>
+                    </div>
+                }
+
+            }
+            else
+            {
+                <div class="col-sm-4 col-xs-12">
+
+                </div>
+            }
+        </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer">
+
+            <button type="button" class="btn btn-success btn-sm" onclick="sut.BaseLegal.aceptar()"><i class="fa fa-check"></i> Aceptar</button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+    </div>
+</div>
+<script>
+    sut.BaseLegal = {
+        fnAdd: @Html.Raw(ViewBag.FnAdd),
+        openSelectNorma: function () {
+            $.ajax({
+                type: "GET",
+                //url: '/Simplificacion/Norma/Select',
+                url: '@Url.Content("~/Simplificacion/Norma/Select")',
+                data: { multi: false, fnAdd: 'sut.BaseLegal.setNorma' },
+                cache: false,
+                beforeSend: function () {
+                    sut.wait.modal('ventana-container-editar');
+                    $('#modal-ventana-editar').modal('show');
+                },
+                success: function (data) {
+                    $('#ventana-container-editar').html(data);
+                },
+                error: function (result) {
+                    $('#modal-ventana-editar').modal('hide');
+                    sut.error.show('mensajes', result.responseText);
+                }
+            });
+        },
+        setNorma: function (data) {
+            $('#modal-ventana-editar').modal('hide');
+            $('#form-bl-detalle input[name="Norma.Descripcion"]').val(data.Descripcion);
+            $('#form-bl-detalle select[name="NormaId"]').val(data.NormaId);
+            $('#form-bl-detalle select[name="TipoNormaId"]').val(data.TipoNormaId);
+            $('#form-bl-detalle input[name="Numero"]').val(data.Numero);
+            $('#form-bl-detalle input[name="Descripcion"]').val(data.Descripcion);
+            $('#form-bl-detalle input[name="FechaPublicacion"]').val(data.FechaPublicacion);
+        },
+        updateForm: function () {
+            var tipo = Number($('#form-bl-detalle select[name="TipoBaseLegal"]').val());
+
+            $('#form-bl-detalle input[name="NormaId"]').parent().parent().css('display', tipo > 1 ? 'none' : '');
+
+            if (tipo == 1) {
+                $('#form-bl-detalle select[name="TipoNormaId"]').attr('disabled', 'disabled');
+                $('#form-bl-detalle input[name="Numero"]').attr('disabled', 'disabled');
+                $('#form-bl-detalle input[name="Descripcion"]').attr('disabled', 'disabled');
+                $('#form-bl-detalle input[name="FechaPublicacion"]').attr('disabled', 'disabled');
+            } else {
+                $('#form-bl-detalle select[name="TipoNormaId"]').removeAttr('disabled');
+                $('#form-bl-detalle input[name="Numero"]').removeAttr('disabled');
+                $('#form-bl-detalle input[name="Descripcion"]').removeAttr('disabled');
+                $('#form-bl-detalle input[name="FechaPublicacion"]').removeAttr('disabled');
+            }
+
+            $('#form-bl-detalle input[name="Url"]').parent().parent().css('display', tipo != 3 ? 'none' : '');
+            //$('#form-bl-detalle-adjunto input[name="ArchivoAdjuntoId"]').parent().parent().css('display', tipo != 2 ? 'none' : '');
+        },
+        aceptar: function () {
+            if ($("#form-bl-detalle").valid()) {
+                debugger;
+                var bl = { };
+                bl.Index = @ViewBag.Index ;
+                bl.Nuevo = @ViewBag.Nuevo ;
+                bl.BaseLegalNormaId = $('#form-bl-detalle input[name="BaseLegalNormaId"]').val();
+                bl.TipoBaseLegal = $('#form-bl-detalle select[name="TipoBaseLegal"]').val();
+                bl.NormaId = $('#form-bl-detalle input[name="NormaId"]').val();
+                bl.Descripcion = $('#form-bl-detalle textarea[name="Descripcion"]').val();
+                bl.TipoNormaId = $('#form-bl-detalle select[name="TipoNormaId"]').val();
+                bl.NormaTipo = $('#form-bl-detalle select[name="TipoNormaId"] option:selected').text();
+                bl.Numero = $('#form-bl-detalle input[name="Numero"]').val();
+                bl.FechaPublicacion = $('#form-bl-detalle input[name="FechaPublicacion"]').val();
+                bl.Articulo = $('#form-bl-detalle textarea[name="Articulo"]').val();
+                bl.Url = $('#form-bl-detalle input[name="Url"]').val();
+
+                debugger;
+                if (@ViewBag.CodigoACR != "0")
+                {
+                    bl.DescripcionACR = $("#txtaObservarExp").val();
+                    if(@Model.EstadoACR!=3){
+                        if ($('#radio1').is(':checked')== true) {
+                            bl.EstadoACR=1;
+                        } else {
+                            bl.EstadoACR=2;
+                        }
+                    }else{
+                        bl.EstadoACR=3;
+                    }
+                }
+                else
+                {
+                    if(@Model.EstadoACR==3){
+                        bl.EstadoACR=3;
+                    }else{
+                        bl.EstadoACR=1;
+                    }
+
+                    bl.DescripcionACR = '';
+
+                }
+
+
+
+                //bl.ArchivoAdjuntoId = $('#form-bl-detalle-adjunto input[name="ArchivoAdjuntoId"]').val();
+
+                sut.BaseLegal.fnAdd(bl);
+            }
+        }
+    };
+
+    $(function () {
+
+        debugger;
+        $('.icheck').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' // optional
+        });
+
+
+        $('input:radio[name=bedStatus]').change(function() {
+            if (this.value == '1') {
+                debugger;
+                var txt=document.getElementsByName("txtaObservarExpacr");
+
+
+                if (@ViewBag.cantidad  != 0){
+                    if (txt.length  != 0) {
+                        if (txt[0].value  != "")
+                        {
+                            $("#radio2").prop("checked", true);
+
+                            showNotification('top', 'right', 'Para ordernar base legal eliminar el regitro anterior', 2);
+                            //alert("Para ordernar base legal eliminar el regitro anterior ");
+                            return;
+                        }
+                    }
+                }
+
+                $('#form-bl-detalle select[name="TipoNormaId"]').removeAttr('disabled');
+                $('#form-bl-detalle input[name="Numero"]').removeAttr('disabled');
+                $('#form-bl-detalle textarea[name="Descripcion"]').removeAttr('disabled');
+                $('#form-bl-detalle input[name="FechaPublicacion"]').removeAttr('disabled');
+                $('#form-bl-detalle textarea[name="Articulo"]').removeAttr('disabled');
+                $('#form-bl-detalle select[name="TipoBaseLegal"]').removeAttr('disabled');
+                document.getElementById("txtaObservarExp").disabled = true;
+
+
+            }
+            else if (this.value == '2') {
+                debugger;
+
+                if(@ViewBag.Nuevo != 0)
+                {
+                    $('#form-bl-detalle input[name="BaseLegalNormaId"]').val("");
+                    $('#form-bl-detalle select[name="TipoBaseLegal"]').val("");
+                    $('#form-bl-detalle input[name="NormaId"]').val("");
+                    $('#form-bl-detalle textarea[name="Descripcion"]').val("");
+                    $('#form-bl-detalle select[name="TipoNormaId"]').val(0);
+                    $('#form-bl-detalle input[name="Numero"]').val("");
+                    $('#form-bl-detalle input[name="FechaPublicacion"]').val("");
+                    $('#form-bl-detalle textarea[name="Articulo"]').val("");
+                    $('#form-bl-detalle input[name="Url"]').val("");
+                }
+
+                var txt=document.getElementsByName("txtaObservarExpacr");
+
+                if (@ViewBag.cantidad  != 0){
+                    if (txt.length  == 0) {
+
+                        $("#radio1").prop("checked", true);
+
+                        showNotification('top', 'right', 'Para ordernar base legal del ACR eliminar el o los regitros anteriores', 2);
+                        //alert("Para ordernar base legal del ACR eliminar el o los regitros anteriores ");
+                        return;
+                    }
+                }
+
+                $('#form-bl-detalle select[name="TipoNormaId"]').attr('disabled', 'disabled');
+                $('#form-bl-detalle input[name="Numero"]').attr('disabled', 'disabled');
+                $('#form-bl-detalle textarea[name="Descripcion"]').attr('disabled', 'disabled');
+                $('#form-bl-detalle input[name="FechaPublicacion"]').attr('disabled', 'disabled');
+                $('#form-bl-detalle textarea[name="Articulo"]').attr('disabled', 'disabled');
+                $('#form-bl-detalle select[name="TipoBaseLegal"]').attr('disabled', 'disabled');
+                document.getElementById("txtaObservarExp").disabled = false;
+
+
+
+            }
+        });
+
+
+
+
+
+        //$('input[name="FechaPublicacion"]').datepicker({ format: 'dd/mm/yyyy' });
+        $('input[name="FechaPublicacion"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es' });
+
+        sut.BaseLegal.updateForm();
+
+        $('#form-bl-detalle select[name="TipoBaseLegal"]').on('change', function (e) {
+
+            sut.BaseLegal.updateForm();
+        });
+
+        //sut.control.uploadfile('form-bl-detalle-adjunto');
+
+        $.validator.addMethod('selTipoNorma', $.validator.methods.min, 'Debe seleccionar un Tipo de Norma.');
+
+        $('#form-bl-detalle').validate({
+            errorPlacement: function (error, element) {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                Numero: 'required',
+                Descripcion: 'required',
+                //FechaPublicacion: 'required',
+                Articulo: 'required',
+                Url: {
+                    required: true,
+                    url: true
+                },
+                TipoNormaId: {
+                    selTipoNorma: 1
+                }
+            },
+            messages: {
+
+            }
+        });
+    });
+
+    if (@ViewBag.CodigoACR != "0")
+    {
+        if ($('#radio1').is(':checked')== true) {
+
+            $('#form-bl-detalle select[name="TipoNormaId"]').removeAttr('disabled');
+            $('#form-bl-detalle input[name="Numero"]').removeAttr('disabled');
+            $('#form-bl-detalle textarea[name="Descripcion"]').removeAttr('disabled');
+            $('#form-bl-detalle input[name="FechaPublicacion"]').removeAttr('disabled');
+            $('#form-bl-detalle textarea[name="Articulo"]').removeAttr('disabled');
+            $('#form-bl-detalle select[name="TipoBaseLegal"]').removeAttr('disabled');
+            document.getElementById("txtaObservarExp").disabled = true;
+
+        } else {
+            $('#form-bl-detalle select[name="TipoNormaId"]').attr('disabled', 'disabled');
+            $('#form-bl-detalle input[name="Numero"]').attr('disabled', 'disabled');
+            $('#form-bl-detalle textarea[name="Descripcion"]').attr('disabled', 'disabled');
+            $('#form-bl-detalle input[name="FechaPublicacion"]').attr('disabled', 'disabled');
+            $('#form-bl-detalle textarea[name="Articulo"]').attr('disabled', 'disabled');
+            $('#form-bl-detalle select[name="TipoBaseLegal"]').attr('disabled', 'disabled');
+            document.getElementById("txtaObservarExp").disabled = false;
+        }
+    }
+
+</script>
+

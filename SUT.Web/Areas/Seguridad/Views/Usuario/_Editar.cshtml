@@ -1,0 +1,425 @@
+﻿@model Sut.Entities.Usuario
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">@ViewBag.Title</h4>
+        </div>
+
+        @using (Html.BeginForm("Guardar", "Seguridad/Usuario", FormMethod.Post, new { @id = "form-modal-editar" }))
+        {
+            @Html.HiddenFor(model => model.UsuarioId)
+
+    <div class="modal-body form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Departamento:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.DepartamentoId, ViewBag.ListaDepartamento as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Provincia:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.ProvinciaId, ViewBag.ListaProvincia as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Entidad:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.EntidadId, ViewBag.ListaEntidad as List<SelectListItem>, new { @class = "form-control", @style = "width: 100 %" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Miembro:</label>
+            <div class="col-sm-9 col-xs-12">
+                <select name="MiembroEquipoId" class="form-control" style="width: 100%">
+                    @foreach (var md in (ViewBag.ListaMiembros as List<Sut.Entities.MetaDato>))
+                    {
+                        <option value="@md.MetaDatoId.ToString()" data-doc="@md.Valor01">
+                            @md.Nombre
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Nro. Documento:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.TextBoxFor(model => model.NroDocumento, new { @class = "form-control input-sm", @readonly = true })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Perfil:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.Rol, ViewBag.ListaRol as List<SelectListItem>, new { @class = "form-control"})
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Asignar Entidades:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.AsigEntidad, ViewBag.asignarentidades as List<SelectListItem>, new { @class = "form-control", @disabled = "True" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Estado: </label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.Estado, ViewBag.publicar as List<SelectListItem>, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Contraseña:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.PasswordFor(model => model.Clave, new { @class = "form-control input-sm", name = "Clave" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Activar Correo: </label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.ActivarCorreo, ViewBag.activarcorreo as List<SelectListItem>, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Fecha de Solicitud</label>
+            <div class="col-sm-9 col-xs-12">
+                @if (Model.UsuarioId == 0)
+                {
+                    <input type="text" name="FechaSolicitud" class="form-control input-sm" value="" />
+
+                }
+                else
+                {
+                    <input type="text" name="FechaSolicitud" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FechaSolicitud == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FechaSolicitud.Value.Day, Model.FechaSolicitud.Value.Month, Model.FechaSolicitud.Value.Year))" />
+
+                }
+
+            </div>
+        </div>
+
+    </div>
+            <div id="msgEditar"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarUsuario.guardar()"><i class="fa fa-save"></i> Guardar</button>
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+
+<script>
+
+
+
+    @*function password_check() {
+      pass = document.getElementById("password").value;
+      console.log(pass);
+      regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (regex.exec(pass) == null) {
+        alert('invalid password!')
+      }
+      else {
+        console.log("valid");
+      }
+    }*@
+
+    $('input[name="FechaSolicitud"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es' });
+
+    var rol = $('select[name="Rol"]').val();
+    if (rol == 10) {
+        document.getElementById("AsigEntidad").disabled = false;
+    }
+    else {
+        document.getElementById("AsigEntidad").disabled = true;
+    }
+
+    $('select[name="Rol"]').on('change', (e) => {
+
+        document.getElementById("AsigEntidad").value = "0";
+
+        var rol = $('select[name="Rol"]').val();
+        if (rol == 10) {
+            document.getElementById("AsigEntidad").disabled = false;
+        }
+        else
+        {
+            document.getElementById("AsigEntidad").disabled = true; 
+        }
+   /*     alert(e);*/
+
+
+    }); 
+
+ 
+
+    sut.editarUsuario = {
+
+        guardar: () => {
+
+
+
+            debugger;
+
+            var entidad = $('select[name="EntidadId"]').val();
+            var entidadtext = $('select[name="EntidadId"] option:selected').text();
+            var rol = $('select[name="Rol"]').val();
+
+            if (rol==7)
+            {
+                if (entidad !=4105 && entidad != 18497 && entidadtext.indexOf("MINISTERIO") == -1)
+                {
+                    showNotification('top', 'right', 'El Rol Evaluador no puede ser asigando para esta entidad', 2);
+                    return;
+                }
+
+            }else if (rol==8)
+            {
+                if (entidad !=4105 && entidad != 18497 && entidad != 20553)
+                {
+                    showNotification('top', 'right', 'El Rol Entidad Fiscalizadora no puede ser asigando para esta entidad', 2);
+                    return;
+                }
+            } else if (rol==6)
+            {
+                if ( entidadtext.indexOf("PROVINCIAL") == -1) {
+
+                    showNotification('top', 'right', 'El Rol Ratificador no puede ser asigando para esta entidad', 2);
+                    return;
+                }
+            }
+
+            if ($("#form-modal-editar").valid()) {
+                var model = $('#form-modal-editar').serialize();
+                console.log(model);
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/Usuario/Guardar",
+                    url: '@Url.Content("~/Seguridad/Usuario/Guardar")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: () => {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: () => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, () => {
+                            sut.Usuario.listar(1);
+                        });
+                    },
+                    error: (result) => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            }
+        }
+    };
+
+    $(() => {
+        //$('select[name="EntidadId"]').select2();
+        //$('select[name="MiembroEquipoId"]').select2();
+
+
+
+
+        $('select[name$="DepartamentoId"]').on('change', (e) => {
+            $.ajax({
+                type: "POST",
+                //url: "/Seguridad/Entidad/GetProvincias",
+                url: '@Url.Content("~/Seguridad/Usuario/GetProvincias")',
+                data: { id: $('select[name$="DepartamentoId"]').val() },
+                dataType: 'json',
+                beforeSend: function () {
+                },
+                complete: function () {
+                },
+                success: function (result) {
+                    var sel = $('select[name$="ProvinciaId"]');
+                    sel.find('option').remove();
+                    $.each(result.data, (i, r) => {
+                        sel.append($('<option></option>').attr('value', r.ProvinciaId).html(r.Nombre));
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        //url: "/Seguridad/Entidad/GetProvincias",
+                        url: '@Url.Content("~/Seguridad/Usuario/GetEntidades")',
+                        data: { id: $('select[name$="ProvinciaId"]').val() },
+                        dataType: 'json',
+                        beforeSend: function () {
+                        },
+                        complete: function () {
+                        },
+                        success: function (result) {
+                            var sel = $('select[name$="EntidadId"]');
+                            sel.find('option').remove();
+                            $.each(result.data, (i, r) => {
+                                sel.append($('<option></option>').attr('value', r.EntidadId).html(r.Nombre));
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('msgEditar', result.responseText);
+                        }
+                    });
+
+                },
+                error: function (result) {
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+        });
+
+
+        $('select[name$="ProvinciaId"]').on('change', (e) => {
+            debugger;
+            $.ajax({
+                type: "POST",
+                //url: "/Seguridad/Entidad/GetProvincias",
+                url: '@Url.Content("~/Seguridad/Usuario/GetEntidades")',
+                data: { id: $('select[name$="ProvinciaId"]').val() },
+                dataType: 'json',
+                beforeSend: function () {
+                },
+                complete: function () {
+                },
+                success: function (result) {
+                    var sel = $('select[name$="EntidadId"]');
+                    sel.find('option').remove();
+                    $.each(result.data, (i, r) => {
+                        sel.append($('<option></option>').attr('value', r.EntidadId).html(r.Nombre));
+                    });
+                },
+                error: function (result) {
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+        });
+
+
+        if ( @MvcHtmlString.Create(ViewBag.User.Rol == (short)Sut.Entities.Rol.Coordinador ? "true" : "false") ) {
+            $('select[name="EntidadId"]').attr('disabled', 'disabled');
+            $('select[name="Rol"]').attr('readonly', true);
+        }
+
+        if (Number($('input[name="UsuarioId"]').val()) > 0) {
+            $('select[name="EntidadId"]').attr('disabled', 'disabled');
+            $('select[name="MiembroEquipoId"]').attr('disabled', 'disabled');
+
+            $('select[name="DepartamentoId"]').attr('disabled', 'disabled');
+            $('select[name="ProvinciaId"]').attr('disabled', 'disabled');
+        }
+
+        $('select[name$="EntidadId"]').on('change', (e) => {
+            var asd=$('select[name$="EntidadId"]').val();
+            debugger;
+
+            $.ajax({
+                type: "POST",
+                //url: "/Seguridad/Miembro/GetByEntidad",
+                url: '@Url.Content("~/Seguridad/Miembro/GetByEntidad")',
+                data: { EntidadId: $('select[name$="EntidadId"]').val() },
+                dataType: 'json',
+                beforeSend: function () {
+                },
+                complete: function () {
+                },
+                success: function (result) {
+                    var sel = $('select[name$="MiembroEquipoId"]');
+                    sel.find('option').remove();
+                    $.each(result.data, (i, r) => {
+                        sel.append($('<option></option>').attr('value', r.MetaDatoId).data('doc', r.Valor01).html(r.Nombre));
+                    });
+                },
+                error: function (result) {
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+        });
+        $('select[name$="MiembroEquipoId"]').on('change', (e) => {
+            $('input[name="NroDocumento"]').val($('select[name$="MiembroEquipoId"] option:selected').data('doc'));
+        });
+
+        $.validator.addMethod("selRol", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un Rol"));
+
+        $.validator.addMethod("selEntidad", $.validator.methods.min,
+            $.validator.format("Debe seleccionar una Entidad"));
+
+        $.validator.addMethod("selMiembro", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un Miembro"));
+
+        $.validator.addMethod("AsigEntiades", $.validator.methods.min,
+            $.validator.format("Debe seleccionar si va Asignar Entidades "));
+
+
+
+
+        @*$.validator.addMethod("formClave", function (value, element) {
+            debugger;
+            var pattern = ^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$;
+            return this.optional(element) || pattern.test(value);
+        }, "La contraseña debe contener al menos ocho caracteres, al menos un número y letras mayúsculas y minúsculas y caracteres especiales");*@
+
+        $.validator.addMethod('formClave', function (value, element) {
+            return this.optional(element) || value.length >= 8 && /\d/.test(value) && /[A-Z]/i.test(value) && /[^A-Za-z0-9]/.test(value) && /[A-Z]/.test(value);
+        }, 'La contraseña debe contener al menos 8 caracteres, al menos un número y letras mayúsculas y minúsculas y caracteres especiales')
+
+        $('#form-modal-editar').validate({
+            errorPlacement: (error, element) => {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                NroDocumento: {
+                    required: true
+                },
+                Rol: {
+                    selRol: 1
+                },
+                EntidadId: {
+                    selEntidad: 1
+                },
+                MiembroEquipoId: {
+                    selMiembro: 1
+                },
+                AsigEntidad: {
+                    AsigEntiades: 1
+                },
+                Clave: {
+                    required: true, formClave:true
+
+                },
+            }
+        });
+    });
+
+</script>
+
+

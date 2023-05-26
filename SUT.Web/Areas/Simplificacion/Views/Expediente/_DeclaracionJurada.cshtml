@@ -1,0 +1,93 @@
+﻿
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">Declaración Jurada</h4>
+        </div>
+        <div class="modal-body">
+            Para registrar el primer expediente en el Sistema Único de Trámites (SUT), las entidades del poder ejecutivo deben responder las siguientes preguntas:
+            <br /><br />
+            <ol>
+                <li>
+                    1.	¿El TUPA vigente ha sido aprobado cumpliendo lo dispuesto en la Ley Nº 27444, Ley del Procedimiento Administrativo General, los lineamientos vigentes y demás normas complementarias que regulan su elaboración y aprobación? 
+                    <br />
+                    <label><input type="radio" name="punto1" id="rbPunto1" checked /> SI</label>
+                    <label><input type="radio" name="punto1" /> NO</label>
+                </li>
+                <li>
+                    2.	En caso corresponda, ¿El TUPA vigente se encuentra actualizado de acuerdo a las disposiciones normativas emitidas a partir de los resultados del ACR?  
+                    <br />
+                    <label><input type="radio" name="punto2" id="rbPunto2" checked /> SI</label>
+                    <label><input type="radio" name="punto2" /> NO</label>
+                </li>
+
+                <li>
+                    3.	¿Los derechos de tramitación del TUPA vigente se obtuvieron siguiendo la metodología de costos aprobada mediante Decreto Supremo Nº 064-2010-PCM vigente?
+                    <br />
+                    <label><input type="radio" name="punto3" id="rbPunto3" checked /> SI</label>
+                    <label><input type="radio" name="punto3" /> NO</label>
+                </li>
+            </ol>
+            <br />
+            <strong>Si al menos una de sus respuestas es NO,</strong> se autogenerará un <strong> Expediente Regular  </strong>  en el cual la entidad debe proceder a actualizar el TUPA vigente. En el expediente regular se registran los Datos Generales, los sustentos técnico-legal, registro de tablas ASME y costeo de derechos de tramitación de cada procedimiento administrativo y servicio prestado en exclusividad.
+            <br /><br />
+            La información proporcionada tiene carácter de declaración jurada. Asimismo, se <strong>declara </strong> conocer que de comprobarse que lo expresado no se ajusta a la verdad, la entidad asume la responsabilidad administrativa.            
+
+        </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success btn-sm" onclick="sut.DeclaracionJurada.aceptar()"><i class="fa fa-check"></i> Aceptar</button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+<script>
+
+    sut.DeclaracionJurada = {
+        aceptar: function () {
+            var flag = $('#rbPunto1').is(':checked') && $('#rbPunto2').is(':checked') && $('#rbPunto3').is(':checked');
+
+            $.ajax({
+                type: "POST",
+                //url: "/Simplificacion/Expediente/GeneraNuevo",
+                url: '@Url.Content("~/Simplificacion/Expediente/GeneraNuevo")',
+                data: { tipo: (flag ? 1 : 2) },
+                dataType: 'json',
+                beforeSend: function () {
+                    $("#msgEditar").hide();
+                    sut.wait.appendProgress('.modal-footer');
+                    $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                    $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                },
+                complete: function () {
+                    sut.wait.removeProgress('.modal-footer');
+                    $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                    $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                },
+                success: function (result) {
+                    $('#modal-ventana').modal('hide');
+                    if (result.exito) {
+                        //window.location = '/Simplificacion/Expediente/Editar/' + result.ExpedienteId;
+                        window.location = '@Url.Content("~/Simplificacion/Expediente/Editar/")' + result.ExpedienteId;
+                    }
+                },
+                error: function (result) {
+                    sut.wait.removeProgress('.modal-footer');
+                    $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                    $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+        }
+    };
+
+    $(() => {
+
+    });
+
+</script>
+
+

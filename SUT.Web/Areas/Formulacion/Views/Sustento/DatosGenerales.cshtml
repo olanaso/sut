@@ -1,0 +1,385 @@
+﻿@{
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Datos Generales 00001069-0001-P";
+    ViewBag.Descripcion = "";
+}
+
+
+<div class="box box-danger">
+    <div class="box-body form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Nivel :</label>
+            <div class="col-sm-10 col-xs-12">
+                <div class="input-group">
+                    <input type="text" class="form-control" value="LICENCIA DE EDIFICACION - MODALIDAD A" readonly />
+                    <div class="input-group-btn">
+                        <a href="#" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Denominación :</label>
+            <div class="col-sm-10 col-xs-12">
+                <input type="text" class="form-control" value="LICENCIA DE EDIFICACION - MODALIDAD A - VIVIENDA UNIFAMILIAR" readonly />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Tipo :</label>
+            <div class="col-sm-10 col-xs-12">
+                <label class="label bg-purple">PROC. ADMINISTRATIVO</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Dependencia a Cargo :</label>
+             
+                <div class="col-sm-10 col-xs-12">
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="GERENCIA DE DESARROLLO URBANO" readonly />
+                        <div class="input-group-btn">
+                            <a href="#" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                        </div>
+                    </div>
+                </div>
+           
+        </div>
+    </div>
+</div>
+
+<div class="box box-default">
+    <div class="box-body">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="#edit-info-basica" data-toggle="tab" aria-expanded="true"><i class="fa fa-file"></i> Información Básica</a>
+                </li>
+                <li>
+                    <a href="#edit-modalidades" data-toggle="tab" aria-expanded="false"><i class="fa fa-table"></i> Modalidades</a>
+                </li>
+                <li>
+                    <a href="#edit-requisitos" data-toggle="tab" aria-expanded="false"><i class="fa fa-copy"></i> Requisitos</a>
+                </li>
+                <li>
+                    <a href="#edit-base-legal" data-toggle="tab" aria-expanded="false"><i class="fa fa-legal"></i> Base Legal</a>
+                </li>
+            </ul>
+            <div class="tab-content ">
+                <div id="edit-info-basica" class="tab-pane active">
+                    
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 col-xs-12 control-label">Objetivo :</label>
+                            <div class="col-sm-10 col-xs-12">
+                                <textarea class="form-control" ></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-xs-12 control-label">Calificación :</label>
+                            <div class="col-sm-4 col-xs-12">
+                                <select class="form-control">
+                                    <option>Automática</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-2 col-xs-12 control-label">Tipo de Atención :</label>
+                            <div class="col-sm-4 col-xs-12">
+                                <select class="form-control">
+                                    <option>Presencial</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-xs-12 control-label">Plazo de Atención :</label>
+                            <div class="col-sm-4 col-xs-12">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" />
+                                    <div class="input-group-addon">
+                                        <span>días hábiles</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <label class="col-sm-2 col-xs-12 control-label">Gratuito :</label>
+                            <div class="col-sm-4 col-xs-12">
+                                <input type="checkbox" class="icheck"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th style="text-align: center;">Cargo</th>
+                                    <th style="text-align: center;">Unidad Orgánica</th>
+                                    <th style="text-align: center;">Días a Presentar</th>
+                                    <th style="text-align: center;">Días a Resolver</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Autoridad Competente a Resolver</td>
+                                    <td>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" value="GERENCIA DE DESARROLLO URBANO" readonly />
+                                            <div class="input-group-btn">
+                                                <a href="#" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td>Reconsideración</td>
+                                    <td>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" value="GERENCIA DE DESARROLLO URBANO" readonly />
+                                            <div class="input-group-btn">
+                                                <a href="#" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="form-control" /></td>
+                                    <td><input type="text" class="form-control" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Apelación</td>
+                                    <td>
+                                        <input type="text" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" value="GERENCIA DE DESARROLLO URBANO" readonly />
+                                            <div class="input-group-btn">
+                                                <a href="#" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="form-control" /></td>
+                                    <td><input type="text" class="form-control" /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <hr />
+
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width:100px;">
+                                        <a href="#" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
+                                    </th>
+                                    <th>Sede de atención del trámite</th>
+                                    <th style="width:50px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Av. Alfredo Mendiola 6821 - Los Olivos</td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Av. Larco 666</td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <hr />
+
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width:100px;">
+                                        <a href="#" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
+                                    </th>
+                                    <th>Notas al Ciudadano</th>
+                                    <th style="width:50px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>
+                                        <textarea class="form-control"></textarea>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>
+                                        <textarea class="form-control"></textarea>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <br />
+                </div>
+                <div id="edit-modalidades" class="tab-pane">
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width:100px;">
+                                        <a href="#" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
+                                    </th>
+                                    <th>Código</th>
+                                    <th>Modalidad</th>
+                                    <th style="width:50px;">Prestaciones Anuales</th>
+                                    <th style="width:50px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>OC01</td>
+                                    <td>VERIFICACIÓN ADMINISTRATIVA</td>
+                                    <td><input type="text" class="form-control input-sm" value="20" /></td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>OC02</td>
+                                    <td>VERIFICACIÓN TÉCNICA</td>
+                                    <td><input type="text" class="form-control input-sm" value="30" /></td>
+                                    <td>
+                                        <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="edit-requisitos" class="tab-pane">
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width:100px;">
+                                        <a href="#" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
+                                    </th>
+                                    <th>Código</th>
+                                    <th>Modalidad</th>
+                                    <th>Descripción</th>
+                                    <th style="width:60px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>01</td>
+                                    <td>VERIFICACIÓN ADMINISTRATIVA</td>
+                                    <td>Formulario Único</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="#" class="btn btn-xs btn-success"><i class="fa fa-pencil"></i></a>
+                                            <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>02</td>
+                                    <td>VERIFICACIÓN ADMINISTRATIVA</td>
+                                    <td>Plano de Ubicación</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="#" class="btn btn-xs btn-success"><i class="fa fa-pencil"></i></a>
+                                            <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>03</td>
+                                    <td>VERIFICACIÓN ADMINISTRATIVA</td>
+                                    <td>Plano de Arquitectura</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="#" class="btn btn-xs btn-success"><i class="fa fa-pencil"></i></a>
+                                            <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>04</td>
+                                    <td>VERIFICACIÓN TÉCNICA</td>
+                                    <td>Anexo H : Cronograma de Visitas de Inspección</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="#" class="btn btn-xs btn-success"><i class="fa fa-pencil"></i></a>
+                                            <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="edit-base-legal" class="tab-pane">
+                    <a href="#" class="btn btn-success btn-xs"><i class="fa fa-plus"></i> Agregar</a>
+                    <div class="table-responsive">
+                        <table class="table table-condensed table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Tipo de Norma</th>
+                                    <th>Número</th>
+                                    <th>Año</th>
+                                    <th>Artículo</th>
+                                    <th style="width:100px;">Documento</th>
+                                    <th style="width:60px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Ley</td>
+                                    <td>29090</td>
+                                    <td>2003</td>
+                                    <td>Art. 12</td>
+                                    <td class="text-center">
+                                        <a href="#" class="btn btn-primary btn-xs"><i class="fa fa-file"></i></a>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="#" class="btn btn-xs btn-success"><i class="fa fa-pencil"></i></a>
+                                            <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-remove"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box-footer">
+        <button class="btn btn-primary pull-right" ><i class="fa fa-save"></i> Guardar</button>
+    </div>
+</div>

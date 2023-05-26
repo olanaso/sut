@@ -1,0 +1,1954 @@
+﻿@model Sut.Entities.Incentivos
+<div class="modal-dialog ">
+    <div class="modal-content" style="width: 130%;">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">@ViewBag.Title</h4>
+        </div>
+        <div class="modal-body form-horizontal">
+            @using (Html.BeginForm("Guardar", "Seguridad/Incentivos", FormMethod.Post, new { @id = "form-modal-editar" }))
+            {
+                @Html.HiddenFor(model => model.IncentivosId)
+                @Html.HiddenFor(model => model.NivelRiesgo)
+
+                @Html.HiddenFor(model => model.NumRUC)
+                @Html.HiddenFor(model => model.Actividadogironegocio)
+                @Html.HiddenFor(model => model.Girocomplementario)
+                @Html.HiddenFor(model => model.Funcion)
+                @Html.HiddenFor(model => model.Numeral)
+                @*@Html.HiddenFor(model => model.NivelInicial)*@
+                @*@Html.HiddenFor(model => model.NivelFinal)*@
+                @Html.HiddenFor(model => model.NumExpediente)
+                @Html.HiddenFor(model => model.Fec_Ing_Sol)
+                @Html.HiddenFor(model => model.Archivo_Fec_Ing_Sol)
+                @Html.HiddenFor(model => model.Fec_Emision_Cert_ITSE)
+                @Html.HiddenFor(model => model.Fec_Notificacion_Cert_ITSE)
+                @Html.HiddenFor(model => model.Archivo_Fec_Emision_Cert_ITSE)
+                @Html.HiddenFor(model => model.Archivo_Fec_Emision_Licencia_Funcionamiento)
+                @Html.HiddenFor(model => model.Archivo_Fec_Notificacion_Cert_ITSE)
+                @Html.HiddenFor(model => model.Archivo_Fec_Revocacion_Licencia_Funcionamiento)
+
+
+                @Html.HiddenFor(model => model.Archivo_Fec_Notificacion_Licencia_Funcionamiento)
+
+                @Html.HiddenFor(model => model.Estado)
+                @Html.HiddenFor(model => model.Fec_Emision_Licencia_Funcionamiento)
+                @Html.HiddenFor(model => model.Fec_Notificacion_Licencia_Funcionamiento)
+                @Html.HiddenFor(model => model.Fec_Revocacion_Licencia_Funcionamiento)
+                @Html.HiddenFor(model => model.Cod_Acreditacion_Inspector_ITSE)
+                @Html.HiddenFor(model => model.Renovacion_ITSE)
+                @*@Html.HiddenFor(model => model.Numero_Revocacion_Licencia_Funcionamiento)*@
+
+                @Html.HiddenFor(model => model.Archivo_Fec_Suspencion_ITSE_Subsanacion)
+                @Html.HiddenFor(model => model.Archivo_Fec_Suspencion_ITSE)
+                @Html.HiddenFor(model => model.Archivo_Fec_Resolucion_denegatoria)
+                @Html.HiddenFor(model => model.Fec_Suspencion_ITSE_Subsanacion)
+                @Html.HiddenFor(model => model.Fec_Suspencion_ITSE)
+                @*@Html.HiddenFor(model => model.Fec_Resolucion_denegatoria)*@
+                @*@Html.HiddenFor(model => model.Numero_Resolucion_Revocatoria)*@
+
+
+
+                <div class="callout callout-warning" style="height: inherit;padding: inherit;display: block;">
+                    Toda la información registrada se encuentra sujeta a verificación posterior
+                </div>
+                <div id="mensajesTitulo"></div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-6 col-xs-12">Nivel de riesgo(asignada según matriz de riesgo) : </label>
+                    <div class="col-sm-6 col-xs-12">
+                        @Html.DropDownListFor(model => model.NivelRiesgo, ViewBag.Nivel as List<SelectListItem>, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+
+            }
+
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#edit-Datos-Generales" data-toggle="tab" aria-expanded="false"><i class="fa fa-file"></i> Datos Generales</a>
+                    </li>
+                    <li>
+                        <a href="#edit-Nivel-Riesgo" data-toggle="tab" aria-expanded="false"><i class="fa fa-file"></i> Nivel de Riesgo</a>
+                    </li>
+                    <li>
+                        <a id="nomtab1" href="#edit-Licencia-Funcionamiento" data-toggle="tab" aria-expanded="false"><i class="fa fa-file"></i> Datos Licencia Funcionamiento</a>
+                    </li>
+                    <li>
+                        <a id="nomtab2" href="#edit-Datos-ITSE" data-toggle="tab" aria-expanded="false"><i class="fa fa-file"></i> Datos ITSE</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="tab-content ">
+                <div id="edit-Datos-Generales" class="tab-pane active">
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 col-xs-12">Fecha ingreso solicitud:</label>
+                        <div class="col-sm-3 col-xs-2">
+
+                            @if (Model.IncentivosId == 0)
+                            {
+                                <input type="text" name="Fec_Ing_Sol" class="form-control input-sm" value="" />
+                            }
+                            else
+                            {
+                                <input type="text" name="Fec_Ing_Sol" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Ing_Sol == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Ing_Sol.Value.Day, Model.Fec_Ing_Sol.Value.Month, Model.Fec_Ing_Sol.Value.Year))" />
+                            }
+                        </div>
+                        <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                            @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto1", @enctype = "multipart/form-data" }))
+                            {
+                                @Html.HiddenFor(model => model.Archivo_Fec_Ing_Sol)
+                                <div class="col-sm-18 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto != null ? "" : "file-empty")">
+                                    <ul>
+                                        <li>
+                                            <span class="text">
+                                                <i class="fa fa-file"></i>
+                                                <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.Archivo_Fec_Ing_Sol)) : "")" target="_blank">
+                                                    @MvcHtmlString.Create(Model.ArchivoAdjunto != null ? Model.ArchivoAdjunto.NombreArchivo : "")
+                                                </a>
+                                            </span>
+                                            <div class="tools">
+                                                <i class="fa fa-remove"></i>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 col-xs-12">N° Expediente:</label>
+                        <div class="col-sm-8 col-xs-12">
+                            @Html.TextBoxFor(model => model.NumExpediente, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 col-xs-12">N° RUC:</label>
+                        <div class="col-sm-8 col-xs-12">
+                            @Html.TextBoxFor(model => model.NumRUC, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 col-xs-12">Actividad o giro de negocio:</label>
+                        <div class="col-sm-8 col-xs-12">
+                            @Html.TextBoxFor(model => model.Actividadogironegocio, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 col-xs-12">Giro afin o complementario:</label>
+                        <div class="col-sm-8 col-xs-12">
+                            @Html.TextBoxFor(model => model.Girocomplementario, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+
+                </div>
+                <div id="edit-Nivel-Riesgo" class="tab-pane">
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 col-xs-12">Función (matriz de riesgo):</label>
+                        <div class="col-sm-8 col-xs-12">
+                            @Html.TextBoxFor(model => model.Funcion, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4 col-xs-12">Código (según función-matriz de riesgo) :</label>
+                        <div class="col-sm-8 col-xs-12">
+                            @Html.TextBoxFor(model => model.Numeral, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                    @*<div class="form-group">
+                    <label class="control-label col-sm-4 col-xs-12">Nivel de riesgo (asignada según evaluación): </label>
+                    <div class="col-sm-8 col-xs-12">
+                        @Html.TextBoxFor(model => model.NivelInicial, new { @class = "form-control input-sm" })
+                    </div>
+                </div>*@
+
+                    @*<div class="form-group">
+                    <label class="control-label col-sm-4 col-xs-12">Nivel de riesgo (asignada según matriz de riesgo): </label>
+                    <div class="col-sm-8 col-xs-12">
+                        @Html.DropDownListFor(model => model.NivelRiesgo, ViewBag.Nivel as List<SelectListItem>, new { @class = "form-control input-sm" })
+                    </div>
+                </div>*@
+
+
+                </div>
+
+
+                <div id="edit-Licencia-Funcionamiento" class="tab-pane">
+
+                    <div id="orden2">
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 col-xs-12">Fecha emisión licencia funcionamiento:</label>
+                            <div class="col-sm-3 col-xs-12">
+
+                                @if (Model.IncentivosId == 0)
+                                {
+                                    <input type="text" name="Fec_Emision_Licencia_Funcionamiento" class="form-control input-sm" value="" />
+                                }
+                                else
+                                {
+                                    <input type="text" name="Fec_Emision_Licencia_Funcionamiento" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Emision_Licencia_Funcionamiento == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Emision_Licencia_Funcionamiento.Value.Day, Model.Fec_Emision_Licencia_Funcionamiento.Value.Month, Model.Fec_Emision_Licencia_Funcionamiento.Value.Year))" />
+                                }
+                            </div>
+
+                            <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                                @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto4", @enctype = "multipart/form-data" }))
+                                {
+
+
+
+                                    @Html.HiddenFor(model => model.Archivo_Fec_Emision_Licencia_Funcionamiento)
+                                    <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto4 != null ? "" : "file-empty")">
+                                        <ul>
+                                            <li>
+                                                <span class="text">
+                                                    <i class="fa fa-file"></i>
+                                                    <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto4 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto4.Archivo_Fec_Emision_Licencia_Funcionamiento)) : "")" target="_blank">
+                                                        @MvcHtmlString.Create(Model.ArchivoAdjunto4 != null ? Model.ArchivoAdjunto4.NombreArchivo : "")
+                                                    </a>
+                                                </span>
+                                                <div class="tools">
+                                                    <i class="fa fa-remove"></i>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                    </div>
+
+
+                                }
+
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 col-xs-12">Fecha notificación licencia funcionamiento:</label>
+                            <div class="col-sm-3 col-xs-12">
+
+                                @if (Model.IncentivosId == 0)
+                                {
+                                    <input type="text" name="Fec_Notificacion_Licencia_Funcionamiento" class="form-control input-sm" value="" />
+                                }
+                                else
+                                {
+                                    <input type="text" name="Fec_Notificacion_Licencia_Funcionamiento" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Notificacion_Licencia_Funcionamiento == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Notificacion_Licencia_Funcionamiento.Value.Day, Model.Fec_Notificacion_Licencia_Funcionamiento.Value.Month, Model.Fec_Notificacion_Licencia_Funcionamiento.Value.Year))" />
+                                }
+
+                            </div>
+
+                            <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                                @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto5", @enctype = "multipart/form-data" }))
+                                {
+
+                                    @Html.HiddenFor(model => model.Archivo_Fec_Notificacion_Licencia_Funcionamiento)
+                                    <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto5 != null ? "" : "file-empty")">
+                                        <ul>
+                                            <li>
+                                                <span class="text">
+                                                    <i class="fa fa-file"></i>
+                                                    <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto5 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto5.Archivo_Fec_Notificacion_Licencia_Funcionamiento)) : "")" target="_blank">
+                                                        @MvcHtmlString.Create(Model.ArchivoAdjunto5 != null ? Model.ArchivoAdjunto5.NombreArchivo : "")
+                                                    </a>
+                                                </span>
+                                                <div class="tools">
+                                                    <i class="fa fa-remove"></i>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="orden1" style="display: none;">
+
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 col-xs-12">Fecha suspensión ITSE (Art. 12 DS 002-2018-PCM):</label>
+                            <div class="col-sm-3 col-xs-12">
+
+                                @if (Model.IncentivosId == 0)
+                                {
+                                    <input type="text" name="Fec_Suspencion_ITSE" class="form-control input-sm" value="" />
+                                }
+                                else
+                                {
+                                    <input type="text" name="Fec_Suspencion_ITSE" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Suspencion_ITSE == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Suspencion_ITSE.Value.Day, Model.Fec_Suspencion_ITSE.Value.Month, Model.Fec_Suspencion_ITSE.Value.Year))" />
+                                }
+
+                            </div>
+                            <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                                @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto111", @enctype = "multipart/form-data" }))
+                                {
+
+                                    @Html.HiddenFor(model => model.Archivo_Fec_Suspencion_ITSE)
+                                    <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto11 != null ? "" : "file-empty")">
+                                        <ul>
+                                            <li>
+                                                <span class="text">
+                                                    <i class="fa fa-file"></i>
+                                                    <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto11 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto11.Archivo_Fec_Suspencion_ITSE)) : "")" target="_blank">
+                                                        @MvcHtmlString.Create(Model.ArchivoAdjunto11 != null ? Model.ArchivoAdjunto11.NombreArchivo : "")
+                                                    </a>
+                                                </span>
+                                                <div class="tools">
+                                                    <i class="fa fa-remove"></i>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                    </div>
+
+                                }
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 col-xs-12">Fecha suspensión ITSE para subsanación de observaciones:</label>
+                            <div class="col-sm-3 col-xs-12">
+
+                                @if (Model.IncentivosId == 0)
+                                {
+                                    <input type="text" name="Fec_Suspencion_ITSE_Subsanacion" class="form-control input-sm" value="" />
+                                }
+                                else
+                                {
+                                    <input type="text" name="Fec_Suspencion_ITSE_Subsanacion" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Suspencion_ITSE_Subsanacion == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Suspencion_ITSE_Subsanacion.Value.Day, Model.Fec_Suspencion_ITSE_Subsanacion.Value.Month, Model.Fec_Suspencion_ITSE_Subsanacion.Value.Year))" />
+                                }
+
+                            </div>
+                            <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                                @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto6", @enctype = "multipart/form-data" }))
+                                {
+
+                                    @Html.HiddenFor(model => model.Archivo_Fec_Suspencion_ITSE_Subsanacion)
+                                    <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto6 != null ? "" : "file-empty")">
+                                        <ul>
+                                            <li>
+                                                <span class="text">
+                                                    <i class="fa fa-file"></i>
+                                                    <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto6 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto6.Archivo_Fec_Suspencion_ITSE_Subsanacion)) : "")" target="_blank">
+                                                        @MvcHtmlString.Create(Model.ArchivoAdjunto6 != null ? Model.ArchivoAdjunto6.NombreArchivo : "")
+                                                    </a>
+                                                </span>
+                                                <div class="tools">
+                                                    <i class="fa fa-remove"></i>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                    </div>
+
+                                }
+                            </div>
+
+
+                        </div>
+
+                        @*<div class="form-group">
+                        <label class="control-label col-sm-4 col-xs-12">Fecha de Resolución de denegatoria:</label>
+                        <div class="col-sm-3 col-xs-2">
+                            @if (Model.IncentivosId == 0)
+                            {
+                                <input type="text" name="Fec_Resolucion_denegatoria" class="form-control input-sm" value="" />
+                            }
+                            else
+                            {
+                                <input type="text" name="Fec_Resolucion_denegatoria" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Resolucion_denegatoria == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Resolucion_denegatoria.Value.Day, Model.Fec_Resolucion_denegatoria.Value.Month, Model.Fec_Resolucion_denegatoria.Value.Year))" />
+                            }
+                        </div>
+                        <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                            @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto7", @enctype = "multipart/form-data" }))
+                            {
+
+
+                                @Html.HiddenFor(model => model.Archivo_Fec_Resolucion_denegatoria)
+                                <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto7 != null ? "" : "file-empty")">
+                                    <ul>
+                                        <li>
+                                            <span class="text">
+                                                <i class="fa fa-file"></i>
+                                                <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto7 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto7.Archivo_Fec_Resolucion_denegatoria)) : "")" target="_blank">
+                                                    @MvcHtmlString.Create(Model.ArchivoAdjunto7 != null ? Model.ArchivoAdjunto7.NombreArchivo : "")
+                                                </a>
+                                            </span>
+                                            <div class="tools">
+                                                <i class="fa fa-remove"></i>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                </div>
+                            }
+
+                        </div>
+                    </div>*@
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 col-xs-12">Fecha emisión certificado ITSE o denegatoria:</label>
+                            <div class="col-sm-3 col-xs-12">
+
+                                @if (Model.IncentivosId == 0)
+                                {
+                                    <input type="text" name="Fec_Emision_Cert_ITSE1" class="form-control input-sm" value="" />
+                                }
+                                else
+                                {
+                                    <input type="text" name="Fec_Emision_Cert_ITSE1" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Emision_Cert_ITSE == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Emision_Cert_ITSE.Value.Day, Model.Fec_Emision_Cert_ITSE.Value.Month, Model.Fec_Emision_Cert_ITSE.Value.Year))" />
+                                }
+                            </div>
+                            <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                                @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto8", @enctype = "multipart/form-data" }))
+                                {
+
+
+                                    @Html.HiddenFor(model => model.Archivo_Fec_Emision_Cert_ITSE)
+                                    <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto2 != null ? "" : "file-empty")">
+                                        <ul>
+                                            <li>
+                                                <span class="text">
+                                                    <i class="fa fa-file"></i>
+                                                    <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto2 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto2.Archivo_Fec_Emision_Cert_ITSE)) : "")" target="_blank">
+                                                        @MvcHtmlString.Create(Model.ArchivoAdjunto2 != null ? Model.ArchivoAdjunto2.NombreArchivo : "")
+                                                    </a>
+                                                </span>
+                                                <div class="tools">
+                                                    <i class="fa fa-remove"></i>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+
+
+                        @*<div class="form-group">
+                        <label class="control-label col-sm-4 col-xs-12">Fecha notificación certificado ITSE:</label>
+                        <div class="col-sm-3 col-xs-12">
+
+                            @if (Model.IncentivosId == 0)
+                            {
+                                <input type="text" name="Fec_Notificacion_Cert_ITSE1" class="form-control input-sm" value="" />
+                            }
+                            else
+                            {
+                                <input type="text" name="Fec_Notificacion_Cert_ITSE1" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Notificacion_Cert_ITSE == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Notificacion_Cert_ITSE.Value.Day, Model.Fec_Notificacion_Cert_ITSE.Value.Month, Model.Fec_Notificacion_Cert_ITSE.Value.Year))" />
+                            }
+                        </div>
+                        <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                            @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto9", @enctype = "multipart/form-data" }))
+                            {
+
+                                @Html.HiddenFor(model => model.Archivo_Fec_Notificacion_Cert_ITSE)
+                                <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto3 != null ? "" : "file-empty")">
+                                    <ul>
+                                        <li>
+                                            <span class="text">
+                                                <i class="fa fa-file"></i>
+                                                <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto3 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto3.Archivo_Fec_Notificacion_Cert_ITSE)) : "")" target="_blank">
+                                                    @MvcHtmlString.Create(Model.ArchivoAdjunto3 != null ? Model.ArchivoAdjunto3.NombreArchivo : "")
+                                                </a>
+                                            </span>
+                                            <div class="tools">
+                                                <i class="fa fa-remove"></i>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                </div>
+
+                            }
+                        </div>
+                    </div>*@
+
+                        <div class="form-group" id="idinspectores2" style="display: none;">
+                            <label class="control-label col-sm-4 col-xs-12">Número del registro nacional de inspectores (RITSE):</label>
+                            <div class="col-sm-8 col-xs-12">
+                                @Html.TextBoxFor(model => model.Cod_Acreditacion_Inspector_ITSE, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="form-group" id="idfecRevocacion">
+                        <label class="control-label col-sm-4 col-xs-12">Fecha de revocación licencia funcionamiento:</label>
+                        <div class="col-sm-3 col-xs-12">
+
+                            @if (Model.IncentivosId == 0)
+                            {
+                                <input type="text" name="Fec_Revocacion_Licencia_Funcionamiento" class="form-control input-sm" value="" />
+                            }
+                            else
+                            {
+                                <input type="text" name="Fec_Revocacion_Licencia_Funcionamiento" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Revocacion_Licencia_Funcionamiento == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Revocacion_Licencia_Funcionamiento.Value.Day, Model.Fec_Revocacion_Licencia_Funcionamiento.Value.Month, Model.Fec_Revocacion_Licencia_Funcionamiento.Value.Year))" />
+                            }
+                        </div>
+
+                        <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                            @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto10", @enctype = "multipart/form-data" }))
+                            {
+
+                                @Html.HiddenFor(model => model.Archivo_Fec_Revocacion_Licencia_Funcionamiento)
+                                <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto10 != null ? "" : "file-empty")">
+                                    <ul>
+                                        <li>
+                                            <span class="text">
+                                                <i class="fa fa-file"></i>
+                                                <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto10 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto10.Archivo_Fec_Revocacion_Licencia_Funcionamiento)) : "")" target="_blank">
+                                                    @MvcHtmlString.Create(Model.ArchivoAdjunto10 != null ? Model.ArchivoAdjunto10.NombreArchivo : "")
+                                                </a>
+                                            </span>
+                                            <div class="tools">
+                                                <i class="fa fa-remove"></i>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+
+                    @*<div class="form-group" id="idfecNumeroRevocacion">
+                    <label class="control-label col-sm-4 col-xs-12">Número resolución de la revocación:</label>
+                    <div class="col-sm-8 col-xs-12">
+                        @Html.TextBoxFor(model => model.Numero_Revocacion_Licencia_Funcionamiento, new { @class = "form-control input-sm" })
+                    </div>
+                </div>*@
+
+
+                </div>
+
+
+                <div id="edit-Datos-ITSE" class="tab-pane">
+
+
+
+                    <div id="orden21">
+
+
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 col-xs-12">Fecha suspensión ITSE (Art. 12 DS 002-2018-PCM):</label>
+                            <div class="col-sm-3 col-xs-12">
+
+                                @if (Model.IncentivosId == 0)
+                                {
+                                    <input type="text" name="Fec_Suspencion_ITSE1" class="form-control input-sm" value="" />
+                                }
+                                else
+                                {
+                                    <input type="text" name="Fec_Suspencion_ITSE1" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Suspencion_ITSE == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Suspencion_ITSE.Value.Day, Model.Fec_Suspencion_ITSE.Value.Month, Model.Fec_Suspencion_ITSE.Value.Year))" />
+                                }
+
+                            </div>
+                            <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                                @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto56", @enctype = "multipart/form-data" }))
+                                {
+
+                                    @Html.HiddenFor(model => model.Archivo_Fec_Suspencion_ITSE)
+                                    <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto11 != null ? "" : "file-empty")">
+                                        <ul>
+                                            <li>
+                                                <span class="text">
+                                                    <i class="fa fa-file"></i>
+                                                    <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto11 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto11.Archivo_Fec_Suspencion_ITSE)) : "")" target="_blank">
+                                                        @MvcHtmlString.Create(Model.ArchivoAdjunto11 != null ? Model.ArchivoAdjunto11.NombreArchivo : "")
+                                                    </a>
+                                                </span>
+                                                <div class="tools">
+                                                    <i class="fa fa-remove"></i>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 col-xs-12">Fecha suspensión ITSE para subsanación de observaciones:</label>
+                            <div class="col-sm-3 col-xs-12">
+
+                                @if (Model.IncentivosId == 0)
+                                {
+                                    <input type="text" name="Fec_Suspencion_ITSE_Subsanacion1" class="form-control input-sm" value="" />
+                                }
+                                else
+                                {
+                                    <input type="text" name="Fec_Suspencion_ITSE_Subsanacion1" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Suspencion_ITSE_Subsanacion == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Suspencion_ITSE_Subsanacion.Value.Day, Model.Fec_Suspencion_ITSE_Subsanacion.Value.Month, Model.Fec_Suspencion_ITSE_Subsanacion.Value.Year))" />
+                                }
+
+                            </div>
+                            <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                                @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto12", @enctype = "multipart/form-data" }))
+                                {
+
+                                    @Html.HiddenFor(model => model.Archivo_Fec_Suspencion_ITSE_Subsanacion)
+                                    <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto6 != null ? "" : "file-empty")">
+                                        <ul>
+                                            <li>
+                                                <span class="text">
+                                                    <i class="fa fa-file"></i>
+                                                    <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto6 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto6.Archivo_Fec_Suspencion_ITSE_Subsanacion)) : "")" target="_blank">
+                                                        @MvcHtmlString.Create(Model.ArchivoAdjunto6 != null ? Model.ArchivoAdjunto6.NombreArchivo : "")
+                                                    </a>
+                                                </span>
+                                                <div class="tools">
+                                                    <i class="fa fa-remove"></i>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+
+                        @*<div class="form-group">
+                        <label class="control-label col-sm-4 col-xs-12">Fecha de Resolución de denegatoria:</label>
+                        <div class="col-sm-3 col-xs-2">
+                            @if (Model.IncentivosId == 0)
+                            {
+                                <input type="text" name="Fec_Resolucion_denegatoria" class="form-control input-sm" value="" />
+                            }
+                            else
+                            {
+                                <input type="text" name="Fec_Resolucion_denegatoria" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Resolucion_denegatoria == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Resolucion_denegatoria.Value.Day, Model.Fec_Resolucion_denegatoria.Value.Month, Model.Fec_Resolucion_denegatoria.Value.Year))" />
+                            }
+                        </div>
+                        <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                            @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto7", @enctype = "multipart/form-data" }))
+                            {
+
+
+                                @Html.HiddenFor(model => model.Archivo_Fec_Resolucion_denegatoria)
+                                <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto7 != null ? "" : "file-empty")">
+                                    <ul>
+                                        <li>
+                                            <span class="text">
+                                                <i class="fa fa-file"></i>
+                                                <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto7 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto7.Archivo_Fec_Resolucion_denegatoria)) : "")" target="_blank">
+                                                    @MvcHtmlString.Create(Model.ArchivoAdjunto7 != null ? Model.ArchivoAdjunto7.NombreArchivo : "")
+                                                </a>
+                                            </span>
+                                            <div class="tools">
+                                                <i class="fa fa-remove"></i>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                </div>
+                            }
+
+                        </div>
+                    </div>*@
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 col-xs-12">Fecha de emisión certificado ITSE o denegatoria:</label>
+                            <div class="col-sm-3 col-xs-12">
+
+                                @if (Model.IncentivosId == 0)
+                                {
+                                    <input type="text" name="Fec_Emision_Cert_ITSE" class="form-control input-sm" value="" />
+                                }
+                                else
+                                {
+                                    <input type="text" name="Fec_Emision_Cert_ITSE" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Emision_Cert_ITSE == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Emision_Cert_ITSE.Value.Day, Model.Fec_Emision_Cert_ITSE.Value.Month, Model.Fec_Emision_Cert_ITSE.Value.Year))" />
+                                }
+
+                            </div>
+                            <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                                @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto22", @enctype = "multipart/form-data" }))
+                                {
+
+
+                                    @Html.HiddenFor(model => model.Archivo_Fec_Emision_Cert_ITSE)
+                                    <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto2 != null ? "" : "file-empty")">
+                                        <ul>
+                                            <li>
+                                                <span class="text">
+                                                    <i class="fa fa-file"></i>
+                                                    <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto2 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto2.Archivo_Fec_Emision_Cert_ITSE)) : "")" target="_blank">
+                                                        @MvcHtmlString.Create(Model.ArchivoAdjunto2 != null ? Model.ArchivoAdjunto2.NombreArchivo : "")
+                                                    </a>
+                                                </span>
+                                                <div class="tools">
+                                                    <i class="fa fa-remove"></i>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 col-xs-12">Fecha notificación certificado ITSE o denegatoria:</label>
+                            <div class="col-sm-3 col-xs-12">
+
+                                @if (Model.IncentivosId == 0)
+                                {
+                                    <input type="text" name="Fec_Notificacion_Cert_ITSE" class="form-control input-sm" value="" />
+                                }
+                                else
+                                {
+                                    <input type="text" name="Fec_Notificacion_Cert_ITSE" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Notificacion_Cert_ITSE == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Notificacion_Cert_ITSE.Value.Day, Model.Fec_Notificacion_Cert_ITSE.Value.Month, Model.Fec_Notificacion_Cert_ITSE.Value.Year))" />
+                                }
+
+                            </div>
+                            <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                                @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto3", @enctype = "multipart/form-data" }))
+                                {
+                                    @Html.HiddenFor(model => model.Archivo_Fec_Notificacion_Cert_ITSE)
+                                    <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto3 != null ? "" : "file-empty")">
+                                        <ul>
+                                            <li>
+                                                <span class="text">
+                                                    <i class="fa fa-file"></i>
+                                                    <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto3 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto3.Archivo_Fec_Notificacion_Cert_ITSE)) : "")" target="_blank">
+                                                        @MvcHtmlString.Create(Model.ArchivoAdjunto3 != null ? Model.ArchivoAdjunto3.NombreArchivo : "")
+                                                    </a>
+                                                </span>
+                                                <div class="tools">
+                                                    <i class="fa fa-remove"></i>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+
+                    <div id="orden11" style="display: none;">
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 col-xs-12">Fecha emisión licencia funcionamiento o denegatoria:</label>
+                            <div class="col-sm-3 col-xs-12">
+
+                                @if (Model.IncentivosId == 0)
+                                {
+                                    <input type="text" name="Fec_Emision_Licencia_Funcionamiento1" class="form-control input-sm" value="" />
+                                }
+                                else
+                                {
+                                    <input type="text" name="Fec_Emision_Licencia_Funcionamiento1" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Emision_Licencia_Funcionamiento == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Emision_Licencia_Funcionamiento.Value.Day, Model.Fec_Emision_Licencia_Funcionamiento.Value.Month, Model.Fec_Emision_Licencia_Funcionamiento.Value.Year))" />
+                                }
+
+                            </div>
+                            <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                                @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto44", @enctype = "multipart/form-data" }))
+                                {
+                                    @Html.HiddenFor(model => model.Archivo_Fec_Emision_Licencia_Funcionamiento)
+                                    <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto4 != null ? "" : "file-empty")">
+                                        <ul>
+                                            <li>
+                                                <span class="text">
+                                                    <i class="fa fa-file"></i>
+                                                    <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto4 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto4.Archivo_Fec_Emision_Licencia_Funcionamiento)) : "")" target="_blank">
+                                                        @MvcHtmlString.Create(Model.ArchivoAdjunto4 != null ? Model.ArchivoAdjunto4.NombreArchivo : "")
+                                                    </a>
+                                                </span>
+                                                <div class="tools">
+                                                    <i class="fa fa-remove"></i>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-4 col-xs-12">Fecha notificación licencia funcionamiento o denegatoria:</label>
+                            <div class="col-sm-3 col-xs-12">
+
+                                @if (Model.IncentivosId == 0)
+                                {
+                                    <input type="text" name="Fec_Notificacion_Licencia_Funcionamiento1" class="form-control input-sm" value="" />
+                                }
+                                else
+                                {
+                                    <input type="text" name="Fec_Notificacion_Licencia_Funcionamiento1" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fec_Notificacion_Licencia_Funcionamiento == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fec_Notificacion_Licencia_Funcionamiento.Value.Day, Model.Fec_Notificacion_Licencia_Funcionamiento.Value.Month, Model.Fec_Notificacion_Licencia_Funcionamiento.Value.Year))" />
+                                }
+
+                            </div>
+                            <div class="col-sm-5 col-xs-12" style="padding-left: 0px">
+                                @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto55", @enctype = "multipart/form-data" }))
+                                {
+                                    @Html.HiddenFor(model => model.Archivo_Fec_Notificacion_Licencia_Funcionamiento)
+                                    <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto5 != null ? "" : "file-empty")">
+                                        <ul>
+                                            <li>
+                                                <span class="text">
+                                                    <i class="fa fa-file"></i>
+                                                    <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto5 != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto5.Archivo_Fec_Notificacion_Licencia_Funcionamiento)) : "")" target="_blank">
+                                                        @MvcHtmlString.Create(Model.ArchivoAdjunto5 != null ? Model.ArchivoAdjunto5.NombreArchivo : "")
+                                                    </a>
+                                                </span>
+                                                <div class="tools">
+                                                    <i class="fa fa-remove"></i>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                        @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+
+
+
+                    <div class="form-group" id="idinspectores">
+                        <label class="control-label col-sm-4 col-xs-12">Número del registro nacional de inspectores (RITSE):</label>
+                        <div class="col-sm-8 col-xs-12">
+
+                            @if (Model.IncentivosId == 0)
+                            {
+                                <input type="text" name="Cod_Acreditacion_Inspector_ITSE1" class="form-control input-sm" value="" />
+                            }
+                            else
+                            {
+                                <input type="text" name="Cod_Acreditacion_Inspector_ITSE1" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Cod_Acreditacion_Inspector_ITSE == null ? "" : Model.Cod_Acreditacion_Inspector_ITSE)" />
+                            }
+
+                        </div>
+                    </div>
+
+
+
+                    @*<div class="form-group">
+                    <label class="control-label col-sm-4 col-xs-12">Número de resolución de la revocación:</label>
+                    <div class="col-sm-8 col-xs-12">
+                        @Html.TextBoxFor(model => model.Numero_Resolucion_Revocatoria, new { @class = "form-control input-sm" })
+                    </div>
+                </div>*@
+
+                    @*<div class="form-group">
+                    <label class="control-label col-sm-4 col-xs-12">Fecha renovación de certificado ITSE:</label>
+                    <div class="col-sm-8 col-xs-12">
+
+                        @if (Model.IncentivosId == 0)
+                        {
+                            <input type="text" name="Renovacion_ITSE" class="form-control input-sm" value="" />
+                        }
+                        else
+                        {
+                            <input type="text" name="Renovacion_ITSE" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Renovacion_ITSE == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Renovacion_ITSE.Value.Day, Model.Renovacion_ITSE.Value.Month, Model.Renovacion_ITSE.Value.Year))" />
+                        }
+
+                    </div>
+                </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-4 col-xs-12">Estado </label>
+                                <div class="col-sm-3 col-xs-12">
+                                    @Html.DropDownListFor(model => model.Estado, ViewBag.publicar as List<SelectListItem>, new { @class = "form-control input-sm" })
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+
+                    @*}*@
+                </div>
+                <div id="msgEditar"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarIncentivos.guardar()"><i class="fa fa-save"></i> Guardar</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+    </div>
+</div>
+<script>
+
+    sut.editarIncentivos = {
+        guardar: () => {
+            debugger;
+            var asd = $('input[name="Fec_Ing_Sol"]').val();
+            var valor = $('select[name="NivelRiesgo"] option:selected').val();
+            var codarchivo = $('#form-archivo-adjunto1 input[name="Archivo_Fec_Ing_Sol"]').val();
+
+
+            if (valor == 0) {
+                showNotification('top', 'right', 'Seleccionar nivel', 2);
+                return;
+            } else if (document.getElementsByName("Fec_Ing_Sol")[1].value == "") {
+                showNotification('top', 'right', 'Ingresar fecha ingreso solicitud', 2);
+                return;
+            } else if (document.getElementsByName("Fec_Ing_Sol")[1].value != "" && codarchivo == "" || codarchivo == 0) {
+                showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha ingreso solicitud', 2);
+            } else if (document.getElementsByName("NumExpediente")[1].value == "") {
+                showNotification('top', 'right', 'Ingresar número de expediente', 2);
+                return;
+            } else if (document.getElementsByName("NumRUC")[1].value == "") {
+                showNotification('top', 'right', 'Ingresar número de RUC', 2);
+                return;
+            } else if (document.getElementsByName("Actividadogironegocio")[1].value == "") {
+                showNotification('top', 'right', 'Ingresar actividad o giro de negocio', 2);
+                return;
+            } else if (document.getElementsByName("Girocomplementario")[1].value == "") {
+                showNotification('top', 'right', 'Ingresar giro a fin o complementario', 2);
+                return;
+            } else if (document.getElementsByName("Funcion")[1].value == "") {
+                showNotification('top', 'right', 'Ingresar función (matriz de riesgo)', 2);
+                return;
+            } else if (document.getElementsByName("Numeral")[1].value == "") {
+                showNotification('top', 'right', 'Ingresar código(según función-matriz de riesgo)', 2);
+                return;
+            } else {
+                         if (valor == 1 || valor == 2) {
+
+                             debugger;
+                             var codarchivo2 = $('#form-archivo-adjunto4 input[name="Archivo_Fec_Emision_Licencia_Funcionamiento"]').val();
+                             var codarchivo3 = $('#form-archivo-adjunto5 input[name="Archivo_Fec_Notificacion_Licencia_Funcionamiento"]').val(); 
+                             var codarchivo4 = $('#form-archivo-adjunto10 input[name="Archivo_Fec_Revocacion_Licencia_Funcionamiento"]').val();
+
+
+                             var codarchivo5 = $('#form-archivo-adjunto12 input[name="Archivo_Fec_Suspencion_ITSE_Subsanacion"]').val();
+                             var codarchivo6 = $('#form-archivo-adjunto22 input[name="Archivo_Fec_Emision_Cert_ITSE"]').val();
+                             var codarchivo7 = $('#form-archivo-adjunto3 input[name="Archivo_Fec_Notificacion_Cert_ITSE"]').val();
+
+
+                             var codarchivo8 = $('#form-archivo-adjunto56 input[name="Archivo_Fec_Suspencion_ITSE"]').val();
+
+                            
+
+
+                             if (document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value != "" && (codarchivo2 == "" || codarchivo2 == 0)) {
+
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha emisión licencia funcionamiento', 2);
+                                 return; 
+                             } else if (document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value != "" && (codarchivo3 == "" || codarchivo3 == 0)) {
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de notificación licencia funcionamiento', 2);
+                                 return;
+
+                             } else if (document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value != "" && (codarchivo4 == "" || codarchivo4 == 0)) {
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha  revocación licencia funcionamiento', 2);
+                                 return;  
+
+                             } else if (document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value != "" && (codarchivo4 == "" || codarchivo4 == 0)) {
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha  revocación licencia funcionamiento', 2);
+                                 return;  
+
+                             } else if ($('input[name="Fec_Suspencion_ITSE1"]').val() != "" && (codarchivo8 == "" || codarchivo8 == 0)) {
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha suspensión ITSE ', 2);
+                                 return;
+
+                             } else if ($('input[name="Fec_Suspencion_ITSE_Subsanacion1"]').val()  != "" && (codarchivo5 == "" || codarchivo5 == 0)) {
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha suspensión ITSE para subsanación de observaciones', 2);
+                                 return;
+
+                             } else if (document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value != "" && (codarchivo6 == "" || codarchivo6 == 0)) {
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha emisión certificado ITSE o denegatoria', 2);
+                                 return;
+                             } else if (document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value != "" && (codarchivo7 == "" || codarchivo7 == 0)) {
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha notificación certificado ITSE o denegatoria', 2);
+                                 return;
+                             } 
+
+                         } else if (valor == 3 || valor == 4) {
+
+
+                             var codarchivo2 = $('#form-archivo-adjunto6 input[name="Archivo_Fec_Suspencion_ITSE_Subsanacion"]').val();
+                             var codarchivo3 = $('#form-archivo-adjunto8 input[name="Archivo_Fec_Emision_Cert_ITSE"]').val();
+                             var codarchivo4 = $('#form-archivo-adjunto44 input[name="Archivo_Fec_Emision_Licencia_Funcionamiento"]').val();
+                             var codarchivo5 = $('#form-archivo-adjunto55 input[name="Archivo_Fec_Notificacion_Licencia_Funcionamiento"]').val();
+
+                             var codarchivo6 = $('#form-archivo-adjunto111 input[name="Archivo_Fec_Suspencion_ITSE"]').val();
+
+                             if (document.getElementsByName("Fec_Suspencion_ITSE")[1].value != "" && (codarchivo6 == "" || codarchivo6 == 0)) {
+
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha suspensión ITSE ', 2);
+                                 return;
+
+                             }else if (document.getElementsByName("Fec_Suspencion_ITSE_Subsanacion")[1].value != "" && (codarchivo2 == "" || codarchivo2 == 0)) {
+
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha suspensión ITSE para subsanación de observaciones', 2);
+                                 return; 
+
+                             } else if ($('input[name="Fec_Emision_Cert_ITSE1"]').val() != "" && (codarchivo3 == "" || codarchivo3 == 0)) {
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha emisión certificado ITSE o denegatoria', 2);
+                                return;
+                             } else if ($('input[name="Fec_Emision_Licencia_Funcionamiento1"]').val()   != "" && (codarchivo4 == "" || codarchivo4 == 0)) {
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha emisión licencia funcionamiento o denegatoria', 2);
+                                 return;
+                             } else if ($('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val() != "" && (codarchivo5 == "" || codarchivo5 == 0)) {
+                                 showNotification('top', 'right', 'Favor de seleccionar un archivo de fecha notificación licencia funcionamiento o denegatori', 2);
+                                 return;
+                             } 
+                        }
+
+            //debugger;
+
+
+
+            //var codarchivo = $('#form-archivo-adjunto1 input[name="Archivo_Fec_Ing_Sol"]').val();
+            //if (codarchivo == "" || codarchivo == 0) {
+            //    showNotification('top', 'right', 'Favor de seleccionar un archivo Fecha Ingreso Solicitud', 2);
+            //    return;
+            //}
+
+            //if (valor == 1 || valor == 2) {
+
+
+            //    //var codarchivo = $('#form-archivo-adjunto6 input[name="Archivo_Fec_Emision_Licencia_Funcionamiento"]').val();
+            //    //if (codarchivo == "" || codarchivo == 0) {
+            //    //    showNotification('top', 'right', 'Favor de seleccionar un archivo Fecha Emisión Licencia Funcionamiento', 2);
+            //    //    return;
+            //    //}
+            //    //var codarchivo = $('#form-archivo-adjunto7 input[name="Archivo_Fec_Notificacion_Licencia_Funcionamiento"]').val();
+            //    //if (codarchivo == "" || codarchivo == 0) {
+            //    //    showNotification('top', 'right', 'Favor de seleccionar un archivo Fecha Notificación Licencia Funcionamiento', 2);
+            //    //    return;
+            //    //}
+            //    //var codarchivo = $('#form-archivo-adjunto8 input[name="Archivo_Fec_Suspencion_ITSE_Subsanacion"]').val();
+            //    //if (codarchivo == "" || codarchivo == 0) {
+            //    //    showNotification('top', 'right', 'Favor de seleccionar un archivo Fecha SuspencionITSE', 2);
+            //    //    return;
+            //    //}
+            //    //var codarchivo = $('#form-archivo-adjunto9 input[name="Archivo_Fec_Resolucion_denegatoria"]').val();
+            //    //if (codarchivo == "" || codarchivo == 0) {
+            //    //    showNotification('top', 'right', 'Favor de seleccionar un archivo Fecha Resolucion Denegatoria', 2);
+            //    //    return;
+            //    //}
+
+
+
+            //} else if (valor == 3 || valor == 4) {
+
+            //    //var codarchivo = $('#form-archivo-adjunto2 input[name="Archivo_Fec_Emision_Cert_ITSE"]').val();
+            //    //if (codarchivo == "" || codarchivo == 0) {
+            //    //    showNotification('top', 'right', 'Favor de seleccionar un archivo Fecha Emisión Certificado ITSE', 2);
+            //    //    return;
+            //    //}
+            //    //var codarchivo = $('#form-archivo-adjunto3 input[name="Archivo_Fec_Notificacion_Cert_ITSE"]').val();
+            //    //if (codarchivo == "" || codarchivo == 0) {
+            //    //    showNotification('top', 'right', 'Favor de seleccionar un archivo Fecha Notificación Certificado ITSE', 2);
+            //    //    return;
+            //    //}
+            //    //var codarchivo = $('#form-archivo-adjunto4 input[name="Archivo_Fec_Emision_Licencia_Funcionamiento"]').val();
+            //    //if (codarchivo == "" || codarchivo == 0) {
+            //    //    showNotification('top', 'right', 'Favor de seleccionar un archivo Fecha Emisión Licencia Funcionamiento', 2);
+            //    //    return;
+            //    //}
+            //    //var codarchivo = $('#form-archivo-adjunto5 input[name="Archivo_Fec_Notificacion_Licencia_Funcionamiento"]').val();
+            //    //if (codarchivo == "" || codarchivo == 0) {
+            //    //    showNotification('top', 'right', 'Favor de seleccionar un archivo Fecha Notificación Licencia Funcionamiento', 2);
+            //    //    return;
+            //    //}
+
+            //}
+
+
+            //debugger;
+
+
+            $('#form-editar input[name="NivelRiesgo"]').val($('select[name="NivelRiesgo"] option:selected').val());
+            //$('#form-editar input[name="NivelRiesgo"]').val($('#form-armotivo-adjunto input[name="ArMotivoAdjuntoId"]').val());
+            //alert(valor);
+            if (valor == 3 || valor == 4) {
+
+                $('input[name="Fec_Emision_Cert_ITSE"]').val($('input[name="Fec_Emision_Cert_ITSE1"]').val());
+                $('input[name="Fec_Notificacion_Cert_ITSE"]').val($('input[name="Fec_Notificacion_Cert_ITSE1"]').val());
+                $('input[name="Fec_Emision_Licencia_Funcionamiento"]').val($('input[name="Fec_Emision_Licencia_Funcionamiento1"]').val());
+                $('input[name="Fec_Notificacion_Licencia_Funcionamiento"]').val($('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val());
+            } else if (valor == 1 || valor == 2) {
+
+                $('input[name="Fec_Suspencion_ITSE"]').val($('input[name="Fec_Suspencion_ITSE1"]').val());
+                $('input[name="Fec_Suspencion_ITSE_Subsanacion"]').val($('input[name="Fec_Suspencion_ITSE_Subsanacion1"]').val());
+                $('input[name="Cod_Acreditacion_Inspector_ITSE"]').val($('input[name="Cod_Acreditacion_Inspector_ITSE1"]').val()); 
+            }
+
+            if ($("#form-modal-editar").valid()) {
+
+
+
+                var valor2 = $('input[name="Fec_Emision_Licencia_Funcionamiento"]').val();
+                var valor3 = document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value;
+
+                var valor2 = $('input[name="Fec_Ing_Sol"]').val();
+                $('#form-modal-editar input[name="NumExpediente"]').val(document.getElementsByName("NumExpediente")[1].value);
+
+                $('#form-modal-editar input[name="Fec_Ing_Sol"]').val(document.getElementsByName("Fec_Ing_Sol")[1].value);
+                $('#form-modal-editar input[name="Archivo_Fec_Ing_Sol"]').val($('#form-archivo-adjunto1 input[name="Archivo_Fec_Ing_Sol"]').val());
+                $('#form-modal-editar input[name="Fec_Emision_Cert_ITSE"]').val(document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value);
+                $('#form-modal-editar input[name="Fec_Notificacion_Cert_ITSE"]').val(document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value);
+
+                $('#form-modal-editar input[name="Fec_Suspencion_ITSE_Subsanacion"]').val(document.getElementsByName("Fec_Suspencion_ITSE_Subsanacion")[1].value);
+
+                $('#form-modal-editar input[name="Fec_Suspencion_ITSE"]').val(document.getElementsByName("Fec_Suspencion_ITSE")[1].value);
+                $('#form-modal-editar input[name="Cod_Acreditacion_Inspector_ITSE"]').val(document.getElementsByName("Cod_Acreditacion_Inspector_ITSE")[1].value);
+
+                debugger;
+                if (valor == 1 || valor == 2) {
+
+                    var asdsad1 = $('#form-archivo-adjunto6 input[name="Archivo_Fec_Suspencion_ITSE_Subsanacion"]').val();
+                    //var asdsad2 = $('#form-archivo-adjunto7 input[name="Archivo_Fec_Resolucion_denegatoria"]').val();
+                    var asdsad3 = $('#form-archivo-adjunto2 input[name="Archivo_Fec_Emision_Cert_ITSE"]').val();
+                    var asdsad4 = $('#form-archivo-adjunto3 input[name="Archivo_Fec_Notificacion_Cert_ITSE"]').val();
+
+                  
+                    $('#form-modal-editar input[name="Archivo_Fec_Suspencion_ITSE_Subsanacion"]').val($('#form-archivo-adjunto12 input[name="Archivo_Fec_Suspencion_ITSE_Subsanacion"]').val());
+                    $('#form-modal-editar input[name="Archivo_Fec_Suspencion_ITSE"]').val($('#form-archivo-adjunto56 input[name="Archivo_Fec_Suspencion_ITSE"]').val());
+                    //$('#form-modal-editar input[name="Archivo_Fec_Resolucion_denegatoria"]').val($('#form-archivo-adjunto7 input[name="Archivo_Fec_Resolucion_denegatoria"]').val());
+                    $('#form-modal-editar input[name="Archivo_Fec_Emision_Cert_ITSE"]').val($('#form-archivo-adjunto2 input[name="Archivo_Fec_Emision_Cert_ITSE"]').val());
+                    $('#form-modal-editar input[name="Archivo_Fec_Emision_Cert_ITSE"]').val($('#form-archivo-adjunto22 input[name="Archivo_Fec_Emision_Cert_ITSE"]').val());
+                    $('#form-modal-editar input[name="Archivo_Fec_Notificacion_Cert_ITSE"]').val($('#form-archivo-adjunto3 input[name="Archivo_Fec_Notificacion_Cert_ITSE"]').val());
+
+                     
+
+                    $('#form-modal-editar input[name="Archivo_Fec_Revocacion_Licencia_Funcionamiento"]').val($('#form-archivo-adjunto10 input[name="Archivo_Fec_Revocacion_Licencia_Funcionamiento"]').val());
+                     
+
+
+                    $('#form-modal-editar input[name="Archivo_Fec_Emision_Licencia_Funcionamiento"]').val($('#form-archivo-adjunto4 input[name="Archivo_Fec_Emision_Licencia_Funcionamiento"]').val());
+                    $('#form-modal-editar input[name="Archivo_Fec_Notificacion_Licencia_Funcionamiento"]').val($('#form-archivo-adjunto5 input[name="Archivo_Fec_Notificacion_Licencia_Funcionamiento"]').val());
+
+
+
+                } else if (valor == 3 || valor == 4)
+                {
+
+                    $('#form-modal-editar input[name="Archivo_Fec_Suspencion_ITSE_Subsanacion"]').val($('#form-archivo-adjunto6 input[name="Archivo_Fec_Suspencion_ITSE_Subsanacion"]').val());
+                    $('#form-modal-editar input[name="Archivo_Fec_Suspencion_ITSE"]').val($('#form-archivo-adjunto111 input[name="Archivo_Fec_Suspencion_ITSE"]').val());
+                    $('#form-modal-editar input[name="Archivo_Fec_Emision_Cert_ITSE"]').val($('#form-archivo-adjunto8 input[name="Archivo_Fec_Emision_Cert_ITSE"]').val());
+                    $('#form-modal-editar input[name="Archivo_Fec_Emision_Licencia_Funcionamiento"]').val($('#form-archivo-adjunto44 input[name="Archivo_Fec_Emision_Licencia_Funcionamiento"]').val());
+                    $('#form-modal-editar input[name="Archivo_Fec_Notificacion_Cert_ITSE"]').val($('#form-archivo-adjunto9 input[name="Archivo_Fec_Notificacion_Cert_ITSE"]').val());
+                    $('#form-modal-editar input[name="Archivo_Fec_Notificacion_Licencia_Funcionamiento"]').val($('#form-archivo-adjunto55 input[name="Archivo_Fec_Notificacion_Licencia_Funcionamiento"]').val());
+
+                    $('#form-modal-editar input[name="Fec_Suspencion_ITSE_Subsanacion"]').val(document.getElementsByName("Fec_Suspencion_ITSE_Subsanacion")[1].value);
+
+                    $('#form-modal-editar input[name="Cod_Acreditacion_Inspector_ITSE"]').val(document.getElementsByName("Cod_Acreditacion_Inspector_ITSE")[1].value);
+                    //$('#form-modal-editar input[name="Archivo_Fec_Emision_Cert_ITSE"]').val(document.getElementsByName("Archivo_Fec_Emision_Cert_ITSE")[1].value);
+                    //$('#form-modal-editar input[name="Archivo_Fec_Emision_Licencia_Funcionamiento"]').val(document.getElementsByName("Archivo_Fec_Emision_Licencia_Funcionamiento")[1].value);
+                    //$('#form-modal-editar input[name="Archivo_Fec_Notificacion_Cert_ITSE"]').val(document.getElementsByName("Archivo_Fec_Notificacion_Cert_ITSE")[1].value);
+                    //$('#form-modal-editar input[name="Archivo_Fec_Notificacion_Licencia_Funcionamiento"]').val(document.getElementsByName("Archivo_Fec_Notificacion_Licencia_Funcionamiento")[1].value);
+                }
+
+                debugger;
+                //var asd = $('input[name="Numero_Revocacion_Licencia_Funcionamiento"]').val();
+                //var asda = $('#Numero_Revocacion_Licencia_Funcionamiento').val();
+                //var asdasdsa = document.getElementsByName("Numero_Revocacion_Licencia_Funcionamiento")[1].value;
+                //var asdasdaa = $('input[name="Numero_Revocacion_Licencia_Funcionamiento"]').val();
+
+                //$('#form-modal-editar input[name="Numero_Revocacion_Licencia_Funcionamiento"]').val(document.getElementsByName("Numero_Revocacion_Licencia_Funcionamiento")[1].value);
+
+                $('#form-modal-editar input[name="Fec_Emision_Licencia_Funcionamiento"]').val(document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value);
+                $('#form-modal-editar input[name="Fec_Notificacion_Licencia_Funcionamiento"]').val(document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value);
+                $('#form-modal-editar input[name="Fec_Revocacion_Licencia_Funcionamiento"]').val(document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value);
+                
+           
+                //$('#form-modal-editar input[name="Fec_Resolucion_denegatoria"]').val(document.getElementsByName("Fec_Resolucion_denegatoria")[1].value);
+
+                $('#form-modal-editar input[name="NumRUC"]').val(document.getElementsByName("NumRUC")[1].value);
+                $('#form-modal-editar input[name="Actividadogironegocio"]').val(document.getElementsByName("Actividadogironegocio")[1].value);
+                $('#form-modal-editar input[name="Girocomplementario"]').val(document.getElementsByName("Girocomplementario")[1].value);
+                $('#form-modal-editar input[name="Funcion"]').val(document.getElementsByName("Funcion")[1].value);
+                $('#form-modal-editar input[name="Numeral"]').val(document.getElementsByName("Numeral")[1].value);
+                //$('#form-modal-editar input[name="NivelInicial"]').val(document.getElementsByName("NivelInicial")[1].value);
+                //$('#form-modal-editar input[name="NivelFinal"]').val(document.getElementsByName("NivelFinal")[1].value);
+
+                //$('#form-modal-editar input[name="Numero_Resolucion_Revocatoria"]').val(document.getElementsByName("Numero_Resolucion_Revocatoria")[1].value);
+                //$('#form-modal-editar input[name="Renovacion_ITSE"]').val(document.getElementsByName("Renovacion_ITSE")[1].value);
+                $('#form-modal-editar input[name="NivelRiesgo"]').val($('select[name="NivelRiesgo"] option:selected').val());
+                //$('#form-modal-editar input[name="Estado"]').val($('select[name="Estado"] option:selected').val());
+
+                var model = $('#form-modal-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/Miembro/Guardar",
+                    url:'@Url.Content("~/Seguridad/Incentivos/Guardar")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: () => {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: () => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, () => {
+                            sut.Incentivos.listar(1);
+                        });
+                    },
+                    error: (result) => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            }
+            }
+        }
+    };
+
+    function myFunction(elmnt, clr) {
+
+        elmnt.style.color = clr;
+    }
+    $(() => {
+
+
+        var ver;
+        var valor = $('select[name="NivelRiesgo"] option:selected').val();
+        //alert(valor);
+        if (valor == 1 || valor == 2) {
+            $('#orden1').hide();
+            $('#orden11').hide();
+            $('#orden2').show();
+            $('#orden21').show();
+            $('#idinspectores').show();
+            $('#idinspectores2').hide();
+
+
+            $('#nomtab1').replaceWith('<a id="nomtab1" data-toggle="tab" aria-expanded="false" href="#edit-Licencia-Funcionamiento"><i class="fa fa-file"></i> Datos Licencia de Funcionamiento </a>');
+
+            $('#nomtab2').replaceWith('<a id="nomtab2" data-toggle="tab" aria-expanded="false" href="#edit-Datos-ITSE"><i class="fa fa-file"></i> Datos ITSE</a>');
+             
+
+            $('#idfecRevocacion').show();
+
+            $('#idfecNumeroRevocacion').show();
+
+        }
+        else if (valor == 3 || valor == 4) {
+
+            debugger;
+            $('#orden1').show();
+            $('#orden11').show();
+            $('#orden2').hide();
+            $('#orden21').hide();
+            $('#idinspectores').hide();
+            $('#idinspectores2').show();
+            $('#idfecNumeroRevocacion').hide();
+            $('#idfecRevocacion').hide();
+
+            $('#nomtab1').replaceWith('<a id="nomtab1" data-toggle="tab" aria-expanded="false" href="#edit-Licencia-Funcionamiento"><i class="fa fa-file"></i>Datos ITSE </a>');
+
+            $('#nomtab2').replaceWith('<a id="nomtab2" data-toggle="tab" aria-expanded="false" href="#edit-Datos-ITSE"><i class="fa fa-file"></i>Datos Licencia de Funcionamiento </a>');
+
+
+        } else {
+            $('#orden1').hide();
+            $('#orden11').hide();
+            $('#orden2').show();
+            $('#orden21').show();
+            $('#idinspectores').show();
+            $('#idinspectores2').hide();
+            $('#idfecRevocacion').show();
+
+            $('#idfecNumeroRevocacion').show();
+
+            $('#nomtab1').replaceWith('<a id="nomtab1" data-toggle="tab" aria-expanded="false" href="#edit-Licencia-Funcionamiento"><i class="fa fa-file"></i> Datos Licencia de Funcionamiento </a>');
+
+            $('#nomtab2').replaceWith('<a id="nomtab2" data-toggle="tab" aria-expanded="false" href="#edit-Datos-ITSE"><i class="fa fa-file"></i> Datos ITSE</a>');
+        }
+
+        $('input[name="Fec_Ing_Sol"]').bind('change keyup', function () {
+            debugger;
+            var fechaSystem = new Date();
+            var mes = fechaSystem.getMonth() + 1;
+
+
+            //var date1 = $('input[name="Fec_Ing_Sol"]').val().split('/')
+            var date1 = document.getElementsByName("Fec_Ing_Sol")[1].value.split('/')
+
+            var newDate = date1[1] + '/' + date1[0] + '/' + date1[2];
+            var mydate = new Date(newDate);
+            var diames = date1[0] + date1[1];
+            var fecha_Ingreso = mydate.getMonth() + 1;
+
+            var valor = $('select[name="NivelRiesgo"] option:selected').val();
+            if (valor == 0) {
+
+                sut.error.clientErrorShow('mensajesTitulo', 'Seleccionar Nivel para continuar con la validación');
+
+                $('input[name="Fec_Ing_Sol"]').val("");
+                document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value = "";
+                document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                return;
+            }
+
+            //////////caambiar el 2 por el 4
+            ////////if (mes == 2 || mes == 5 || mes == 6) {
+            ////////    if (fecha_Ingreso != 4 && fecha_Ingreso != 5 && fecha_Ingreso != 6) {
+
+
+            ////////        sut.error.clientErrorShow('mensajesTitulo', 'La Fecha Ingresada no se encuentra en el rango  de Abril y Junio');
+            ////////        //showNotification('top', 'right', 'La Fecha Ingresada no se encuentra en el rango  de Abril y Mayo', 2);
+            ////////        $('input[name="Fec_Ing_Sol"]').val("");
+            ////////        document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+            ////////        document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+            ////////        document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value = "";
+            ////////        document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+            ////////        document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+            ////////       // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+            ////////        return;
+            ////////    }
+            ////////    else if (valor == 1 || valor == 2) {
+            ////////        if (diames < 0104 && diames > 1706) {
+            ////////            sut.error.clientErrorShow('mensajesTitulo', 'La Fecha Ingresada esta fuera del tiempo de corte de Abril y Junio');
+            ////////            $('input[name="Fec_Ing_Sol"]').val("");
+            ////////            document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+            ////////            document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+            ////////            document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value = "";
+            ////////            document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+            ////////            document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+            ////////           // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+            ////////            return;
+            ////////        }
+
+            ////////    }
+            ////////    else if (valor == 3 || valor == 4) {
+
+            ////////        if (diames < 0104 && diames > 1806) {
+            ////////            sut.error.clientErrorShow('mensajesTitulo', 'La Fecha Ingresada esta fuera del tiempo de corte de Abril y Junio');
+            ////////            $('input[name="Fec_Ing_Sol"]').val("");
+            ////////            document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+            ////////            document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+            ////////            document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value = "";
+            ////////            document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+            ////////            document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+            ////////           // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+            ////////            return;
+            ////////        }
+            ////////    }
+            ////////    else
+            ////////    {
+            ////////        //sut.error.clientErrorShow('mensajesTitulo', 'La Fecha Ingresada no se encuentra en el rango  de Abril y Mayo');
+            ////////        $('#mensajesTitulo').hide();
+
+            ////////        document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+            ////////        document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+            ////////        document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value = "";
+            ////////        document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+            ////////        document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+
+
+            ////////        $('input[name="Fec_Emision_Cert_ITSE1"]').val("");
+            ////////        $('input[name="Fec_Notificacion_Cert_ITSE1"]').val("");
+            ////////        $('input[name="Fec_Emision_Licencia_Funcionamiento1"]').val("");
+            ////////        $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val("");
+            ////////        $('input[name="Fec_Revocacion_Licencia_Funcionamiento1"]').val("");
+
+            ////////       // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+
+            ////////    }
+            ////////    //caambiar el 2 por el 8
+            ////////} else if (mes == 8 || mes == 9 || mes == 10 || mes == 11) {
+
+
+            ////////    if (fecha_Ingreso != 8 && fecha_Ingreso != 9 && fecha_Ingreso != 10 && fecha_Ingreso != 11) {
+
+
+
+            ////////        sut.error.clientErrorShow('mensajesTitulo', 'La Fecha Ingresada no se encuentra en el rango de Agosto, Septiembre , Octubre y Noviembre');
+            ////////        //showNotification('top', 'right', 'La Fecha Ingresada no se encuentra en el rango  de Junio, Julio, Agosto, Septiembre , Octubre y Noviembre', 2);
+            ////////        $('input[name="Fec_Ing_Sol"]').val("");
+            ////////        document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+            ////////        document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+            ////////        document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value = "";
+            ////////        document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+            ////////        document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+            ////////       // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+
+            ////////        return;
+
+            ////////    } else if (valor == 1 || valor == 2) {
+            ////////        if (diames < 0308 && diames > 1711) {
+            ////////            sut.error.clientErrorShow('mensajesTitulo', 'La Fecha Ingresada esta fuera del tiempo de corte de Agosto, Septiembre , Octubre y Noviembre');
+            ////////            $('input[name="Fec_Ing_Sol"]').val("");
+            ////////            document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+            ////////            document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+            ////////            document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value = "";
+            ////////            document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+            ////////            document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+            ////////           // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+            ////////            return;
+            ////////        }
+
+            ////////    }
+            ////////    else if (valor == 3 || valor == 4) {
+            ////////        if (diames < 0308 && diames > 1811) {
+            ////////            sut.error.clientErrorShow('mensajesTitulo', 'La Fecha Ingresada esta fuera del tiempo de corte de Agosto, Septiembre , Octubre y Noviembre');
+            ////////            $('input[name="Fec_Ing_Sol"]').val("");
+            ////////            document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+            ////////            document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+            ////////            document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value = "";
+            ////////            document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+            ////////            document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+            ////////           // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+            ////////            return;
+            ////////        }
+            ////////    } else {
+            ////////        $('#mensajesTitulo').hide();
+            ////////        document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+            ////////        document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+            ////////        document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value = "";
+            ////////        document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+            ////////        document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+
+            ////////        $('input[name="Fec_Emision_Cert_ITSE1"]').val("");
+            ////////        $('input[name="Fec_Notificacion_Cert_ITSE1"]').val("");
+            ////////        $('input[name="Fec_Emision_Licencia_Funcionamiento1"]').val("");
+            ////////        $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val("");
+            ////////        $('input[name="Fec_Revocacion_Licencia_Funcionamiento1"]').val("");
+            ////////       // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+
+            ////////    }
+            ////////} else {
+            ////////    sut.error.clientErrorShow('mensajes3', 'No existe rango');
+            ////////    //showNotification('top', 'right', 'No existe rango ', 2);
+            ////////    $('input[name="Fec_Ing_Sol"]').val("");
+            ////////    document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+            ////////    document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+            ////////    document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value = "";
+            ////////    document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+            ////////    document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+            ////////   // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+            ////////    return;
+            ////////}
+        });
+
+
+        $('input[name="Fec_Emision_Licencia_Funcionamiento"]').bind('change keyup', function () {
+            debugger;
+            var fecha1 = document.getElementsByName("Fec_Ing_Sol")[1].value.split('/')
+            var numero1 = fecha1[2]+ fecha1[1]+ fecha1[0];
+
+
+            var fecha2 = document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value.split('/')
+            var numero2 = fecha2[2] + fecha2[1] + fecha2[0];
+
+            if (numero1 > numero2) {
+                showNotification('top', 'right', 'La Fecha Emisión Licencia Funcionamiento no puede ser menor a la Fecha Ingreso Solicitud', 2);
+                document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value = "";
+                document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                return;
+            } else {
+                document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+            }
+        });
+
+
+        $('input[name="Fec_Notificacion_Licencia_Funcionamiento"]').bind('change keyup', function () {
+            debugger;
+            var fecha1 = document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value.split('/')
+            var numero1 = fecha1[2] + fecha1[1] + fecha1[0];
+
+
+            var fecha2 = document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value.split('/')
+            var numero2 = fecha2[2] + fecha2[1] + fecha2[0];
+
+            if (numero1 > numero2) {
+                showNotification('top', 'right', 'La Fecha Notificación Licencia Funcionamiento no puede ser menor a la Fecha Ingreso Solicitud', 2);
+                document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Notificacion_Licencia_Funcionamiento")[1].value = "";
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                return;
+            } else
+            {
+                document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+            }
+        });
+
+
+        $('input[name="Fec_Emision_Cert_ITSE"]').bind('change keyup', function () {
+
+            debugger;
+            var fecha1 = document.getElementsByName("Fec_Emision_Licencia_Funcionamiento")[1].value.split('/')
+            var numero1 = fecha1[2] + fecha1[1] + fecha1[0];
+
+
+            var fecha2 = document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value.split('/')
+            var numero2 = fecha2[2] + fecha2[1] + fecha2[0];
+
+            if (numero1 > numero2) {
+                showNotification('top', 'right', 'La Fecha Emisión Certificado ITSE no puede ser menor a la Fecha Emisión Licencia Funcionamiento', 2);
+                document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                return;
+            } else
+            {
+                document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+               // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+
+            }
+        });
+
+        $('input[name="Fec_Emision_Cert_ITSE1"]').bind('change keyup', function () {
+
+            debugger;
+            var fecha1 = document.getElementsByName("Fec_Ing_Sol")[1].value.split('/')
+            var numero1 = fecha1[2] + fecha1[1] + fecha1[0];
+
+
+            var fecha2 = $('input[name="Fec_Emision_Cert_ITSE1"]').val().split('/')
+            var numero2 = fecha2[2] + fecha2[1] + fecha2[0];
+
+            if (numero1 > numero2) {
+                showNotification('top', 'right', 'La Fecha Emisión Certificado ITSE no puede ser menor a la  Fecha Ingreso Solicitud', 2);
+                $('input[name="Fec_Emision_Cert_ITSE1"]').val("");
+                $('input[name="Fec_Notificacion_Cert_ITSE1"]').val("");
+                $('input[name="Fec_Emision_Licencia_Funcionamiento1"]').val("");
+                $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val("");
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                return;
+            } else
+            {
+
+                $('input[name="Fec_Notificacion_Cert_ITSE1"]').val("");
+                $('input[name="Fec_Emision_Licencia_Funcionamiento1"]').val("");
+                $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val("");
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+            }
+        });
+
+
+
+        $('input[name="Fec_Notificacion_Cert_ITSE1"]').bind('change keyup', function () {
+
+            debugger;
+            var fecha1 = $('input[name="Fec_Emision_Cert_ITSE1"]').val().split('/')
+            var numero1 = fecha1[2] + fecha1[1] + fecha1[0];
+
+
+            var fecha2 = $('input[name="Fec_Notificacion_Cert_ITSE1"]').val().split('/')
+            var numero2 = fecha2[2] + fecha2[1] + fecha2[0];
+
+            if (numero1 > numero2) {
+                showNotification('top', 'right', 'La Fecha Notificación Certificado ITSE no puede ser menor a la  Fecha Emisión Certificado ITSE', 2);
+                $('input[name="Fec_Notificacion_Cert_ITSE1"]').val("");
+                $('input[name="Fec_Emision_Licencia_Funcionamiento1"]').val("");
+                $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val("");
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                return;
+            } else
+            {
+                $('input[name="Fec_Emision_Licencia_Funcionamiento1"]').val("");
+                $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val("");
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+            }
+        });
+
+
+        $('input[name="Fec_Emision_Licencia_Funcionamiento1"]').bind('change keyup', function () {
+
+            debugger;
+            var fecha1 = $('input[name="Fec_Emision_Cert_ITSE1"]').val().split('/')
+            var numero1 = fecha1[2] + fecha1[1] + fecha1[0];
+
+
+            var fecha2 = $('input[name="Fec_Emision_Licencia_Funcionamiento1"]').val().split('/')
+            var numero2 = fecha2[2] + fecha2[1] + fecha2[0];
+
+            if (numero1 > numero2) {
+                showNotification('top', 'right', 'La Fecha Emisión Licencia Funcionamiento no puede ser menor a la Fecha Emisión Certificado ITSE ', 2);
+                $('input[name="Fec_Emision_Licencia_Funcionamiento1"]').val("");
+                $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val("");
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                return;
+            } else
+            {
+                $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val("");
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+            }
+        });
+
+
+        $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').bind('change keyup', function () {
+
+            debugger;
+            var fecha1 = $('input[name="Fec_Emision_Licencia_Funcionamiento1"]').val().split('/')
+            var numero1 = fecha1[2] + fecha1[1] + fecha1[0];
+
+
+            var fecha2 = $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val().split('/')
+            var numero2 = fecha2[2] + fecha2[1] + fecha2[0];
+
+            if (numero1 > numero2) {
+                showNotification('top', 'right', 'La Fecha Notificación Licencia Funcionamiento no puede ser menor a la Fecha Emisión Licencia Funcionamiento', 2);
+                $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val("");
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                return;
+            } else
+            {
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+
+            }
+        });
+
+
+
+
+
+
+
+        $('input[name="Fec_Notificacion_Cert_ITSE"]').bind('change keyup', function () {
+            debugger;
+            var fecha1 = document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value.split('/')
+            var numero1 = fecha1[2] + fecha1[1] + fecha1[0];
+
+
+            var fecha2 = document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value.split('/')
+            var numero2 = fecha2[2] + fecha2[1] + fecha2[0];
+
+            if (numero1 > numero2) {
+                showNotification('top', 'right', 'La Fecha Notificación Certificado ITSE no puede ser menor a la Fecha Emisión Certificado ITSE', 2);
+                document.getElementsByName("Fec_Notificacion_Cert_ITSE")[1].value = "";
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                return;
+            } else
+            {
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                //document.getElementsByName("Renovacion_ITSE")[1].value = "";
+            }
+        });
+
+
+        $('input[name="Fec_Revocacion_Licencia_Funcionamiento"]').bind('change keyup', function () {
+            debugger;
+
+            var valor = $('select[name="NivelRiesgo"] option:selected').val();
+            //alert(valor);
+            if (valor == 1 || valor == 2) {
+                debugger;
+                var fecha1 = document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value.split('/')
+                var numero1 = fecha1[2] + fecha1[1] + fecha1[0];
+
+
+                var fecha2 = document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value.split('/')
+                var numero2 = fecha2[2] + fecha2[1] + fecha2[0];
+
+                if (numero1 > numero2) {
+                    showNotification('top', 'right', 'La Fecha Revocación Licencia Funcionamiento no puede ser menor a la Fecha Emisión Certificado ITSE', 2);
+                    document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                   //// document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                    return;
+                } else
+                {
+                   // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                }
+            }
+            else if (valor == 3 || valor == 4) {
+                debugger;
+
+                var fecha1 = $('input[name="Fec_Emision_Cert_ITSE1"]').val().split('/');
+                var numero1 = fecha1[2] + fecha1[1] + fecha1[0];
+
+
+                var fecha2 = document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value.split('/')
+                var numero2 = fecha2[2] + fecha2[1] + fecha2[0];
+
+                if (numero1 > numero2) {
+                    showNotification('top', 'right', 'La Fecha Revocación Licencia Funcionamiento no puede ser menor a la Fecha Emisión Certificado ITSE', 2);
+                    document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+                   // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                    return;
+                } else
+                {
+                   // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+                }
+            }
+
+        });
+
+
+
+        //$('input[name="Renovacion_ITSE"]').bind('change keyup', function () {
+
+        //        var valor = $('select[name="NivelRiesgo"] option:selected').val();
+        //    //alert(valor);
+        //        if (valor == 1 || valor == 2) {
+        //            var fecha1 = document.getElementsByName("Fec_Emision_Cert_ITSE")[1].value.split('/')
+        //            var numero1 = fecha1[2] + fecha1[1] + fecha1[0];
+
+
+        //            var fecha2 = document.getElementsByName("Renovacion_ITSE")[1].value.split('/')
+        //            var numero2 = fecha2[2] + fecha2[1] + fecha2[0];
+
+        //            if (numero1 > numero2) {
+        //                showNotification('top', 'right', 'Renovaciones ITSE no puede ser menor a la Fecha Emisión Certificado ITSE', 2);
+        //               // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+        //                return;
+        //            }
+        //        }
+        //        else if (valor == 3 || valor == 4) {
+        //            var fecha1 = $('input[name="Fec_Emision_Cert_ITSE1"]').val().split('/');
+        //            var numero1 = fecha1[2] + fecha1[1] + fecha1[0];
+
+
+        //            var fecha2 = document.getElementsByName("Renovacion_ITSE")[1].value.split('/')
+        //            var numero2 = fecha2[2] + fecha2[1] + fecha2[0];
+
+        //            if (numero1 > numero2) {
+        //                showNotification('top', 'right', 'Renovaciones ITSE no puede ser menor a la Fecha Emisión Certificado ITSE', 2);
+        //               // document.getElementsByName("Renovacion_ITSE")[1].value = "";
+        //                return;
+        //            }
+        //        }
+
+        //});
+
+
+
+
+        //$('input[name="Fec_Ing_Sol"]').datepicker({format: 'dd/mm/yyyy', endDate: '+0d', language: 'es', autoclose: true});
+        //$('input[name="Fec_Emision_Cert_ITSE"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es', autoclose: true });
+        //$('input[name="Fec_Notificacion_Cert_ITSE"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es', autoclose: true });
+        //$('input[name="Fec_Emision_Licencia_Funcionamiento"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es', autoclose: true });
+        //$('input[name="Fec_Notificacion_Licencia_Funcionamiento"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es', autoclose: true });
+        //$('input[name="Fec_Emision_Cert_ITSE1"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es', autoclose: true });
+        //$('input[name="Fec_Notificacion_Cert_ITSE1"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es', autoclose: true });
+        //$('input[name="Fec_Emision_Licencia_Funcionamiento1"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es', autoclose: true });
+        //$('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es', autoclose: true });
+        //$('input[name="Fec_Revocacion_Licencia_Funcionamiento"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es', autoclose: true });
+        //$('input[name="Renovacion_ITSE"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es', autoclose: true });
+
+
+        $('input[name="Fec_Ing_Sol"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        $('input[name="Fec_Emision_Cert_ITSE"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        $('input[name="Fec_Notificacion_Cert_ITSE"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        $('input[name="Fec_Emision_Licencia_Funcionamiento"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        $('input[name="Fec_Notificacion_Licencia_Funcionamiento"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        $('input[name="Fec_Emision_Cert_ITSE1"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        $('input[name="Fec_Notificacion_Cert_ITSE1"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        $('input[name="Fec_Emision_Licencia_Funcionamiento1"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        $('input[name="Fec_Revocacion_Licencia_Funcionamiento"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        //$('input[name="Renovacion_ITSE"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+
+
+        $('input[name="Fec_Suspencion_ITSE_Subsanacion"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+
+        $('input[name="Fec_Suspencion_ITSE_Subsanacion1"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        $('input[name="Fec_Suspencion_ITSE1"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        $('input[name="Fec_Suspencion_ITSE"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+        //$('input[name="Fec_Resolucion_denegatoria"]').datepicker({ format: 'dd/mm/yyyy', language: 'es', autoclose: true });
+
+
+        $('select[name="NivelRiesgo"]').on('change', (e) => {
+            var valor = $('select[name="NivelRiesgo"] option:selected').val();
+            $('#mensajesTitulo').hide();
+            //alert(valor);
+            if (valor == 1 || valor == 2) {
+
+
+                $('#nomtab1').replaceWith('<a id="nomtab1" data-toggle="tab" aria-expanded="false" href="#edit-Licencia-Funcionamiento"><i class="fa fa-file"></i> Datos Licencia de Funcionamiento </a>');
+
+                $('#nomtab2').replaceWith('<a id="nomtab2" data-toggle="tab" aria-expanded="false" href="#edit-Datos-ITSE"><i class="fa fa-file"></i> Datos ITSE</a>');
+
+
+                $('#orden1').hide();
+                $('#orden11').hide();
+                $('#orden2').show();
+                $('#orden21').show();
+
+                $('#idinspectores').show();
+                $('#idinspectores2').hide();
+
+                $('#idfecRevocacion').show();
+                $('#idfecNumeroRevocacion').show();
+
+
+                $('input[name="Fec_Ing_Sol"]').val("");
+                $('input[name="Fec_Emision_Licencia_Funcionamiento"]').val("");
+                $('input[name="Fec_Notificacion_Licencia_Funcionamiento"]').val("");
+
+                $('input[name="Fec_Emision_Cert_ITSE"]').val("");
+                $('input[name="Fec_Notificacion_Cert_ITSE"]').val("");
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+
+                $('input[name="Fec_Suspencion_ITSE_Subsanacion1"]').val("");
+                $('input[name="Fec_Suspencion_ITSE1"]').val("");
+            }
+            else if (valor == 3 || valor == 4) {
+                debugger;
+
+                $('#nomtab1').replaceWith('<a id="nomtab1" data-toggle="tab" aria-expanded="false" href="#edit-Licencia-Funcionamiento"><i class="fa fa-file"></i>Datos ITSE </a>');
+
+                $('#nomtab2').replaceWith('<a id="nomtab2" data-toggle="tab" aria-expanded="false" href="#edit-Datos-ITSE"><i class="fa fa-file"></i>Datos Licencia de Funcionamiento </a>');
+
+                $('#orden1').show();
+                $('#orden11').show();
+                $('#orden2').hide();
+                $('#orden21').hide();
+
+                $('#idinspectores').hide();
+                $('#idinspectores2').show();
+
+                $('#idfecRevocacion').hide();
+                $('#idfecNumeroRevocacion').hide();
+
+                $('input[name="Fec_Ing_Sol"]').val("");
+                document.getElementsByName("Fec_Revocacion_Licencia_Funcionamiento")[1].value = "";
+
+                $('input[name="Fec_Emision_Cert_ITSE1"]').val("");
+                $('input[name="Fec_Notificacion_Cert_ITSE1"]').val("");
+                $('input[name="Fec_Emision_Licencia_Funcionamiento1"]').val("");
+                $('input[name="Fec_Notificacion_Licencia_Funcionamiento1"]').val("");
+            } else {
+                $('#orden1').hide();
+                $('#orden11').hide();
+                $('#orden2').show();
+                $('#orden21').show();
+                $('#idinspectores').show();
+                $('#idinspectores2').hide();
+            }
+        });
+
+
+
+        $('#form-modal-editar').validate({
+
+            errorPlacement: (error, element) => {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            //rules: {
+            //    NumExpediente: 'required',
+            //    Fec_Ing_Sol: 'required',
+            //    Archivo_Fec_Ing_Sol: 'required',
+            //    Fec_Emision_Cert_ITSE: 'required',
+            //    Fec_Notificacion_Cert_ITSE: 'required',
+            //    Archivo_Fec_Emision_Cert_ITSE: 'required',
+            //    Archivo_Fec_Emision_Licencia_Funcionamiento: 'required',
+            //    Archivo_Fec_Notificacion_Cert_ITSE: 'required',
+            //    Archivo_Fec_Notificacion_Licencia_Funcionamiento: 'required',
+            //    Fec_Emision_Licencia_Funcionamiento: 'required',
+            //    Fec_Notificacion_Licencia_Funcionamiento: 'required',
+            //    Fec_Revocacion_Licencia_Funcionamiento: 'required',
+            //    Cod_Acreditacion_Inspector_ITSE: 'required',
+            //    Renovacion_ITSE: 'required',
+            //    Fec_Ing_Sol: 'required',
+            //},
+            messages: {
+
+            }
+        });
+    });
+    $(function () {
+        sut.control.uploadfileFecha1('form-archivo-adjunto1');
+        sut.control.uploadfileFecha2('form-archivo-adjunto2');
+        sut.control.uploadfileFecha3('form-archivo-adjunto3');
+        sut.control.uploadfileFecha4('form-archivo-adjunto4');
+        sut.control.uploadfileFecha5('form-archivo-adjunto5');
+
+
+        sut.control.uploadfileFecha6('form-archivo-adjunto6');
+        sut.control.uploadfileFecha7('form-archivo-adjunto7');
+        sut.control.uploadfileFecha2('form-archivo-adjunto8');
+        sut.control.uploadfileFecha3('form-archivo-adjunto9');
+
+        sut.control.uploadfileFecha10('form-archivo-adjunto10');
+
+        sut.control.uploadfileFecha6('form-archivo-adjunto12'); 
+        sut.control.uploadfileFecha2('form-archivo-adjunto22');
+        sut.control.uploadfileFecha4('form-archivo-adjunto44');
+        sut.control.uploadfileFecha5('form-archivo-adjunto55');
+
+        sut.control.uploadfileFecha11('form-archivo-adjunto111'); 
+        sut.control.uploadfileFecha11('form-archivo-adjunto56'); 
+
+        
+
+    });
+
+</script>
+

@@ -1,0 +1,148 @@
+﻿<div id="buscarSede" class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Seleccionar PA</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-buscar-sede", @class = "form-horizontal" })) 
+            {
+                <div class="table-responsive">
+                    <table id="tblBuscarSede" class="table table-bordered table-striped table-hover"
+                           data-pagesize="5000"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.Masivo.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th class="colCheck">
+                                    @if (ViewBag.Multi)
+                                    {
+                                        @*<input type="checkbox" id="buscarSedeTodo" />*@ 
+                                    }
+                                </th>
+                                <th>Código</th>
+                                <th>Denominación</th> 
+                            </tr> 
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr><td colspan="4"><div id="paginator"></div></td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+
+            }
+        </div>
+        <div class="modal-footer">
+            @if (ViewBag.Multi)
+            {
+                <a class="btn btn-success btn-sm" href="javascript:sut.Masivo.aceptar();"><i class="fa fa-check"></i> Aceptar</a>
+            }
+            <button type="button" class="btn btn-danger btn-sm" onclick="$(this).parent().parent().parent().parent().parent().modal('hide');"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+</style>
+
+<script>
+
+    var multi = @Html.Raw(ViewBag.multi ? "true" : "false");
+    var expedienteId = @Html.Raw(ViewBag.expedienteId);
+    var datocampo = @Html.Raw(ViewBag.datocampo);
+    var fnAdd = @Html.Raw(ViewBag.FnAdd);
+    var texto1 = "@Html.Raw(ViewBag.Texto1)";
+    var texto2 = "@Html.Raw(ViewBag.Texto2)";
+
+    sut.Masivo = {
+        listar: function (table, page) {
+            debugger;
+            table = $('#' + table);
+            var model = {
+                'filtro.expedienteId': expedienteId,
+                'pageIndex': page,
+                'pageSize': table.data('pagesize')
+            };
+
+            //var sede1 = document.getElementsByName("ProcedimientoSede[0].SedeId");
+            //alert(sede1.value);
+
+            $.ajax({
+                //url: '/Simplificacion/Procedimiento/GetAllLikePaginMasivoObservacion',
+                url: '@Url.Content("~/Simplificacion/Procedimiento/GetAllLikePaginMasivoObservacion")',
+                type: 'GET',
+                data: model,
+                dataType: 'json',
+                beforeSend: function () {
+                    sut.wait.appendProgress('#buscarSede .modal-footer');
+                },
+                success: function (data) {
+                    sut.wait.removeProgress('#buscarSede .modal-footer');
+                    table.data('page', page);
+                    table.data('totalrows', data.totalRows);
+                    sut.Masivo.generar(table, data.lista);
+                    if (data.totalRows == 0){
+                        $('#tblBuscarSede tbody').append('<tr><td colspan="4" class="text-center text-bold">NO EXISTEN REGISTROS</td></td>');
+                    }
+
+
+                },
+                error: function (data) {
+                    sut.error.show('mensajes', data.responseText);
+                }
+            });
+        },
+        generar: function (table, lista) {
+            var tabla = table.children('tbody');
+            tabla.children('tr').remove();
+            var rows = '';
+            var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+            $.each(lista, function (i, r) {
+                if (multi)
+                {
+
+                        rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarSede{0}" type="checkbox" value="{0}|{1}|{2}" /></td><td>{1}</td><td>{2}</td></tr>',
+                            //r.ProcedimientoId, r.Codigo, r.Denominacion, r.TipoProcedimiento, r.TipoProcedimiento);
+                            r.ProcedimientoId, r.Codigo, r.Denominacion );
+                } else {
+                    rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarSede{0}" type="hidden" value="{0}|{1}|{2}" /></td><td>{1}</td><td>{2}</td></tr>',
+                        r.ProcedimientoId, r.Codigo, r.Denominacion);
+                }
+            });
+            sut.pagination.update(table);
+            tabla.append(rows);
+
+        },
+        aceptar: function () {
+            debugger;
+            var inputs = $('#tblBuscarSede tbody tr td input:checked');
+            if (inputs.length > 0) {
+                var data = [];
+                $.each(inputs, function (i, r) {
+                    var v = $(r).val().split('|');
+                    data.push({ ProcedimientoId: Number(v[0]), Codigo: v[1], Denominacion: v[2],datocampo : datocampo , Texto1:texto1, Texto2:texto2});
+                });
+                fnAdd(data);
+
+
+            }
+        },
+        aceptarSingle: function (tr) {
+            var input = $(tr).find('input[id^="chkbuscarSede"]');
+            var v = input.val().split('|');
+            fnAdd({ ProcedimientoId: Number(v[0]), Codigo: v[1], Denominacion: v[2] });
+        }
+    };
+
+    $(function () {
+        debugger;
+        sut.Masivo.listar('tblBuscarSede', 1);
+
+
+        //sut.table.selectRow('#tblBuscarSede', multi, sut.Sede.aceptarSingle);
+    });
+
+</script>

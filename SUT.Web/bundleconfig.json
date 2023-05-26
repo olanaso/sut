@@ -1,0 +1,26 @@
+[
+  {
+    "outputFileName": "dist/css/AdminLTE.min.css",
+    "inputFiles": [
+      "dist/css/AdminLTE.css"
+    ]
+  },
+  {
+    "outputFileName": "Content/login.min.css",
+    "inputFiles": [
+      "Content/login.css"
+    ]
+  },
+  {
+    "outputFileName": "Content/metro-ui/css/metro.min.css",
+    "inputFiles": [
+      "Content/metro-ui/css/metro.css"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/aes.min.js",
+    "inputFiles": [
+      "Scripts/aes.js"
+    ]
+  }
+]

@@ -1,0 +1,2032 @@
+﻿@using Sut.Entities;
+@model Sut.Entities.Procedimiento
+
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Información al ciudadano " + Model.CodigoCorto;
+    ViewBag.Descripcion = "";
+}
+
+<div id="mensajes">
+    @{Html.RenderPartial("_Error");}
+</div>
+
+@using (Html.BeginForm("DatosGenerales", "Procedimiento", new { @area = "Simplificacion" }, FormMethod.Post, new { @id = "form-editar" }))
+{
+    @Html.HiddenFor(model => model.ProcedimientoId)
+    @Html.HiddenFor(model => model.ExpedienteId)
+    @Html.HiddenFor(model => model.Codigo)
+    @Html.HiddenFor(model => model.Operacion)
+    @Html.HiddenFor(model => model.TipoProcedimiento)
+    @Html.HiddenFor(model => model.CategoriaProcedimientoId)
+    @Html.HiddenFor(model => model.TipoProcedimientoId)
+    @Html.HiddenFor(model => model.CodigoCorto)
+
+    @Html.HiddenFor(model => model.SustentoEliminacion)
+    @Html.HiddenFor(model => model.SustTecCalificacion)
+
+    <div class="box box-danger" >
+        <div class="box-body form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label" for="Denominacion">Denominación :</label>
+                <div class="col-sm-10 col-xs-12">
+
+
+                    @if (!ViewBag.EsTupaEstandar && Model.TipoProcedimiento != TipoProcedimiento.Estandar)
+                    {
+                    @Html.TextBoxFor(model => model.Denominacion, new { @class = "form-control", @readonly = "readonly" })
+                    }
+                    else if (ViewBag.EsTupaEstandar && Model.TipoProcedimiento == TipoProcedimiento.Estandar)
+                    {
+                    @Html.TextBoxFor(model => model.Denominacion, new { @class = "form-control" })
+                    }
+                    else
+                    {
+                    @Html.TextBoxFor(model => model.Denominacion, new { @class = "form-control", @readonly = true })
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Tipo :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.TipoProcedimiento(Model.TipoProcedimiento)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Dependencia a Cargo :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.HiddenFor(model => model.UndOrgResponsableId)
+                    <div class="input-group" style="width:100%!important"> 
+                        @if (!ViewBag.EsTupaEstandar && Model.TipoProcedimiento != TipoProcedimiento.Estandar)
+                        {
+                        @Html.TextBoxFor(model => model.UndOrgResponsable.Nombre, new { @class = "form-control", @readonly = "readonly" })
+                        }
+                        else if (ViewBag.EsTupaEstandar && Model.TipoProcedimiento == TipoProcedimiento.Estandar)
+                        {
+                        @Html.TextBoxFor(model => model.UndOrgResponsable.Nombre, new { @class = "form-control" })
+                        }
+                        else
+                        {
+                        @Html.TextBoxFor(model => model.UndOrgResponsable.Nombre, new { @class = "form-control", @readonly = true })
+                        }
+
+                        <div class="input-group-btn">
+                            <a style="display:none;visibility:collapse;" href="javascript:sut.editProcedimiento.openSelectUndOrg('sut.editProcedimiento.setUndOrgResp')" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="box box-default" id="idgeneral">
+        <div class="box-body">
+            <div class="nav-tabs-custom">
+                <div class="tab-content ">
+                    <div id="edit-info-basica" class="tab-pane">
+
+                        @if (!ViewBag.EsTupaEstandar)
+                        {
+                            <div class="table-responsive">
+                                <table id="tblSede" class="table table-condensed table-bordered table-striped" data-cant="0">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:100px;">
+
+                                            </th>
+                                            <th>Sede de atención del trámite</th>
+                                            <th style="width:50px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-principal></tbody>
+                                </table>
+                            </div>
+                        }
+                        <div class="table-responsive">
+
+                            <table id="tblNota" class="table table-condensed table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width:100px;">
+
+                                        </th>
+                                        <th colspan="2">Notas al Ciudadano</th>
+                                        <th style="width:50px;"></th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="4">
+                                            <div class="callout callout-warning" style="height: inherit;padding: inherit;display: block;">
+                                                Colocar las observaciones o información necesaria que facilite el entendimiento del procedimiento.
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="tblPasoSeguir" class="table table-condensed table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width:100px;">
+
+                                        </th>
+                                        <th colspan="1">Pasos a Seguir</th>
+                                        <th style="width:50px;"></th>
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="4">
+                                            <div class="callout callout-warning" style="height: inherit;padding: inherit;display: block;">
+                                                Colocar los pasos necesarios que debe seguir el usuario para el procedimiento.
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        @if (!ViewBag.EsTupaEstandar)
+                        {
+                            <div class="table-responsive">
+                                <table id="tblCanales" class="table table-condensed table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:50px;"></th>
+                                            <th>Canales de Atención</th>
+                                            <th>Comentarios</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int i = 0;
+                                        }
+
+                                        @if (Model.ProcedimientoDatoAdicional.Count(x => x.Tipo == 1) > 0)
+                                        {
+                                            for (i = 0; i < Model.ProcedimientoDatoAdicional.Count(x => x.Tipo == 1); i++)
+                                            {
+                                                if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].ProcedimientoId)
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].MetaDatoId)
+                                                            @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar })
+                                                        </td>
+                                                        <td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>
+                                                        <td>@Html.TextAreaFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true })</td>
+
+
+
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+
+                                                    <tr>
+                                                        <td>
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].ProcedimientoId)
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].MetaDatoId)
+                                                            @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @disabled = "disabled " })
+                                                        </td>
+                                                        <td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>
+
+                                                        <td>@Html.TextAreaFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true, @readonly = "readonly" })</td>
+
+
+
+                                                    </tr>
+
+                                                }
+
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr><td colspan="3">NO SE TIENEN CANALES DE ATENCIÓN DISPONIBLES</td></tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="table-responsive">
+                                <table id="tblFormasPago" class="table table-condensed table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:50px;"></th>
+                                            <th>Formas de Pago</th>
+                                            <th>Comentarios</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.ProcedimientoDatoAdicional.Count(x => x.Tipo == 2) > 0)
+                                        {
+                                            for (; i < Model.ProcedimientoDatoAdicional.Count(); i++)
+                                            {
+
+                                                if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                                {
+
+                                                    if (Model.ProcedimientoDatoAdicional[i].MetaDato.Entero01 != Model.ProcedimientoDatoAdicional[i - 1].MetaDato.Entero01)
+                                                    {
+                                                        <tr>
+                                                            <td></td>
+                                                            <td><strong>@Model.ProcedimientoDatoAdicional[i].MetaDato.Padre.Nombre</strong></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    }
+                                                    <tr>
+                                                        <td>
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].ProcedimientoId)
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].MetaDatoId)
+                                                            @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked)
+                                                        </td>
+                                                        <td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>
+                                                        <td>@Html.TextAreaFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @norequired = true })</td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    if (Model.ProcedimientoDatoAdicional[i].MetaDato.Entero01 != Model.ProcedimientoDatoAdicional[i - 1].MetaDato.Entero01)
+                                                    {
+                                                        <tr>
+                                                            <td></td>
+                                                            <td><strong>@Model.ProcedimientoDatoAdicional[i].MetaDato.Padre.Nombre</strong></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    }
+                                                    <tr>
+                                                        <td>
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].ProcedimientoId)
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].MetaDatoId)
+                                                            @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled " })
+
+                                                        </td>
+                                                        <td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>
+                                                        <td>@Html.TextAreaFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @norequired = true, @disabled = "disabled " })</td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr><td colspan="3">NO SE TIENEN FORMAS DE PAGO DISPONIBLES</td></tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                                            <div class="form-horizontal">
+
+                                                <h3>Atención de Consultas sobre el Procedimiento:</h3>
+                                                <div class="form-group">
+                                                    <label class="col-sm-4 col-xs-12 control-label">Teléfono :</label>
+                                                    <div class="col-sm-8 col-xs-12">
+                                                        @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                                        {
+                                                            @Html.TextBoxFor(model => model.Telefono, new { @class = "form-control" })
+                                                        }
+                                                        else
+                                                        { @Html.TextBoxFor(model => model.Telefono, new { @class = "form-control", @disabled = "disabled " })}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-4 col-xs-12 control-label">Anexo :</label>
+                                                    <div class="col-sm-8 col-xs-12">
+                                                        @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                                        {
+                                                            @Html.TextBoxFor(model => model.Anexo, new { @class = "form-control" })
+                                                        }
+                                                        else
+                                                        { @Html.TextBoxFor(model => model.Anexo, new { @class = "form-control", @disabled = "disabled " })}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-4 col-xs-12 control-label">Correo Electrónico :</label>
+                                                    <div class="col-sm-8 col-xs-12">
+                                                        @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                                        {
+                                                            @Html.TextBoxFor(model => model.Correo, new { @class = "form-control", @norequired = true })
+                                                        }
+                                                        else
+                                                        { @Html.TextBoxFor(model => model.Correo, new { @class = "form-control", @norequired = true, @disabled = "disabled " })}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                                            }
+
+
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div> 
+
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+<div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;z-index: 5;">
+    <a href="@Url.Content("~/Simplificacion/Expediente/VerObservacion/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a> 
+
+</div>
+  
+
+
+@section Style{
+    <style>
+        #tblCanales thead tr th, #tblFormasPago thead tr th {
+            text-align: center;
+        }
+
+        #divBotones {
+            /*position: relative;
+            width: 100%;
+            display: block;*/
+        }
+            /*.menu-compensador {
+            position: relative;
+            width: 100%;
+            display: none;
+        }*/
+            #divBotones.fixed {
+                /*z-index: 1000;
+            position: fixed;*/
+                /*top: 0;
+            left: 0;
+            right: 0;*/
+            }
+        /*.menu-compensador.fixed {
+            display: block;
+        }*/
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.editProcedimiento = {
+
+            tab: '@Request.QueryString["tab"]',
+            esProcEstadar: @Html.Raw(Model.TipoProcedimiento == TipoProcedimiento.Estandar ? "true" : "false") ,
+            esCargaInicial: @MvcHtmlString.Create(ViewBag.EsCargaInicial ? "true" : "false") ,
+            esTupaEstandar: @MvcHtmlString.Create(ViewBag.EsTupaEstandar ? "true" : "false") ,
+
+
+            camposNoRequerido: function () {
+                debugger;
+                var lista = $("input[norequired=True]");
+
+                var countCamposVacias = 0;
+
+                $.each(lista, function () {
+                    if ($(this).val() === "") {
+                        $(this).css({ "border-color": "#e4e423", "border-width": "3px" });
+                        countCamposVacias += 1;
+                    }
+                });
+
+                if (countCamposVacias > 0) {
+                    sut.msg.CamposVacios("Hay campos en blanco, desea continuar con el registro", function () {
+                        sut.editProcedimiento.guardar(false)
+                    });
+                }
+                else {
+                    sut.editProcedimiento.guardar(false)
+                }
+            },
+            terminarInfCdno: function () {
+                var valid = true;
+                if (valid && !sut.editProcedimiento.esTupaEstandar) {
+                    valid = $('#tblSede tbody tr').size() > 0;
+                    //if(!valid) sut.error.clientErrorShow('mensajes', 'Debe agregar al menos una Sede donde se atiende el trámite. Ingresarlo en la casilla de "Información al ciudadano" del procedimiento.');
+                    if (!valid) showNotification('top', 'right', 'Debe agregar al menos una Sede donde se atiende el trámite. Ingresarlo en la casilla de "Información al ciudadano" del procedimiento.', 2);
+                }
+
+                if (valid) {
+                    valid = $('#tblPasoSeguir tbody tr').size() > 0;
+                    //if (!valid) sut.error.clientErrorShow('mensajes', 'Debe indicar los pasos a seguir para la realización del trámite. Ingresarlo en la casilla de "Información al ciudadano" del procedimiento.');
+
+                    if (!valid) showNotification('top', 'right', 'Debe indicar los pasos a seguir para la realización del trámite. Ingresarlo en la casilla de "Información al ciudadano" del procedimiento.', 2);
+                }
+
+                if (valid) {
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/ActivarSustento',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/TerminarSustento")',
+                        data: {tipo: 5, ProcedimientoId: @Model.ProcedimientoId},
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+
+
+                            showNotification('top', 'right', 'El Registro se Termino Satisfactoriamente', 1);
+                            setTimeout("reFresh()", 800);
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }
+            },
+            activarInfCdno: function () {
+
+                sut.msg.confirm('Si activa el registro podrá modificarlo nuevamente.', () => {
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/ActivarSustento',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/ActivarSustento")',
+                        data: {tipo: 5, ProcedimientoId: @Model.ProcedimientoId},
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+
+                            showNotification('top', 'right', 'El Registro se Activo Satisfactoriamente', 1);
+                            setTimeout("reFresh()", 800);
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                });
+
+            },
+
+            setUndOrgResp: function (data) {
+                $('#modal-ventana').modal('hide');
+                $('input[name="UndOrgResponsableId"]').val(data.id);
+                $('input[name="UndOrgResponsable.Nombre"]').val(data.nombre);
+            },
+            setUndOrgRecon: function (data) {
+                $('#modal-ventana').modal('hide');
+                $('input[name="UndOrgReconsideracionId"]').val(data.id);
+                $('input[name="UndOrgReconsideracion.Nombre"]').val(data.nombre);
+            },
+            setUndOrgApel: function (data) {
+                $('#modal-ventana').modal('hide');
+                $('input[name="UndOrgApelacionId"]').val(data.id);
+                $('input[name="UndOrgApelacion.Nombre"]').val(data.nombre);
+            },
+            setUndOrgPres: function (data) {
+                $('#modal-ventana').modal('hide');
+                $('input[name="UndOrgPresentDocumentacionId"]').val(data.id);
+                $('input[name="UndOrgPresentDocumentacion.Nombre"]').val(data.nombre);
+            },
+            salir: function (expediente) {
+                ;
+                sut.msg.salir('¿Desea guardar los cambios efectuados?'
+                    , function (d) {
+                        sut.editProcedimiento.guardar(true).then(function () {
+                            window.location = expediente;
+                        });
+                    }, function () {
+                        $(location).attr('href', expediente);
+
+                    });
+            },
+
+            volver: function (expediente) {
+                $(location).attr('href', expediente);
+            },
+
+            Sede: {
+                openSelect: function () {
+                    debugger;
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/Sede/Select',
+                        url: '@Url.Content("~/Simplificacion/Sede/Select")',
+                        data: { multi: true, fnAdd: 'sut.editProcedimiento.Sede.add' },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                            var sede1 = document.getElementsByName("ProcedimientoSede[0].SedeId");
+                            //alert(sede1.value);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    }); 
+                    
+                },
+                init: function () {
+                    debugger;
+                    var lista = @Html.Raw(ViewBag.ListaSede != null ? ViewBag.ListaSede : "[]");
+                    var tblSede = $('#tblSede tbody');
+
+
+                    if (lista.length <= 0) {
+                        $('#mensaje2').hide();
+                        $('#mensaje1').show();
+
+
+                    } else {
+                        $('#mensaje2').show();
+                        $('#mensaje1').hide();
+                        //sut.control.Actualizartexto();
+                    }
+
+                    if (lista.length > 0) {
+                        var rows = ""
+                        $.each(lista, function (i, r) {
+
+                            rows += sut.string.format('<tr data-rowPadre="{0}">',i);
+
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span><input type="hidden" name="ProcedimientoSede[{1}].SedeId" value="{2}" />', i + 1,i, r.SedeId);
+                            rows += sut.string.format('<input type="hidden" name="ProcedimientoId" value="{1}" />',i,r.ProcedimientoId);
+                            rows += '</td>';
+
+                            rows += sut.string.format('<td>{0}<br />{1}<br />{2}<br /></td>', r.Nombre || '', r.Direccion || '', r.Horario || '');
+                            rows += '<td><div class="btn-group">';
+                            
+                            rows += '</div></td>';
+                            rows += '</tr>';
+
+                            rows += sut.string.format('<tr><td colspan="5"><table class="table table-condensed table-bordered" data-indexParent="{0}">',i);
+                            rows += '<thead><tr><th style="width:100px;"></th><th style="width:100px;">'; 
+                            rows += '</th><th>Unidades donde se presenta la documentación:</th><th style="width:100px;"></th></tr></thead><tbody>';
+                            rows += sut.editProcedimiento.UndOrgRecepcion.newFila(i,JSON.parse(r.UndOrgRecepcionDocumentos),r.ProcedimientoId,r.SedeId);
+                            rows += '</tbody></table></td></tr>';
+                            rows += "</tr>";
+
+
+                            tblSede.append(rows);
+                            rows = "";
+                        });
+                    }
+                },
+                add: function (data) {
+                    debugger;
+                    $('#modal-ventana').modal('hide');
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/MaestroFijo/GetOneByEntidad',
+                        url: '@Url.Content("~/Simplificacion/MaestroFijo/GetOneByEntidad")',
+                        data: { EntidadId: @Model.Expediente.EntidadId },
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container-editar');
+                            //$('#modal-ventana-editar').modal('show');
+                        },
+                        success: function (LstUndOrg) {
+                            //$('#ventana-container-editar').html(data);
+                            debugger;
+                            var d = data;
+                            var x = JSON.parse(LstUndOrg);
+
+                            $.each(d,function(i,r){
+                                d[i].ListaUndOrganica = [];
+
+                                $.each(x,function(index,result){
+                                    if(r.SedeId === result.SedeId){
+                                        d[i].ListaUndOrganica.push(result);
+                                    }
+                                });
+                            });
+
+
+                            sut.editProcedimiento.Sede.generar(d);
+                            sut.editProcedimiento.guardar(false);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana-editar').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                delete: function (id) {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                    var num = 1;
+                    $.each($('#tblSede tbody tr[data-rowPadre]'), function (index, tr) {
+                        if (index == id){
+                            $(tr).remove();
+                            $('table[data-indexparent='+ id +']').remove();
+                        }
+                    });
+
+                    sut.editProcedimiento.Sede.update();
+                    //});
+                },
+                update: function () {
+
+                    var concatLstOrganica = "";
+                    var count = 0;
+                    $.each($('#tblSede tbody tr[data-rowPadre]'), function (i, tr) {
+
+                        oldParentId = $(this).attr("data-rowPadre");
+                        ProcedimientoId = $(tr).find('td input[name="ProcedimientoId"]').val();
+
+
+                        $(tr).attr("data-rowPadre",count);
+                        $(tr).find('td span').html(count + 1);
+                        $(tr).find('td input[name$="SedeId"]').attr('name', sut.string.format('ProcedimientoSede[{0}].SedeId', count));
+                        $(tr).find('td a').attr("href",sut.string.format('javascript:sut.editProcedimiento.Sede.delete({0})', count));
+
+                        $.each($('#tblSede tbody tr table'), function (idx, trc) {
+                            if($(trc).attr("data-indexParent") === oldParentId){
+
+
+                                var rowsUndOrg = $(trc).find("tbody tr");
+
+                                $.each(rowsUndOrg,function(x,y){
+                                    $(y).attr('data-indexParent',count);
+                                    $(y).find('td input[name$="UnidadOrganicaId"]').attr("name", sut.string.format('ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].UnidadOrganicaId', count, x));
+                                    $(y).find('td input[name$="ProcedimientoId"]').attr("name", sut.string.format('ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].ProcedimientoId', count, x));
+                                    $(y).find('td input[name$="SedeId"]').attr("name", sut.string.format('ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].SedeId', count, x));
+                                    $(y).find('td a').attr("href",sut.string.format('javascript:sut.editProcedimiento.UndOrgRecepcion.borrar({0},{1})', count ,x));
+                                })
+
+                                $(trc).attr("data-indexParent",count);
+                            }
+                        });
+
+                        count++;
+                    });
+
+
+                    $.each($("#tblCanales tbody tr"), function (i, v) {
+
+                        var c = $(this).find("input:checkbox");
+                        var t = $(this).find("input:text");
+
+
+                        if (concatLstOrganica === "") {
+
+                            if ($(c).attr("original") !== "1") {
+                                if ($(c).attr("oficinaAutocompletar") === "1") {
+
+                                    $(t).val(concatLstOrganica);
+                                    $(c).prop("checked", false);
+
+                                }
+                            }
+                        } else {
+                            if ($(c).attr("original") !== "1") {
+                                if ($(c).attr("oficinaAutocompletar") === "1") {
+
+                                    $(t).val(concatLstOrganica);
+                                    $(c).prop("checked", true);
+                                }
+                            }
+                        }
+                    });
+                },
+                generar : function(data){
+
+                    var tblSede = $('#tblSede tbody[data-principal]');
+                    var s = tblSede.find('tr[data-rowPadre]').size();
+
+
+                    var trSedes = $("#tblSede tbody tr[data-rowPadre]");
+                    $.each(trSedes,function(i,r){
+                        var v = parseInt($(r).find('td input[name$="SedeId"]').val());
+                        var find = false;
+                        $.each(data,function(idx,re){
+                            if(re.SedeId === v){
+                                data.splice(idx,1);
+                                find = true;
+                            }
+
+                            if(find)
+                                return false;
+                        })
+
+                    });
+
+                    $.each(data,function(i,r){
+                        var rows = "";
+                        rows += sut.string.format('<tr data-rowPadre="{0}">',s);
+
+                        rows += '<td>';
+                        rows += sut.string.format('<span>{0}</span><input type="hidden" name="ProcedimientoSede[{1}].SedeId" value="{2}" />', s + 1,s, r.SedeId);
+                        rows += sut.string.format('<input type="hidden" name="ProcedimientoId" value="{0}" />',null);
+                        rows += '</td>';
+
+                        rows += sut.string.format('<td>{0}<br />{1}<br />{2}<br /></td>', r.Nombre || '', r.Direccion || '', r.Horario || '');
+                        rows += '<td><div class="btn-group">';
+                         
+                        rows += '</div></td>';
+                        rows += '</tr>';
+
+                        rows += sut.string.format('<tr><td colspan="5"><table class="table table-condensed table-bordered" data-indexParent="{0}">',s);
+                        rows += '<thead><tr><th style="width:100px;"></th><th style="width:100px;">';
+                         
+                        rows += '</th><th>Unidades donde se presenta la documentación:</th><th style="width:100px;"></th></tr></thead><tbody>';
+                        rows += '</tbody></table></td></tr>';
+                        rows += "</tr>";
+
+
+                        tblSede.append(rows);
+                        s++;
+                        sut.editProcedimiento.Sede.update();
+                    });
+
+
+                }
+            },
+            UndOrgRecepcion : {
+                UndOrgProcediemientoId:0,
+                UndOrgSedeIdProcedimiento:0,
+                IndexParent : 0,
+                newFila : function(pIndexParent,UndOrgSede,pProcedimientoId,pSedeId){
+                    debugger;
+                    var rows = "";
+                    $.each(UndOrgSede,function(i,r){
+
+                        if(pSedeId == r.SedeId){
+                            rows += sut.string.format('<tr data-index="{0}" data-indexParent="{1}" class="UndOrg" >', i,pIndexParent);
+                            rows += "<td></td>";
+                            rows += '<td>';
+                            //rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].UnidadOrganicaId" value="{2}" />', pIndexParent,i, r.UnidadOrganicaId);
+                            rows += sut.string.format('<input type="hidden" name="ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].ProcedimientoId" value="{2}" />', pIndexParent, i , pProcedimientoId);
+                            rows += sut.string.format('<input type="hidden" name="ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].SedeId" value="{2}" />', pIndexParent,i, r.SedeId);
+                            rows += '</td>';
+                            rows += sut.string.format("<td>{0}</td>", r.nombre);
+                            if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7) {
+                                rows += sut.string.format('<td> ');
+                               
+                                rows += sut.string.format('</td>', pIndexParent,i);
+                            }
+                            rows += '</tr>'
+                        }
+                    });
+
+                    return rows;
+                },
+                newFiladata : function(pIndexParent,UndOrgSede,pProcedimientoId,pSedeId){
+                    debugger;
+                    var rows = "";
+                    $.each(UndOrgSede,function(i,r){
+
+                        if(pSedeId == r.SedeId){
+                            rows=  rows +','+ r.nombre ;
+                        }
+                    });
+
+                    return rows;
+                },
+                openSelectUndOrg: function (pProcedimientoId,pSedeId,text,pIndexParent) {
+                    debugger;
+                    UndOrgProcediemientoId = pProcedimientoId;
+                    UndOrgSedeIdProcedimiento = pSedeId;
+                    IndexParent = pIndexParent;
+
+                    if(pProcedimientoId==null){
+
+
+                        showNotification('top', 'right', 'Debe guardar la información para poder reconocer la Sede Agregado.', 2);
+                        return;
+                    }
+
+
+                    debugger;
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/UnidadOrganica/Select',
+                        url: '@Url.Content("~/Simplificacion/UnidadOrganica/Select")',
+                        data: { multi: true, fnAdd: 'sut.editProcedimiento.UndOrgRecepcion.setUndOrg' ,texto:text, SedeId : UndOrgSedeIdProcedimiento},
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container-editar');
+                            $('#modal-ventana-editar').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container-editar').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana-editar').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                setUndOrg: function (data) {
+                    debugger;
+                    $('#modal-ventana-editar').modal('hide');
+
+                    if (!$.isArray(data)) data = [data];
+
+
+                    var tabla = $('table[data-indexParent=' + IndexParent +'] tbody').eq(0);
+                    var s = tabla.children('tr').size();
+
+                    var trUndOrg =  $('table[data-indexParent=' + IndexParent +'] tbody tr');
+
+                    $.each(trUndOrg,function(i,v){
+
+                        var idUndOrg = parseInt($(v).find("td input[name$=UnidadOrganicaId]").val());
+                        var find = false;
+                        $.each(data,function(ix,vx){
+                            if(vx.id === idUndOrg){
+                                data.splice(ix,1);
+                                find = true;
+                            }
+
+                            if(find)
+                                return false;
+                        })
+                    });
+
+                    var rows = '';
+
+                    $.each(data, (i, r) => {
+                        rows += sut.string.format('<tr data-index="{0}" class="UndOrg" >', i);
+                        rows += "<td></td>";
+                        rows += '<td>';
+                        //rows += sut.string.format('<span>{0}</span>', i + 1);
+                        rows += sut.string.format('<input type="hidden" name="ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].ProcedimientoId" value="{2}" />', IndexParent,s, UndOrgProcediemientoId);
+                        rows += sut.string.format('<input type="hidden" name="ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].SedeId" value="{2}" />', IndexParent,s, UndOrgSedeIdProcedimiento);
+                        rows += sut.string.format('<input type="hidden" name="ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].UnidadOrganicaId" value="{2}" />', IndexParent,s, r.id);
+
+                        rows += '</td>';
+                        rows += sut.string.format("<td>{0}</td>",r.nombre);
+                        rows += sut.string.format('<td>');
+                        
+                        rows += sut.string.format('</td>');
+                        rows += '</tr>'
+                    });
+
+                    tabla.append(rows);
+
+                    sut.editProcedimiento.UndOrgRecepcion.actualizar(IndexParent);
+
+
+                },
+                borrar : function(pIndexParent, index){
+                    var tr = $('table[data-indexParent=' + pIndexParent +'] tbody tr');
+
+                    $(tr).eq(index).remove();;
+
+
+                    sut.editProcedimiento.UndOrgRecepcion.actualizar(pIndexParent);
+                },
+                actualizar : function(pIndexParent){
+
+                    var rows = $('table[data-indexParent=' + pIndexParent +'] tbody').eq(0).find("tr");
+
+                    $.each(rows,function(i,tr){
+                        $(tr).data("index",i);
+                        //$(tr).find('td span').html(i+1);
+                        $(tr).find('td input[name$="ProcedimientoId"]').attr("name", sut.string.format('ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].ProcedimientoId', pIndexParent, i));
+                        $(tr).find('td input[name$="SedeId"]').attr("name", sut.string.format('ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].SedeId', pIndexParent, i));
+                        $(tr).find('td input[name$="UnidadOrganicaId"]').attr("name", sut.string.format('ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].UnidadOrganicaId', pIndexParent, i));
+                        $(tr).find('td a').attr('href',sut.string.format('javascript:sut.editProcedimiento.UndOrgRecepcion.borrar({0},{1})', pIndexParent ,i));
+                    });
+                }
+            },
+            Nota: {
+
+                tipos: @Html.Raw(ViewBag.TipoNota != null ? ViewBag.TipoNota : "[]"),
+                comboTipo: function (index, id) {
+
+                    if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7) {
+                        var cb = sut.string.format('<select class="form-control" name="NotaCiudadano[{0}].TipoNotaId" >', index);
+                        $.each(sut.editProcedimiento.Nota.tipos, function (i, r) {
+                            cb += sut.string.format('<option value="{0}" {2}>{1}</option>', r.MetaDatoId, r.Nombre, r.MetaDatoId == id ? 'selected' : '');
+                        });
+                        cb += '</select>';
+                    } else {
+                        var cb = sut.string.format('<select class="form-control" name="NotaCiudadano[{0}].TipoNotaId" disabled="disabled ">', index);
+                        $.each(sut.editProcedimiento.Nota.tipos, function (i, r) {
+                            cb += sut.string.format('<option value="{0}" {2}>{1}</option>', r.MetaDatoId, r.Nombre, r.MetaDatoId == id ? 'selected' : '');
+                        });
+                        cb += '</select>';
+                    }
+                    return cb;
+                },
+                init: function () {
+                    debugger;
+                    var lista = @Html.Raw(ViewBag.ListaNota != null ? ViewBag.ListaNota : "[]");
+                    var tabla = $('#tblNota tbody');
+
+                    if (lista.length <= 0) {
+                        $('#mensaje2').hide();
+                        $('#mensaje1').show();
+
+
+                    } else {
+                        $('#mensaje2').show();
+                        $('#mensaje1').hide();
+                        //sut.control.Actualizartexto();
+                    }
+
+                    if (lista.length > 0) {
+                        var data = [];
+                        $.each(lista, function (i, r) {
+                            var rows = '';
+                            rows += '<tr>';
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="NotaCiudadano[{0}].NotaCiudadanoId" value="{1}" />', i, r.NotaCiudadanoId);
+                            rows += sut.string.format('<input type="hidden" name="NotaCiudadano[{0}].Orden" value="{1}" />', i, i + 1);
+                            rows += '</td>';
+                            rows += sut.string.format('<td>{0}</td>', sut.editProcedimiento.Nota.comboTipo(i, r.TipoNotaId));
+                            if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7) {
+                                rows += sut.string.format('<td><textarea name="NotaCiudadano[{0}].Nota" class="form-control" required >{1}</textarea></td>', i, r.Nota || '');
+                            } else {
+                                rows += sut.string.format('<td><textarea name="NotaCiudadano[{0}].Nota" disabled="disabled" class="form-control" required >{1}</textarea></td>', i, r.Nota || '');
+                            }
+
+                            rows += '<td><div class="btn-group">';
+                            
+                            rows += '</div></td>';
+                            rows += '</tr>';
+
+                            tabla.append(rows);
+                        });
+                    }
+                },
+                add: function () {
+                    var tabla = $('#tblNota tbody');
+                    var rows = '';
+                    rows += '<tr>';
+                    rows += '<td>';
+                    rows += '<span>0</span>';
+                    rows += '<input type="hidden" name="NotaCiudadano[0].NotaCiudadanoId" value="0" />';
+                    rows += '<input type="hidden" name="NotaCiudadano[0].Orden" value="0" />';
+                    rows += '</td>';
+                    rows += sut.string.format('<td>{0}</td>', sut.editProcedimiento.Nota.comboTipo(0, 0));
+                    rows += sut.string.format('<td><textarea name="NotaCiudadano[0].Nota" class="form-control" required></textarea></td>', '');
+                    rows += '<td><div class="btn-group">';
+                   
+                    rows += '</div></td>';
+                    rows += '</tr>';
+
+                    tabla.append(rows);
+                    sut.editProcedimiento.Nota.update();
+                },
+                delete: function (id) {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                    var num = 1;
+                    $.each($('#tblNota tbody tr'), function (index, tr) {
+                        var NotaCiudadanoId = Number($(tr).find('td input[name$="NotaCiudadanoId"]').val());
+                        if (NotaCiudadanoId == id) $(tr).remove();
+                    });
+                    sut.editProcedimiento.Nota.update();
+                    //});
+                },
+                update: function () {
+                    $.each($('#tblNota tbody tr'), function (i, tr) {
+                        $(tr).find('td span').html(i + 1);
+                        $(tr).find('td input[name$="NotaCiudadanoId"]').attr('name', sut.string.format('NotaCiudadano[{0}].NotaCiudadanoId', i)).val(i + 1)
+                        $(tr).find('td input[name$="Orden"]').attr('name', sut.string.format('NotaCiudadano[{0}].Orden', i)).val(i + 1)
+                        $(tr).find('td textarea[name$="Nota"]').attr('name', sut.string.format('NotaCiudadano[{0}].Nota', i))
+                        $(tr).find('td select[name$="TipoNotaId"]').attr('name', sut.string.format('NotaCiudadano[{0}].TipoNotaId', i))
+                        $(tr).find('td div a').attr('href', sut.string.format('javascript:sut.editProcedimiento.Nota.delete({0})', i + 1));
+                    });
+                }
+            },
+            PasoSeguir: {
+                init: function () {
+                    var lista = @Html.Raw(ViewBag.ListaPasoSeguir != null ? ViewBag.ListaPasoSeguir : "[]");
+                    var tabla = $('#tblPasoSeguir tbody');
+
+                    if (lista.length <= 0) {
+                        $('#mensaje2').hide();
+                        $('#mensaje1').show();
+
+                    } else {
+                        $('#mensaje2').show();
+                        $('#mensaje1').hide();
+                        //sut.control.Actualizartexto();
+                    }
+                    if (lista.length > 0) {
+                        var data = [];
+                        $.each(lista, function (i, r) {
+                            var rows = '';
+                            rows += '<tr>';
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="PasoSeguir[{0}].PasoSeguirId" value="{1}" />', i, r.PasoSeguirId);
+                            rows += '</td>';
+                            if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7) {
+                                rows += sut.string.format('<td><textarea name="PasoSeguir[{0}].Descripcion" class="form-control" required >{1}</textarea></td>', i, r.Descripcion || '');
+                            } else {
+                                rows += sut.string.format('<td><textarea name="PasoSeguir[{0}].Descripcion" disabled="disabled" class="form-control" required >{1}</textarea></td>', i, r.Descripcion || '');
+                            }
+                            rows += '<td><div class="btn-group">';
+                            
+                            rows += '</div></td>';
+                            rows += '</tr>';
+
+                            tabla.append(rows);
+                        });
+                    }
+                },
+                add: function () {
+                    var tabla = $('#tblPasoSeguir tbody');
+                    var rows = '';
+                    rows += '<tr>';
+                    rows += '<td>';
+                    rows += '<span>0</span>';
+                    rows += '<input type="hidden" name="PasoSeguir[0].PasoSeguirId" value="0" />';
+                    rows += '</td>';
+                    rows += sut.string.format('<td><textarea name="PasoSeguir[0].Descripcion" class="form-control" required ></textarea></td>', '');
+                    rows += '<td><div class="btn-group">';
+                     
+                    rows += '</div></td>';
+                    rows += '</tr>';
+
+                    tabla.append(rows);
+                    sut.editProcedimiento.PasoSeguir.update();
+                },
+                delete: function (id) {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                    var num = 1;
+                    $.each($('#tblPasoSeguir tbody tr'), function (index, tr) {
+                        var PasoSeguirId = Number($(tr).find('td input[name$="PasoSeguirId"]').val());
+                        if (PasoSeguirId == id) $(tr).remove();
+                    });
+                    sut.editProcedimiento.PasoSeguir.update();
+                    //});
+                },
+                update: function () {
+                    $.each($('#tblPasoSeguir tbody tr'), function (i, tr) {
+                        $(tr).find('td span').html(i + 1);
+                        $(tr).find('td input[name$="PasoSeguirId"]').attr('name', sut.string.format('PasoSeguir[{0}].PasoSeguirId', i)).val(i + 1);
+                        $(tr).find('td textarea[name$="Descripcion"]').attr('name', sut.string.format('PasoSeguir[{0}].Descripcion', i));
+                        $(tr).find('td div a').attr('href', sut.string.format('javascript:sut.editProcedimiento.PasoSeguir.delete({0})', i + 1));
+                    });
+                }
+            },
+            Modalidad : {
+                init: function () {
+                    var lista = @Html.Raw(ViewBag.ListaModalidad != null ? ViewBag.ListaModalidad : "[]");
+                    var tabla = $('#tblModalidad tbody');
+
+                    if (lista.length > 0) {
+                        var data = [];
+                        $.each(lista, function (i, r) {
+                            var rows = '';
+                            rows += sut.string.format('<tr data-index="{0}" >', i);
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="TablaAsme[{0}].TablaAsmeId" value="{1}" />', i, r.TablaAsmeId);
+                            rows += '</td>';
+                            rows += sut.string.format('<td><input type="text" name="TablaAsme[{0}].Codigo" value="{1}" class="form-control" readonly /></td>', i, r.Codigo);
+                            rows += sut.string.format('<td><input type="text" name="TablaAsme[{0}].Descripcion" value="{1}" class="form-control" {2} /></td>', i, r.Descripcion, sut.editProcedimiento.esProcEstadar ? 'readonly' : '');
+                            rows += sut.string.format('<td><input type="checkbox" data-type="EsGratuito" name="TablaAsme[{0}].EsGratuito"  {1} {2} /></td>', i, r.EsGratuito ? 'checked' : '', sut.editProcedimiento.esProcEstadar ? 'readonly' : '');
+
+                            if(sut.editProcedimiento.esTupaEstandar) {
+                                rows += sut.string.format('<td><input name="TablaAsme[{0}].Prestaciones" value="{1}" class="form-control" type="number" min="1" /></td>', i, r.Prestaciones);
+                            } else if (sut.editProcedimiento.esCargaInicial) {
+                                if (!sut.editProcedimiento.esProcEstadar) {
+                                    rows += sut.string.format('<td><input name="TablaAsme[{0}].CostoUnitario" value="{1}" class="form-control" type="number" min="1" {2} /></td>', i, r.CostoUnitario, r.EsGratuito ? 'disabled="disabled"' : '');
+                                }
+                            } else {
+                                if (!sut.editProcedimiento.esProcEstadar) {
+                                    rows += sut.string.format('<td><input name="TablaAsme[{0}].Prestaciones" value="{1}" class="form-control" type="number" min="1" /></td>', i, r.Prestaciones);
+                                }
+                            }
+
+                            rows += '<td><div class="btn-group">';
+                            
+                            rows += '</div></td>';
+                            rows += '</tr>';
+
+                            tabla.append(rows);
+                        });
+                    }
+                },
+                add: function () {
+                    var tabla = $('#tblModalidad tbody');
+
+                    var i = tabla.children('tr').size();
+
+                    var rows = '';
+                    rows += sut.string.format('<tr data-index="{0}" >', i);
+                    rows += '<td>';
+                    rows += sut.string.format('<span>{0}</span>', i + 1);
+                    rows += sut.string.format('<input type="hidden" name="TablaAsme[{0}].TablaAsmeId" value="{1}" />', i, 0);
+                    rows += '</td>';
+                    rows += sut.string.format('<td><input type="text" name="TablaAsme[{0}].Codigo" value="{1}" class="form-control" readonly /></td>', i, '-');
+                    rows += sut.string.format('<td><input type="text" name="TablaAsme[{0}].Descripcion" value="{1}" class="form-control" /></td>', i, '');
+                    rows += sut.string.format('<td><input type="checkbox" data-type="EsGratuito" name="TablaAsme[{0}].EsGratuito" value="false" /></td>', i);
+
+                    if (sut.editProcedimiento.esTupaEstandar) {
+                        rows += sut.string.format('<td><input name="TablaAsme[{0}].Prestaciones" value="{1}" class="form-control" type="number" min="1" /></td>', i, 0);
+                    } else if (sut.editProcedimiento.esCargaInicial) {
+                        if (!sut.editProcedimiento.esProcEstadar) {
+                            rows += sut.string.format('<td><input name="TablaAsme[{0}].CostoUnitario" value="{1}" class="form-control" type="number" min="1" /></td>', i, 0);
+                        }
+                    } else {
+                        if (!sut.editProcedimiento.esProcEstadar) {
+                            rows += sut.string.format('<td><input name="TablaAsme[{0}].Prestaciones" value="{1}" class="form-control" type="number" min="1" /></td>', i, 0);
+                        }
+                    }
+
+                    rows += '<td><div class="btn-group">';
+                    
+                    rows += '</div></td>';
+                    rows += '</tr>';
+
+                    tabla.append(rows);
+                    sut.editProcedimiento.Modalidad.update();
+                },
+                delete: function (id) {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                    $.each($('#tblModalidad tbody tr'), function (index, tr) {
+                        var i = Number($(tr).data('index'));
+                        if (i == id) $(tr).remove();
+                    });
+                    sut.editProcedimiento.Modalidad.update();
+                    //});
+                },
+                update: function () {
+                    $.each($('#tblModalidad tbody tr'), function (i, tr) {
+                        $(tr).data('index', i);
+                        $(tr).find('td span').html(i + 1);
+                        $(tr).find('td input[name$="TablaAsmeId"]').attr('name', sut.string.format('TablaAsme[{0}].TablaAsmeId', i));
+                        $(tr).find('td input[name$="Codigo"]').attr('name', sut.string.format('TablaAsme[{0}].Codigo', i));
+                        $(tr).find('td input[name$="Descripcion"]').attr('name', sut.string.format('TablaAsme[{0}].Descripcion', i));
+                        $(tr).find('td input[name$="EsGratuito"]').attr('name', sut.string.format('TablaAsme[{0}].EsGratuito', i)).attr("data-type","EsGratuito");
+                        $(tr).find('td input[name$="Prestaciones"]').attr('name', sut.string.format('TablaAsme[{0}].Prestaciones', i));
+                        $(tr).find('td input[name$="CostoUnitario"]').attr('name', sut.string.format('TablaAsme[{0}].CostoUnitario', i));
+
+                        $(tr).find('td div a').attr('href', sut.string.format('javascript:sut.editProcedimiento.Modalidad.delete({0})', i));
+                    });
+                }
+            },
+            Requisito: {
+                indexReq: 0,
+                TipoRequisito : 0,
+                textCadenaTramite: (val, index) => {
+                    rows = '';
+                    rows += '<div class="input-group">';
+                    rows += sut.string.format('<input type="text" name="Requisito[{0}].CadenaTramite" value="{1}" class="form-control input-sm" />', index, val || '');
+                    rows += '<div class="input-group-btn">';
+                    rows += sut.string.format('<a href="javascript:sut.editProcedimiento.Requisito.openCadenaTramite({0})" class="cadenaTramite btn btn-danger btn-sm"><i class="fa fa-ellipsis-h"></i></a>', index);
+                    rows += '</div>';
+                    rows += '</div>';
+                    return rows;
+                },
+                setCadenaTramite: (data) => {
+                    $('#modal-ventana').modal('hide');
+                    debugger;
+                    var index = sut.editProcedimiento.Requisito.indexReq;
+                    var tabla = "";
+
+                    if (sut.editProcedimiento.Requisito.TipoRequisito === 1) {
+                        tabla = "#tblRequisitoGeneral";
+                    } else {
+                        tabla = "#tblRequisitoEspecifico";
+                    }
+
+                    var req = $(tabla +' tbody tr.requisito').eq(index);
+                    req.find('input[name$="CadenaTramite"]').val(data.Codigo);
+                },
+                openCadenaTramite: (index,TipoRequisito) => {
+                    sut.editProcedimiento.Requisito.indexReq = index;
+                    sut.editProcedimiento.Requisito.TipoRequisito = TipoRequisito;
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/Procedimiento/Select',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/Select")',
+                        data: { tipo: 1, multi: false, fnAdd: 'sut.editProcedimiento.Requisito.setCadenaTramite' },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                init: function () {
+                    var lista = @Html.Raw(ViewBag.ListaRequisito != null ? ViewBag.ListaRequisito : "[]");
+                    var tablaRGeneral = $('#tblRequisitoGeneral tbody');
+                    var tablaREspecifico = $('#tblRequisitoEspecifico tbody');
+                    var counttablaRGeneral = 0;
+                    var counttablaREspecifico = 0;
+                    debugger;
+
+                    if (lista.length > 0) {
+                        var data = [];
+                        $.each(lista, function (i, r) {
+                            var rows = '';
+                            if (r.TipoRequisito === 1) {
+                                i = counttablaRGeneral;
+                            } else {
+                                i = counttablaREspecifico;
+                            }
+
+                            rows += sut.string.format('<tr data-index="{0}" class="requisito" >', i);
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoId" value="{1}" />', i, r.RequisitoId);
+                            rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegalId" value="{1}" />', i, r.BaseLegalId);
+                            rows += sut.string.format('<input type="hidden" name="Requisito[{0}].SustentoTecnico" value="{1}" />', i, r.SustentoTecnico || '');
+                            rows += sut.string.format('<input type="hidden" name="Requisito[{0}].TipoRequisito" value="{1}" />', i, r.TipoRequisito);
+                            rows += '</td>';
+                            if (!sut.editProcedimiento.esTupaEstandar && !sut.editProcedimiento.esProcEstadar) {
+                                rows += sut.string.format('<td><input type="text" name="Requisito[{0}].Nombre" value="{1}" class="form-control" required /></td>', i, r.Nombre || '');
+                                //rows += sut.string.format('<td><textarea name="Requisito[{0}].Descripcion" class="form-control" >{1}</textarea></td>', i, r.Descripcion || '');
+                            } else if (sut.editProcedimiento.esTupaEstandar && sut.editProcedimiento.esProcEstadar) {
+                                rows += sut.string.format('<td><input type="text" name="Requisito[{0}].Nombre" value="{1}" class="form-control" required /></td>', i, r.Nombre || '');
+                                //rows += sut.string.format('<td><textarea name="Requisito[{0}].Descripcion" class="form-control" >{1}</textarea></td>', i, r.Descripcion || '');
+                            } else {
+                                rows += sut.string.format('<td><input type="text" name="Requisito[{0}].Nombre" value="{1}" class="form-control" readonly /></td>', i, r.Nombre || '');
+                                //rows += sut.string.format('<td><textarea name="Requisito[{0}].Descripcion" class="form-control" readonly >{1}</textarea></td>', i, r.Descripcion || '');
+                            }
+
+                            //rows += sut.string.format('<td>{0}</td>', sut.editProcedimiento.Requisito.textCadenaTramite(r.CadenaTramite, i));
+                            rows += '<td class="text-center" ><div class="btn-group">';
+ 
+                            rows += '</div></td>';
+                            rows += '</tr>';
+                            rows += '<tr><td colspan="4"><table class="table table-condensed table-bordered">';
+                            rows += '<thead><tr><th style="width:100px;"></th><th style="width:100px;">';
+                             
+                            rows += '</th><th>Formulario</th><th style="width:60px;">Archivo</th><th style="width:100px;"></th></tr></thead><tbody>';
+                            $.each(r.RequisitoFormulario, (k, f) => {
+                                f.indexReq = r.TipoRequisito === 1 ? counttablaRGeneral : counttablaREspecifico;
+                                f.indexForm = k;
+                                f.TipoRequisito = r.TipoRequisito;
+                                rows += sut.editProcedimiento.Formulario.newFila(f);
+                            });
+                            rows += '</tbody></table></td></tr>';
+
+                            if (r.TipoRequisito === 1) {
+                                tablaRGeneral.append(rows);
+                                counttablaRGeneral++;
+                            } else {
+                                tablaREspecifico.append(rows);
+                                counttablaREspecifico++;
+                            }
+                        });
+
+                        sut.editProcedimiento.Requisito.update();
+                    }
+                },
+                add: function (TipoRequisito) {
+                    debugger;
+                    var tabla = null;
+                    debugger;
+                    if (TipoRequisito === 1) {
+                        tabla = $('#tblRequisitoGeneral tbody').eq(0);
+                    } else {
+                        tabla = $('#tblRequisitoEspecifico tbody').eq(0);
+                    }
+
+
+                    //var i = tabla.children('tr.requisito').size();
+                    var i = tabla.children('tr.requisito').size();
+
+                    var rows = '';
+                    rows += sut.string.format('<tr data-index="{0}" class="requisito" >', i);
+                    rows += '<td>';
+                    rows += sut.string.format('<span>{0}</span>', i + 1);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoId" value="{1}" />', i, 0);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegalId" value="{1}" />', i, 0);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].SustentoTecnico" value="{1}" />', i, '');
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].TipoRequisito" value="{1}" />', i, TipoRequisito);
+                    rows += '</td>';
+                    //rows += sut.string.format('<td><input type="text" name="Requisito[{0}].Codigo" value="{1}" class="form-control" readonly /></td>', i, '-');
+                    rows += sut.string.format('<td><input type="text" name="Requisito[{0}].Nombre" value="{1}" class="form-control" required /></td>', i, '');
+                    //rows += sut.string.format('<td><textarea name="Requisito[{0}].Descripcion" class="form-control" >{1}</textarea></td>', i, '');
+                    //rows += sut.string.format('<td>{0}</td>', sut.editProcedimiento.Requisito.textCadenaTramite('', i));
+                    rows += '<td class="text-center" ><div class="btn-group">';
+                     
+                    rows += '</div></td>';
+                    rows += '</tr>';
+
+                    tabla.append(rows);
+                    sut.editProcedimiento.Requisito.update();
+                },
+                delete: function (index, pTipoRequisito) {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+
+                    var tabla = "";
+                    if (pTipoRequisito === 1) {
+                        tabla = "table#tblRequisitoGeneral";
+                    } else {
+                        tabla = "table#tblRequisitoEspecifico";
+                    }
+
+                    var TipoRequisito = $(tabla +' tbody tr.requisito').eq(index).find('td input[name$="TipoRequisito"]').attr('name');
+
+                    var req = $(tabla + ' tbody tr.requisito').eq(index);
+                    if (Number(req.find('td input[name$="RequisitoId"]').val()) > 0) req.next().remove();
+                    req.remove();
+
+                    //$.each($('#tblRequisito tbody tr.requisito'), function (index, tr) {
+                    //    var i = Number($(tr).data('index'));
+                    //    if (i == id) $(tr).remove();
+                    //});
+                    sut.editProcedimiento.Requisito.update();
+                    //});
+                },
+                update: function () {
+
+                    var cont = 0;
+
+                    $.each($('#tblRequisitoGeneral tbody tr.requisito'), function (i, tr) {
+                        $(tr).data('index', i);
+                        $(tr).find('td span').html(i + 1);
+                        $(tr).find('td input[name$="RequisitoId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoId', cont));
+                        $(tr).find('td input[name$="TipoRequisito"]').attr('name', sut.string.format('Requisito[{0}].TipoRequisito', cont));
+                        $(tr).find('td input[name$="BaseLegalId"]').attr('name', sut.string.format('Requisito[{0}].BaseLegalId', cont));
+                        $(tr).find('td input[name$="SustentoTecnico"]').attr('name', sut.string.format('Requisito[{0}].SustentoTecnico', cont));
+                        $(tr).find('td input[name$="Nombre"]').attr('name', sut.string.format('Requisito[{0}].Nombre', cont));
+                        $(tr).find('td input[name$="CadenaTramite"]').attr('name', sut.string.format('Requisito[{0}].CadenaTramite', cont));
+                        $(tr).find('td input[name$="Descripcion"]').attr('name', sut.string.format('Requisito[{0}].Descripcion', cont));
+                        $(tr).find('td div div a.cadenaTramite').attr('href', sut.string.format('javascript:sut.editProcedimiento.Requisito.openCadenaTramite({0},1)', cont));
+                        //$(tr).find('td div a.delRequisito').attr('href', sut.string.format('javascript:sut.editProcedimiento.Requisito.delete({0})', cont));
+
+                        if($(tr).find('td input[name$="RequisitoId"]').val() != '0') {
+                            $.each($(tr).next().find('td table tbody tr.formulario'), (k, f) => {
+                                $(f).data('index', k);
+                                $(f).find('td span').html(k + 1);
+                                $(f).find('td input[name$="RequisitoId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].RequisitoId', cont, k));
+                                $(f).find('td input[name$="FormularioId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].FormularioId', cont, k));
+                                $(f).find('td input[name$="Nombre"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].Nombre', cont, k));
+                                $(f).find('td input[name$="Url"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].Url', cont, k));
+                                $(f).find('td input[name$="ArchivoAdjuntoId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].ArchivoAdjuntoId', cont, k));
+                            });
+                        }
+
+                        cont++;
+                    });
+
+
+                    $.each($('#tblRequisitoEspecifico tbody tr.requisito'), function (i, tr) {
+                        $(tr).data('index', i);
+                        $(tr).find('td span').html(i + 1);
+                        $(tr).find('td input[name$="RequisitoId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoId', cont));
+                        $(tr).find('td input[name$="TipoRequisito"]').attr('name', sut.string.format('Requisito[{0}].TipoRequisito', cont));
+                        $(tr).find('td input[name$="BaseLegalId"]').attr('name', sut.string.format('Requisito[{0}].BaseLegalId', cont));
+                        $(tr).find('td input[name$="SustentoTecnico"]').attr('name', sut.string.format('Requisito[{0}].SustentoTecnico', cont));
+                        $(tr).find('td input[name$="Nombre"]').attr('name', sut.string.format('Requisito[{0}].Nombre', cont));
+                        $(tr).find('td input[name$="CadenaTramite"]').attr('name', sut.string.format('Requisito[{0}].CadenaTramite', cont));
+                        $(tr).find('td input[name$="Descripcion"]').attr('name', sut.string.format('Requisito[{0}].Descripcion', cont));
+                        $(tr).find('td div div a.cadenaTramite').attr('href', sut.string.format('javascript:sut.editProcedimiento.Requisito.openCadenaTramite({0},2)', cont));
+                        //$(tr).find('td div a.delRequisito').attr('href', sut.string.format('javascript:sut.editProcedimiento.Requisito.delete({0})', cont));
+
+                        if ($(tr).find('td input[name$="RequisitoId"]').val() != '0') {
+                            $.each($(tr).next().find('td table tbody tr.formulario'), (k, f) => {
+                                $(f).data('index', k);
+                                $(f).find('td span').html(k + 1);
+                                $(f).find('td input[name$="RequisitoId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].RequisitoId', cont, k));
+                                $(f).find('td input[name$="FormularioId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].FormularioId', cont, k));
+                                $(f).find('td input[name$="Nombre"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].Nombre', cont, k));
+                                $(f).find('td input[name$="Url"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].Url', cont, k));
+                                $(f).find('td input[name$="ArchivoAdjuntoId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].ArchivoAdjuntoId', cont, k));
+                            });
+                        }
+
+                        cont++;
+                    });
+                }
+            },
+            Formulario: {
+                newFila: (r) => {
+                    var rows = sut.string.format('<tr data-index="{0}" class="formulario" >', r.indexForm);
+                    rows += '<td></td>';
+                    rows += '<td>';
+                    rows += sut.string.format('<span>{0}</span>', r.indexForm + 1);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoFormulario[{1}].RequisitoId" value="{2}" />', r.indexReq, r.indexForm, r.RequisitoId);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoFormulario[{1}].FormularioId" value="{2}" />', r.indexReq, r.indexForm, r.FormularioId);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoFormulario[{1}].Nombre" value="{2}" />', r.indexReq, r.indexForm, r.Nombre);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoFormulario[{1}].Url" value="{2}" />', r.indexReq, r.indexForm, r.Url || '');
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoFormulario[{1}].ArchivoAdjuntoId" value="{2}" />', r.indexReq, r.indexForm, r.ArchivoAdjuntoId);
+                    rows += '</td>';
+                    rows += sut.string.format('<td>{0}</td>', r.Nombre);
+                    rows += '<td class="text-center" ><div class="btn-group">';
+                    if (r.Url || '' != '') {
+                        rows += sut.string.format('<a class="btn btn-default btn-xs" href="{0}" ><i class="fa fa-link" ></i></a>', r.Url);
+                    } else {
+                        rows += sut.string.format('<a class="btn btn-primary btn-xs" href="{0}" ><i class="fa fa-download" ></i></a>', r.Url);
+                    }
+                    rows += '</div></td>';
+                    rows += '<td class="text-center" ><div class="btn-group">';
+                    
+                    rows += '</div></td>';
+                    rows += '</tr>';
+                    return rows;
+                },
+                add: (r) => {
+                    $('#modal-ventana').modal('hide');
+                    debugger;
+                    var ntabla = "";
+                    if (r.TipoRequisito === 1) {
+                        ntabla = "#tblRequisitoGeneral";
+                    } else {
+                        ntabla = "#tblRequisitoEspecifico";
+                    }
+
+                    var tabla = $('table' + ntabla + ' tbody tr.requisito').eq(r.indexReq).next().find('td[colspan="4"] table tbody');
+                    if (r.Nuevo == 1) {
+                        r.indexForm = tabla.find('tr.formulario').size();
+                        tabla.append(sut.editProcedimiento.Formulario.newFila(r));
+                    } else {
+                        var tr = tabla.find('tr.formulario').eq(r.indexForm);
+                        tr.find('td input[name$="RequisitoId"]').val(r.RequisitoId);
+                        tr.find('td input[name$="FormularioId"]').val(r.FormularioId);
+                        tr.find('td input[name$="Nombre"]').val(r.Nombre);
+                        tr.find('td input[name$="Url"]').val(r.Url);
+                        tr.find('td input[name$="ArchivoAdjuntoId"]').val(r.ArchivoAdjuntoId);
+                        tr.find('td').eq(2).html(r.Nombre);
+                    }
+                },
+                edit: (indexReq, indexForm,TipoRequisito) => {
+                    var model = {};
+
+                    debugger;
+                    var tabla = "";
+                    if (TipoRequisito === 1) {
+                        tabla = "#tblRequisitoGeneral";
+                    } else {
+                        tabla = "#tblRequisitoEspecifico";
+                    }
+
+                    if (indexForm != null) {
+                        var r = $('table' + tabla + ' tbody tr.requisito').eq(indexReq).next().find('td[colspan="4"] table tbody tr.formulario').eq(indexForm);
+                        model['model.RequisitoId'] = r.find('td input[name$="RequisitoId"]').val();
+                        model['model.FormularioId'] = r.find('td input[name$="FormularioId"]').val();
+                        model['model.Nombre'] = r.find('td input[name$="Nombre"]').val();
+                        model['model.Url'] = r.find('td input[name$="Url"]').val();
+                        model['model.ArchivoAdjuntoId'] = r.find('td input[name$="ArchivoAdjuntoId"]').val();
+                    } else {
+                        model['model.RequisitoId'] = $('table' + tabla + ' tbody tr.requisito').eq(indexReq).find('td input[name$=RequisitoId]').val();
+                        model['model.FormularioId'] = $('table' + tabla + ' tbody tr.requisito').eq(indexReq).next().find('td[colspan="4"] table tbody tr.formulario').size() + 1;
+                    }
+
+                    model['nuevo'] = indexForm == null ? 1 : 0;
+                    model['indexForm'] = indexForm == null ? 0 : indexForm;
+                    model['indexReq'] = indexReq;
+                    model['fnAdd'] = 'sut.editProcedimiento.Formulario.add';
+                    model['TipoRequisito'] = TipoRequisito
+
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/Procedimiento/EditarFormulario',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/EditarFormulario")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                delete: (indexReq, indexForm, TipoRequisito) => {
+
+                    var tabla = "";
+                    if (TipoRequisito === 1) {
+                        tabla = "#tblRequisitoGeneral";
+                    } else {
+                        tabla = "#tblRequisitoEspecifico";
+                    }
+
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                    var tr = $('table' + tabla + ' tbody tr.requisito').eq(indexReq).next().find('td[colspan="4"] table tbody tr').eq(indexForm);
+                    tr.remove();
+                    sut.editProcedimiento.Requisito.update();
+                    //});
+                }
+            },
+            BaseLegal: {
+                data: @Html.Raw(ViewBag.ListaBaseLegal != null ? ViewBag.ListaBaseLegal : "[]") ,
+                init: () => {
+                    sut.editProcedimiento.BaseLegal.generar();
+                },
+                edit: (index) => {
+                    var model = {};
+                    if (index != null) {
+                        var r = sut.editProcedimiento.BaseLegal.data[index];
+                        model['model.BaseLegalNormaId'] = r.BaseLegalNormaId;
+                        model['model.TipoBaseLegal'] = r.TipoBaseLegal;
+                        model['model.NormaId'] = r.NormaId;
+                        model['model.Descripcion'] = r.Descripcion == 'null' ? '' : r.Descripcion;
+                        model['model.TipoNormaId'] = r.TipoNormaId;
+                        model['model.Numero'] = r.Numero;
+                        model['model.FechaPublicacion'] = r.FechaPublicacion;
+                        model['model.Articulo'] = r.Articulo;
+                        model['model.Url'] = r.Url == 'null' ? '' : r.Url;
+                        model['model.ArchivoAdjuntoId'] = r.ArchivoAdjuntoId;
+                    }
+
+                    model['nuevo'] = index == null ? 1 : 0;
+                    model['index'] = index == null ? 0 : index;
+                    model['fnAdd'] = 'sut.editProcedimiento.BaseLegal.add';
+
+                    $.ajax({
+                        type: "GET",
+                        //url: '/General/BaseLegal/EditarDetalle',
+                        url: '@Url.Content("~/General/BaseLegal/EditarDetalle")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                generar: () => {
+                    var tabla = $('#tblBaseLegal tbody');
+                    $('#tblBaseLegal tbody tr').remove();
+                    if (sut.editProcedimiento.BaseLegal.data.length > 0) {
+                        var rows = '';
+                        $.each(sut.editProcedimiento.BaseLegal.data, function (i, r) {
+                            rows += sut.string.format('<tr data-index="{0}" >', i);
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].BaseLegalId" value="{1}" />', i, r.BaseLegalId);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].BaseLegalNormaId" value="{1}" />', i, r.BaseLegalNormaId);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].TipoBaseLegal" value="{1}" />', i, r.TipoBaseLegal);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].NormaId" value="{1}" />', i, r.NormaId);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].Descripcion" value="{1}" />', i, r.Descripcion);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].TipoNormaId" value="{1}" />', i, r.TipoNormaId);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].Numero" value="{1}" />', i, r.Numero);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].FechaPublicacion" value="{1}" />', i, r.FechaPublicacion);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].Articulo" value="{1}" />', i, r.Articulo);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].ArchivoAdjuntoId" value="{1}" />', i, r.ArchivoAdjuntoId);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].Url" value="{1}" />', i, r.Url);
+                            rows += '</td>';
+                            rows += sut.string.format('<td>{0}</td>', r.NormaTipo);
+                            rows += sut.string.format('<td>{0}</td>', r.Numero);
+                            rows += sut.string.format('<td>{0}</td>', r.Descripcion);
+                            rows += sut.string.format('<td>{0}</td>', r.FechaPublicacion);
+                            rows += sut.string.format('<td>{0}</td>', r.Articulo); 
+                            rows += '<td><div class="btn-group">';
+                             
+                            rows += '</div></td>';
+                            rows += '</tr>';
+                        });
+                        tabla.append(rows);
+                    }
+                },
+                add: (r) => {
+                    $('#modal-ventana').modal('hide');
+                    if (r.Nuevo == 1) {
+                        sut.editProcedimiento.BaseLegal.data.push(r);
+                    } else {
+                        var arr = [];
+                        $.each(sut.editProcedimiento.BaseLegal.data, function (i, d) {
+                            if (i != r.Index) arr.push(d);
+                            else arr.push(r);
+                        });
+                        sut.editProcedimiento.BaseLegal.data = arr;
+                    }
+                    sut.editProcedimiento.BaseLegal.generar();
+                },
+                delete: (index) => {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                    var arr = [];
+                    $.each(sut.editProcedimiento.BaseLegal.data, function (i, d) {
+                        if (i != index) arr.push(d);
+                    });
+                    sut.editProcedimiento.BaseLegal.data = arr;
+                    sut.editProcedimiento.BaseLegal.generar();
+                    //});
+                }
+            },
+
+            guardar: function (is_salir) {
+                var valid = true;
+
+                var deferred = $.Deferred();
+
+                $.each($("#tblModalidad input[data-type='EsGratuito']"), function (i, v) {
+                    if ($(this).is(':checked')) {
+                        $(this).attr("value", true);
+                    } else {
+                        $(this).attr("value", false);
+                    }
+                });
+
+                //$.each($("#tblCanales input[type='checkbox']"), function (i, v) {
+                //    if ($(this).is(':checked')) {
+                //        $(this).attr("value", true);
+                //        $(this).attr("checked", true);
+                //        $(this).prop("checked", true);
+                //    } else {
+                //        $(this).attr("value", false);
+                //        $(this).attr("checked", false);
+                //        $(this).prop("checked", false);
+                //    }
+                //});
+
+
+                if ($('#form-editar').valid() && valid) {
+                    var model = $('#form-editar').serialize();
+
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/DatosGeneralesInformacionCiudadano',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/DatosGeneralesInformacionCiudadano")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                @*//window.location = '/Simplificacion/Procedimiento/DatosGenerales/@Model.ProcedimientoId';*@
+                                deferred.resolve('Ok');
+                                if (!is_salir)
+                                    window.location = '@Url.Action("InformacionCiudadano", "Procedimiento", new { @area = "Simplificacion", @id = Model.ProcedimientoId })' + '?tab=' + sut.editProcedimiento.tab;
+                            });
+
+                            //showNotification('top', 'right', 'El Registro de Guardo Satisfactoriamente', 1);
+                            //debugger;
+                            //deferred.resolve('Ok'); // jleon 05022019
+                            //if (!is_salir)
+                            //    setTimeout("reFresh()", 1000);
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }
+
+                return deferred.promise();
+            },
+            terminar: function () {
+                var valid = true;
+
+                if (valid) {
+                    valid = $('#tblRequisito tbody tr').size() > 0;
+                    if (!valid) sut.error.clientErrorShow('mensajes', 'Debe agregar al menos un Requisito.');
+                }
+
+                if (valid) {
+                    valid = $('#tblBaseLegal tbody tr').size() > 0;
+                    if (!valid) sut.error.clientErrorShow('mensajes', 'Debe agregar al menos un registro de Base Legal.');
+                }
+
+                if (valid) {
+                    var tablas = $('#tblModalidad tbody tr td input[name$="Prestaciones"]');
+                    $.each(tablas, (i, p) => {
+                        if (Number($(p).val()) == 0) valid = false;
+                    });
+                    if (!valid) sut.error.clientErrorShow('mensajes', 'Debe indicar la cantidad de prestaciones.');
+                }
+
+                if (valid && !sut.editProcedimiento.esTupaEstandar) {
+                    valid = $('#tblSede tbody tr').size() > 0;
+                    if(!valid) sut.error.clientErrorShow('mensajes', 'Debe agregar al menos una Sede donde se atiende el trámite.');
+                }
+
+                if (valid) {
+                    valid = $('#tblPasoSeguir tbody tr').size() > 0;
+                    if (!valid) sut.error.clientErrorShow('mensajes', 'Debe indicar los pasos a seguir para la realización del trámite.');
+                }
+
+                if (valid) {
+                    sut.msg.confirm('Si finaliza el registro no podrá modificarlo nuevamente.', () => {
+                        if ($('#form-editar').valid()) {
+                            var model = $('#form-editar').serialize();
+                            $.ajax({
+                                type: 'POST',
+                                //url: '/Simplificacion/Procedimiento/DatosGenerales',
+                                url: '@Url.Content("~/Simplificacion/Procedimiento/DatosGenerales")',
+                                data: model,
+                                dataType: 'json',
+                                beforeSend: function () {
+                                    $("#mensajes").hide();
+                                },
+                                complete: function () {
+
+                                },
+                                success: function (result) {
+
+                                    $.ajax({
+                                        type: 'POST',
+                                        //url: '/Simplificacion/Procedimiento/TerminarSustento',
+                                        url: '@Url.Content("~/Simplificacion/Procedimiento/TerminarSustento")',
+                                        data: {tipo: 1, ProcedimientoId: @Model.ProcedimientoId},
+                                        dataType: 'json',
+                                        beforeSend: function () {
+                                            $("#mensajes").hide();
+                                        },
+                                        complete: function () {
+
+                                        },
+                                        success: function (result) {
+                                            sut.msg.success(result.mensaje, function () {
+                                                @*//window.location = '/Simplificacion/Procedimiento/DatosGenerales/@Model.ProcedimientoId';*@
+                                                window.location = '@Url.Action("DatosGenerales", "Procedimiento", new { @area = "Simplificacion", @id = Model.ProcedimientoId })' + '?tab=' + sut.editProcedimiento.tab;
+                                            });
+                                        },
+                                        error: function (result) {
+                                            sut.error.show('mensajes', result.responseText);
+                                        }
+                                    });
+
+                                },
+                                error: function (result) {
+                                    sut.error.show('mensajes', result.responseText);
+                                }
+                            });
+                        }
+                    });
+                }
+
+            },
+
+            Scroll: {
+                pos : 0,
+                init: () => {
+                    //$('.menu-compensador').css('height', $('#divBotones').height());
+                    //sut.editProcedimiento.Scroll.pos = $('#divBotones').offset().top;
+                    //window.onscroll = sut.editProcedimiento.Scroll.ejecutar;
+                    //sut.editProcedimiento.Scroll.ejecutar();
+                },
+                ejecutar: () => {
+                    var sc = window.pageYOffset;
+                    var menu = $('#divBotones');
+                    //var mot = menu.offset().top;
+                    if (sc > sut.editProcedimiento.Scroll.pos) {
+                        if (!menu.hasClass('fixed')) {
+                            menu.addClass('fixed');
+                            menu.appendTo($('.menu-fijo'));
+                            $('.menu-compensador').show();
+                        }
+                    } else if (menu.hasClass('fixed')) {
+                        menu.removeClass('fixed');
+                        menu.appendTo($('.menu-movil'));
+                        $('.menu-compensador').hide();
+                    }
+                },
+                getScrollOffsets: () => {
+                    /* Esto funciona para todos los navegadores excepto para IE8 y anteriores */
+                    if (window.pageXOffset != null) {
+                        return {
+                            x: window.pageXOffset,
+                            y: window.pageYOffset
+                        };
+                    }
+
+                    /* Funciona para navegadores standards */
+                    var doc = window.document;
+                    if (document.compatMode === "CSS1Compat") {
+                        return {
+                            x: doc.documentElement.scrollLeft,
+                            y: doc.documentElement.scrollTop
+                        };
+                    }
+
+                    /* Funciona para navegadores con compatibilidad con navegadores antiguos */
+                    return {
+                        x: doc.body.scrollLeft,
+                        y: doc.body.scrollTop
+                    };
+                }
+            }
+        };
+        function reFresh() {
+            window.location.reload();
+        }
+        $(function () {
+
+            if("@Model.InfCdnoTerminado"=="True"){
+
+                $("#idgeneral").css({ "pointer-events":"none" });
+                
+                $(".btn-success").css({ "background-color":"#d2d6de" });
+                $(".btn-success").css({ "border-color":"#d2d6de" });
+            } 
+
+            sut.editProcedimiento.Scroll.init();
+
+            $('a[href|="#edit"]').on('click', (e) => {
+                var href = $(e.target).attr('href');
+                sut.editProcedimiento.tab = href.substr(1, href.length - 1);
+            });
+
+            if (sut.editProcedimiento.tab == '') {
+                $('#edit-info-basica').addClass('active');
+                $('#edit-info-basica').parent().addClass('active');
+            } else {
+                $('#' + sut.editProcedimiento.tab).addClass('active');
+                $('a[href="#' + sut.editProcedimiento.tab + '"]').parent().addClass('active');
+            }
+
+            sut.editProcedimiento.Sede.init();
+            sut.editProcedimiento.Nota.init();
+            sut.editProcedimiento.PasoSeguir.init();
+            sut.editProcedimiento.Modalidad.init();
+            sut.editProcedimiento.Requisito.init();
+            sut.editProcedimiento.BaseLegal.init();
+
+            //$.each($('#tblCanales input[type="checkbox"], #tblFormasPago input[type="checkbox"]'), (i, r) => {
+            //    var chk = $(r);
+            //    if(!chk.is(':checked')) {
+            //        chk.parent().next().next().find('input[type="text"]').attr('disabled', 'disabled').val('');
+
+            //    }
+
+            //    chk.attr("original", "1");
+            //});
+
+            $.each($('#tblCanales input[type="checkbox"], #tblFormasPago input[type="checkbox"]'), (i, r) => {
+                var chk = $(r);
+                if (!chk.is(':checked')) {
+                    chk.parent().next().next().find('textarea').attr('disabled', 'disabled').val('');
+                }
+                chk.attr("original", "1");
+            });
+
+            //$('#tblCanales input[type="checkbox"], #tblFormasPago input[type="checkbox"]').on('change', (e) => {
+            //    var chk = $(e.target);
+            //    if(!chk.is(':checked')) {
+            //        chk.parent().next().next().find('input[type="text"]').attr('disabled', 'disabled').val('');
+            //    } else {
+            //        chk.parent().next().next().find('input[type="text"]').removeAttr('disabled');
+            //    }
+
+            //    chk.attr("original", "0");
+            //});
+            $('#tblCanales input[type="checkbox"], #tblFormasPago input[type="checkbox"]').on('change', (e) => {
+                var chk = $(e.target);
+                if (!chk.is(':checked')) {
+                    chk.parent().next().next().find('textarea').attr('disabled', 'disabled');
+                } else {
+                    chk.parent().next().next().find('textarea').removeAttr('disabled');
+
+                    if (chk[0].id == 'ProcedimientoDatoAdicional_0__Checked') {
+                        $("#ProcedimientoDatoAdicional_0__Comentario").val("Sedes de la Entidad. \n Centro de Mejora Atención al Ciudadano – MAC:");
+                    }
+
+
+                }
+            });
+
+
+            $('#tblModalidad').on('change', 'tbody tr td input[name$="EsGratuito"]', null, (e) => {
+                var chk = $(e.target);
+                var txtPrestaciones = chk.parent().parent().find('input[name$="Prestaciones"]');
+                var txtCostoUnitario = chk.parent().parent().find('input[name$="CostoUnitario"]');
+                if (sut.editProcedimiento.esCargaInicial) {
+                    if (chk.is(':checked')) {
+                        txtCostoUnitario.val(0).attr('min', 0).attr('disabled', 'disabled');
+                    } else {
+                        txtCostoUnitario.val(0).attr('min', 1).removeAttr('disabled');
+                    }
+                }
+            });
+
+            $('#form-editar').validate({
+                errorPlacement: function (error, element) {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+                    PlazoAtencion : 'integer',
+                    PzoReconPresent: 'integer',
+                    PzoReconResol: 'integer',
+                    PzoApelPresent: 'integer',
+                    PzoApelResol: 'integer',
+                    Correo: {
+                        email: true
+                    },
+                    //Telefono: 'digits',
+                    //Anexo: 'digits'
+                },
+                messages: {
+
+                }
+            });
+
+
+
+
+
+
+            /*desarrollo de la ayuda*/
+            /*minimizar un modal*/
+
+            var $content, $modal, $apnData, $modalCon;
+
+            $content = $(".min");
+
+
+            //To fire modal
+            $(".mdlFire").click(function (e) {
+                debugger;
+                e.preventDefault();
+
+                var $id = $(this).attr("data-target");
+
+                $($id).modal({ backdrop: false, keyboard: false });
+
+            });
+
+            debugger;
+
+            if(@user.Ayuda==1){
+                $('#edit-fase-preparatoria').addClass('active');
+                $('a[href="#edit-fase-preparatoria"]').parent().addClass('active');
+
+
+                $('#tituloocultar').hide();
+
+
+                $('#modalAyudaAvatar1').modal({backdrop: 'static', keyboard: false})
+                $modal = "#modalAyudaAvatar1"
+                $($modal).toggleClass("min");
+                $modal = "#modalAyudaAvatar1";
+                $(".modal-backdrop").addClass("display-none");
+                $(".minmaxConayuda").append($apnData);
+                $(".modal").css({
+                    backgroundColor: "transparent"
+                });
+
+            }
+
+
+
+            /*fin*/
+
+            $(".modalMinimize").on("click", function(){
+                debugger;
+                $modalCon = $(this).closest(".mymodal").attr("id");
+                $apnData = $(this).closest(".mymodal");
+                $modal = "#" + $modalCon;
+                $(".modal-backdrop").addClass("display-none");
+
+                $($modal).toggleClass("min2");
+                if ( $($modal).hasClass("min2") ){
+                    $('#tituloocultar').show();
+                    $(".minmaxCon").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-minus fa-2x').toggleClass( 'fa-clone fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                }
+                else {
+                    $('#tituloocultar').hide();
+                    $(".minmaxConayuda").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-clone fa-2x').toggleClass( 'fa-minus fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                };
+            });
+
+
+
+        });
+
+        function reFresh() {
+            window.location = '@Url.Action("InformacionCiudadano", "Procedimiento", new { @area = "Simplificacion", @id = Model.ProcedimientoId })' + '?tab=' + sut.editProcedimiento.tab;
+
+        }
+    </script>
+}

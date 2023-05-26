@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewBag.Title = "Expedientes";
+    ViewBag.Descripcion = "Registro de expedientes";
+}
+
+<div class="box box-danger">
+    <div class="box-body">
+        <a class="btn btn-success"><i class="fa fa-plus"></i> Nuevo</a>
+        <br />
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            Nro Expediente
+                        </th>
+                        <th>
+                            F. Creación
+                        </th>
+                        <th>
+                            F. Modificación
+                        </th>
+                        <th>
+                            Usuario Creación
+                        </th>
+                        <th>
+                            Usuario Modificación
+                        </th>
+                        <th>
+                            Tipo Expediente
+                        </th>
+                        <th>
+                            Estado
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>00001069-001-2017</td>
+                        <td>22/05/2017</td>
+                        <td>24/05/2017</td>
+                        <td>Jonathan Castillo</td>
+                        <td>Jonathan Castillo</td>
+                        <td class="text-center"><label class="label label-primary">EXPEDIENTE REGULAR</label></td>
+                        <td class="text-center"><label class="label label-primary">EN PROCESO</label></td>
+                        <td>
+                            <a class="btn btn-success btn-xs" href="#"><i class="fa fa-pencil"></i></a>
+                            <a class="btn btn-primary btn-xs" href="#"><i class="fa fa-search"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>00001069-002-2016</td>
+                        <td>22/12/2016</td>
+                        <td>24/12/2016</td>
+                        <td>Jonathan Castillo</td>
+                        <td>Jonathan Castillo</td>
+                        <td class="text-center"><label class="label label-warning">CARGA INICIAL</label></td>
+                        <td class="text-center"><label class="label label-success">PUBLICADO</label></td>
+                        <td>
+                            <a class="btn btn-primary btn-xs" href="#"><i class="fa fa-search"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+@section Style {
+    <style type="text/css" >
+        table thead tr th {
+            text-align: center;
+        }
+    </style>
+}
+
+@section Script {
+    <script>
+        $(function () {
+            $('table tbody a.btn').click(function (e) {
+                window.location = '/Formulacion/Expediente/Editar';
+            });
+        });
+    </script>
+}

@@ -1,0 +1,607 @@
+﻿@model Sut.Entities.CalendarioActividades
+
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">@ViewBag.Title</h4>
+        </div>
+
+        @using (Html.BeginForm("Guardar", "Simplificacion/CalendarioActividades", FormMethod.Post, new { @id = "form-modal-editar" }))
+        {
+            @Html.HiddenFor(model => model.CalendarioActividadesId)
+
+    <div class="modal-body form-horizontal">
+        <div class="form-group">
+
+
+            <label class="control-label col-sm-3 col-xs-12">Equipo/SubSecretaría</label>
+ 
+
+            <div class="col-sm-7 col-xs-12" id="listasRecursos2">
+ 
+            <div class="col-sm-7 col-xs-12">
+ 
+                @Html.DropDownListFor(model => model.EquipoSubId, ViewBag.EquipoSub as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+            <div class="col-sm-2 col-xs-12">
+                <a id="add_fieldPersonal" class="btn btn-success" style="padding: 1px 9px;"><i class="fa fa-plus"></i></a>
+            </div>
+ 
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Asistencia Técnica</label>
+            <div class="col-sm-7 col-xs-12">
+                @Html.DropDownListFor(model => model.AsisTecId, ViewBag.AsisTec as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Modalidad</label>
+            <div class="col-sm-7 col-xs-12">
+                @Html.DropDownListFor(model => model.ModalidadId, ViewBag.Modalidad as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+        <div class="form-group" id="Dep">
+            <label class="control-label col-sm-3 col-xs-12">Departamento:</label>
+            <div class="col-sm-7 col-xs-12">
+                @Html.DropDownListFor(model => model.DepartamentoId, ViewBag.ListaDepartamento as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+        <div class="form-group" id="LuEj">
+            <label class="control-label col-sm-3 col-xs-12">Lugar Ejecucion</label>
+            <div class="col-sm-7 col-xs-12">
+                @Html.TextBoxFor(model => model.LugarEjecucion, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Responsable</label>
+            <div class="col-sm-7 col-xs-12">
+                @Html.DropDownListFor(model => model.ResponsableId, ViewBag.Responsable as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Materia</label>
+            <div class="col-sm-7 col-xs-12">
+                @Html.DropDownListFor(model => model.MateriaId, ViewBag.Materia as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Seleccionar tipo de Rango</label>
+ 
+            <div class="col-sm-7 col-xs-12">
+ 
+            <div class="col-sm-9 col-xs-12">
+ 
+                @Html.DropDownListFor(model => model.TipoRango, ViewBag.tipRango as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+
+
+        <div class="form-group" id="FecProg">
+            <label class="control-label col-sm-3 col-xs-12">Fecha Programada</label>
+            <div class="col-sm-4 col-xs-12">
+                @if (Model.CalendarioActividadesId == 0)
+                {
+                    <input type="text" id="FecProgramada" name="FecProgramada" class="form-control input-sm" value="" />
+
+                }
+                else
+                {
+                    <input type="text" id="FecProgramada" name="FecProgramada" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FecProgramada == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FecProgramada.Value.Day, Model.FecProgramada.Value.Month, Model.FecProgramada.Value.Year))" />
+
+                }
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group" id="FecRango">
+            <label class="control-label col-sm-3 col-xs-12">Rango Fecha</label>
+            <div class="col-sm-3 col-xs-12">
+                @if (Model.CalendarioActividadesId == 0)
+                {
+                    <input type="text" name="FecInicio" class="form-control input-sm" value="" />
+
+                }
+                else
+                {
+                    <input type="text" name="FecInicio" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FecInicio == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FecInicio.Value.Day, Model.FecInicio.Value.Month, Model.FecInicio.Value.Year))" />
+
+                }
+
+            </div>
+
+            <div class="col-sm-4 col-xs-12">
+                @if (Model.CalendarioActividadesId == 0)
+                {
+                    <input type="text" name="FecFin" class="form-control input-sm" value="" />
+
+                }
+                else
+                {
+                    <input type="text" name="FecFin" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FecFin == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FecFin.Value.Day, Model.FecFin.Value.Month, Model.FecFin.Value.Year))" />
+
+                }
+
+            </div>
+        </div>
+
+
+        <div class="form-group" id="FecMultiple">
+            <label class="control-label col-sm-3 col-xs-12">Fecha</label>
+            <div class="col-sm-2 col-xs-12">
+                @if (Model.CalendarioActividadesId == 0)
+                {
+                    <input type="text" name="FecInicio" class="form-control input-sm" value="" />
+
+                }
+                else
+                {
+                    <input type="text" name="FecInicio" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FecInicio == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FecInicio.Value.Day, Model.FecInicio.Value.Month, Model.FecInicio.Value.Year))" />
+
+                }
+
+            </div>
+
+            <label class="control-label col-sm-3 col-xs-12">Ejecución</label>
+            <div class="col-sm-2 col-xs-12">
+                @if (Model.CalendarioActividadesId == 0)
+                {
+                    <input type="text" name="FecEjecucion" class="form-control input-sm" value="" />
+
+                }
+                else
+                {
+                    <input type="text" name="FecEjecucion" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FecEjecucion == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FecEjecucion.Value.Day, Model.FecEjecucion.Value.Month, Model.FecEjecucion.Value.Year))" />
+
+                }
+
+            </div>
+            <div class="col-sm-2 col-xs-12">
+                <a id="add_fieldMultiple" class="btn btn-success" style="padding: 1px 9px;"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+
+
+
+        <div class="form-group" id="FecEje">
+            <label class="control-label col-sm-3 col-xs-12">Fecha Ejecutada</label>
+            <div class="col-sm-4 col-xs-12">
+                @if (Model.CalendarioActividadesId == 0)
+                {
+                    <input type="text" name="FecEjecucion" class="form-control input-sm" value="" />
+
+                }
+                else
+                {
+                    <input type="text" name="FecEjecucion" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FecEjecucion == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FecEjecucion.Value.Day, Model.FecEjecucion.Value.Month, Model.FecEjecucion.Value.Year))" />
+
+                }
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Cumplimiento de Plazo</label>
+            <div class="col-sm-7 col-xs-12">
+                @Html.DropDownListFor(model => model.Cumplimiento, ViewBag.Cumplimientos as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Cantidad</label>
+            <div class="col-sm-7 col-xs-12">
+                @Html.TextBoxFor(model => model.Cantidad, new { @class = "form-control input-sm" })
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Observaciones</label>
+            <div class="col-sm-7 col-xs-12">
+                @Html.TextAreaFor(model => model.Observaciones, new { @class = "form-control input-sm", rows = "6", cols = "10" })
+
+            </div>
+        </div>
+
+    </div>
+                <div id="msgEditar"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="sut.EditarCalendarioActividades.guardar()"><i class="fa fa-save"></i> Guardar</button>
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+                </div>
+            }
+        </div>
+</div>
+
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+
+<script>
+
+    sut.EditarCalendarioActividades = {
+        guardar: function () {
+
+
+
+
+
+            var asdsad = $("#FecProgramada").val(); 
+            var fecha = document.getElementById("FecProgramada").value;
+
+ 
+
+            if (fecha == "23/04/2023") {
+                showNotification('top', 'right', ' Ocupado: SSAP: Sensibilización (despliegues para lograr compromiso)', 2);
+                return;
+            }
+
+            if (fecha == "24/04/2023") { 
+                showNotification('top', 'right', ' Ocupado: SSAP: Fortalecimiento de capacidades', 2);
+                return;
+            }
+
+
+            if (fecha == "28/04/2023") {
+                showNotification('top', 'right', ' SSAR: Fortalecimiento de capacidades', 2);
+                return;
+            }
+
+
+
+            if ($("#form-modal-editar").valid()) {
+                var model = $('#form-modal-editar').serialize();
+
+                sut.msg.confirm("¿que desea guardar la información?", function () {
+
+                    $.ajax({
+                        type: "POST",
+                        //url: "/Simplificacion/CalendarioActividades/Guardar",
+                        url: '@Url.Content("~/Simplificacion/CalendarioActividades/Guardar")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#msgEditar").hide();
+                            sut.wait.appendProgress('.modal-footer');
+                            $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                            $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                        },
+                        complete: function () {
+                            sut.wait.removeProgress('.modal-footer');
+                            $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                            $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        },
+                        success: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.msg.success(result.mensaje, function () {
+                                sut.CalendarioActividades.listar(1);
+                            });
+                        },
+                        error: function (result) {
+                            sut.wait.removeProgress('.modal-footer');
+                            $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                            $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                            sut.error.show('msgEditar', result.responseText);
+                        }
+                    });
+                });
+
+            }
+        }
+    };
+
+
+
+
+
+
+
+    //proceso Inicio 2
+    var campos_max = 15;   //max de 10 campos
+    var x = 0;
+    $('#add_fieldPersonal').click(function (e) {
+        e.preventDefault();     //prevenir novos clicks
+        if (x < campos_max) {
+            $('#listasRecursos2').append('<div> \
+                                <select name="listaUnidadMedidaId[]" id="unidad'+ x +'" class="form-control" style="width:94%;display:inline!important"> </select> \
+                                <a href="#" class="remover_campo2"><i class="fa fa-minus-circle fa-2x" style="color:#dd4b39" aria-hidden="true"></i></a> \
+                                </div>\
+                               '
+                                );
+
+            var modtagerId = $('#unidad'+ x);
+            @foreach (var item in (@ViewBag.EquipoSub as List<SelectListItem>))
+                {
+                    <text>
+            var value = "@(item.Value)";
+            var text = "@(Html.Raw(item.Text))";
+            $("<option />", {
+                val: value,
+                text: text
+            }).appendTo(modtagerId);
+            </text>
+                }
+            x++;
+        }
+        //document.getElementById("titulorecurso2").style.visibility = "visible";
+    });
+
+    // Remover o div anterior
+    $('#listasRecursos2').on("click", ".remover_campo2", function (e) {
+        e.preventDefault();
+        $(this).parent('div').remove();
+
+        var nombre= document.getElementsByName("listaNombre[]");
+        if(nombre.length == 1){
+            //document.getElementById("titulorecurso2").style.visibility = "hidden";
+        }
+
+        x--;
+    });
+    //proceso FIN 2
+
+
+
+
+    //proceso Inicio 2
+    var campos_max = 15;   //max de 10 campos
+    var x = 0;
+    $('#add_fieldMultiple').click(function (e) {
+        e.preventDefault();     //prevenir novos clicks
+        if (x < campos_max) {
+            $('#FecMultiple').append('<label class= "control-label col-sm-3 col-xs-12" > Fecha</label >\
+                 <div class="col-sm-2 col-xs-12"> \
+                                  <input type="text" class="form-control input-sm"  style="width:106%;display:inline!important" name="listaNombre[]" onkeydown = "enterToTab(event);">\  </div>\
+                  <label class="control-label col-sm-3 col-xs-12">Ejecucion</label>\<div class="col-sm-2 col-xs-12"> \
+                                  <input type="text" class="form-control input-sm"  style="width:77%;display:inline!important" name="listaNombre[]" onkeydown = "enterToTab(event);">\
+                                <a href="#" class="remover_campo2"><i class="fa fa-minus-circle fa-2x" style="color:#dd4b39" aria-hidden="true"></i></a> \
+                                </div>\
+                               '
+                                );
+
+            var modtagerId = $('#unidad'+ x);
+            @foreach (var item in (@ViewBag.EquipoSub as List<SelectListItem>))
+                {
+                    <text>
+            var value = "@(item.Value)";
+            var text = "@(Html.Raw(item.Text))";
+            $("<option />", {
+                val: value,
+                text: text
+            }).appendTo(modtagerId);
+            </text>
+                }
+            x++;
+        }
+        //document.getElementById("titulorecurso2").style.visibility = "visible";
+    });
+
+    // Remover o div anterior
+    $('#FecMultiple').on("click", ".remover_campo2", function (e) {
+        e.preventDefault();
+        $(this).parent('div').remove();
+
+        var nombre= document.getElementsByName("listaNombre[]");
+        if(nombre.length == 1){
+            //document.getElementById("titulorecurso2").style.visibility = "hidden";
+        }
+
+        x--;
+    });
+    //proceso FIN 2
+
+
+
+    
+
+
+
+    $(function () {
+        //$('input[name="Fecha"]').datepicker({ format: 'dd/mm/yyyy' });
+        $('input[name="FecProgramada"]').datepicker({ format: 'dd/mm/yyyy',   language: 'es' });
+        $('input[name="FecEjecucion"]').datepicker({ format: 'dd/mm/yyyy', language: 'es' });
+
+
+        $('input[name="FecInicio"]').datepicker({ format: 'dd/mm/yyyy', language: 'es' });
+
+        $('input[name="FecFin"]').datepicker({ format: 'dd/mm/yyyy', language: 'es' });
+
+
+        var codR = $('select[name="TipoRango"] option:selected').val();
+
+        debugger;
+        if (codR == 0) {
+            document.getElementById("FecProg").style.display = "none";
+            document.getElementById("FecRango").style.display = "none";
+        } else if (codR == 1) {
+
+            document.getElementById("FecProg").style.display = "block";
+            document.getElementById("FecRango").style.display = "none";
+
+        } else if (codR == 2) {
+
+            document.getElementById("FecProg").style.display = "none";
+            document.getElementById("FecRango").style.display = "block";
+
+        }  
+
+        var codR = $('select[name="TipoRango"] option:selected').val();
+
+
+        if (codR == 0) {
+            document.getElementById("FecProg").style.display = "none";
+            document.getElementById("FecRango").style.display = "none";
+            document.getElementById("FecEje").style.display = "none";
+            document.getElementById("FecMultiple").style.display = "none";
+
+
+        } else if (codR == 1) {
+
+            document.getElementById("FecProg").style.display = "block";
+            document.getElementById("FecRango").style.display = "none";
+            document.getElementById("FecEje").style.display = "block";
+            document.getElementById("FecMultiple").style.display = "none";
+
+        } else if (codR == 2) {
+
+            document.getElementById("FecProg").style.display = "none";
+            document.getElementById("FecRango").style.display = "block";
+            document.getElementById("FecMultiple").style.display = "none";
+
+        } else if (codR == 3) {
+
+            document.getElementById("FecProg").style.display = "none";
+            document.getElementById("FecRango").style.display = "none";
+            document.getElementById("FecEje").style.display = "none";
+            document.getElementById("FecMultiple").style.display = "block";
+        }
+
+
+        var cod = $('select[name="ModalidadId"] option:selected').val();
+
+        debugger;
+
+        if (cod == 0) {
+            document.getElementById("Dep").style.display = "none";
+            document.getElementById("LuEj").style.display = "none";
+        } else if (cod == 193) {
+            document.getElementById("Dep").style.display = "none";
+            document.getElementById("LuEj").style.display = "none";
+        } else {
+            document.getElementById("Dep").style.display = "block";
+            document.getElementById("LuEj").style.display = "block";
+        }
+
+
+        $('select[name="TipoRango"]').on('change', (e) => {
+
+            var codR = $('select[name="TipoRango"] option:selected').val();
+
+            debugger;
+            if (codR == 0) {
+                document.getElementById("FecProg").style.display = "none";
+                document.getElementById("FecRango").style.display = "none";
+                document.getElementById("FecEje").style.display = "none";
+                document.getElementById("FecMultiple").style.display = "none";
+            } else if (codR == 1) {
+
+                document.getElementById("FecProg").style.display = "block";
+                document.getElementById("FecRango").style.display = "none";
+                document.getElementById("FecEje").style.display = "block";
+                document.getElementById("FecMultiple").style.display = "none";
+
+            } else if (codR == 2) {
+
+                document.getElementById("FecProg").style.display = "none";
+                document.getElementById("FecRango").style.display = "block";
+                document.getElementById("FecMultiple").style.display = "none";
+
+            } else if (codR == 3) {
+
+                document.getElementById("FecProg").style.display = "none";
+                document.getElementById("FecRango").style.display = "none";
+                document.getElementById("FecEje").style.display = "none";
+                document.getElementById("FecMultiple").style.display = "block";
+            }
+        });
+
+
+
+
+
+
+        $('select[name="ModalidadId"]').on('change', (e) => {
+
+            var cod = $('select[name="ModalidadId"] option:selected').val();
+
+            debugger;
+            if (cod == 193) {
+                document.getElementById("Dep").style.display = "none";
+                document.getElementById("LuEj").style.display = "none";
+            } else
+            {
+                document.getElementById("Dep").style.display = "block";
+                document.getElementById("LuEj").style.display = "block";
+            }
+
+
+        });
+
+
+        $.validator.addMethod("seEquipoSubId", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un EQUIPO/SUBSECRETARÍA"));
+
+        $.validator.addMethod("selAsisTecId", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un ASISTENCIA TÉCNICA "));
+
+        $.validator.addMethod("selModalidadId", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un MODALIDAD"));
+
+        $.validator.addMethod("selResponsableId", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un RESPONSABLE"));
+
+        $.validator.addMethod("selMateriaId", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un MATERIA"));
+
+
+
+        $.validator.addMethod("selEstado", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un Estado"));
+
+        $.validator.addMethod("selCumplimiento", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un Cumplimiento"));
+
+
+        $('#form-modal-editar').validate({
+            errorPlacement: function (error, element) {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+
+                EquipoSubId: {
+                    seEquipoSubId: 1
+                },
+                AsisTecId: {
+                    selAsisTecId: 1
+                },
+                ModalidadId: {
+                    selModalidadId: 1
+                },
+                ResponsableId: {
+                    selResponsableId: 1
+                },
+                MateriaId: {
+                    selMateriaId: 1
+                },
+                Estado: {
+                    selEstado: 1
+                },
+                Cumplimiento: {
+                    selCumplimiento: 1
+                },
+            },
+            messages: {
+
+            }
+        });
+    });
+
+
+
+
+
+
+
+</script>
+
+

@@ -1,0 +1,132 @@
+﻿@using Sut.Entities;
+@model List<Procedimiento>
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    Expediente exp = ViewBag.Expediente as Expediente;
+}
+<tbody data-totalrows="@ViewBag.TotalRows">
+    @if (Model.Count() > 0)
+    {
+        int i = (int)ViewBag.Row;
+        foreach (Procedimiento p in Model)
+        {
+            <tr>
+                <td></td>
+                @*<td>@MvcHtmlString.Create((++i).ToString())</td>*@
+                @if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                {
+                    <td style="width:50px;text-align:center">@p.Numero</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                <td>@Html.TipoOperacion(p.Operacion)</td>
+                <td>@p.UndOrgResponsable.Nombre</td>
+                <td>@p.CodigoCorto</td>
+                <td>@p.Denominacion</td>
+                <td>@Html.TipoProcedimiento(p.TipoProcedimiento)</td>
+                <td>
+                    @p.NombreCategoria
+                </td>
+                @*<td class="text-center">
+                        <a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.copiar(@p.ProcedimientoId)"><i class="fa fa-copy"></i></a>
+                    </td>*@
+                <td class="text-center">
+                    <a class="btn btn-info btn-xs" href="javascript:sut.Procedimiento.verObsNotasCiudadano(@p.ProcedimientoId)"><i class="fa fa-pencil"></i></a>
+                </td>
+                <td class="text-center">
+                    @if (p.ObsDGH == 0)
+                    {
+                    <a class="btn btn-info btn-xs" href="javascript:sut.Procedimiento.verObsDatosGenerales(@p.ProcedimientoId)"><i class="fa fa-pencil"></i></a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-danger btn-xs" href="javascript:sut.Procedimiento.verObsDatosGenerales(@p.ProcedimientoId)"><i class="fa fa-pencil"></i></a>
+                    }
+                </td>
+
+                @if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                {
+                    <td class="text-center">
+                        @if (p.ObsSTLH == 0)
+                        {
+                            <a class="btn btn-info btn-xs" href="javascript:sut.Procedimiento.verObsSustentoTecnico(@p.ProcedimientoId)"><i class="fa fa-pencil"></i></a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-danger btn-xs" href="javascript:sut.Procedimiento.verObsSustentoTecnico(@p.ProcedimientoId)"><i class="fa fa-pencil"></i></a>
+                        }
+                    </td>
+                }
+                @if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                {
+                    <td>
+                        @if (p.ObsASMEH == 0)
+                        {
+                            <a class="btn btn-info btn-xs" href="javascript:sut.Procedimiento.verObsTablaAsme(@p.ProcedimientoId)"><i class="fa fa-pencil"></i></a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-danger btn-xs" href="javascript:sut.Procedimiento.verObsTablaAsme(@p.ProcedimientoId)"><i class="fa fa-pencil"></i></a>
+                        }
+
+                    </td>
+                }
+                <td>
+                    @{
+                        if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                        {
+                            if (@p.CodigoCorto != null)
+                            {
+                                @*<a class="btn btn-default btn-xs" href="@Url.Content("~/General/Reporte/ReporteTupa")?ExpedienteId=@p.ExpedienteId&&ProcedimientoId=@p.ProcedimientoId&&orden=1" target="_blank"><i class="fa fa-file-pdf-o"></i></a>*@
+                                <a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.ReporteTupa(@p.ExpedienteId,@p.ProcedimientoId,1)"><i class="fa fa-file-pdf-o"></i></a>
+                            }
+                        }
+                        else if (p.Operacion == OperacionExpediente.Ninguna)
+                        {
+                            @*<a class="btn btn-default btn-xs" href="@Url.Content("~/General/Reporte/ReporteTupa")?ExpedienteId=@p.ExpedienteId&&ProcedimientoId=@p.ProcedimientoId&&orden=1" target="_blank"><i class="fa fa-file-pdf-o"></i></a>*@
+                            <a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.ReporteTupa(@p.ExpedienteId,@p.ProcedimientoId,1)"><i class="fa fa-file-pdf-o"></i></a>
+
+                        }
+                    }
+
+                </td>
+                @if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                {
+                    <td>
+                        @{
+                            if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                            {
+                                if (@p.CodigoCorto != null)
+                                {
+                                    @*<a class="btn btn-default btn-xs" href="@Url.Content("~/General/Reporte/FSLT")?tipo=2&id=@p.ProcedimientoId" target="_blank"><i class="fa fa-file-pdf-o"></i></a>*@
+                                    <a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.FSLT(2,@p.ProcedimientoId)"><i class="fa fa-file-pdf-o"></i></a>
+                                }
+                            }
+                            else if (p.Operacion == OperacionExpediente.Ninguna)
+                            {
+                                @*<a class="btn btn-default btn-xs" href="@Url.Content("~/General/Reporte/FSLT")?tipo=2&id=@p.ProcedimientoId" target="_blank"><i class="fa fa-file-pdf-o"></i></a>*@
+                                <a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.FSLT(2,@p.ProcedimientoId)"><i class="fa fa-file-pdf-o"></i></a>
+
+                            }
+                        }
+
+                    </td>
+                            }
+                <td>@p.PlazoAtencion</td>
+                <td>@p.Pprestacionesanuales</td>
+                <td>@p.Prequisitos</td>
+
+
+            </tr>
+                                }
+                            }
+                            else
+                            {
+                    <tr>
+                        <td colspan="10" class="text-center text-bold">NO SE ENCONTRARON REGISTROS.</td>
+                    </tr>
+                }
+
+</tbody>

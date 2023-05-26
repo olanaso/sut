@@ -1,0 +1,301 @@
+﻿@using Sut.Entities
+<div id="buscarProcedimiento" class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Seleccionar @MvcHtmlString.Create(ViewBag.TipoTupa == (short)TipoTupa.Estandar ? "Procedimiento Estándar" : "Procedimiento/Servicio")</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-buscar-procedimiento", @class = "form-horizontal" }))
+            {
+                <div class="table-responsive">
+
+
+                    <div class="panel-group" id="accordion">
+                    </div>  
+                    @*<table id="tblBuscarProcedimiento"
+                       class="table table-bordered table-striped table-hover"
+                       data-pagesize="20"
+                       data-page="1"
+                       data-totalrows="0"
+                       data-function="sut.buscarProcedimiento.listar"
+                       data-paginator="paginator">
+                    <thead>
+                        <tr>
+                            <th class="colCheck">
+                                @if (ViewBag.Multi)
+                                {
+                                    @*<input type="checkbox" id="buscarProcedimientoTodo" />*
+                                }@
+                            @*</th>
+                            <th>Tipo</th>
+                            <th>@MvcHtmlString.Create(ViewBag.TipoTupa == (short)TipoTupa.Estandar ? "TUPA Estándar" : "Entidad")</th>
+                            <th>Código</th>
+                            <th>Denominación</th>
+                        </tr>
+                        <tr>
+                            <th><button type="button" class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                            <th></th>
+                            <th><input name="Entidad" type="text" class="form-control input-sm" /></th>
+                            <th><input name="Codigo" type="text" class="form-control input-sm" /></th>
+                            <th><input name="Denominacion" type="text" class="form-control input-sm" /></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr><td colspan="5"><div id="paginator"></div></td></tr>
+                    </tfoot>
+                </table>*@ 
+                </div>
+            }
+        </div>
+        <div class="modal-footer">
+            @if (ViewBag.Multi)
+            {
+                <a class="btn btn-success btn-sm" href="javascript:sut.buscarProcedimiento.aceptar();"><i class="fa fa-check"></i> Aceptar</a>
+            }
+            <button type="button" class="btn btn-danger btn-sm" onclick="$(this).parent().parent().parent().parent().parent().modal('hide');"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+
+</style>
+
+<script>
+
+    var multi = @Html.Raw(ViewBag.Multi ? "true" : "false");
+    var fnAdd = @Html.Raw(ViewBag.FnAdd);
+
+    sut.buscarProcedimiento = {
+        tipoColor: ["", "bg-purple", "label-success", "label-warning", "label-warning", "label-warning" ],
+        tipoNom: ["", "PROCEDIMIENTO ADMINISTRATIVO", "SERVICIO EXCLUSIVO", "PROCEDIMIENTO ESTÁNDAR", "", "SERVICIO ESTÁNDAR" ],
+        getTipoProc: (tipo) => {
+            return sut.string.format('<label class="label {0}" >{1}</label>', sut.buscarProcedimiento.tipoColor[tipo], sut.buscarProcedimiento.tipoNom[tipo]);
+        },
+
+        listar: function (table, page,ExpedienteId) {
+            debugger;
+            table = $('#' + table);
+            var model = {
+                'filtro.Codigo': $('#form-buscar-procedimiento input[name="Codigo"]').val(),
+                'filtro.Denominacion': $('#form-buscar-procedimiento input[name="Denominacion"]').val(),
+                'filtro.Expediente.Entidad.Nombre': $('#form-buscar-procedimiento input[name="Entidad"]').val(),
+                'tipo': @ViewBag.TipoTupa ,
+                'filtro.ExpedienteId': ExpedienteId ,
+                'pageIndex': page,
+                'pageSize': table.data('pagesize')
+            };
+
+            $.ajax({
+                //url: '/Simplificacion/Procedimiento/GetAllLikePaginByTupa',
+                url: '@Url.Content("~/Simplificacion/Procedimiento/GetAllLikePaginByTupaxid")',
+                type: 'GET',
+                data: model,
+                dataType: 'json',
+                beforeSend: function () {
+                    sut.wait.appendProgress('#buscarProcedimiento .modal-footer');
+                },
+                success: function (data) {
+                    sut.wait.removeProgress('#buscarProcedimiento .modal-footer');
+                    table.data('page', page);
+                    table.data('totalrows', data.totalRows);
+                    sut.buscarProcedimiento.generar(table, data.lista);
+                    //if (data.totalRows == 0)
+                    //    $('#tblBuscarProcedimiento tbody').append('<tr><td colspan="5" class="text-center text-bold">NO EXISTEN REGISTROS</td></td>');
+                },
+                error: function (data) {
+                    sut.error.show('mensajes', data.responseText);
+                }
+            });
+        },
+        generar: function (table, lista) {
+            debugger;
+            var tabla = table.children('tbody');
+            tabla.children('tr').remove();
+            var rows = '';
+            var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+            $.each(lista, function (i, r) {
+                if (multi)
+                {
+                    rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarProcedimiento{0}" type="checkbox" onclick="codigocapturar('+r.ExpedienteId+')"  value="{0}|{3}" /></td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>',
+                        r.ProcedimientoId, sut.buscarProcedimiento.getTipoProc(r.Tipo), r.Entidad, r.CodigoCorto, r.Denominacion);
+                } else {
+                    rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarProcedimiento{0}" onclick="codigocapturar('+r.ExpedienteId+')" type="hidden" value="{0}|{3}" /></td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>',
+                        r.ProcedimientoId, sut.buscarProcedimiento.getTipoProc(r.Tipo), r.Entidad, r.CodigoCorto, r.Denominacion);
+                }
+            });
+            sut.pagination.update(table);
+            tabla.append(rows);
+
+            //if (multi) {
+            //    $('.icheck-procedimiento').iCheck({
+            //        checkboxClass: 'icheckbox_square-red',
+            //        radioClass: 'iradio_square-red',
+            //        increaseArea: '20%' // optional
+            //    });
+            //}
+        },
+        listarAcordion: function (page) {
+            debugger;
+            table = $('#tblLista');
+            var model = {
+                'filtro.Codigo': '',
+                'filtro.Denominacion': '',
+                'filtro.Expediente.Entidad.Nombre': '',
+                'tipo': @ViewBag.TipoTupa ,
+                pageIndex: page,
+                pageSize: table.data('pagesize')
+            };
+            $.ajax({
+                //url: "/Seguridad/Ayuda/GetAllLikePaginAcordion",
+              url: '@Url.Content("~/Simplificacion/Procedimiento/GetAllLikePaginByTupaxidFiltro")',
+                type: "GET",
+                data: model,
+                dataType: "json",
+                beforeSend: function () {
+                    sut.wait.appendOverlay('#boxLista');
+                },
+                success: function (data) {
+                    sut.wait.removeOverlay('#boxLista');
+                    sut.buscarProcedimiento.generaracordion(data.lista);
+                },
+                error: function (data) {
+                    sut.error.show('mensajes', data.responseText);
+                }
+            });
+        },
+
+        generaracordion: function (lista) {
+            debugger;
+            var numero = 1;
+            var numero2 = 1;
+            $.each(lista, function (i, r) {
+                var rows = '';
+                rows += ('<div class="panel panel-default ">');
+                rows += ('         <div class="panel-heading" class="callout callout-warning" style="height: inherit;padding: inherit;display: block;">');
+                rows += ('             <h4 class="panel-title">');
+                rows += sut.string.format('                 <a data-toggle="collapse" data-parent="#accordion" class="datos_edit" href="#collapse{0}">', ++numero);
+                rows += (r.Entidad);
+                rows += ('                 </a>');
+                rows += ('             </h4>');
+                rows += ('         </div>');
+                if (numero2 == 1) {
+                    rows += sut.string.format('         <div id="collapse{0}" class="panel-collapse collapse  in">', ++numero2);
+                } else { rows += sut.string.format('         <div id="collapse{0}" class="panel-collapse collapse  ">', ++numero2);}
+                rows += ('             <div class="panel-body">');
+                rows += sut.string.format('<input type="hidden" id="valor" />');
+
+
+                //rows += (r.contenido)+'asdasdas asjorge';
+
+                rows += ('<table  id="tblBuscarProcedimiento'+r.ExpedienteId+'"');
+                rows += ('	   class="table table-bordered table-striped table-hover"');
+                rows += ('	   data-pagesize="10000"');
+                rows += ('	   data-page="1"');
+                rows += ('	   data-totalrows="0"');
+                rows += ('	   data-function=sut.buscarProcedimiento.listar');
+                rows += ('	   data-paginator="paginator">');
+                rows += ('	<thead>');
+                rows += ('		<tr>');
+                rows += ('			<th class="colCheck">');
+                rows += ('			</th>');
+                rows += ('			<th>Tipo</th>');
+                rows += ('			<th>@MvcHtmlString.Create(ViewBag.TipoTupa == (short)TipoTupa.Estandar ? "TUPA Estándar" : "Entidad")</th>');
+                rows += ('			<th>Código</th>');
+                rows += ('			<th>Denominación</th>');
+                rows += ('		</tr>');
+                rows += ('		<tr>');
+                rows += ('			<th><button type="button" class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>');
+                rows += ('			<th></th>');
+                rows += ('			<th><input name="Entidad" type="text" class="form-control input-sm" /></th>');
+                rows += ('			<th><input name="Codigo" type="text" class="form-control input-sm" /></th>');
+                rows += ('			<th><input name="Denominacion" type="text" class="form-control input-sm" /></th>');
+                rows += ('		</tr>');
+                rows += ('	</thead>');
+                rows += ('	<tbody></tbody>');
+                rows += ('	<tfoot>');
+                rows += ('		<tr><td colspan="5"><div id="paginator"></div></td></tr>');
+                rows += ('	</tfoot>');
+                rows += ('</table>');
+
+
+
+                rows += ('             </div>');
+                rows += ('         </div>');
+                rows += ('</div>');
+                $('#accordion').append(rows);
+
+                sut.buscarProcedimiento.listar('tblBuscarProcedimiento'+r.ExpedienteId+'', 1,r.ExpedienteId);
+            });
+
+
+
+
+        },
+        aceptar: function () {
+            debugger;
+            var inputs3 = $('#valor').val();
+            //var adas = $('.collapse').collapse('show')
+            //var inputs3 = $('input[name="valor"]').val(id);
+
+            var inputs = $('#tblBuscarProcedimiento'+inputs3+' tbody tr td input:checked');
+            if (inputs.length > 0) {
+                var data = [];
+                $.each(inputs, function (i, r) {
+                    var v = $(r).val().split('|');
+                    data.push({
+                        ProcedimientoId: Number(v[0]),
+                        Codigo: v[1]
+                    });
+                });
+                fnAdd(data);
+            }
+        },
+        aceptarSingle: function (tr) {
+            var input = $(tr).find('input[id^="chkbuscarProcedimiento"]');
+            var v = input.val().split('|');
+            fnAdd({
+                ProcedimientoId: Number(v[0]),
+                Codigo: v[1]
+            });
+        }
+    };
+    function codigocapturar(id) {
+        //document.getElementById(id).checked = !document.getElementById(id).checked;
+        debugger;
+     $('#valor').val(id);
+     var inputs3 = $('#valor').val();
+        //var inputs3 = $('#valor').val(id);
+        //alert(inputs3);
+    }
+    $(function () {
+        //sut.buscarProcedimiento.listar('tblBuscarProcedimiento', 1);
+
+        sut.buscarProcedimiento.listarAcordion(1);
+
+        $('#buscarProcedimientoTodo').on('change', function (e) {
+            $('input[id^="chkbuscarProcedimiento"]').prop('checked', $('#buscarProcedimientoTodo').is(':checked'));
+            //$('input[id^="chkbuscarProcedimiento"]').iCheck($('#buscarProcedimientoTodo').is(':checked') ? 'check' : 'uncheck');
+        });
+
+        $('#form-buscar-procedimiento input[name="Codigo"], #form-buscar-procedimiento input[name="Entidad"], #form-buscar-procedimiento input[name="Denominacion"]').keypress(function (e) {
+            var inputs3 = $('#valor').val();
+            var key = e.keyCode || event.keyCode
+            if (key == 13) {
+                sut.buscarProcedimiento.listar('tblBuscarProcedimiento'+inputs3, 1);
+                e.preventDefault();
+            }
+        });
+
+        $('#tblBuscarProcedimiento button').eq(0).click(function (e) {
+            $('#form-buscar-procedimiento input[name="Codigo"]').val('');
+            $('#form-buscar-procedimiento input[name="Denominacion"]').val('');
+            $('#form-buscar-procedimiento input[name="Entidad"]').val('');
+            sut.buscarProcedimiento.listar('tblBuscarProcedimiento3', 1);
+        });
+
+        sut.table.selectRow('#tblBuscarProcedimiento', multi, sut.buscarProcedimiento.aceptarSingle);
+    });
+
+</script>

@@ -1,0 +1,1002 @@
+﻿using Sut.Entities;
+using Sut.IApplicationServices;
+using Sut.IRepositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Sut.ApplicationServices
+{
+    public class AuditoriaService : IAuditoriaService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IAuditoriaRepository _AuditoriaRepository;
+
+        public AuditoriaService(IUnitOfWork unitOfWork,
+                            IAuditoriaRepository AuditoriaRepository)
+        {
+            _unitOfWork = unitOfWork;
+            _AuditoriaRepository = AuditoriaRepository;
+        }
+
+        public Auditoria GetOne(long Auditoriaid)
+        {
+            try
+            {
+                return _AuditoriaRepository.GetOne(Auditoriaid);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<RequisitoFormulario> GetAllListaReq(long pExpedienteId)
+        {
+            try
+            {
+                return _AuditoriaRepository.GetAllListaReq(pExpedienteId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<RequisitoFormulario> GetAllListaReqID(long pProcedimientoId)
+        {
+            try
+            {
+                return _AuditoriaRepository.GetAllListaReqID(pProcedimientoId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> GetAllReporte(Auditoria filtro, int roladmi)
+        {
+            try
+            {
+                List<Auditoria> query;
+                if ((short)Rol.Administrador == roladmi)
+                {
+                    query = _AuditoriaRepository.GetAllAdmin();
+                }
+                else
+                {
+                    query = _AuditoriaRepository.GetAll(filtro);
+                }
+
+                var data = query.Where(x => x.Usuario.ToUpper().Contains((filtro.Usuario ?? x.Usuario).ToUpper())
+                                         && x.Actividad.ToUpper().Contains((filtro.Actividad ?? x.Actividad).ToUpper())
+                                         && x.Pantalla.ToUpper().Contains((filtro.Pantalla ?? x.Pantalla).ToUpper())
+                 );
+
+
+                if (filtro.FecCreaciontexto != null)
+                {
+                    if (filtro.FecCreaciontexto.ToString().Trim() != "")
+                    {
+
+                        data = data.Where(x => x.FecCreacion.ToString().Contains((filtro.FecCreaciontexto ?? x.FecCreacion.ToString()).ToUpper()));
+                    }
+                }
+
+                if (filtro.EntidadId != 0 && roladmi != 1)
+                {
+                    data = data.Where(x => x.EntidadId == filtro.EntidadId);
+                }
+                else if (filtro.NombreEntidad != null)
+                {
+                    if (!string.IsNullOrEmpty(filtro.NombreEntidad))
+                        data = data.Where(x => x.Entidad != null)
+                                    .Where(x => x.Entidad.Nombre.ToUpper().Contains((filtro.NombreEntidad ?? x.Entidad.Nombre).ToUpper()));
+                }
+
+                data = data.OrderBy(x => x.EntidadId)
+                    .ThenBy(x => x.AuditoriaID);
+
+                var result = data.ToList();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        public List<Auditoria> GetAllLikePagin(Auditoria filtro, int pageIndex, int pageSize, ref int totalRows)
+        {
+            try
+            {
+                List<Auditoria> query = _AuditoriaRepository.GetAll(filtro);
+
+                var data = query.Where(x => x.Actividad.ToUpper().Contains((string.IsNullOrEmpty(filtro.Actividad) ? x.Actividad : filtro.Actividad).ToUpper()))
+                            .OrderByDescending(x => x.FecCreacion);
+
+                totalRows = data.Count();
+                var result = data.Skip((pageIndex - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        public List<Auditoria> GetAllLikePaginAudi(Auditoria filtro, int roladmi, int pageIndex, int pageSize, ref int totalRows)
+        {
+            try
+            {
+                List<Auditoria> query;
+                if ((short)Rol.Administrador == roladmi)
+                {
+                    query = _AuditoriaRepository.GetAllAdmin();
+                }
+                else
+                {
+                    query = _AuditoriaRepository.GetAll(filtro);
+                }
+
+                var data = query.Where(x => x.Usuario.ToUpper().Contains((filtro.Usuario ?? x.Usuario).ToUpper())
+                                         && x.Actividad.ToUpper().Contains((filtro.Actividad ?? x.Actividad).ToUpper())
+                                         && x.Pantalla.ToUpper().Contains((filtro.Pantalla ?? x.Pantalla).ToUpper())
+                 );
+
+
+                if (filtro.FecCreaciontexto != null)
+                {
+                    if (filtro.FecCreaciontexto.ToString().Trim() != "")
+                    {
+
+                        data = data.Where(x => x.FecCreacion.ToString().Contains((filtro.FecCreaciontexto ?? x.FecCreacion.ToString()).ToUpper()));
+                    }
+                }
+
+                if (filtro.EntidadId != 0)
+                {
+                    data = data.Where(x => x.EntidadId == filtro.EntidadId);
+                }
+                else if (filtro.Entidad != null)
+                {
+                    if (!string.IsNullOrEmpty(filtro.Entidad.Nombre))
+                        data = data.Where(x => x.Entidad != null)
+                                    .Where(x => x.Entidad.Nombre.ToUpper().Contains((filtro.Entidad.Nombre ?? x.Entidad.Nombre).ToUpper()));
+                }
+
+                data = data.OrderBy(x => x.EntidadId)
+                    .ThenBy(x => x.AuditoriaID);
+
+
+                totalRows = data.Count();
+                var result = data.Skip((pageIndex - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void Save(Auditoria obj)
+        {
+            try
+            {
+                _AuditoriaRepository.Save(obj);
+                _unitOfWork.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
+
+        public int PresentarAprobar(long pExpedienteId)
+        {
+            try
+            {
+                return _AuditoriaRepository.PresentarAprobar(pExpedienteId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        } 
+        public int  LimpiarObs_Expediente(long pExpedienteId, string pUsuarioCreacion, string pUserCreacion)
+        {
+            try
+            {
+                return _AuditoriaRepository.LimpiarObs_Expediente(pExpedienteId, pUsuarioCreacion, pUserCreacion);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public int ActualizarObservacion(long pExpedienteId)
+        {
+            try
+            {
+                return _AuditoriaRepository.ActualizarObservacion(pExpedienteId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public int ActualizarResolver(long pProcedimientoId, long pPzoReconResol)
+        {
+            try
+            {
+                return _AuditoriaRepository.ActualizarResolver(pProcedimientoId, pPzoReconResol);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public int ActualizarResolverDet(long pProcedimientoId, long pPzoReconResol)
+        {
+            try
+            {
+                return _AuditoriaRepository.ActualizarResolverDet(pProcedimientoId, pPzoReconResol);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public  int Eliminar_ActividadBlanco(long pTablaAsmeId)
+        {
+            try
+            {
+                return _AuditoriaRepository.Eliminar_ActividadBlanco(pTablaAsmeId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+       
+
+        public List<Auditoria> ListaRptEquipoTrabajo()
+        {
+            try
+            {
+                return _AuditoriaRepository.ListaRptEquipoTrabajo();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> ListaRptUsuario()
+        {
+            try
+            {
+                return _AuditoriaRepository.ListaRptUsuario();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> ListaRptExpediente()
+        {
+            try
+            {
+                return _AuditoriaRepository.ListaRptExpediente();
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_NORMA(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_NORMA(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_NORMALISTA(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_NORMALISTA(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_ArAdjunto(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_ArAdjunto(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_ciudadano(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_ciudadano(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        
+        public List<Auditoria> listaObs_DatoGenerales(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_DatoGenerales(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<Auditoria> listaObs_DatoGeneralesComp(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_DatoGeneralesComp(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_STL(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_STL(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_TablaAsme(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_TablaAsme(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+		/*JJJMSP2*/
+		public List<CompararPA> getProcedimientoComparar(long pEntidadId1, long pExpedienteId1, long pExpedienteId2)
+        {
+            try
+            {
+                return _AuditoriaRepository.getProcedimientoComparar(pEntidadId1, pExpedienteId1, pExpedienteId2);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_ResumenCosto(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_ResumenCosto(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_PersonalCosto(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_PersonalCosto(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_MATERIALFUNGIBLE(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_MATERIALFUNGIBLE(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_SERVICIOIDENTIFICABLE(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_SERVICIOIDENTIFICABLE(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_MATERIALNOFUNGIBLE(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_MATERIALNOFUNGIBLE(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_SERVICIOTERCEROS(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_SERVICIOTERCEROS(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_DEPRECIACIONAMORIZACION(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_DEPRECIACIONAMORIZACION(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_COSTOSFIJOS(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_COSTOSFIJOS(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_VALORESINDUCTORES(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_VALORESINDUCTORES(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+ 
+
+        public List<Auditoria> listaObs_General(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_General(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Auditoria> listaObs_INDUCTORSIGNACIONCOSTOS(long pExpedienteId, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.listaObs_INDUCTORSIGNACIONCOSTOS(pExpedienteId, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<FactorDedicacion> rptFactorTupa_NoTupa(long pExpedienteId)
+        {
+            try
+            {
+                return _AuditoriaRepository.rptFactorTupa_NoTupa(pExpedienteId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<Expediente> listagrafico(long pSectorId, long pNivelGobiernoId, string pAcronimo)
+        {
+            try
+            {
+                return _AuditoriaRepository.listagrafico(pSectorId, pNivelGobiernoId, pAcronimo);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int AlimpiarPosicion(long pExpedienteId, long pProcedimientoId)
+        {
+            try
+            {
+                return _AuditoriaRepository.AlimpiarPosicion(pExpedienteId, pProcedimientoId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int GenerarNumeracion(long pExpedienteId)
+        {
+            try
+            {
+                return _AuditoriaRepository.GenerarNumeracion(pExpedienteId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int BotonSiguienteAtras_INDEX(long pExpedienteId, long pExplorarNum)
+        {
+            try
+            {
+                return _AuditoriaRepository.BotonSiguienteAtras_INDEX(pExpedienteId, pExplorarNum);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int  ResetearFactor(long pExpedienteId)
+        {
+            try
+            {
+                return _AuditoriaRepository.ResetearFactor(pExpedienteId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        
+
+
+        public int AnularExpediente(long pExpedienteId)
+        {
+            try
+            {
+                return _AuditoriaRepository.AnularExpediente(pExpedienteId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public string VerificarEliminar(long UnidadOrganicaId)
+        {
+            try
+            {
+                return _AuditoriaRepository.VerificarEliminar(UnidadOrganicaId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public string VerificarRecursoEspera(long pProcedimientoId)
+        {
+            try
+            {
+                return _AuditoriaRepository.VerificarRecursoEspera(pProcedimientoId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+ 
+        public string VerificarEliminareditar(long UnidadOrganicaId)
+        {
+            try
+            {
+                return _AuditoriaRepository.VerificarEliminareditar(UnidadOrganicaId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public string VerificarEliminarReq(long RequisitoId, long TipoRequisito, long estadoExpediente)
+        {
+            try
+            {
+                return _AuditoriaRepository.VerificarEliminarReq(RequisitoId, TipoRequisito, estadoExpediente);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public string VerificarEliminarSede(long SedeId)
+        {
+            try
+            {
+                return _AuditoriaRepository.VerificarEliminarSede(SedeId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public string VerificarEliminarRecursoId(long RecursoId)
+        {
+            try
+            {
+                return _AuditoriaRepository.VerificarEliminarRecursoId(RecursoId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public string VerificarEliminarRecursoIdEditar(long RecursoId)
+        {
+            try
+            {
+                return _AuditoriaRepository.VerificarEliminarRecursoIdEditar(RecursoId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
+        public string VerificarEliminarInductorId(long InductorId)
+        {
+            try
+            {
+                return _AuditoriaRepository.VerificarEliminarInductorId(InductorId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public string VerificarEliminarInductorIdEditar(long InductorId)
+        {
+            try
+            {
+                return _AuditoriaRepository.VerificarEliminarInductorIdEditar(InductorId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        public int ActualizarLicencias(long pUsuario)
+        {
+            try
+            {
+                return _AuditoriaRepository.ActualizarLicencias(pUsuario);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int ValidarUnidadOrganicaId(long pUnidadOrganicaId, long pEntidadId, string pDescripcion)
+        {
+            try
+            {
+                return _AuditoriaRepository.ValidarUnidadOrganicaId(pUnidadOrganicaId, pEntidadId, pDescripcion);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int ValidarRecursoId(long pRecursoId, long pEntidadId, string pDescripcion)
+        {
+            try
+            {
+                return _AuditoriaRepository.ValidarRecursoId(pRecursoId, pEntidadId, pDescripcion);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public int AgregarObservacion(Observacion filtro, int pEstadoCambio, string pUsuarioCreacion, string pUserCreacion, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.AgregarObservacion(filtro, pEstadoCambio, pUsuarioCreacion, pUserCreacion, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int CancelarObservacion(Observacion filtro, int pEstadoCambio, string pUsuarioCreacion, string pUserCreacion, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.CancelarObservacion(filtro, pEstadoCambio, pUsuarioCreacion, pUserCreacion, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int ValidarInductorId(long pInductorId, long pEntidadId, string pDescripcion)
+        {
+            try
+            {
+                return _AuditoriaRepository.ValidarInductorId(pInductorId, pEntidadId, pDescripcion);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int CambiarEstado(long pExpedienteId, long pEstadoExpediente, long pEntidadId)
+        {
+            try
+            {
+                return _AuditoriaRepository.CambiarEstado(pExpedienteId, pEstadoExpediente, pEntidadId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public int CambiarEstadoSustento(TipoSustento pTipoEstado, long pProcedimientoId, long pEstado, long pExpedienteId)
+        {
+            try
+            {
+                return _AuditoriaRepository.CambiarEstadoSustento(pTipoEstado, pProcedimientoId, pEstado, pExpedienteId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int CambiarEstadoProceso(TipoSustento pTipoEstado, long pProcedimientoId, long pEstado, long pExpedienteId)
+        {
+            try
+            {
+                return _AuditoriaRepository.CambiarEstadoProceso(pTipoEstado, pProcedimientoId, pEstado, pExpedienteId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int ObservarTtotal(long pExpedienteId, long pNum)
+        {
+            try
+            {
+                return _AuditoriaRepository.ObservarTtotal(pExpedienteId, pNum);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int ValidarTotal(long pExpedienteId, long pNum)
+        {
+            try
+            {
+                return _AuditoriaRepository.ValidarTotal(pExpedienteId, pNum);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public int ActualizarSubsanar(long pExpedienteId)
+        {
+            try
+            {
+                return _AuditoriaRepository.ActualizarSubsanar(pExpedienteId);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public int ValidarProcedimiento(long pExpedienteId, long pFicha)
+        {
+            try
+            {
+                return _AuditoriaRepository.ValidarProcedimiento(pExpedienteId, pFicha);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public int registrarAuditoria(Auditoria obj)
+        {
+            try
+            {
+                return _AuditoriaRepository.registrarAuditoria(obj);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public int InsertarusuarioAsig(UsuarioAsignacion auditoria)
+        {
+            try
+            {
+                return _AuditoriaRepository.InsertarusuarioAsig(auditoria);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int QuitarusuarioAsig(UsuarioAsignacion auditoria)
+        {
+            try
+            {
+                return _AuditoriaRepository.QuitarusuarioAsig(auditoria);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public int InsertarusuarioAsigActividad(GrupoEntidad auditoria)
+        {
+            try
+            {
+                return _AuditoriaRepository.InsertarusuarioAsigActividad(auditoria);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public int QuitarusuarioAsigActividad(GrupoEntidad auditoria)
+        {
+            try
+            {
+                return _AuditoriaRepository.QuitarusuarioAsigActividad(auditoria);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+     
+    }
+}

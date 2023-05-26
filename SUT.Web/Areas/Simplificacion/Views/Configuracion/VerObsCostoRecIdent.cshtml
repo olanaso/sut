@@ -1,0 +1,797 @@
+﻿@using Sut.Entities
+@model List<RecursoCosto>
+@{
+    Expediente exp = ViewBag.Expediente as Expediente;
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    List<Sut.Entities.Observacion> ObservacionCostoPersonal = ViewBag.ObservacionCostoPersonal as List<Sut.Entities.Observacion>;
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Sustento de Costos - Expediente " + exp.Codigo;
+    ViewBag.Descripcion = "";
+    var nombremultiple = ViewBag.nomoficial; 
+}
+
+<div id="mensajes">
+    @{Html.RenderPartial("_Error");}
+</div>
+
+<div class="box box-default">
+    <div class="box-body">
+        @{Html.RenderPartial("_VerObsMenuCostos", exp);} 
+    </div>
+</div>
+
+<div id="boxLista" class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title">@ViewBag.TipoRecurso</h3>
+        <div class="box-tools pull-right">
+            <a href="javascript:void(0)" class="btn btn-box-tool" data-toggle="tooltip" data-placement="bottom" title="Se lista los recursos asginados a las actividades de las Tablas ASME-VM.">
+                <i class="fa fa-question-circle"></i>
+            </a>
+        </div>
+    </div>
+    <div class="box-body">
+        @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-recurso-costo" }))
+        {
+            <div class="table-responsive">
+                <table id="tblLista" class="table table-bordered table-condensed table-striped" style="margin-bottom: 0px;font-size: 16px;">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;"></th>
+                            <th style="width: 30%;">Recurso</th>
+                            <th style="width: 30%;">Unidad de Medida</th>
+                            <th style="width: 10%;">Costo Unitario</th>
+                            <th style="width: 30%;">Doc. Sustento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count() > 0)
+                        {
+                            for (int i = 0; i < Model.Count; i++)
+                            {
+
+                                <tr>
+                                    <td colspan="5">
+
+                                        @*/*Inicio CostoPersonal*/*@
+                                        <div class="form-group">
+                                            <div class="col-sm-10 col-xs-12" style="text-align: left;">
+                                                
+                                                @if (ObservacionCostoPersonal.Count != 0)
+                                                {
+                                                    var cont = 0;
+                                                    var texto1 = "";
+                                                    foreach (var item in ObservacionCostoPersonal)
+                                                    {
+                                                        var nombre = nombremultiple + i;
+
+                                                        if (@item.Pantalla == nombremultiple && @item.NombreCampo == nombre)
+                                                        {
+                                                            cont = 1;
+
+                                                            if (@item.TipoEstado == "1")
+                                                            {
+                                                                texto1 = @item.Descripcion;
+                                                            }
+                                                            else if (@item.TipoEstado == "2")
+                                                            {
+                                                                <script> 
+                                                                window.addEventListener("load", function() { 
+                                                                    sut.RecursoCosto.textoobservacionCostoPersonal("@texto1.Replace("\n", " ")", "@item.Descripcion.Replace("\n", " ")", 4, "@exp.EstadoExpediente", @i); 
+                                                                });
+                                                                </script>
+                                                            } 
+                                                            else if (@item.TipoEstado == "3")
+                                                            {
+                                                                <script> 
+                                                                    window.addEventListener("load", function() { 
+                                                                        sut.RecursoCosto.textosustentoCostoPersonal("@item.Descripcion.Replace("\n", " ")", 4, "@exp.EstadoExpediente", @i); 
+                                                                    });
+                                                                </script>
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                            </div>
+                                        </div>
+                                        <div id="divCostoPersonal" >
+                                            <table id="divCostoPersonal0_@i" class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;font-size: 14px;">
+                                                <thead> 
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                        @*/*Fin*/*@
+                                    </td>
+                                </tr> 
+                                <tr>
+                                    <td></td> 
+                                    <td>@Model[i].Recurso.Nombre</td>
+                                    <td>@Model[i].Recurso.UnidadMedida.Nombre</td>
+                                    <td>
+                                        @Html.HiddenFor(model => model[i].ExpedienteId)
+                                        @Html.HiddenFor(model => model[i].RecursoCostoId)
+                                        @Html.HiddenFor(model => model[i].RecursoId)
+                                        @Html.TextBoxFor(model => model[i].CostoUnitario, new { @class = "form-control input-sm", @min = 0, @readonly = true })
+
+
+                                        @Html.HiddenFor(model => model[i].Recurso.Nombre, new { id = "RecursoNombre" + i })
+                                        @Html.HiddenFor(model => model[i].Recurso.UnidadMedida.Nombre, new { id = "RecursoUnidadMedidaNombre" + i })
+                                        @Html.HiddenFor(model => model[i].CostoUnitario, new { id = "CostoUnitario" + i })
+                                        @Html.HiddenFor(model => model[i].DocSustento, new { id = "DocSustento" + i })
+
+                                    </td>
+                                    <td>@Html.TextBoxFor(model => model[i].DocSustento, new { @class = "form-control input-sm", @readonly = true }) </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+    <div class="box-footer">
+        <div class="pull-right"> 
+            <a href="@Url.Content("~/Simplificacion/Configuracion/VerObsResumen/")?id=@exp.ExpedienteId&&entidadid=@ViewBag.entidadver" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a> 
+        </div>
+    </div>
+</div>
+
+@section Style {
+    <style type="text/css">
+        #tblLista thead tr th {
+            vertical-align: middle !important;
+            text-align: center !important;
+            font-size: 0.8em;
+        }
+
+            #tblLista thead tr th:nth-child(3) {
+                width: 100px;
+            }
+
+        #tblLista tbody tr td {
+            vertical-align: middle !important;
+            text-align: center !important;
+            font-size: 0.9em;
+        }
+
+            #tblLista tbody tr td input[type="text"] {
+                text-align: right !important;
+            }
+
+        /*#tblLista tbody tr td:nth-child(4),
+        #tblLista tbody tr td:nth-child(5) {
+            text-align: right !important;
+        }*/
+    </style>
+}
+
+@section Script {
+    <script>
+        sut.RecursoCosto = {
+            ObsVervisualizarSustentoRecursoCosto: function (evt, input) {
+                debugger;
+                var key = window.Event ? evt.which : evt.keyCode;
+                var chark = String.fromCharCode(key);
+                var tempValue = input.value + chark;
+                var id = input.id;
+                var txt = $(evt.target);
+                var valor = id.substring(14);
+                $('#mensajeCostoPersonal_' + valor).hide();
+                document.querySelector('#mensajeCostoPersonal_' + valor).innerText = '';
+            },
+            guardar: function () {
+                if ($('#form-recurso-costo').valid()) {
+                    var model = $('#form-recurso-costo').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Configuracion/GuardarRecursoCosto',
+                        url: '@Url.Content("~/Simplificacion/Configuracion/GuardarRecursoCosto")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                window.location.reload();
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }
+            },
+
+            init: function () {
+                //sut.CostoPersonal.updateCalc();
+            },
+            validarObservarExpCostoPersonal: function (idExpediente, numero,RecursoId,RecursoCostoId) {
+                debugger;
+
+                var Descripcion = $('#RecursoNombre'+numero).val()+';'+$('#RecursoUnidadMedidaNombre'+numero).val()+';'+$('#CostoUnitario'+numero).val()+';'+$('#DocSustento'+numero).val();
+                var NombreCampo = 'CostoPersonal';
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '4',
+                    'filtro.TipoEstado': '4',
+                    'filtro.NombreCampo': '@nombremultiple' + numero,
+                    'filtro.Pantalla': '@nombremultiple',
+                    'filtro.Estado': '1',
+                    'filtro.RecursoId': RecursoId,
+                    'filtro.RecursoCostoId': RecursoCostoId,
+                };
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/AgregarObservacion',
+                    url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+                        //$('#aValidarObservarExp' + NombreCampo + '_' + numero + '').css("display", "none");
+                        $('#aCancelarGeneralExp' + NombreCampo + '_' +  numero + '').css("display", "");
+
+                        $('#aObservarEditarExp' + NombreCampo + '_' + numero + '').css({ "display": "none" });
+                        $('#aMasivoObservarExp' + NombreCampo + '_' + numero + '').css({ "display": "none" });
+                        $('#mensajeCostoPersonal_' + numero).show();
+                        document.querySelector('#mensajeCostoPersonal_' + numero).innerText = 'Se valido con éxito';
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            CancelarGeneralExpCostoPersonal: function (idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId) {
+                debugger;
+
+                var Descripcion = $('#RecursoNombre'+numero).val()+';'+$('#RecursoUnidadMedidaNombre'+numero).val()+';'+$('#CostoUnitario'+numero).val()+';'+$('#DocSustento'+numero).val();
+
+
+                var NombreCampo = 'CostoPersonal';
+
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '4',
+                    'filtro.TipoEstado': '4',
+                    'filtro.NombreCampo': '@nombremultiple' + numero,
+                    'filtro.Pantalla': '@nombremultiple',
+                    'filtro.Estado': '1',
+                    'filtro.RecursoId': RecursoId,
+                    'filtro.RecursoCostoId': RecursoCostoId,
+                };
+
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarObservacion',
+                    url: '@Url.Content("~/Simplificacion/Expediente/CancelarObservacion")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+
+
+                        //$('#aValidarObservarExp' + NombreCampo +'_'+ numero + '').css("display", "");
+                        $('#aObservarEditarExp' + NombreCampo + '_' + numero + '').css("display", "");
+                        //$("#aSustentarObservarExpObjetivo").css("display","");
+                        //$("#aMasivoObservarExpObjetivo").css("display","");
+
+                        $('#aCancelarGeneralExp' + NombreCampo + '_' + numero + '').css({ "display": "none" });
+
+                        $('#mensajeCostoPersonal_' + numero + '').hide();
+                        document.querySelector('#mensajeCostoPersonal_' + numero + '').innerText = '';
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            observareditarExpCostoPersonal: function (num) {
+                debugger;
+                var tabla = $('#divCostoPersonal0_' + num + ' tbody');
+                debugger;
+                var NombreCampo = 'CostoPersonal';
+                var rows = '';
+
+                var monto0= sut.format.decimal($('#CostoAnual'+num).val() / 12);
+                var monto1= sut.format.decimal(($('#CostoAnual'+num).val() / 12) / 14400);
+
+
+                rows += sut.string.format('<tr data-index="{0}" id="trdivCostoPersonal0' + num + '">', num);
+                rows +='<td style="width: 5%;"> Descripción: </td>';
+                rows +='<td  style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;width: 30%;">';
+                rows += $('#RecursoNombre'+num).val() ;
+                rows += '</td>';
+                rows +='<td  style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;width: 30%;">';
+                rows += $('#RecursoUnidadMedidaNombre'+num).val() ;
+                rows += '</td>';
+                rows +='<td  style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;width: 10%;">';
+                rows +=sut.format.decimal($('#CostoUnitario'+num).val());
+                rows += '</td>';
+                rows +='<td  style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;width: 30%;">';
+                rows += $('#DocSustento'+num).val() ;
+                rows += '</td>';
+
+
+                rows += sut.string.format('</tr>');
+                rows += '<tr id="trdivCostoPersonal0_' + num + '">'
+                rows +='<td style="width: 5%;"> Observar: </td>';
+                rows += sut.string.format('<td colspan="10" ><textarea name="CostoPersonal2' + num + '" id="CostoPersonal2' + num + '" class="form-control" onkeypress="javascript:sut.RecursoCosto.ObsVervisualizarSustentoRecursoCosto(event,this);" style="border-color:red;background:#ff00002e;"></textarea></td>', '');
+                rows += '</tr>';;
+
+                tabla.append(rows);
+
+                $('#aAsignarGuardarObservarExp' + NombreCampo +'_'+ num + '').css({ "display": "" });
+                $('#aAsignarCancelarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+
+                //$('#aValidarObservarExp' + NombreCampo + '_' + num + '').css("display", "none");
+                $('#aCancelarGeneralExp' + NombreCampo + '_' + num + '').css("display", "none");
+                $('#aObservarEditarExp' + NombreCampo + '_'+ num + '').css({ "display": "none" });
+                $('#aMasivoObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+
+                $('#trCostoPersonal_' + num + '').hide();
+                //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                //visible
+                //$('#' + dato + 'label').hide();
+
+            },
+            ///*trabajar*/
+            asignarguardarObservarExpCostoPersonal: function (idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId) {
+                debugger;
+                if ($('#CostoPersonal2' + numero).val().trim() == "") {
+
+                    showNotification('top', 'right', 'No puedes Guardar una obseracion en blanco', 2);
+                    return;
+                }
+                sut.RecursoCosto.GuardarObservarExp1CostoPersonal(idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId);
+            },
+
+            GuardarObservarExp1CostoPersonal: function (idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId) {
+
+                var Descripcion = $('#RecursoNombre'+numero).val()+';'+$('#RecursoUnidadMedidaNombre'+numero).val()+';'+$('#CostoUnitario'+numero).val()+';'+$('#DocSustento'+numero).val();
+
+                var NombreCampo = 'CostoPersonal';
+
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '1',
+                    'filtro.TipoEstado': '1',
+                    'filtro.NombreCampo': '@nombremultiple' + numero,
+                    'filtro.Pantalla': '@nombremultiple',
+                    'filtro.Estado': '1',
+                    'filtro.RecursoId': RecursoId,
+                    'filtro.RecursoCostoId': RecursoCostoId,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/AgregarObservacion',
+                    url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                    data: model,
+                    cache: false,
+                    success: function (data) {
+                        sut.RecursoCosto.GuardarObservarExp2CostoPersonal(idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+
+            GuardarObservarExp2CostoPersonal: function (idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId) {
+
+                var NombreCampo = 'CostoPersonal';
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.Descripcion': $('#CostoPersonal2' + numero).val(),
+                    'filtro.CodValidacion': '2',
+                    'filtro.TipoEstado': '2',
+                    'filtro.NombreCampo': '@nombremultiple' + numero,
+                    'filtro.Pantalla': '@nombremultiple',
+                    'filtro.Estado': '1',
+                    'filtro.RecursoId': RecursoId,
+                    'filtro.RecursoCostoId': RecursoCostoId,
+                };
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/AgregarObservacion',
+                    url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#modal-ventana').modal('hide');
+
+
+                        $('#aCancelarObservarExp' + NombreCampo + '_' + numero + '').css("display", "none");
+                        $('#aGuardarObservarExp' + NombreCampo + '_' + numero + '').css({ "display": "none" });
+                        $('#aEditarObservarExp' + NombreCampo + '_' + numero + '').css({ "display": "" });
+
+                        $('#mensajeCostoPersonal_' + numero).show();
+                        document.querySelector('#mensajeCostoPersonal_' + numero).innerText = 'Se observo con éxito';
+
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            } ,
+            asignarCancelarObservarExpCostoPersonal: function (idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId) {
+
+                sut.RecursoCosto.CancelarObservacion1CostoPersonal(idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId);
+
+            },
+            CancelarObservacion1CostoPersonal: function (idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId) {
+
+
+                var NombreCampo = 'CostoPersonal';
+
+                var Descripcion = $('#RecursoNombre'+numero).val()+';'+$('#RecursoUnidadMedidaNombre'+numero).val()+';'+$('#CostoUnitario'+numero).val()+';'+$('#DocSustento'+numero).val();
+
+
+
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '1',
+                    'filtro.TipoEstado': '1',
+                    'filtro.NombreCampo': '@nombremultiple' + numero,
+                    'filtro.Pantalla':'@nombremultiple',
+                    'filtro.Estado': '1',
+                    'filtro.RecursoId': RecursoId,
+                    'filtro.RecursoCostoId': RecursoCostoId,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                    url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+
+                        sut.RecursoCosto.CancelarObservacion2CostoPersonal(idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            CancelarObservacion2CostoPersonal: function (idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId) {
+
+
+
+                var NombreCampo = 'CostoPersonal';
+                var Descripcion = $('#RecursoNombre'+numero).val()+';'+$('#RecursoUnidadMedidaNombre'+numero).val()+';'+$('#CostoUnitario'+numero).val()+';'+$('#DocSustento'+numero).val();
+
+
+
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.Descripcion': $('#CostoPersonal2' + numero).val(),
+                    'filtro.CodValidacion': '2',
+                    'filtro.TipoEstado': '2',
+                    'filtro.NombreCampo': '@nombremultiple' + numero,
+                    'filtro.Pantalla': '@nombremultiple',
+                    'filtro.Estado': '1',
+                    'filtro.RecursoId': RecursoId,
+                    'filtro.RecursoCostoId': RecursoCostoId,
+                };
+
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                    url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+
+                        sut.RecursoCosto.CancelarObservacion3CostoPersonal(idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId);
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            CancelarObservacion3CostoPersonal: function (idExpediente, procedimientoId, numero,RecursoId,RecursoCostoId) {
+
+
+                var Descripcion = $('#RecursoNombre'+numero).val()+';'+$('#RecursoUnidadMedidaNombre'+numero).val()+';'+$('#CostoUnitario'+numero).val()+';'+$('#DocSustento'+numero).val();
+
+                var NombreCampo = 'CostoPersonal';
+
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '3',
+                    'filtro.TipoEstado': '3',
+                    'filtro.NombreCampo': '@nombremultiple' + numero,
+                    'filtro.Pantalla': '@nombremultiple',
+                    'filtro.Estado': '1',
+                    'filtro.RecursoId': RecursoId,
+                    'filtro.RecursoCostoId': RecursoCostoId,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                    url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+
+                        //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                        //visible
+                        $('#trCostoPersonal_' + numero + '').show();
+
+                        //$('#aValidarObservarExp' + NombreCampo + '_' + numero + '').css({ "display": "" });
+                        $('#aObservarEditarExp' + NombreCampo + '_' + numero + '').css({ "display": "" });
+
+                        $('#aAsignarGuardarObservarExp' + NombreCampo + '_' + numero + '').css({ "display": "none" });
+                        $('#aAsignarCancelarObservarExp' +   NombreCampo + '_' + numero + '').css({ "display": "none" });
+
+
+                        $('#trdivCostoPersonal0' + numero + '').remove();
+                        $('#trdivCostoPersonal0_' + numero + '').remove();
+                        $('#mensajeCostoPersonal_' + numero).hide();
+                        document.querySelector('#mensajeCostoPersonal_' + numero).innerText = '';
+
+
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+
+                comentario = "";
+            },
+
+            textoobservacionCostoPersonal: function (Descripcion, Descripcion2, estado, nomcampo, num) {
+                debugger;
+
+                var Des = Descripcion.split(";");
+                var tabla = $('#divCostoPersonal0_' + num + ' tbody');
+                debugger;
+                //var Descripcion = $('#DesCostoPersonal' + num).val() + ";" + $('#chekCostoPersonal' + num).val() + ";" + $('#PreCostoPersonal' + num).val() + ";" + $('#CostoCostoPersonal' + num).val();
+                var NombreCampo = 'CostoPersonal';
+                var rows = '';
+                rows += sut.string.format('<tr data-index="{0}" id="trdivCostoPersonal0' + num + '">', num);
+                rows +='<td style="width: 5%;"> Descripción: </td>';
+                rows +='<td style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;width: 30%;">';
+                rows += Des[0];
+                rows += '</td>';
+                rows +='<td style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;width: 30%;">';
+                rows += Des[1];
+                rows += '</td>';
+                rows +='<td style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;width: 10%;">';
+                rows +=sut.format.decimal(Des[2]);
+                rows += '</td>';
+                rows +='<td style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;width: 30%;">';
+                rows += Des[3];
+                rows += '</td>';
+
+                rows += sut.string.format('</tr>');
+
+
+
+                rows += '<tr id="trdivCostoPersonal0_' + num + '">'
+                rows +='<td style="width: 5%;"> Observar: </td>';
+                rows += sut.string.format('<td colspan="10" ><textarea name="CostoPersonal2' + num + '" id="CostoPersonal2' + num + '" onkeypress="javascript:sut.RecursoCosto.ObsVervisualizarSustentoRecursoCosto(event,this);" class="form-control" style="border-color:red;background:#ff00002e;">{0}</textarea></td>', Descripcion2);
+                rows += '</tr>';;
+
+                tabla.append(rows);
+
+
+                $('#aAsignarGuardarObservarExp' + NombreCampo +'_'+ num + '').css({ "display": "" });
+                $('#aAsignarCancelarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+
+                //$('#aValidarObservarExp' + NombreCampo +'_'+ num + '').css("display", "none");
+                $('#aCancelarGeneralExp' + NombreCampo +'_'+ num + '').css("display", "none");
+                $('#aObservarEditarExp' + NombreCampo +'_'+ num + '').css({ "display": "none" });
+                $('#aMasivoObservarExp' + NombreCampo +'_'+ num + '').css({ "display": "" });
+
+
+
+
+                //if (estado == 'Presentado') {
+                //    $('#' + nomcampo + '').hide();
+                //    //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                //    //visible
+                //    $('#' + nomcampo + 'label').hide();
+
+                //} else {
+                //    $('#' + nomcampo + '').show();
+                //    //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                //    //visible
+                //    $('#' + nomcampo + 'label').show();
+                //}
+
+
+            },
+            textosustentoCostoPersonal: function (Descripcion2, estado, nomcampo, num) {
+
+
+                var tabla = $('#divCostoPersonal0_' + num + ' tbody');
+
+                var rows = '';
+                var NombreCampo = 'CostoPersonal';
+
+                rows += '<tr id="trdivCostoPersonal1_' + num + '">'
+                rows += sut.string.format('<td style="width:100px;"> </td>');
+                rows += sut.string.format('<td colspan="5" ><textarea name="CostoPersonal3' + num + '" id="CostoPersonal3' + num + '" class="form-control"  style="border-color:#f39c12;background:#f39c1259;" readOnly >{0}</textarea></td>', Descripcion2);
+                rows += '</tr>';
+
+                tabla.append(rows);
+
+
+                $('#aSustentarObservarExp'+NombreCampo+'_'+numero+'').css({ "display": "none" });
+                $('#aGuardarSustentarExp'+NombreCampo+'_'+numero+'').css({ "display": "" });
+                $('#aCancelarSustentarExp'+NombreCampo+'_'+numero+'').css({ "display": "" });
+            }
+        };
+
+        $(function () {
+            sut.RecursoCosto.init();
+
+            //$('#tblLista tbody tr td input[name$="CostoAnual"]').on('change', function (e) {
+            //    sut.RecursoCosto.updateCalc();
+            //})
+
+            $('#form-recurso-costo').validate({
+                errorPlacement: function (error, element) {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+
+                },
+                messages: {
+
+                }
+            });
+        });
+
+
+
+        function observarbotonesModalidad(NombreCampo, num) {
+            $('#aAsignarGuardarObservarExp' + NombreCampo +'_'+ num + '').css({ "display": "" });
+            $('#aAsignarCancelarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+
+            //$('#aValidarObservarExp' + NombreCampo + '_' + num + '').css("display", "none");
+            $('#aCancelarGeneralExp' + NombreCampo + '_' + num + '').css("display", "none");
+            $('#aObservarEditarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+            $('#aMasivoObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+        }
+        function valiarbotonesModalidad(NombreCampo, num) {
+            //$('#aValidarObservarExp' + NombreCampo + '_' + num + '').css("display", "");
+            $('#aCancelarGeneralExp' + NombreCampo + '_' + num + '').css("display", "");
+            $('#aObservarEditarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+            $('#aMasivoObservarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+        }
+        function canceladobotonesModalidad(NombreCampo, num) {
+            $('#aAsignarGuardarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+            $('#aAsignarCancelarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+            //$('#aValidarObservarExp' + NombreCampo + '_' + num + '').css("display", "");
+            $('#aCancelarGeneralExp' + NombreCampo + '_' + num + '').css("display", "none");
+            $('#aObservarEditarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+            $('#aMasivoObservarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+        }
+
+        function sustentobotones(NombreCampo, num) {
+
+
+            $('#aSustentarObservarExp'+NombreCampo+'_' + num + '').css({ "display": "none" });
+            $('#aGuardarSustentarExp'+NombreCampo+'_' + num + '').css({ "display": "" });
+            $('#aCancelarSustentarExp'+NombreCampo+'_' + num + '').css({ "display": "" });
+
+        }
+
+         function openCity(evt, cityName) {
+                var i, tabcontent, tablinks;
+                tabcontent = document.getElementsByClassName("tabcontent");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+                tablinks = document.getElementsByClassName("tablinks");
+                for (i = 0; i < tablinks.length; i++) {
+                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                }
+                document.getElementById(cityName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+         sut.VerObsMenuCostos = {
+            VerObsvisualizar: function (valor) { 
+                if (valor == 0) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoPersonal/")?id=@exp.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 1) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoMatFungible/")?id=@exp.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 2) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoServIdentificable/")?id=@exp.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 3) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoMatNoFungible/")?id=@exp.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 4) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoServTerceros/")?id=@exp.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 5) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoDepreciacion/")?id=@exp.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 6) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoFijo/")?id=@exp.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 7) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsConfigInductor/")?id=@exp.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 8) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsFactorTupa/")?id=@exp.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 9) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsResumen/")?id=@exp.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                }
+            }
+         };
+    </script>
+}

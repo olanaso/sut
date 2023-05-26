@@ -1,0 +1,236 @@
+﻿@model List<Sut.Entities.Entidad>
+@{
+    ViewBag.Title = "Entidades";
+    ViewBag.Descripcion = "Registro de Entidades";
+}
+
+<div id="mensajes"></div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body">
+                <a class="btn btn-success" href="javascript:sut.Entidad.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>
+                <br /><br />
+                <div id="divLista" ></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="9"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 30px;
+        } 
+         
+        /*tfoot .pagination {
+            margin: 0px 0px;
+        }*/
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.Entidad = {
+            init: () => {
+                jcd.create('JsonStore', { id: 'stGobierno', recordId: 'Value', fields: [{ name: 'Text' }, { name: 'Value' }], data: @Html.Raw(ViewBag.ListaGobierno) });
+                jcd.create('JsonStore', { id: 'stSector', recordId: 'Value', fields: [{ name: 'Text' }, { name: 'Value' }], data: @Html.Raw(ViewBag.ListaSector) });
+                jcd.create('JsonStore', { id: 'stDepartamento', recordId: 'Value', fields: [{ name: 'Text' }, { name: 'Value' }], data: @Html.Raw(ViewBag.ListaDepartamento) });
+                jcd.create('JsonStore', { id: 'stProvincia', recordId: 'Value', fields: [{ name: 'Text' }, { name: 'Value' }], data: @Html.Raw(ViewBag.ListaProvincia) });
+
+                jcd.create('Grid', {
+                    id: 'gridLista',
+                    store: jcd.create('JsonStore', {
+                        id: 'stLista',
+                        recordId: 'EntidadId',
+                        fields: [
+                            { name: 'EntidadId' },
+                            { name: 'Nombre' },
+                            { name: 'Codigo' },
+                            { name: 'Acronimo' },
+                            { name: 'NivelGobierno' },
+                            { name: 'Sector' },
+                            { name: 'Provincia' },
+                            { name: 'Departamento' },
+                            { name: 'Estado' },
+                        ],
+                        pageIndex: 1,
+                        pageSize: 200,
+                        ajax: {
+                            url: '@Url.Action("GetAllLikePagin", "Entidad", new { area = "Seguridad" })',
+                            data: {
+                                'filtro.NivelGobiernoId': () => App.cbFilterGobierno.$().val(),
+                                'filtro.SectorId': () => App.cbFilterSector.$().val(),
+                                'filtro.DepartamentoId': () => App.cbFilterDepartamento.$().val(),
+                                'filtro.ProvinciaId': () => App.cbFilterProvincia.$().val(),
+                                'filtro.Codigo': () => App.txtFilterCodigo.$().val(),
+                                'filtro.Nombre': () => App.txtFilterNombre.$().val(),
+                                'filtro.Acronimo': () => App.txtFilterAcronimo.$().val(),
+                                'filtro.TipoTupa': 1,
+                            },
+                            autoLoad: false
+                        },
+                    }),
+                    header: [
+                        jcd.create('Button', {
+                            icon: 'fa fa-filter', aditionalClass: 'btn-xs', handler: {
+                                click: (e) => {
+                                    App.cbFilterGobierno.$().val('0');
+                                    App.cbFilterSector.$().val('0');
+                                    App.cbFilterDepartamento.$().val('0');
+                                    App.cbFilterProvincia.$().val('0');
+                                    App.txtFilterCodigo.$().val('');
+                                    App.txtFilterNombre.$().val('');
+                                    App.txtFilterAcronimo.$().val('');
+                                    App.stLista.reload({ pageIndex: 1 });
+                                }
+                            }
+                        }),
+                        jcd.create('ComboBox', { id: 'cbFilterGobierno', store: 'stGobierno', displayField: 'Text', valueField: 'Value', aditionalClass: 'input-sm', handler: { change: (e) => App.stLista.reload({ pageIndex: 1 }) } }),
+                        jcd.create('ComboBox', { id: 'cbFilterSector', store: 'stSector', displayField: 'Text', valueField: 'Value', aditionalClass: 'input-sm', handler: { change: (e) => App.stLista.reload({ pageIndex: 1 }) } }),
+                        jcd.create('ComboBox', { id: 'cbFilterDepartamento', store: 'stDepartamento', displayField: 'Text', valueField: 'Value', aditionalClass: 'input-sm', handler: { change: (e) => {
+                     
+                            App.stLista.reload({ pageIndex: 1 })
+                           
+                        } } }),
+                        jcd.create('ComboBox', { id: 'cbFilterProvincia', store: 'stProvincia', displayField: 'Text', valueField: 'Value', aditionalClass: 'input-sm', handler: { change: (e) => App.stLista.reload({ pageIndex: 1 }) } }),
+                        
+                        jcd.create('TextBox', {
+                            id: 'txtFilterCodigo',
+                            aditionalClass: 'input-sm',
+                            handler: {
+                                keypress: (e) => {
+                                    if (e.which == 13)
+                                        App.stLista.reload({ pageIndex: 1 });
+                                }
+                            }
+                        }),
+                        jcd.create('TextBox', {
+                            id: 'txtFilterNombre',
+                            aditionalClass: 'input-sm',
+                            handler: {
+                                keypress: (e) => {
+                                    if (e.which == 13)
+                                        App.stLista.reload({ pageIndex: 1 });
+                                }
+                            }
+                        }),
+                        jcd.create('TextBox', {
+                            id: 'txtFilterAcronimo',
+                            aditionalClass: 'input-sm',
+                            handler: {
+                                keypress: (e) => {
+                                    if (e.which == 13)
+                                        App.stLista.reload({ pageIndex: 1 });
+                                }
+                            }
+                        }),
+                    ],
+                    columns: [
+                        jcd.create('RowNumberColumn', { width: 50 }),
+                        jcd.create('GridColumn', {  name: 'Gobierno', dataIndex: 'NivelGobierno'  }),
+                        jcd.create('GridColumn', {  name: 'Sector' }),
+                        jcd.create('GridColumn', {  name: 'Departamento' }),
+                        jcd.create('GridColumn', {  name: 'Provincia' }),
+                        jcd.create('GridColumn', {  name: 'Código', dataIndex: 'Codigo' }),
+                        jcd.create('GridColumn', {  name: 'Nombre' }),
+                        jcd.create('GridColumn', {  name: 'Acrónimo', dataIndex: 'Acronimo' }),
+                        jcd.create('GridColumn', {  name: 'Estado', dataIndex: 'Estado' }),
+                        jcd.create('ActionColumn', {
+                            width: 50,
+                            commands: [
+                                { icon: 'fa fa-pencil', color: 'btn-success', callback: (e) => { sut.Entidad.editar(e.record.EntidadId); } }
+                            ]
+                        })
+                    ],
+                    footer: [jcd.create('Paginator', { id: 'pagLista', store: 'stLista' })]
+                });
+
+                App.gridLista.renderTo($('#divLista'));
+                App.cbFilterGobierno.update();
+                App.cbFilterSector.update();
+                App.cbFilterDepartamento.update();
+                App.cbFilterProvincia.update();
+                App.stLista.reload();
+            },
+
+
+            editar: (id) => {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Seguridad/Entidad/Editar',
+                    url: '@Url.Content("~/Seguridad/Entidad/Editar")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+        };
+
+        $(() => {
+            sut.Entidad.init();
+
+            
+            $('select[id="jcdComboBox_cbFilterDepartamento"]').on('change', (e) => {
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/Entidad/GetProvincias",
+                    url: '@Url.Content("~/Seguridad/Entidad/GetProvinciasGrid")',
+                    data: { id: $('select[id="jcdComboBox_cbFilterDepartamento"]').val() },
+                    dataType: 'json',
+                    beforeSend: function () {
+                    },
+                    complete: function () {
+                    },
+                    success: function (result) {
+                        var sel = $('select[id="jcdComboBox_cbFilterProvincia"]');
+                        sel.find('option').remove();
+                        $.each(result.data, (i, r) => {
+                            sel.append($('<option></option>').attr('value', r.ProvinciaId).html(r.Nombre));
+                        });
+                    },
+                    error: function (result) {
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            });
+ 
+        });
+    </script>
+}

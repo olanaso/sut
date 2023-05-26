@@ -1,0 +1,85 @@
+﻿.file-list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: auto;
+}
+.file-list ul > li {
+  border-radius: 2px;
+  padding: 10px;
+  background: #f4f4f4;
+  margin-bottom: 2px;
+  border-left: 2px solid #e6e7e8;
+  color: #444;
+}
+.file-list ul > li:last-of-type {
+  margin-bottom: 0;
+}
+.file-list ul > li .text {
+  display: inline-block;
+  margin-left: 5px;
+  font-weight: 600;
+}
+.file-list ul > li .tools {
+  display: inline-block;
+  float: right;
+  color: #dd4b39;
+}
+.file-list ul > li .tools > .fa,
+.file-list ul > li .tools > .glyphicon,
+.file-list ul > li .tools > .ion {
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.file-list input[type="file"] {
+	display: none;
+}
+
+.file-list.file-empty ul {
+	display: none;
+}
+.file-list.file-empty input[type="file"] {
+	display: block;
+}
+
+/***********************************************/
+
+.datepicker {
+    z-index: 1300 !important;
+}
+
+.form-control.error,
+.form-control.error + .input-group-addon {
+    border-color: #dd4b39;
+    box-shadow: none;
+}
+
+.form-control.valid,
+.form-control.valid + .input-group-addon {
+    border-color: #00a65a;
+    box-shadow: none;
+}
+
+label[id$=error].error {
+    color: #dd4b39;
+}
+
+
+/***************************************************/
+
+tr.rowselect {
+    cursor: pointer;
+}
+
+td.colCheck, th.colCheck {
+    width: 30px;
+}
+
+textarea {
+    resize: none;
+}
+
+select2 {
+    width: 100%
+}

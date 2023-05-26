@@ -1,0 +1,117 @@
+﻿@model Sut.Entities.Expediente
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>*@
+            <h4 class="modal-title">Información Adicional</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginForm("GuardarOpcion", "Simplificacion/Expediente", FormMethod.Post, new { @id = "form-modal-editar" }))
+            {
+                @Html.HiddenFor(model => model.ExpedienteId)
+                    <div class="table-responsive">
+                        <table id="tblCanales" class="table table-condensed table-bordered table-striped">
+                            <tbody>
+
+
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td width="100px">Descripción :</td>
+
+                                    <td>
+                                        @Model.Descripcion
+                                        @*<textarea class="form-control input-sm" disabled="disabled" style="height:170px;width: 400px">@Model.Descripcion</textarea>*@
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>Fecha Creación :</td>
+
+                                    <td>@Model.FecCreacion  </td>
+
+                                </tr>
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>Ordenar PA :</td>
+                                    <td>
+                                        <div class="col-sm-7 col-xs-3">
+                                            @Html.DropDownListFor(model => model.OrdenPa, ViewBag.ordenpas as List<SelectListItem>, new { @class = "form-control" })
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+            }
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarInfCondicion.activarOrden()"><i class="fa fa-save"></i> Guardar</button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+<script>
+
+    sut.editarInfCondicion = {
+        activarOrden: () => {
+            debugger;
+
+            if ($("#form-modal-editar").valid()) {
+                var model = $('#form-modal-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/Miembro/Guardar",
+                    url:'@Url.Content("~/Simplificacion/Expediente/activarinfcondicion")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: () => {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: () => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, () => {
+                            window.location.reload();
+                        });
+                    },
+                    error: (result) => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            }
+        }
+    };
+
+    $(() => {
+
+
+
+    });
+
+
+</script>
+
+
+
+
+

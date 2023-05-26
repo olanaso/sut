@@ -1,0 +1,251 @@
+﻿@model List<Sut.Entities.UIT>
+@{
+    ViewBag.Title = "Unidad Impositiva Tributaria - UIT";
+    ViewBag.Descripcion = "Registro de unidad impositiva tributaria - UIT";
+    var activar = "active";
+}
+
+<div class="nav-tabs-custom">
+
+    <ul class="nav nav-tabs">
+        @if (@ViewBag.TipoRecurso == 1)
+        {
+            <li class="@activar">
+                <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.UIT.visualizar(0)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Unidades de Medida</a>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.UIT.visualizar(0)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Unidades de Medida</a>
+            </li>
+        }
+
+        @if (@ViewBag.TipoRecurso == 2)
+        {
+            <li class="@activar">
+                <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.UIT.visualizar(1)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Tipos de Norma</a>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.UIT.visualizar(1)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Tipos de Norma</a>
+            </li>
+        }
+
+        @if (@ViewBag.TipoRecurso == 3)
+        {
+            <li class="@activar">
+                <a href="#edit-info-basica2" data-toggle="tab" onclick="javascript:sut.UIT.visualizar(2)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Tipos de Nota al Ciudadano</a>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="#edit-info-basica2" data-toggle="tab" onclick="javascript:sut.UIT.visualizar(2)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Tipos de Nota al Ciudadano</a>
+            </li>
+        }
+
+
+        @if (@ViewBag.TipoRecurso == 4)
+        {
+            <li class="@activar">
+                <a href="#edit-info-basica3" data-toggle="tab" onclick="javascript:sut.UIT.visualizar(3)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> UIT</a>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="#edit-info-basica3" data-toggle="tab" onclick="javascript:sut.UIT.visualizar(3)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> UIT</a>
+            </li>
+        }
+
+    </ul>
+</div>
+<div id="mensajes"></div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body">
+                <a class="btn btn-success" href="javascript:sut.UIT.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>
+                <br />
+                <div class="table-responsive">
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="20"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.UIT.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th>Nro.</th>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                                <th>Año</th>
+                                <th>Estado</th>
+                                <th class="colAction"></th>
+                            </tr> 
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr><td colspan="6"><div id="paginator"></div></td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="4"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 30px;
+        }
+
+        #tblLista .colAbreviatura {
+            width: 80px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        }
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.UIT = {
+            estadoExpColor: ['label-danger', 'label-primary', 'label-danger'],
+            estado: ['INACTIVO', 'ACTIVO', 'INACTIVO'],
+            editar: function (id) {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/UIT/Editar',
+                    url: '@Url.Content("~/Simplificacion/UIT/Editar")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            visualizar: function (valor) {
+              if (valor == 0) {
+                    //window.location = '/Simplificacion/UnidadMedida/Lista';
+                    window.location = '@Url.Content("~/Simplificacion/UnidadMedida/Lista")';
+                } else if (valor == 1) {
+                    //window.location = '/General/Dato/Lista/12';
+                    window.location = '@Url.Content("~/General/Dato/Lista/12")';
+                } else if (valor == 2) {
+                    //window.location = '/General/Dato/Lista/15';
+                    window.location = '@Url.Content("~/General/Dato/Lista/15")';
+                } else if (valor == 3) {
+                    //window.location = '/Simplificacion/UIT/Lista';
+                    window.location = '@Url.Content("~/Simplificacion/UIT/Lista")';
+                }
+            },
+            listar: function (page) {
+                debugger;
+                table = $('#tblLista');
+                var model = {
+                    //'filtro.Abreviatura': $('#txtFilterAbreviatura').val(),
+                    //'filtro.Nombre': $('#txtFilterNombre').val(),
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+                $.ajax({
+                    //url: "/Simplificacion/UIT/GetAllLikePagin",
+                    url: '@Url.Content("~/Simplificacion/UIT/GetAllLikePagin")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.UIT.generar(data.lista);
+                        if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='4' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            },
+            generar: function (lista) {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += sut.string.format('<td>{0}</td>', r.Descripcion);
+                    rows += sut.string.format('<td class = "text-center" >{0}</td>', sut.format.decimal(r.Monto));
+                    rows += sut.string.format('<td class = "text-center">{0}</td>', r.Fecha);
+                    rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.UIT.estadoExpColor[r.estado], sut.UIT.estado[r.estado]);
+
+                    rows += '<td>';
+                    rows += '<div class="btn-group">';
+                    if (r.estado == 1) {
+                    rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.UIT.editar({0})" ><i class="fa fa-pencil"></i></a>', r.UITId);
+                    }
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            }
+        };
+
+        $(function () {
+            sut.UIT.listar(1);
+
+            //$('#txtFilterNombre, #txtFilterAbreviatura').keypress(function (e) {
+            //    var key = e.keyCode || event.keyCode;
+            //    if (key == 13) sut.UnidadMedida.listar(1);
+            //});
+            //$('#tblLista thead button').click(function (e) {
+            //    $('#txtFilterNombre').val('');
+            //    $('#txtFilterAbreviatura').val('');
+            //    sut.UnidadMedida.listar(1);
+            //});
+        });
+    </script>
+}

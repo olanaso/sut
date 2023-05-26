@@ -1,0 +1,2384 @@
+﻿@using Sut.Entities;
+@model Sut.Entities.Procedimiento
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    Sut.Entities.Expediente exp = ViewBag.Expediente as Sut.Entities.Expediente;
+    Sut.Entities.Observacion obs = ViewBag.Observacion as Sut.Entities.Observacion;
+
+    List<Sut.Entities.Observacion> obstecnico = ViewBag.Observaciontecnico as List<Sut.Entities.Observacion>;
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Sustento Técnico y Legal - " + Model.CodigoCorto;
+    ViewBag.Descripcion = "";
+}
+
+@if (exp.EstadoExpediente == EstadoExpediente.Observado || exp.EstadoExpediente == EstadoExpediente.Subsanado || exp.EstadoExpediente == EstadoExpediente.Aprobado ||
+                exp.EstadoExpediente == EstadoExpediente.Presentado)
+{
+    <div class="box box-danger">
+        <div class="box-body">
+            <div class="col-sm-12 col-xs-12" style="border-color:red">
+
+                <div class="pull-left col-sm-12 col-xs-12">
+
+                    <fieldset class="scheduler-border">
+                        <legend>
+                            Información Complementaria a la Observación
+                            <a class="btn btn-danger btn-xs" id="aEditarObservarExp" href="javascript:sut.editProcedimiento.Observarexp.editarObservarExp();" data-toggle="tooltip" data-placement="right" title="Editar"><i class="fa fa-pencil"></i></a>
+                            <a class="btn btn-primary btn-xs" id="aGuardarObservarExp" href="javascript:sut.editProcedimiento.Observarexp.guardarObservarExp(@exp.ExpedienteId,@Model.ProcedimientoId);"><i class="fa fa-floppy-o"></i></a>
+                            <a class="btn btn-danger btn-xs" id="aCancelarObservarExp" href="javascript:sut.editProcedimiento.Observarexp.CancelarObservarExp();"><i class="fa fa-power-off"></i></a>
+
+                            <label id="mensajedatos" style="font-size: 100%;font-weight: normal;" class="label-primary label"></label>
+                        </legend>
+                        <br />
+                        <div class="form-group">
+                            @if (obs != null)
+                            {
+                                <textarea rows="7" class="form-control" id="txtaObservarExp" style="border-color:red;background:#ff00002e;"> @obs.Descripcion</textarea>
+
+                                <script>
+                                                            window.addEventListener("load", function () {
+
+
+                                                                //$('#aValidarObservarExpDenominacion').css("display","none");
+                                                                if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                                {
+                                                                    document.querySelector('#mensajedatos').innerText = 'Se valido con éxito';
+                                                                }
+                                                                else
+                                                                {
+                                                                    document.querySelector('#mensajedatos').innerText = '';
+                                                                }
+
+                                                            });
+                                </script>
+                            }
+                            else
+                            {<textarea rows="7" class="form-control" id="txtaObservarExp" style="border-color:red;background:#ff00002e;"> </textarea>}
+                        </div>
+
+                    </fieldset>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+@using (Html.BeginForm("SustentoTecnico", "Procedimiento", new { @area = "Simplificacion" }, FormMethod.Post, new { @id = "form-editar" }))
+{
+    @Html.HiddenFor(model => model.ProcedimientoId)
+    @Html.HiddenFor(model => model.Operacion)
+    @Html.HiddenFor(model => model.ObsDG)
+    @Html.HiddenFor(model => model.ObsDGH)
+    @Html.HiddenFor(model => model.ObsSTL)
+    @Html.HiddenFor(model => model.ObsSTLH)
+    @Html.HiddenFor(model => model.ObsASME)
+    @Html.HiddenFor(model => model.ObsASMEH)
+    <div class="box box-danger">
+        <div class="box-body form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label" for="Denominacion">Denominación :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.TextBoxFor(model => model.Denominacion, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Tipo :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.TipoProcedimiento(Model.TipoProcedimiento)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Dependencia a Cargo :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.TextBoxFor(model => model.UndOrgResponsable.Nombre, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            @if (@Model.CargoPordependencia != "")
+            {
+                <div class="form-group">
+                    <label class="col-sm-2 col-xs-12 control-label">Otras Dependecias a Cargo:</label>
+                    <div class="col-sm-10 col-xs-12">
+                        <div>
+                            @Html.TextAreaFor(model => model.CargoPordependencia, new { @style = "scroll-behavior: smooth;resize:vertical;", @class = "form-control", @readonly = "readonly", Required = true })
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    if (Model.Operacion != OperacionExpediente.Eliminacion)
+    {
+        if (Model.Expediente.TipoExpediente != TipoExpediente.CargaInicial)
+        {
+            if (Model.Calificacion != CalificacionProcedimiento.Automatica && Model.Calificacion != CalificacionProcedimiento.SilencioPositivo)
+            {
+                <div class="box box-default">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"> Sustento Técnico de la Calificación</h3>
+                    </div>
+                    <div class="box-body form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 col-xs-12 control-label">Calificación :</label>
+                            <div class="col-sm-10 col-xs-12">
+                                <input type="text" value="@ViewBag.Calificacion" class="form-control" readonly />
+                            </div>
+                        </div>
+
+                        @*/*Inicio SustTecCalificacion*/*@
+                        <div class="form-group" style="margin-bottom: 5px;">
+                            <label class="col-sm-2 col-xs-12 control-label"></label>
+                            <div class="col-sm-10 col-xs-12">
+                                @if ((user.Rol == 8 || user.Rol == 6 || user.Rol == 7) && exp.EstadoExpediente != EstadoExpediente.EnProceso)
+                                {
+                                    @*/*botones unicos*/*@
+                                    <a class="btn btn-success btn-xs" style="display:none" id="aValidarObservarExpSustTecCalificacion" data-placement="right" title="Validar" href="javascript:sut.editProcedimiento.ValObservarexp.validarObservarExp(@exp.ExpedienteId,@Model.ProcedimientoId,'SustTecCalificacion','SustTecCalificacion','Sustento Tecnico');"><i class="fa fa-thumbs-o-up"></i></a>
+
+                                    <a class="btn btn-info btn-xs" id="aObservarEditarExpSustTecCalificacion" data-placement="right" title="Observar" href="javascript:sut.editProcedimiento.ValObservarexp.observareditarExp('SustTecCalificacion1','SustTecCalificacion2','divSustTecCalificacion','divSustTecCalificaciondetalle','SustTecCalificacion','SustTecCalificacion','Sustento de la Calificación :',10);"><i class="fa fa-eye"></i></a>
+
+
+                                    @*<a class="btn btn-info btn-xs" style="display:none" id="aMasivoObservarExpSustTecCalificacion" data-toggle="tooltip" data-placement="right" title="Masivo" href="javascript:sut.editProcedimiento.ValObservarexp.masivoObservarExp();"><i class="fa fa-comments-o"></i></a>*@
+
+                                    <a class="btn btn-danger btn-xs" style="display:none" id="aCancelarGeneralExpSustTecCalificacion" data-placement="right" title="Quitar Validación" href="javascript:sut.editProcedimiento.ValObservarexp.CancelarGeneralExp(@exp.ExpedienteId,@Model.ProcedimientoId,1,'SustTecCalificacion','SustTecCalificacion','Sustento Tecnico');"><i class="fa fa-power-off"></i></a>
+
+                                    <a class="btn btn-primary btn-xs" style="display:none" id="aAsignarGuardarObservarExpSustTecCalificacion" data-placement="right" title="Guardar" href="javascript:sut.editProcedimiento.AsignarObservarexp.asignarguardarObservarExp(@Model.ExpedienteId,@Model.ProcedimientoId,'SustTecCalificacion1','SustTecCalificacion2','SustTecCalificacion','Sustento Tecnico');"><i class="fa fa-floppy-o"></i></a>
+                                    <a class="btn btn-danger btn-xs" style="display:none" id="aAsignarCancelarObservarExpSustTecCalificacion" data-placement="right" title="Cancelar" href="javascript:sut.editProcedimiento.AsignarObservarexp.asignarCancelarObservarExp(@exp.ExpedienteId,@Model.ProcedimientoId,1,'SustTecCalificacion1','SustTecCalificacion2','SustTecCalificacion','Sustento Tecnico','divSustTecCalificaciondetalle','SustTecCalificacionSustento','divSustTecCalificacionSustento','SustTecCalificacion');"><i class="fa fa-power-off"></i></a>
+                                    @*/*botones Generados*/*@
+
+
+                                }
+                                @*else if (exp.EstadoExpediente == EstadoExpediente.Observado)
+                                    {
+                                        if (obstecnico.Count != 0)
+                                        {
+                                            <a class="btn btn-warning btn-xs" id="aSustentarObservarExpSustTecCalificacion" data-toggle="tooltip" data-placement="right" title="Sustentar" href="javascript:sut.editProcedimiento.ValObservarexp.sustentarObservarExp('SustTecCalificacionSustento','divSustTecCalificacion','divSustTecCalificacionSustento','SustTecCalificacion','Sustento de la Calificación :',4);"><i class="fa fa-exclamation"></i></a>
+
+                                            /*botones unicos sustentar*/
+                                            <a class="btn btn-primary btn-xs" style="display:none" id="aGuardarSustentarExpSustTecCalificacion" href="javascript:sut.editProcedimiento.AsignarSustentarexp.guardarSustentarExp(@Model.ExpedienteId,@Model.ProcedimientoId,'SustTecCalificacionSustento','SustTecCalificacion','Sustento Tecnico');"><i class="fa fa-floppy-o"></i></a>
+                                            <a class="btn btn-danger btn-xs" style="display:none" id="aCancelarSustentarExpSustTecCalificacion" href="javascript:sut.editProcedimiento.AsignarSustentarexp.CancelarSustentarExp(@Model.ExpedienteId,@Model.ProcedimientoId,'SustTecCalificacionSustento','SustTecCalificacion','Sustento Tecnico','divSustTecCalificacionSustento');"><i class="fa fa-power-off"></i></a>
+                                            /*botones Generados*/
+                                        }
+                                    }*@
+                                <label id="mensajeSustTecCalificacion" style="font-size: 100%;font-weight: normal;" class="label-primary label"></label>
+
+                                @if (obstecnico.Count != 0)
+                                {
+                                    var cont = 0;
+                                    var texto1 = "";
+                                    foreach (var item in obstecnico)
+                                    {
+                                        if (@item.Pantalla == "Sustento Tecnico" && @item.NombreCampo == "SustTecCalificacion")
+                                        {
+                                            cont = 1;
+
+                                            if (@item.CodValidacion == "1")
+                                            {
+
+                                                texto1 = @item.Descripcion;
+                                            }
+                                            else
+
+                                            if (@item.CodValidacion == "4")
+                                            {
+                                                <script>
+                                                window.addEventListener("load", function () {
+                                                    valiarbotones('SustTecCalificacion');
+                                                    $('#aValidarObservarExpSustTecCalificacion').css("display", "none");
+                                                    if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                    {
+                                                        document.querySelector('#mensajeSustTecCalificacion').innerText = 'Se valido con éxito';
+                                                    }
+                                                    else{
+                                                        document.querySelector('#mensajeSustTecCalificacion').innerText = '';
+                                                    }
+
+
+                                                });
+                                                </script>
+                                            }
+                                            else if (@item.CodValidacion == "2")
+                                            {
+
+                                                <script>
+
+
+                                                window.addEventListener("load", function() {
+                                                    observarbotones('SustTecCalificacion');
+                                                    if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                    {
+                                                        document.querySelector('#mensajeSustTecCalificacion').innerText = 'Se observo con éxito';
+                                                    }
+                                                    else
+                                                    {
+                                                        document.querySelector('#mensajeSustTecCalificacion').innerText = '';
+                                                    }
+
+                                                    sut.editProcedimiento.AsignarSustentarexp.textoobservacion("@texto1.Replace("\n", " ")", "@item.Descripcion.Replace("\n", " ")", 'divSustTecCalificacion', 'divSustTecCalificaciondetalle','Sustento de la Calificación :','SustTecCalificacion1','SustTecCalificacion2',10, "@exp.EstadoExpediente",'SustTecCalificacion');
+                                                });
+                                                </script>
+                                            }
+
+                                            else if (@item.CodValidacion == "5")
+                                            {
+                                                <script>
+                                                    window.addEventListener("load", function () {
+                                                        canceladobotones('SustTecCalificacion');
+                                                    });
+                                                </script>
+                                            }
+                                            else if (@item.CodValidacion == "3")
+                                            {
+                                                <script>
+
+                                                window.addEventListener("load", function() {
+                                                    //sustentobotones('SustTecCalificacion');
+                                                    if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                    { }
+                                                    else
+                                                    {
+                                                        document.querySelector('#mensajeSustTecCalificacion').innerText = '';
+                                                    }
+                                                    //document.querySelector('#mensajeSustTecCalificacion').innerText = '';
+                                                    sut.editProcedimiento.AsignarSustentarexp.textosustento("@item.Descripcion.Replace("\n", " ")", 'divSustTecCalificacion', 'divSustTecCalificacionSustento','Sustento de la Calificación :','SustTecCalificacionSustento',10);
+                                                });
+                                                </script>
+                                            }
+                                        }
+                                    }
+                                    if (cont == 0)
+                                    {
+                                        <script>
+                                            window.addEventListener("load", function () {
+                                                canceladobotonessustento('SustTecCalificacion');
+                                            });
+                                        </script>
+                                    }
+                                }
+
+                            </div>
+                        </div>
+                        <div id="divSustTecCalificacion" class="form-group">
+                        </div>
+                        @*/*Fin*/*@
+
+                        <div class="form-group">
+                            <label class="col-sm-2 col-xs-12 control-label" id="SustTecCalificacionlabel">Sustento de la Calificación :</label>
+                            <div class="col-sm-10 col-xs-12">
+
+                                @*@Html.TextAreaFor(model => model.SustTecCalificacion, new { @class = "form-control", @readonly = true })*@
+                                <label id="SustTecCalificacion" name="SustTecCalificacion" class="form-control" style="border-color:#ddd;background: #eeeeee;font-weight: 600;height: 100%;">@Html.DisplayFor(model => model.SustTecCalificacion)</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+            if (Model.PlazoAtencion > 30)
+            {
+                <div class="box box-default">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"> Sustento Técnico del Plazo de Atención</h3>
+                    </div>
+
+                    <div class="box-body form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 col-xs-12 control-label" for="PlazoAtencion">Plazo de Atención :</label>
+                            <div class="col-sm-4 col-xs-12">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(model => model.PlazoAtencion, new { @class = "form-control", @type = "number", min = 0, @readonly = true })
+                                    <div class="input-group-addon">
+                                        <span>días hábiles</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 col-xs-12 control-label" for="PlazoAtencion">Base legal del Plazo de Atención:</label>
+                            <div class="col-sm-10 col-xs-12">
+                                @Html.TextAreaFor(model => model.SustentoPlazo, new { @class = "form-control", @readonly = true })
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+        }
+
+        <div class="box box-default">
+            <div class="box-header with-border">
+                <h3 class="box-title"> Sustento Técnico de los Requisitos</h3>
+            </div>
+            <div class="box-body">
+                <h3>Requisitos Generales</h3>
+                <br />
+                @if (Model.Requisito.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table id="tblRequisito" class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;">
+                            <thead>
+                                <tr>
+                                    <th style="width:40px;">
+                                    </th>
+                                    <th style="width:20%">Nombre</th>
+                                    <th style="width:20%">Justificación</th>
+                                    <th>Sustento Legal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @for (int i = 0; i < Model.Requisito.Count; i++)
+                                {
+                                    if (Model.Requisito[i].TipoRequisito == TipoRequisito.General)
+                                    {
+
+                                        <tr>
+                                            <td colspan="5">
+
+                                                @*/*Inicio TecnicoRequisitos*/*@
+                                                <div class="form-group">
+                                                    <div class="col-sm-10 col-xs-12">
+                                                        @if ((user.Rol == 8 || user.Rol == 6 || user.Rol == 7) && exp.EstadoExpediente != EstadoExpediente.EnProceso)
+                                                        {
+                                                            @*/*botones unicos*/*@
+                                                            <a class="btn btn-success btn-xs" style="display:none" id="aValidarObservarExpTecnicoRequisitos_@i" data-toggle="tooltip" data-placement="right" title="Validar" href="javascript:sut.editProcedimiento.validarObservarExpTecnicoRequisitos(@exp.ExpedienteId,@Model.ProcedimientoId,@i,@Model.Requisito[i].RequisitoId);"><i class="fa fa-thumbs-o-up"></i></a>
+
+                                                            <a class="btn btn-info btn-xs" id="aObservarEditarExpTecnicoRequisitos_@i" data-toggle="tooltip" data-placement="right" title="Observar" href="javascript:sut.editProcedimiento.observareditarExpTecnicoRequisitos(@i);"><i class="fa fa-eye"></i></a>
+
+                                                            <a class="btn btn-danger btn-xs" style="display:none" id="aCancelarGeneralExpTecnicoRequisitos_@i" data-placement="right" title="Quitar Validación" href="javascript:sut.editProcedimiento.CancelarGeneralExpTecnicoRequisitos(@exp.ExpedienteId,@Model.ProcedimientoId,@i,@Model.Requisito[i].RequisitoId);"><i class="fa fa-power-off"></i></a>
+
+                                                            <a class="btn btn-primary btn-xs" style="display:none" data-placement="right" title="Guardar" id="aAsignarGuardarObservarExpTecnicoRequisitos_@i" href="javascript:sut.editProcedimiento.asignarguardarObservarExpTecnicoRequisitos(@exp.ExpedienteId,@Model.ProcedimientoId,@i,@Model.Requisito[i].RequisitoId);"><i class="fa fa-floppy-o"></i></a>
+                                                            <a class="btn btn-danger btn-xs" style="display:none" data-placement="right" title="Cancelar" id="aAsignarCancelarObservarExpTecnicoRequisitos_@i" href="javascript:sut.editProcedimiento.asignarCancelarObservarExpTecnicoRequisitos(@exp.ExpedienteId,@Model.ProcedimientoId,@i,@Model.Requisito[i].RequisitoId);"><i class="fa fa-power-off"></i></a>
+                                                            @*/*botones Generados*/*@
+
+
+                                                        }
+                                                        <label id="mensajeTecnicoRequisitos_@i" style="font-size: 100%;font-weight: normal;" class="label-primary label"></label>
+
+                                                        @if (obstecnico.Count != 0)
+                                                        {
+                                                            var cont = 0;
+                                                            var texto1 = "";
+                                                            foreach (var item in obstecnico)
+                                                            {
+                                                                var nombre = "NombredelosTecnicoRequisitos" + i;
+
+                                                                if (@item.Pantalla == "Sustento Tecnico" && @item.NombreCampo == nombre)
+                                                                {
+                                                                    cont = 1;
+
+                                                                    if (@item.CodValidacion == "1")
+                                                                    {
+
+                                                                        texto1 = @item.Descripcion;
+                                                                    }
+                                                                    else
+
+                                                                    if (@item.CodValidacion == "4")
+                                                                    {
+                                                                        <script>
+                                                                            window.addEventListener("load", function () {
+                                                                                valiarbotonesModalidad('TecnicoRequisitos', @i);
+                                                                                $("#mensajeTecnicoRequisitos_" + @i).show();
+                                                                                $('#aValidarObservarExpTecnicoRequisitos_' + @i + '').css("display", "none");
+                                                                                if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                                                {
+
+                                                                                    document.querySelector("#mensajeTecnicoRequisitos_" + @i).innerText = 'Se valido con éxito';
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    $("#mensajeTecnicoRequisitos_" + @i).hide();
+                                                                                }
+
+                                                                            });
+                                                                        </script>
+                                                                    }
+                                                                    else if (@item.CodValidacion == "2")
+                                                                    {
+
+                                                                        <script>
+
+
+                                                                            window.addEventListener("load", function() {
+
+                                                                                observarbotonesModalidad('TecnicoRequisitos', @i);
+                                                                                $("#mensajeTecnicoRequisitos_" + @i).show();
+                                                                                if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                                                {
+
+                                                                                    document.querySelector("#mensajeTecnicoRequisitos_" + @i).innerText = 'Se observo con éxito';
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    $("#mensajeTecnicoRequisitos_" + @i).hide();
+                                                                                }
+
+                                                                                debugger;
+                                                                                sut.editProcedimiento.textoobservacionTecnicoRequisitos("@texto1.Replace("\n", " ")", "@item.Descripcion.Replace("\n", " ")", 4, "@exp.EstadoExpediente", @i);
+
+                                                                            });
+                                                                        </script>
+                                                                    }
+
+                                                                    else if (@item.CodValidacion == "5")
+                                                                    {
+                                                                        <script>
+                                                                            window.addEventListener("load", function () {
+                                                                                canceladobotonesModalidad('TecnicoRequisitos');
+                                                                            });
+                                                                        </script>
+                                                                    }
+                                                                    else if (@item.CodValidacion == "3")
+                                                                    {
+                                                                        <script>
+
+                                                                            window.addEventListener("load", function() {
+                                                                                if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                                                    { }
+                                                                                else{$("#mensajeTecnicoRequisitos_" + @i).hide(); }
+                                                                                @*sustentobotones('Requisitos',@i);
+                                                                                document.querySelector("#mensajeTecnicoRequisitos_" + @i).innerText  = 'Sustento';*@
+                                                                                sut.editProcedimiento.textosustento("@item.Descripcion.Replace("\n", " ")", 4, "@exp.EstadoExpediente", @i);
+                                                                            });
+                                                                        </script>
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+                                                    </div>
+                                                </div>
+                                                @*</td>
+                                                    </tr>
+                                                     <tr>
+                                                                                        <td colspan="5">*@
+                                                <div id="divTecnicoRequisitos">
+                                                    <table id="divTecnicoRequisitos0_@i" class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;">
+                                                        <tbody></tbody>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                            @*/*Fin*/*@
+                                        </tr>
+
+                                        <tr id="trTecnicoRequisitos_@i">
+
+
+
+                                            <td>
+                                                @*@MvcHtmlString.Create((i + 1).ToString())*@
+                                                @Model.Requisito[i].RecNum
+
+                                                @Html.HiddenFor(model => model.Requisito[i].RequisitoId)
+                                                @Html.HiddenFor(model => model.Requisito[i].Nombre)
+                                                @Html.HiddenFor(model => model.Requisito[i].SustentoTecnico)
+                                            </td>
+                                            @*<td> @Html.TextAreaFor(model => model.Requisito[i].Nombre, new { @class = "form-control", @readonly = true }) </td>*@
+                                            <td> @Model.Requisito[i].Nombre</td>
+                                            <td>@Model.Requisito[i].SustentoTecnico</td>
+                                            <td>
+                                                @Html.HiddenFor(model => model.Requisito[i].BaseLegalId)
+                                                @Html.HiddenFor(model => model.Requisito[i].BaseLegal.BaseLegalId)
+                                                <div class="table-responsive">
+                                                    <table id="tblBaseLegal_@MvcHtmlString.Create(i.ToString())" class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width:80px;">
+                                                                </th>
+                                                                <th style="width:60px;">Artículo</th>
+                                                                <th>Denominación</th>
+                                                                <th style="width:100px;">Tipo de Norma</th>
+                                                                <th style="width:60px;">Número</th>
+                                                                <th style="width:100px;">Fecha Publicación</th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>Nota:</h3>
+                    <br />
+                    <div class="table-responsive">
+                        <table id="tblRequisito" class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;">
+                            <thead>
+                                <tr>
+                                    <th style="width:40px;">
+                                    </th>
+                                    <th style="width:20%">Nombre</th>
+                                    <th style="width:20%">Justificación</th>
+                                    <th>Sustento Legal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @for (int i = 0; i < Model.Requisito.Count; i++)
+                                {
+                                    if (Model.Requisito[i].TipoRequisito == TipoRequisito.Especifico)
+                                    {
+
+                                        <tr>
+                                            <td colspan="4">
+
+                                                @*/*Inicio TecnicoRequisitos*/*@
+                                                <div class="form-group">
+                                                    <div class="col-sm-10 col-xs-12">
+                                                        @if ((user.Rol == 8 || user.Rol == 6 || user.Rol == 7) && exp.EstadoExpediente != EstadoExpediente.EnProceso)
+                                                        {
+                                                            @*/*botones unicos*/*@
+                                                            <a class="btn btn-success btn-xs" style="display:none" id="aValidarObservarExpTecnicoRequisitos_@i" data-toggle="tooltip" data-placement="right" title="Validar" href="javascript:sut.editProcedimiento.validarObservarExpTecnicoRequisitos(@exp.ExpedienteId,@Model.ProcedimientoId,@i,@Model.Requisito[i].RequisitoId);"><i class="fa fa-thumbs-o-up"></i></a>
+
+                                                            <a class="btn btn-info btn-xs" id="aObservarEditarExpTecnicoRequisitos_@i" data-toggle="tooltip" data-placement="right" title="Observar" href="javascript:sut.editProcedimiento.observareditarExpTecnicoRequisitos(@i);"><i class="fa fa-eye"></i></a>
+
+                                                            <a class="btn btn-danger btn-xs" style="display:none" id="aCancelarGeneralExpTecnicoRequisitos_@i" data-placement="right" title="Quitar Validación" href="javascript:sut.editProcedimiento.CancelarGeneralExpTecnicoRequisitos(@exp.ExpedienteId,@Model.ProcedimientoId,@i,@Model.Requisito[i].RequisitoId);"><i class="fa fa-power-off"></i></a>
+
+                                                            <a class="btn btn-primary btn-xs" style="display:none" data-placement="right" title="Guardar" id="aAsignarGuardarObservarExpTecnicoRequisitos_@i" href="javascript:sut.editProcedimiento.asignarguardarObservarExpTecnicoRequisitos(@exp.ExpedienteId,@Model.ProcedimientoId,@i,@Model.Requisito[i].RequisitoId);"><i class="fa fa-floppy-o"></i></a>
+                                                            <a class="btn btn-danger btn-xs" style="display:none" data-placement="right" title="Cancelar" id="aAsignarCancelarObservarExpTecnicoRequisitos_@i" href="javascript:sut.editProcedimiento.asignarCancelarObservarExpTecnicoRequisitos(@exp.ExpedienteId,@Model.ProcedimientoId,@i,@Model.Requisito[i].RequisitoId);"><i class="fa fa-power-off"></i></a>
+                                                            @*/*botones Generados*/*@
+
+
+                                                        }
+                                                        <label id="mensajeTecnicoRequisitos_@i" style="font-size: 100%;font-weight: normal;" class="label-primary label"></label>
+
+                                                        @if (obstecnico.Count != 0)
+                                                        {
+                                                            var cont = 0;
+                                                            var texto1 = "";
+                                                            foreach (var item in obstecnico)
+                                                            {
+                                                                var nombre = "NombredelosTecnicoRequisitos" + i;
+
+                                                                if (@item.Pantalla == "Sustento Tecnico" && @item.NombreCampo == nombre)
+                                                                {
+                                                                    cont = 1;
+
+                                                                    if (@item.CodValidacion == "1")
+                                                                    {
+
+                                                                        texto1 = @item.Descripcion;
+                                                                    }
+                                                                    else
+
+                                                                    if (@item.CodValidacion == "4")
+                                                                    {
+                                                                        <script>
+                                                                        window.addEventListener("load", function () {
+                                                                            valiarbotonesModalidad('TecnicoRequisitos', @i);
+                                                                            $("#mensajeTecnicoRequisitos_" + @i).show();
+                                                                            $('#aValidarObservarExpTecnicoRequisitos_' + @i + '').css("display", "none");
+                                                                            if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                                            {
+                                                                            document.querySelector("#mensajeTecnicoRequisitos_" + @i).innerText = 'Se valido con éxito';
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $("#mensajeTecnicoRequisitos_" + @i).hide();
+                                                                            }
+                                                                        });
+                                                                        </script>
+                                                                    }
+                                                                    else if (@item.CodValidacion == "2")
+                                                                    {
+
+                                                                        <script>
+
+
+                                                                        window.addEventListener("load", function() {
+
+                                                                            observarbotonesModalidad('TecnicoRequisitos', @i);
+                                                                            $("#mensajeTecnicoRequisitos_" + @i).show();
+                                                                            if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                                            {
+                                                                                document.querySelector("#mensajeTecnicoRequisitos_" + @i).innerText = 'Se observo con éxito';
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                $("#mensajeTecnicoRequisitos_" + @i).hide();
+                                                                            }
+
+
+                                                                            debugger;
+                                                                            sut.editProcedimiento.textoobservacionTecnicoRequisitos("@texto1.Replace("\n", " ")", "@item.Descripcion.Replace("\n", " ")", 4, "@exp.EstadoExpediente", @i);
+
+                                                                        });
+                                                                        </script>
+                                                                    }
+
+                                                                    else if (@item.CodValidacion == "5")
+                                                                    {
+                                                                        <script>
+                                                                            window.addEventListener("load", function () {
+                                                                                canceladobotonesModalidad('TecnicoRequisitos');
+                                                                            });
+                                                                        </script>
+                                                                    }
+                                                                    else if (@item.CodValidacion == "3")
+                                                                    {
+                                                                        <script>
+
+                                                                        window.addEventListener("load", function() {
+                                                                            if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                                            { }
+                                                                            else{  $("#mensajeTecnicoRequisitos_" + @i).hide();}
+                                                                            @*sustentobotones('Requisitos',@i);
+                                                                            document.querySelector("#mensajeTecnicoRequisitos_" + @i).innerText  = 'Sustento';*@
+                                                                            sut.editProcedimiento.textosustento("@item.Descripcion.Replace("\n", " ")", 4, "@exp.EstadoExpediente", @i);
+                                                                        });
+                                                                        </script>
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+                                                    </div>
+                                                </div>
+                                                <div id="divTecnicoRequisitos">
+                                                    <table id="divTecnicoRequisitos0_@i" class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;">
+                                                        <tbody></tbody>
+                                                    </table>
+                                                </div>
+                                                @*/*Fin*/*@
+                                            </td>
+                                        </tr>
+                                        <tr id="trTecnicoRequisitos_@i">
+                                            <td>
+                                                @*@MvcHtmlString.Create((i + 1).ToString())*@
+                                                @Model.Requisito[i].RecNum
+
+                                                @Html.HiddenFor(model => model.Requisito[i].RequisitoId)
+                                                @Html.HiddenFor(model => model.Requisito[i].Nombre)
+                                                @Html.HiddenFor(model => model.Requisito[i].SustentoTecnico)
+                                            </td>
+                                            @*<td> @Html.TextAreaFor(model => model.Requisito[i].Nombre, new { @class = "form-control", @readonly = true }) </td>*@
+                                            <td> @Model.Requisito[i].Nombre</td>
+                                            <td>@Model.Requisito[i].SustentoTecnico</td>
+                                            <td>
+                                                @Html.HiddenFor(model => model.Requisito[i].BaseLegalId)
+                                                @Html.HiddenFor(model => model.Requisito[i].BaseLegal.BaseLegalId)
+                                                <div class="table-responsive">
+                                                    <table id="tblBaseLegal_@MvcHtmlString.Create(i.ToString())" class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width:80px;">
+                                                                </th>
+                                                                <th style="width:60px;">Artículo</th>
+                                                                <th>Denominación</th>
+                                                                <th style="width:100px;">Tipo de Norma</th>
+                                                                <th style="width:60px;">Número</th>
+                                                                <th style="width:100px;">Fecha Publicación</th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+
+            </div>
+        </div>
+
+        @*<div class="box box-default"> jleon
+                <div class="box-header with-border">
+                    <h3 class="box-title"> Tablas ASME del Procedimiento/Servicio</h3>
+                </div>
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table id="tblModalidad" class="table table-condensed table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="width:40px;">
+
+                                    </th>
+                                    <th style="width:120px;">Código</th>
+                                    <th>Descripción</th>
+                                    <th style="width:50px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.TablaAsme.Count > 0)
+                                {
+                                    for (int i = 0; i < Model.TablaAsme.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @MvcHtmlString.Create((i + 1).ToString())
+                                            </td>
+                                            <td>@Model.TablaAsme[i].Codigo</td>
+                                            <td>@Model.TablaAsme[i].Descripcion</td>
+                                            <td>
+                                                <a class="btn btn-primary btn-xs" href="javascript:window.location='/Simplificacion/TablaAsme/Editar/@Model.TablaAsme[i].TablaAsmeId'"><i class="fa fa-table"></i></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr><td colspan="4" style="font-weight:bold; text-align:center;">NO EXISTEN REGISTROS</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>*@
+    }
+    else
+    {
+        <div class="box box-default">
+            <div class="box-header with-border">
+                <h3 class="box-title"> Sustento Técnico de los Requisitos</h3>
+            </div>
+            <div class="box-body">
+                @Html.TextAreaFor(model => model.SustentoEliminacion, new { @class = "form-control", @readonly = true })
+            </div>
+        </div>
+    }
+    @*<div class="box box-default">
+            <div class="box-body">
+                <div class="btn-group pull-right">
+                    <a href="/Simplificacion/Expediente/Editar/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+                    <a href="javascript:sut.editProcedimiento.activar()" class="btn btn-warning"><i class="fa fa-check"></i> Activar</a>
+                </div>
+            </div>
+        </div>*@
+
+
+}
+<div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0; z-index: 5;">
+
+
+    <a href="javascript:sut.editProcedimiento.AtrasPA(@Model.ExpedienteId,@Model.ExplorarNum)" class="btn btn-danger"><i class="fa fa-id-card-o"></i> ATRAS </a>
+    <a href="javascript:sut.editProcedimiento.SiguientePA(@Model.ExpedienteId,@Model.ExplorarNum)" class="btn btn-danger"><i class="fa fa-id-card-o"></i> SIGUIENTE </a>
+    @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7 && user.Rol != 1)
+    {
+        @*<a href="/Simplificacion/Expediente/Editar/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+
+
+
+
+        <a href="@Url.Content("~/Simplificacion/Procedimiento/InformacionCiudadano/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Inf. Ciudadano </a>
+        <a href="@Url.Content("~/Simplificacion/Procedimiento/DatosGenerales/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Ir Datos Generales </a>
+        if (Model.Expediente.TipoExpediente == TipoExpediente.ExpedienteRegular)
+        {
+            <a href="#" class="btn btn-success"><i class="fa fa-id-card-o"></i> Sus. Tec. Legal</a>
+            <a href="@Url.Content("~/Simplificacion/Procedimiento/TablaAsme/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-table"></i> Ir Tabla Asme</a>
+        }
+        <a href="@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+
+        if (exp.EstadoExpediente != EstadoExpediente.Presentado && exp.EstadoExpediente != EstadoExpediente.Aprobado && exp.EstadoExpediente != EstadoExpediente.Publicado && exp.EstadoExpediente != EstadoExpediente.Subsanado && @Model.Operacion != OperacionExpediente.Ninguna && @Model.Operacion != OperacionExpediente.Eliminacion)
+        {
+            if (ViewBag.User.Rol == (short)Rol.Coordinador)
+            {
+                if (Model.Estadostl != 6)
+                {
+                    <a href="javascript:sut.editProcedimiento.activar()" class="btn btn-warning"><i class="fa fa-check"></i> Activar</a>
+                }
+
+            }
+
+        }
+    }
+    else
+    {
+        if (user.Rol == 8 || user.Rol == 6 || user.Rol == 7)
+        {
+            @*if (@Model.EstadostlEva == 0)
+                {
+                    <a class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,3)">Sin Acción </a>
+                }
+                else if (@Model.EstadostlEva == 1)
+                {
+                    <a class="btn btn-dropbox btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,3)">En Revisión</a>
+                }
+                else if (@Model.EstadostlEva == 4)
+                {
+                    <a class="btn btn-danger  btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,3)">Observado</a>
+                }
+                else if (@Model.EstadostlEva == 5)
+                {
+                    <a class="btn btn-warning  btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,3)">Subsanado</a>
+                }
+                else if (@Model.EstadostlEva == 6)
+                {
+                    <a class="btn btn-success  btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,3)">Validado</a>
+                }*@
+            <a href="@Url.Content("~/Simplificacion/Procedimiento/InformacionCiudadano/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Inf. Ciudadano </a>
+            <a href="@Url.Content("~/Simplificacion/Procedimiento/DatosGenerales/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Ir Datos Generales </a>
+            if (Model.Expediente.TipoExpediente == TipoExpediente.ExpedienteRegular)
+            {
+                <a href="#" class="btn btn-success"><i class="fa fa-id-card-o"></i> Sus. Tec. Legal</a>
+                <a href="@Url.Content("~/Simplificacion/Procedimiento/TablaAsme/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-table"></i> Ir Tabla Asme</a>
+            }
+            @*<a href="/Simplificacion/Expediente/EditarObservacion/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+            @*<a href="@Url.Content("~/Simplificacion/Expediente/EditarObservacion/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+
+            <a href="javascript:sut.editProcedimiento.CondicionVolver(@Model.ProcedimientoId,3)" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+        }
+        else
+        {
+            <a href="@Url.Content("~/Simplificacion/Procedimiento/InformacionCiudadano/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Inf. Ciudadano </a>
+            <a href="@Url.Content("~/Simplificacion/Procedimiento/DatosGenerales/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Ir Datos Generales </a>
+            if (Model.Expediente.TipoExpediente == TipoExpediente.ExpedienteRegular)
+            {
+                <a href="#" class="btn btn-success"><i class="fa fa-id-card-o"></i> Sus. Tec. Legal</a>
+                <a href="@Url.Content("~/Simplificacion/Procedimiento/TablaAsme/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-table"></i> Ir Tabla Asme</a>
+                @*<a href="/Simplificacion/Expediente/Editar/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+            }
+            if (user.Rol == (short)Rol.Administrador)
+            {
+                <a href="@Url.Content("~/Simplificacion/Expediente/EditarObservacion/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+            }
+            else
+            {
+                <a href="@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+            }
+
+        }
+
+    }
+</div>
+<div class="modal fade" id="modal-ventana">
+    <div id="ventana-container">
+    </div>
+</div>
+@section Style{
+    <style>
+        fieldset.scheduler-border {
+            border: 1px groove #ddd !important;
+            padding: 0 1.4em 0 1.4em !important;
+            margin: 0 0 1.5em 0 !important;
+            -webkit-box-shadow: 0px 0px 0px 0px #000;
+            box-shadow: 0px 0px 0px 0px #000;
+        }
+
+        .scheduler-border legend {
+            font-size: 1.2em !important;
+            font-weight: bold !important;
+            text-align: left !important;
+            width: auto !important;
+            margin-bottom: 0px !important;
+            padding: 0px !important;
+            border-bottom: none;
+        }
+    </style>
+}
+@section Script {
+    <script>
+
+        sut.editProcedimiento = {
+
+
+
+            SiguientePA: (Expediente, ExplorarNum) => {
+                debugger;
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/SiguientePA")',
+                    data: { pExpediente: Expediente, pExplorarNum: ExplorarNum  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+
+                            if (data.estado == 0) {
+
+                                sut.msg.msgUsuario('No existe PA para Avanzar', 'Alerta');
+                            } else
+                            {
+                                //~/Simplificacion/Procedimiento / InformacionCiudadano /
+                                window.location = '/Simplificacion/Procedimiento/InformacionCiudadano/' + data.estado;
+                            }
+
+
+
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+
+            AtrasPA: (Expediente, ExplorarNum) => {
+                debugger;
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/AtrasPA")',
+                    data: { pExpediente: Expediente, pExplorarNum: ExplorarNum  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                           debugger;
+                        $('#modal-ventana').modal('hide');
+                            if (data.estado == 0) {
+
+                                sut.msg.msgUsuario('No existe PA para retroceder', 'Alerta');
+                            } else
+                            {
+                                //~/Simplificacion/Procedimiento / InformacionCiudadano /
+                                window.location = '/Simplificacion/Procedimiento/InformacionCiudadano/' + data.estado;
+                            }
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            BaseLegal: {
+                datavalidar: @Html.Raw(ViewBag.ListaBaseLegalvalidar != null ? ViewBag.ListaBaseLegalvalidar : "[]") ,
+                data: @Html.Raw(ViewBag.ListaBaseLegal != null ? ViewBag.ListaBaseLegal : "[]") ,
+                init: () => {
+                    sut.editProcedimiento.BaseLegal.generar();
+                },
+                generar: () => {
+
+                    debugger;
+
+                    for (var k = 0; k < sut.editProcedimiento.BaseLegal.data.length; k++) {
+                        var tabla = $('#tblBaseLegal_' + k + ' tbody');
+                        $('#tblBaseLegal_' + k + ' tbody tr').remove();
+                        if (sut.editProcedimiento.BaseLegal.data[k].length > 0) {
+                            var rows = '';
+                            $.each(sut.editProcedimiento.BaseLegal.data[k], function (i, r) {
+                                rows += sut.string.format('<tr data-index="{0}" >', i);
+                                rows += '<td>';
+                                rows += sut.string.format('<span>{0}</span>', i + 1);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].BaseLegalId" value="{2}" />', k, i, r.BaseLegalId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].BaseLegalNormaId" value="{2}" />', k, i, r.BaseLegalNormaId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].TipoBaseLegal" value="{2}" />', k, i, r.TipoBaseLegal);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].NormaId" value="{2}" />', k, i, r.NormaId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].Descripcion" value="{2}" />', k, i, r.Descripcion);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].TipoNormaId" value="{2}" />', k, i, r.TipoNormaId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].Numero" value="{2}" />', k, i, r.Numero);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].FechaPublicacion" value="{2}" />', k, i, r.FechaPublicacion);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].Articulo" value="{2}" />', k, i, r.Articulo);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].ArchivoAdjuntoId" value="{2}" />', k, i, r.ArchivoAdjuntoId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].Url" value="{2}" />', k, i, r.Url);
+                                rows += '</td>';
+
+                                if (r.EstadoACR==2){
+                                    rows += sut.string.format('<td colspan="5">{0}</td>', r.DescripcionACR);
+                                    //$('#idagregarbaselegal_'+ k).hide();
+                                }else{
+                                    rows += sut.string.format('<td>{0}</td>', r.Articulo);
+                                    rows += sut.string.format('<td>{0}</td>', r.Descripcion);
+                                    rows += sut.string.format('<td>{0}</td>', r.NormaTipo);
+                                    rows += sut.string.format('<td>{0}</td>', r.Numero);
+                                    rows += sut.string.format('<td>{0}</td>', r.FechaPublicacion);
+                                    //$('#idagregarbaselegal_'+ k).show();
+                                }
+
+
+
+                                //rows += sut.string.format('<td>{0}</td>', r.NormaTipo);
+                                //rows += sut.string.format('<td>{0}</td>', r.Numero);
+                                //rows += sut.string.format('<td>{0}</td>', r.Descripcion);
+                                //rows += sut.string.format('<td>{0}</td>', r.FechaPublicacion);
+                                //rows += sut.string.format('<td>{0}</td>', r.Articulo);
+                                rows += '</tr>';
+                            });
+                            tabla.append(rows);
+                        }
+                    }
+                },
+            },
+            visualizarSustento: function (evt, input) {
+                debugger;
+                var key = window.Event ? evt.which : evt.keyCode;
+                var chark = String.fromCharCode(key);
+                var tempValue = input.value + chark;
+                var id = input.id;
+                var txt = $(evt.target);
+                var valor = id.replace(/\d/g, "");
+                $('#mensaje' + valor).hide();
+                document.querySelector('#mensaje' + valor).innerText = '';
+            },
+            visualizarSustentotecnico: function (evt, input) {
+                debugger;
+                var key = window.Event ? evt.which : evt.keyCode;
+                var chark = String.fromCharCode(key);
+                var tempValue = input.value + chark;
+                var id = input.id;
+                var txt = $(evt.target);
+                var valor = id.substring(18);
+                $('#mensajeTecnicoRequisitos_' + valor).hide();
+                document.querySelector('#mensajeTecnicoRequisitos_' + valor).innerText = '';
+            },
+               CondicionVolver: (id, Tipoficha) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/condicionvolver")',
+                    data: { id: id, Tipoficha: Tipoficha  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+                        if (data.estado == 0) {
+                            //showNotification('top', 'right', 'La Ficha se encuentra en estado "SIN ACCIÓN" ', 2);
+                              sut.msg.confirm('La ficha se encuentra en estado "SIN ACCIÓN". Desea Salir', () => {
+                                    window.location = '/Simplificacion/Expediente/EditarObservacion/@Model.ExpedienteId';
+                              });
+                        } else
+                        {
+                            window.location = '/Simplificacion/Expediente/EditarObservacion/@Model.ExpedienteId';
+                        }
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            editarCondicion: (id, Tipoficha) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/EditarCondicion")',
+                    data: { id: id, Tipoficha: Tipoficha  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            /*Validacion*/
+            ValObservarexp: {
+                validarObservarExp: function (idExpediente, procedimientoId, Descripcion, NombreCampo, Pantalla) {
+                    debugger;
+                    var model = {
+                        'filtro.ExpedienteId': idExpediente,
+                        'filtro.ProcedimientoId': procedimientoId,
+                        'filtro.Descripcion':  document.getElementById(''+Descripcion+'').innerHTML,
+                        'filtro.CodValidacion': '4',
+                        'filtro.TipoEstado': '4',
+                        'filtro.NombreCampo': NombreCampo,
+                        'filtro.Pantalla': Pantalla,
+                        'filtro.Estado': '1',
+                    };
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/AgregarObservacion',
+                        url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            debugger;
+                            $('#modal-ventana').modal('hide');
+
+                            $('#aValidarObservarExp' + NombreCampo + '').css("display", "none");
+                            $('#aCancelarGeneralExp' + NombreCampo + '').css("display", "");
+
+                            $('#aObservarEditarExp' + NombreCampo + '').css({ "display": "none" });
+                            $('#aMasivoObservarExp' + NombreCampo + '').css({ "display": "none" });
+                            $('#mensaje' + NombreCampo + '').show();
+                            document.querySelector('#mensaje' + NombreCampo + '').innerText = 'Se valido con éxito';
+
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                },
+                comentario: "",
+                observareditarExp: function (Descripcion1, Descripcion2, nombdiv, nombdivdetalle, NombreCampo, dato, titulo, numcol) {
+                    debugger;
+
+
+                    var rows = '';
+                    rows += '<div id="' + nombdivdetalle + '">';
+                    rows += '<label class="col-sm-2 col-xs-12 control-label" for="Objetivo">' + titulo + '</label>';
+                    rows += '<div class="col-sm-' + numcol + ' col-xs-12">';
+                    rows += sut.string.format('<td><label name="' + Descripcion1 + '"  id="' + Descripcion1 + '" class="form-control"    style="border-color:green;background:#00a65a36;font-weight: 600;height: 100%;"  >{0}</label></td>', document.getElementById(''+dato+'').innerHTML);
+                    rows += '</div>';
+                    rows += '<br/>';
+                    rows += '<br/>';
+                    rows += '<br/>';
+                    rows += '<label class="col-sm-2 col-xs-12 control-label" for="Objetivo">' + titulo + '</label>';
+                    rows += '<div class="col-sm-' + numcol + ' col-xs-12">';
+                    rows += sut.string.format('<td><textarea name="' + Descripcion2 + '" id="' + Descripcion2 + '" class="form-control"  onkeypress="javascript:sut.editProcedimiento.visualizarSustento(event,this);" style="border-color:red;background:#ff00002e;"></textarea></td>', '');
+                    rows += '</div>';
+                    rows += '</div>';
+
+                    $('#' + nombdiv + '').append(rows);
+
+                    $('#aAsignarGuardarObservarExp' + NombreCampo + '').css({ "display": "" });
+                    $('#aAsignarCancelarObservarExp' + NombreCampo + '').css({ "display": "" });
+
+                    $('#aValidarObservarExp' + NombreCampo + '').css("display", "none");
+                    $('#aCancelarGeneralExp' + NombreCampo + '').css("display", "none");
+                    $('#aObservarEditarExp' + NombreCampo + '').css({ "display": "none" });
+                    $('#aMasivoObservarExp' + NombreCampo + '').css({ "display": "" });
+
+                    $('#' + dato + '').hide();
+                    //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                    //visible
+                    $('#' + dato + 'label').hide();
+
+
+                    comentario = $("#txtaObservarExp").val();
+                },
+                masivoObservarExp: function (expedienteId, datocampo) {
+                    debugger;
+                    $.ajax({
+                        type: "GET",
+                        //url: "/Simplificacion/Procedimiento/SelectMasivo",
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/SelectMasivo")',
+                        data: { multi: true, expedienteId: expedienteId, datocampo: datocampo, fnAdd: 'sut.editProcedimiento.Sede.add' },
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+
+
+                },
+
+                CancelarGeneralExp: function (idExpediente, procedimientoId, idOpcion, Descripcion, NombreCampo, Pantalla) {
+
+                    if (idOpcion == 1) {
+                        var model = {
+                            'filtro.ExpedienteId': idExpediente,
+                            'filtro.ProcedimientoId': procedimientoId,
+                            'filtro.Descripcion': document.getElementById(''+Descripcion+'').innerHTML,
+                            'filtro.CodValidacion': '4',
+                            'filtro.TipoEstado': '4',
+                            'filtro.NombreCampo': NombreCampo,
+                            'filtro.Pantalla': Pantalla,
+                            'filtro.Estado': '1',
+                        };
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/CancelarObservacion',
+                        url: '@Url.Content("~/Simplificacion/Expediente/CancelarObservacion")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            debugger;
+                            $('#modal-ventana').modal('hide');
+
+
+                            //$('#aValidarObservarExp' + NombreCampo + '').css("display", "");
+                            $('#aObservarEditarExp' + NombreCampo + '').css("display", "");
+                            //$("#aSustentarObservarExpObjetivo").css("display","");
+                            //$("#aMasivoObservarExpObjetivo").css("display","");
+
+                            $('#aCancelarGeneralExp' + NombreCampo + '').css({ "display": "none" });
+
+                            $('#mensaje' + NombreCampo + '').hide();
+                            document.querySelector('#mensaje' + NombreCampo + '').innerText = '';
+
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                }
+            },
+            AsignarObservarexp: {
+                asignarguardarObservarExp: function (idExpediente, procedimientoId, Descripcion1, Descripcion2, NombreCampo, Pantalla) {
+                    debugger;
+                    if ($('#' + Descripcion2 + '').val().trim() == "") {
+
+                        showNotification('top', 'right', 'No puedes Guardar una obseracion en blanco', 2);
+                        return;
+                    }
+                    debugger;
+                    sut.editProcedimiento.AsignarObservarexp.GuardarObservarExp1(idExpediente, procedimientoId, Descripcion1, Descripcion2, NombreCampo, Pantalla);
+                },
+
+                GuardarObservarExp1: function (idExpediente, procedimientoId, Descripcion1, Descripcion2, NombreCampo, Pantalla) {
+                    var model = {
+                        'filtro.ExpedienteId': idExpediente,
+                        'filtro.ProcedimientoId': procedimientoId,
+                        'filtro.Descripcion':  document.getElementById(''+Descripcion1+'').innerHTML,
+                        'filtro.CodValidacion': '1',
+                        'filtro.TipoEstado': '1',
+                        'filtro.NombreCampo': NombreCampo,
+                        'filtro.Pantalla': Pantalla,
+                        'filtro.Estado': '1',
+                    };
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/AgregarObservacion',
+                        url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                        data: model,
+                        cache: false,
+                        success: function (data) {
+                            sut.editProcedimiento.AsignarObservarexp.GuardarObservarExp2(idExpediente, procedimientoId, Descripcion1, Descripcion2, NombreCampo, Pantalla);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                },
+
+                GuardarObservarExp2: function (idExpediente, procedimientoId, Descripcion1, Descripcion2, NombreCampo, Pantalla) {
+                    var model = {
+                        'filtro.ExpedienteId': idExpediente,
+                        'filtro.ProcedimientoId': procedimientoId,
+                        'filtro.Descripcion': $('#' + Descripcion2 + '').val().trim(),
+                        'filtro.CodValidacion': '2',
+                        'filtro.TipoEstado': '2',
+                        'filtro.NombreCampo': NombreCampo,
+                        'filtro.Pantalla': Pantalla,
+                        'filtro.Estado': '1',
+                    };
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/AgregarObservacion',
+                        url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#modal-ventana').modal('hide');
+                            $("#aCancelarObservarExp").css({ "display": "none" });
+                            $("#aGuardarObservarExp").css({ "display": "none" });
+                            $("#aEditarObservarExp").css({ "display": "" });
+
+                            $('#mensaje' + NombreCampo + '').show();
+                            document.querySelector('#mensaje' + NombreCampo + '').innerText = 'Se observo con éxito';
+
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                },
+
+                comentario: "",
+                asignarCancelarObservarExp: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
+
+                    sut.editProcedimiento.AsignarObservarexp.CancelarObservacion1(idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo);
+
+                },
+                CancelarObservacion1: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
+
+                    if (idOpcion == 1) {
+                        var model = {
+                            'filtro.ExpedienteId': idExpediente,
+                            'filtro.ProcedimientoId': procedimientoId,
+                            'filtro.Descripcion':  document.getElementById(''+Descripcion1+'').innerHTML,
+                            'filtro.CodValidacion': '1',
+                            'filtro.TipoEstado': '1',
+                            'filtro.NombreCampo': NombreCampo,
+                            'filtro.Pantalla': Pantalla,
+                            'filtro.Estado': '1',
+                        };
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                        url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+
+                            sut.editProcedimiento.AsignarObservarexp.CancelarObservacion2(idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                },
+                CancelarObservacion2: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
+
+                    if (idOpcion == 1) {
+                        var model = {
+                            'filtro.ExpedienteId': idExpediente,
+                            'filtro.ProcedimientoId': procedimientoId,
+                            'filtro.Descripcion': $('#' + Descripcion2 + '').val(),
+                            'filtro.CodValidacion': '2',
+                            'filtro.TipoEstado': '2',
+                            'filtro.NombreCampo': NombreCampo,
+                            'filtro.Pantalla': Pantalla,
+                            'filtro.Estado': '1',
+                        };
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                        url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+
+                            sut.editProcedimiento.AsignarObservarexp.CancelarObservacion3(idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo);
+
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                },
+                CancelarObservacion3: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
+
+                    if (idOpcion == 1) {
+                        var model = {
+                            'filtro.ExpedienteId': idExpediente,
+                            'filtro.ProcedimientoId': procedimientoId,
+                            'filtro.Descripcion': $('#' + nomsustento + '').val(),
+                            'filtro.CodValidacion': '3',
+                            'filtro.TipoEstado': '3',
+                            'filtro.NombreCampo': NombreCampo,
+                            'filtro.Pantalla': Pantalla,
+                            'filtro.Estado': '1',
+                        };
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                        url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            debugger;
+                            $('#modal-ventana').modal('hide');
+
+                            $('#' + nomcampo + '').show();
+                            //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                            //visible
+                            $('#' + nomcampo + 'label').show();
+
+                            //$('#aValidarObservarExp' + NombreCampo + '').css({ "display": "" });
+                            $('#aObservarEditarExp' + NombreCampo + '').css({ "display": "" });
+
+                            $('#aMasivoObservarExp' + NombreCampo + '').css({ "display": "none" });
+                            $('#aAsignarGuardarObservarExp' + NombreCampo + '').css({ "display": "none" });
+                            $('#aAsignarCancelarObservarExp' + NombreCampo + '').css({ "display": "none" });
+
+                            $('#' + divsustento + '').remove();
+                            $('#' + nombdivdetalle + '').remove();
+                            $('#mensaje' + NombreCampo + '').hide();
+                            document.querySelector('#mensaje' + NombreCampo + '').innerText = '';
+
+
+
+
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+
+                    comentario = "";
+                },
+                sustentarObservarExp: function (Descripcion1, nombdiv, nombdivdetalle, NombreCampo, titulo, numcol) {
+
+                    debugger;
+                    var rows = '';
+                    rows += '<div id="' + nombdivdetalle + '">';
+                    rows += '<br/>';
+                    rows += '<br/>';
+                    rows += '<br/>';
+                    rows += '<label class="col-sm-2 col-xs-12 control-label" for="Objetivo">' + titulo + '</label>';
+                    rows += '<div class=col-sm-' + numcol + ' col-xs-12">';
+                    rows += sut.string.format('<td><textarea name="' + Descripcion1 + '"  id="' + Descripcion1 + '" class="form-control" style="border-color:#f39c12;background:#f39c1259;" readonly></textarea></td>');
+                    rows += '</div>';
+                    rows += '</div>';
+                    $('#' + nombdiv + '').append(rows);
+
+                    $('#aSustentarObservarExp' + NombreCampo + '').css({ "display": "none" });
+                    $('#aGuardarSustentarExp' + NombreCampo + '').css({ "display": "" });
+                    $('#aCancelarSustentarExp' + NombreCampo + '').css({ "display": "" });
+
+                },
+            },
+            AsignarSustentarexp: {
+                guardarSustentarExp: function (idExpediente, procedimientoId, Descripcion, NombreCampo, Pantalla) {
+                    var model = {
+                        'filtro.ExpedienteId': idExpediente,
+                        'filtro.ProcedimientoId': procedimientoId,
+                        'filtro.Descripcion': $('#' + Descripcion + '').val(),
+                        'filtro.CodValidacion': '3',
+                        'filtro.TipoEstado': '3',
+                        'filtro.NombreCampo': NombreCampo,
+                        'filtro.Pantalla': Pantalla,
+                        'filtro.Estado': '1',
+                    };
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/AgregarObservacion',
+                        url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+
+                            $('#modal-ventana').modal('hide');
+
+                            $('#mensaje' + NombreCampo + '').show();
+                            document.querySelector('#mensaje' + NombreCampo + '').innerText = 'Sustento';
+
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                },
+                comentario: "",
+                CancelarSustentarExp: function (idExpediente, procedimientoId, Descripcion, NombreCampo, Pantalla, nombdivdetalle) {
+
+                    var model = {
+                        'filtro.ExpedienteId': idExpediente,
+                        'filtro.ProcedimientoId': procedimientoId,
+                        'filtro.Descripcion': $('#' + Descripcion + '').val(),
+                        'filtro.CodValidacion': '3',
+                        'filtro.TipoEstado': '3',
+                        'filtro.NombreCampo': NombreCampo,
+                        'filtro.Pantalla': Pantalla,
+                        'filtro.Estado': '1',
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                        url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            debugger;
+                            $('#modal-ventana').modal('hide');
+
+                            $('#aSustentarObservarExp' + NombreCampo + '').css({ "display": "" });
+                            $('#aGuardarSustentarExp' + NombreCampo + '').css({ "display": "none" });
+                            $('#aCancelarSustentarExp' + NombreCampo + '').css({ "display": "none" });
+
+                            $('#' + nombdivdetalle + '').remove();
+                            $('#mensaje' + NombreCampo + '').show();
+                            document.querySelector('#mensaje' + NombreCampo + '').innerText = 'Se observo con éxito';
+
+
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+
+
+
+                },
+                textoobservacion: function (Descripcion1, Descripcion2, nombdiv, nombdivdetalle, titulo, campo1, campo2, numcol, estado, nomcampo) {
+                    debugger;
+                    var rows = '';
+                    rows += '<div id="' + nombdivdetalle + '">';
+                    rows += '<label class="col-sm-2 col-xs-12 control-label" for="Objetivo">' + titulo + ' </label>';
+                    rows += '<div class="col-sm-' + numcol + ' col-xs-12">';
+                    rows += sut.string.format('<td><textarea name="' + campo1 + '"  id="' + campo1 + '" class="form-control" style="border-color:green;background:#00a65a36;" readonly >{0}</textarea></td>', Descripcion1);
+                    rows += '</div>';
+                    rows += '<br/>';
+                    rows += '<br/>';
+                    rows += '<br/>';
+                    rows += '<label class="col-sm-2 col-xs-12 control-label" for="Objetivo">Observar: </label>';
+                    rows += '<div class="col-sm-' + numcol + ' col-xs-12">';
+                    if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                    {
+                        rows += sut.string.format('<td><textarea name="' + campo2 + '" id="' + campo2 + '" class="form-control"  onkeypress="javascript:sut.editProcedimiento.visualizarSustento(event,this);" style="border-color:red;background:#ff00002e;">{0}</textarea></td>', Descripcion2);
+                    }
+                    else
+                    {
+                        rows += sut.string.format('<td><label class="form-control" name="' + campo2 + '" id="' + campo2 + '"  style="border-color:red;background:#ff00002e;font-weight: 600;height: 100%;" >{0}</label></td>', Descripcion2 );
+					}
+
+                    rows += '</div>';
+                    rows += '</div>';
+                    $('#' + nombdiv + '').append(rows);
+
+                    if (estado == 'Presentado') {
+                        $('#' + nomcampo + '').hide();
+                        //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                        //visible
+                        $('#' + nomcampo + 'label').hide();
+
+                    } else {
+                        $('#' + nomcampo + '').show();
+                        //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                        //visible
+                        $('#' + nomcampo + 'label').show();
+                    }
+
+
+                },
+                textosustento: function (Descripcion1, nombdiv, nombdivdetalle, titulo, campo, numcol) {
+
+                    debugger;
+                    var rows = '';
+                    rows += '<div id="' + nombdivdetalle + '">';
+                    rows += '<br/>';
+                    rows += '<br/>';
+                    if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                    {  rows += '<br/>';}
+                    rows += '<label class="col-sm-2 col-xs-12 control-label" for="Objetivo">Sustento Observación</label>';
+                    rows += '<div class="col-sm-' + numcol + ' col-xs-12">';
+                    //rows += sut.string.format('<td><textarea name="' + campo + '"  id="' + campo + '" class="form-control" style="border-color:#f39c12;background:#f39c1259;" readonly >{0}</textarea></td>', Descripcion1);
+                    rows += sut.string.format('<td><label class="form-control"  name="' + campo + '"  id="' + campo + '"  style="border-color:#f39c12;background:#f39c1259;font-weight: 600;height: 100%;" >{0}</label></td>', Descripcion1 );
+                    rows += '</div>';
+                    rows += '</div>';
+                    $('#' + nombdiv + '').append(rows);
+                },
+            },
+            guardar: function () {
+                if ($('#form-editar').valid()) {
+                    var model = $('#form-editar').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/SustentoTecnico',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                @*window.location = '/Simplificacion/Procedimiento/SustentoTecnico/@Model.ProcedimientoId';*@
+                                window.location = '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId';
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }
+            },
+            Observarexp: {
+                comentario: "",
+                editarObservarExp: function () {
+                    $("#aEditarObservarExp").css({ "display": "none" });
+                    $("#aGuardarObservarExp").css({ "display": "" });
+                    $("#aCancelarObservarExp").css({ "display": "" });
+                    $("#txtaObservarExp").prop("disabled", false);
+                    comentario = $("#txtaObservarExp").val();
+                    document.querySelector('#mensajedatos').innerText = '';
+                },
+                guardarObservarExp: function (idExpediente, procedimientoId) {
+
+                    if ($('#txtaObservarExp').val().trim() == "") {
+
+                        showNotification('top', 'right', 'No puedes Guardar una obseracion en blanco', 2);
+                        return;
+                    }
+
+
+                    var model = {
+                        'filtro.ExpedienteId': idExpediente,
+                        'filtro.ProcedimientoId': procedimientoId,
+                        'filtro.Descripcion': $('#txtaObservarExp').val(),
+                        'filtro.CodValidacion': '1',
+                        'filtro.TipoEstado': '1',
+                        'filtro.NombreCampo': 'Nota de Ayuda Sustento Tecnico',
+                        'filtro.Pantalla': 'Sustento Tecnico',
+                        'filtro.Estado': '1',
+                    };
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/AgregarObservacion',
+                        url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+
+                            $('#modal-ventana').modal('hide');
+                            $("#aCancelarObservarExp").css({ "display": "none" });
+                            $("#aGuardarObservarExp").css({ "display": "none" });
+                            $("#aEditarObservarExp").css({ "display": "" });
+                            $("#txtaObservarExp").prop("disabled", true); document.querySelector('#mensajedatos').innerText = 'Se valido con éxito';
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                },
+                CancelarObservarExp: function () {
+                    $("#aCancelarObservarExp").css({ "display": "none" });
+                    $("#aGuardarObservarExp").css({ "display": "none" });
+                    $("#aEditarObservarExp").css({ "display": "" });
+                    $("#txtaObservarExp").prop("disabled", true);
+                    $("#txtaObservarExp").val(comentario);
+                    if ($('#txtaObservarExp').val().trim() == "") {
+                        document.querySelector('#mensajedatos').innerText = '';
+                    } else {
+                        document.querySelector('#mensajedatos').innerText = 'Se valido con éxito';
+                    }
+                }
+            },
+            terminar: function () {
+                sut.msg.confirm('Si finaliza el registro no podrá modificarlo nuevamente.', () => {
+                    if ($('#form-editar').valid()) {
+                        var model = $('#form-editar').serialize();
+                        $.ajax({
+                            type: 'POST',
+                            //url: '/Simplificacion/Procedimiento/SustentoTecnico',
+                            url: '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico")',
+                            data: model,
+                            dataType: 'json',
+                            beforeSend: function () {
+                                $("#mensajes").hide();
+                            },
+                            complete: function () {
+
+                            },
+                            success: function (result) {
+
+                                $.ajax({
+                                    type: 'POST',
+                                    //url: '/Simplificacion/Procedimiento/TerminarSustento',
+                                    url: '@Url.Content("~/Simplificacion/Procedimiento/TerminarSustento")',
+                                    data: {tipo: 2, ProcedimientoId: @Model.ProcedimientoId},
+                                    dataType: 'json',
+                                    beforeSend: function () {
+                                        $("#mensajes").hide();
+                                    },
+                                    complete: function () {
+
+                                    },
+                                    success: function (result) {
+                                        sut.msg.success(result.mensaje, function () {
+                                            @*window.location = '/Simplificacion/Procedimiento/SustentoTecnico/@Model.ProcedimientoId';*@
+                                            window.location = '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId';
+                                        });
+                                    },
+                                    error: function (result) {
+                                        sut.error.show('mensajes', result.responseText);
+                                    }
+                                });
+                            },
+                            error: function (result) {
+                                sut.error.show('mensajes', result.responseText);
+                            }
+                        });
+                    }
+                });},
+            activar : function(){
+
+                $.ajax({
+                    type: 'POST',
+                    //url: '/Simplificacion/Procedimiento/ActivarSustento',
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/ActivarSustento")',
+                    data: {tipo: 2, ProcedimientoId: @Model.ProcedimientoId, estadoExpediente: '@exp.EstadoExpediente', ExpedienteId: @exp.ExpedienteId},
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#mensajes").hide();
+                    },
+                    complete: function () {
+
+                    },
+                    success: function (result) {
+                        sut.msg.success(result.mensaje, function () {
+                            //window.location = '/Simplificacion/Procedimiento/DatosGenerales/@Model.ProcedimientoId';
+                            window.location = '@Url.Action("SustentoTecnico", "Procedimiento", new { @area = "Simplificacion", @id = Model.ProcedimientoId })';
+                        });
+                    },
+                    error: function (result) {
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+            },
+            validarObservarExpTecnicoRequisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
+                debugger;
+                var Descripcion = $('#Requisito_' + numero + '__Nombre').val() + ";:;" + $('#Requisito_' + numero +'__SustentoTecnico').val();
+                var NombreCampo = 'TecnicoRequisitos';
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '4',
+                    'filtro.TipoEstado': '4',
+                    'filtro.NombreCampo': 'NombredelosTecnicoRequisitos' + numero,
+                    'filtro.Pantalla': 'Sustento Tecnico',
+                    'filtro.Estado': '1',
+                    'filtro.RequisitoId': RequisitoId,
+                };
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/AgregarObservacion',
+                    url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+                        $('#aValidarObservarExp' + NombreCampo + '_' + numero + '').css("display", "none");
+                        $('#aCancelarGeneralExp' + NombreCampo + '_' +  numero + '').css("display", "");
+
+                        $('#aObservarEditarExp' + NombreCampo + '_' + numero + '').css({ "display": "none" });
+                        $('#aMasivoObservarExp' + NombreCampo + '_' + numero + '').css({ "display": "none" });
+                        $('#mensajeTecnicoRequisitos_' + numero).show();
+                        document.querySelector('#mensajeTecnicoRequisitos_' + numero).innerText = 'Se valido con éxito';
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+
+            CancelarGeneralExpTecnicoRequisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
+                debugger;
+                var Descripcion = $('#Requisito_' + numero + '__Nombre').val() + ";:;" + $('#Requisito_' + numero + '__SustentoTecnico').val();
+                var NombreCampo = 'TecnicoRequisitos';
+
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '4',
+                    'filtro.TipoEstado': '4',
+                    'filtro.NombreCampo': 'NombredelosTecnicoRequisitos' + numero,
+                    'filtro.Pantalla': 'Sustento Tecnico',
+                    'filtro.Estado': '1',
+                    'filtro.RequisitoId': RequisitoId,
+                };
+
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarObservacion',
+                    url: '@Url.Content("~/Simplificacion/Expediente/CancelarObservacion")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+
+
+                        //$('#aValidarObservarExp' + NombreCampo +'_'+ numero + '').css("display", "");
+                        $('#aObservarEditarExp' + NombreCampo + '_' + numero + '').css("display", "");
+                        //$("#aSustentarObservarExpObjetivo").css("display","");
+                        //$("#aMasivoObservarExpObjetivo").css("display","");
+
+                        $('#aCancelarGeneralExp' + NombreCampo + '_' + numero + '').css({ "display": "none" });
+
+                        $('#mensajeTecnicoRequisitos_' + numero + '').hide();
+                        document.querySelector('#mensajeTecnicoRequisitos_' + numero + '').innerText = '';
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            observareditarExpTecnicoRequisitos: function (num) {
+                debugger;
+                var tabla = $('#divTecnicoRequisitos0_' + num + ' tbody');
+                debugger;
+                var NombreCampo = 'TecnicoRequisitos';
+                var rows = '';
+
+                /*obsercacion de casillas
+                rows += sut.string.format('<tr data-index="{0}" id="trdivTecnicoRequisitos0' + num + '">', num);
+
+                rows += sut.string.format('<td><input style="border-color:green;background:#00a65a36;" type="text" id="NombreD' + num + '" value="{0}" class="form-control" readOnly /></td>', $('#Requisito_'+ num+'__Nombre').val());
+
+                rows += sut.string.format('<td></td>');
+                rows += sut.string.format('<td>');
+                rows += sut.string.format('<td><input style="border-color:green;background:#00a65a36;" type="text" id="SustentoD' + num + '" value="{0}" class="form-control" readOnly /></td>', $('#Requisito_' + num +'__SustentoTecnico').val());
+
+                rows += sut.string.format('</td>');
+                rows += sut.string.format('</tr>');
+                    */
+                rows += '<tr id="trdivTecnicoRequisitos0_' + num + '">'
+                rows += sut.string.format('<td style="width:100px;">Observar </td>');
+                rows += sut.string.format('<td colspan="5" ><textarea name="TecnicoRequisitos2' + num + '" id="TecnicoRequisitos2' + num + '" onkeypress="javascript:sut.editProcedimiento.visualizarSustentotecnico(event,this);" class="form-control" style="border-color:red;background:#ff00002e;"></textarea></td>', '');
+                rows += '</tr>';;
+
+                tabla.append(rows);
+
+                $('#aAsignarGuardarObservarExp' + NombreCampo +'_'+ num + '').css({ "display": "" });
+                $('#aAsignarCancelarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+
+                $('#aValidarObservarExp' + NombreCampo + '_' + num + '').css("display", "none");
+                $('#aCancelarGeneralExp' + NombreCampo + '_' + num + '').css("display", "none");
+                $('#aObservarEditarExp' + NombreCampo + '_'+ num + '').css({ "display": "none" });
+                $('#aMasivoObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+
+                //$('#trTecnicoRequisitos_' + num + '').hide();
+                //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                //visible
+                //$('#' + dato + 'label').hide();
+
+            },
+            ///*trabajar*/
+            asignarguardarObservarExpTecnicoRequisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
+
+
+                if ($('#TecnicoRequisitos2' + numero).val().trim() == "") {
+
+                    showNotification('top', 'right', 'No puedes Guardar una obseracion en blanco', 2);
+                    return;
+                }
+                debugger;
+                sut.editProcedimiento.GuardarObservarExp1TecnicoRequisitos(idExpediente, procedimientoId, numero,RequisitoId);
+            },
+
+            GuardarObservarExp1TecnicoRequisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
+                var Descripcion = $('#Requisito_' + numero + '__Nombre').val() + ";:;" + $('#Requisito_' + numero + '__SustentoTecnico').val();
+                debugger;
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '1',
+                    'filtro.TipoEstado': '1',
+                    'filtro.NombreCampo': 'NombredelosTecnicoRequisitos' + numero,
+                    'filtro.Pantalla': 'Sustento Tecnico',
+                    'filtro.Estado': '1',
+                    'filtro.RequisitoId': RequisitoId,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/AgregarObservacion',
+                    url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                    data: model,
+                    cache: false,
+                    success: function (data) {
+                        sut.editProcedimiento.GuardarObservarExp2TecnicoRequisitos(idExpediente, procedimientoId, numero,RequisitoId);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+
+            GuardarObservarExp2TecnicoRequisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
+                debugger;
+                var NombreCampo = 'TecnicoRequisitos';
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': $('#TecnicoRequisitos2' + numero).val(),
+                    'filtro.CodValidacion': '2',
+                    'filtro.TipoEstado': '2',
+                    'filtro.NombreCampo': 'NombredelosTecnicoRequisitos' + numero,
+                    'filtro.Pantalla': 'Sustento Tecnico',
+                    'filtro.Estado': '1',
+                    'filtro.RequisitoId': RequisitoId,
+                };
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/AgregarObservacion',
+                    url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#modal-ventana').modal('hide');
+
+
+                        $('#aCancelarObservarExp' + NombreCampo + '_' + numero + '').css("display", "none");
+                        $('#aGuardarObservarExp' + NombreCampo + '_' + numero + '').css({ "display": "none" });
+                        $('#aEditarObservarExp' + NombreCampo + '_' + numero + '').css({ "display": "" });
+
+                        $('#mensajeTecnicoRequisitos_' + numero).show();
+                        document.querySelector('#mensajeTecnicoRequisitos_' + numero).innerText = 'Se observo con éxito';
+
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            asignarCancelarObservarExpTecnicoRequisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
+
+                debugger;
+                sut.editProcedimiento.CancelarObservacion1TecnicoRequisitos(idExpediente, procedimientoId, numero,RequisitoId);
+
+            },
+            CancelarObservacion1TecnicoRequisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
+                var Descripcion = $('#Requisito_' + numero + '__Nombre').val() + ";:;" + $('#Requisito_' + numero + '__SustentoTecnico').val();
+
+                debugger;
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '1',
+                    'filtro.TipoEstado': '1',
+                    'filtro.NombreCampo': 'NombredelosTecnicoRequisitos' + numero,
+                    'filtro.Pantalla': 'Sustento Tecnico',
+                    'filtro.Estado': '1',
+                    'filtro.RequisitoId': RequisitoId,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                    url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+
+                        sut.editProcedimiento.CancelarObservacion2TecnicoRequisitos(idExpediente, procedimientoId, numero,RequisitoId);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            CancelarObservacion2TecnicoRequisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
+                var Descripcion = $('#Requisito_' + numero + '__Nombre').val() + ";:;" + $('#Requisito_' + numero + '__SustentoTecnico').val();
+
+                debugger;
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '2',
+                    'filtro.TipoEstado': '2',
+                    'filtro.NombreCampo': 'NombredelosTecnicoRequisitos' + numero,
+                    'filtro.Pantalla': 'Sustento Tecnico',
+                    'filtro.Estado': '1',
+                    'filtro.RequisitoId': RequisitoId,
+                };
+
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                    url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+
+                        sut.editProcedimiento.CancelarObservacion3TecnicoRequisitos(idExpediente, procedimientoId, numero,RequisitoId);
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            CancelarObservacion3TecnicoRequisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
+                debugger;
+                var Descripcion = $('#Requisito_' + numero + '__Nombre').val() + ";:;" + $('#Requisito_' + numero + '__SustentoTecnico').val();
+                var NombreCampo = 'TecnicoRequisitos';
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '3',
+                    'filtro.TipoEstado': '3',
+                    'filtro.NombreCampo': 'NombredelosTecnicoRequisitos' + numero,
+                    'filtro.Pantalla': 'Sustento Tecnico',
+                    'filtro.Estado': '1',
+                    'filtro.RequisitoId': RequisitoId,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                    url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+
+                        //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                        //visible
+                        $('#trTecnicoRequisitos_' + numero + '').show();
+
+                        //$('#aValidarObservarExp' + NombreCampo + '_' + numero + '').css({ "display": "" });
+                        $('#aObservarEditarExp' + NombreCampo + '_' + numero + '').css({ "display": "" });
+
+                        $('#aAsignarGuardarObservarExp' + NombreCampo + '_' + numero + '').css({ "display": "none" });
+                        $('#aAsignarCancelarObservarExp' +   NombreCampo + '_' + numero + '').css({ "display": "none" });
+
+
+                        $('#trdivTecnicoRequisitos0' + numero + '').remove();
+                        $('#trdivTecnicoRequisitos0_' + numero + '').remove();
+                        $('#mensajeTecnicoRequisitos_' + numero).hide();
+                        document.querySelector('#mensajeTecnicoRequisitos_' + numero).innerText = '';
+
+
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+
+                comentario = "";
+            },
+
+            textoobservacionTecnicoRequisitos: function (Descripcion, Descripcion2, estado, nomcampo, num) {
+                debugger;
+
+
+
+                var Des = Descripcion.split(";");
+                var tabla = $('#divTecnicoRequisitos0_' + num + ' tbody');
+                debugger;
+                //var Descripcion = $('#DesTecnicoRequisitos' + num).val() + ";" + $('#chekTecnicoRequisitos' + num).val() + ";" + $('#PreTecnicoRequisitos' + num).val() + ";" + $('#CostoTecnicoRequisitos' + num).val();
+                var NombreCampo = 'TecnicoRequisitos';
+                var rows = '';
+
+                //rows += sut.string.format('<tr data-index="{0}" id="trdivTecnicoRequisitos0' + num + '"  >', num);
+                ////rows += sut.string.format('<td >');
+                ////rows += sut.string.format('</td>');
+                //rows += sut.string.format('<td><input style="border-color:green;background:#00a65a36;" type="text" id="NombreD' + num + '" value="{0}" class="form-control" readOnly /></td>', Des[0]);
+
+                //rows += sut.string.format('<td></td>');
+                //rows += sut.string.format('<td>');
+                //rows += sut.string.format('<td><input style="border-color:green;background:#00a65a36;" type="text" id="SustentoD' + num + '" value="{0}" class="form-control" readOnly /></td>', Des[1]);
+
+                //rows += sut.string.format('</td>');
+                //rows += sut.string.format('</tr>');
+
+
+
+
+                rows += '<tr id="trdivTecnicoRequisitos0_' + num + '">'
+                rows += sut.string.format('<td style="width:100px;">Observar </td>');
+
+                if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                {
+                    rows += sut.string.format('<td colspan="5" ><textarea name="TecnicoRequisitos2' + num + '" id="TecnicoRequisitos2' + num + '" onkeypress="javascript:sut.editProcedimiento.visualizarSustentotecnico(event,this);" class="form-control" style="border-color:red;background:#ff00002e;">{0}</textarea></td>', Descripcion2);
+                }
+                else
+                {
+                    rows += sut.string.format('<td colspan="5"><label class="form-control" name="TecnicoRequisitos2' + num + '" id="TecnicoRequisitos2' + num + '"  style="border-color:red;background:#ff00002e;font-weight: 600;height: 100%;" >{0}</label></td>', Descripcion2 );
+				}
+                rows += '</tr>';;
+
+                tabla.append(rows);
+
+
+                $('#aAsignarGuardarObservarExp' + NombreCampo +'_'+ num + '').css({ "display": "" });
+                $('#aAsignarCancelarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+
+                $('#aValidarObservarExp' + NombreCampo +'_'+ num + '').css("display", "none");
+                $('#aCancelarGeneralExp' + NombreCampo +'_'+ num + '').css("display", "none");
+                $('#aObservarEditarExp' + NombreCampo +'_'+ num + '').css({ "display": "none" });
+                $('#aMasivoObservarExp' + NombreCampo +'_'+ num + '').css({ "display": "" });
+
+
+
+
+                //if (estado == 'Presentado') {
+                //    $('#' + nomcampo + '').hide();
+                //    //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                //    //visible
+                //    $('#' + nomcampo + 'label').hide();
+
+                //} else {
+                //    $('#' + nomcampo + '').show();
+                //    //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                //    //visible
+                //    $('#' + nomcampo + 'label').show();
+                //}
+
+
+            },
+            textosustento: function (Descripcion2, estado, nomcampo, num) {
+
+                debugger;
+                var tabla = $('#divTecnicoRequisitos0_' + num + ' tbody');
+                debugger;
+                //var Descripcion = $('#DesModalidad' + num).val() + ";" + $('#chekModalidad' + num).val() + ";" + $('#PreModalidad' + num).val() + ";" + $('#CostoModalidad' + num).val();
+                var NombreCampo = 'Requisitos';
+                var rows = '';
+
+
+                rows += '<tr id="trdivsustentarRequisitos0_' + num + '">'
+                rows += sut.string.format('<td style="width:20px;"> Sustento Observación</td>');
+                //rows += sut.string.format('<td colspan="5" ><textarea name="Requisitos2' + num + '" id="Requisitos2' + num + '" class="form-control" style="border-color:#f39c12;background:#f39c1259;" readOnly>{0}</textarea></td>', Descripcion2);
+
+                rows += sut.string.format('<td colspan="5"><label class="form-control" name="Requisitos2' + num + '" id="Requisitos2' + num + '"  style="border-color:#f39c12;background:#f39c1259;font-weight: 600;height: 100%;" >{0}</label></td>', Descripcion2 );
+
+                rows += '</tr>';;
+
+                tabla.append(rows);
+
+
+                $('#aSustentarObservarExp'+NombreCampo+num+'').css({ "display": "none" });
+                $('#aGuardarSustentarExp'+NombreCampo+num+'').css({ "display": "" });
+                $('#aCancelarSustentarExp'+NombreCampo+num+'').css({ "display": "" });
+            },
+
+        };
+
+
+        function observarbotonesModalidad(NombreCampo, num) {
+            $('#aAsignarGuardarObservarExp' + NombreCampo +'_'+ num + '').css({ "display": "" });
+            $('#aAsignarCancelarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+
+            $('#aValidarObservarExp' + NombreCampo + '_' + num + '').css("display", "none");
+            $('#aCancelarGeneralExp' + NombreCampo + '_' + num + '').css("display", "none");
+            $('#aObservarEditarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+            $('#aMasivoObservarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+        }
+        function valiarbotonesModalidad(NombreCampo, num) {
+            //$('#aValidarObservarExp' + NombreCampo + '_' + num + '').css("display", "");
+            $('#aCancelarGeneralExp' + NombreCampo + '_' + num + '').css("display", "");
+            $('#aObservarEditarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+            $('#aMasivoObservarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+        }
+        function canceladobotonesModalidad(NombreCampo, num) {
+            $('#aAsignarGuardarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+            $('#aAsignarCancelarObservarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+            //$('#aValidarObservarExp' + NombreCampo + '_' + num + '').css("display", "");
+            $('#aCancelarGeneralExp' + NombreCampo + '_' + num + '').css("display", "none");
+            $('#aObservarEditarExp' + NombreCampo + '_' + num + '').css({ "display": "" });
+            $('#aMasivoObservarExp' + NombreCampo + '_' + num + '').css({ "display": "none" });
+        }
+        function sustentobotones(NombreCampo, num) {
+
+
+            $('#aSustentarObservarExp'+NombreCampo+'_' + num + '').css({ "display": "none" });
+            $('#aGuardarSustentarExp'+NombreCampo+'_' + num + '').css({ "display": "" });
+            $('#aCancelarSustentarExp'+NombreCampo+'_' + num + '').css({ "display": "" });
+
+        }
+
+        function valiarbotones(NombreCampo) {
+            //$('#aValidarObservarExp' + NombreCampo + '').css("display", "");
+            $('#aCancelarGeneralExp' + NombreCampo + '').css("display", "");
+            $('#aObservarEditarExp' + NombreCampo + '').css({ "display": "none" });
+            $('#aMasivoObservarExp' + NombreCampo + '').css({ "display": "none" });
+        }
+
+        function observarbotones(NombreCampo) {
+            $('#aAsignarGuardarObservarExp'+NombreCampo+'').css({ "display": "" });
+            $('#aAsignarCancelarObservarExp'+NombreCampo+'').css({ "display": "" });
+
+            $('#aValidarObservarExp'+NombreCampo+'').css("display","none");
+            $('#aCancelarGeneralExp'+NombreCampo+'').css("display", "none");
+            $('#aObservarEditarExp'+NombreCampo+'').css({ "display": "none" });
+            $('#aMasivoObservarExp'+NombreCampo+'').css({ "display": "" });
+        }
+
+
+        function canceladobotonessustento(NombreCampo) {
+            $('#aSustentarObservarExp' + NombreCampo + '').css({ "display": "none" });
+        }
+
+        function sustentobotones(NombreCampo) {
+
+
+            $('#aSustentarObservarExp' + NombreCampo + '').css({ "display": "none" });
+            $('#aGuardarSustentarExp' + NombreCampo + '').css({ "display": "" });
+            $('#aCancelarSustentarExp' + NombreCampo + '').css({ "display": "" });
+
+        }
+        function canceladobotones(NombreCampo) {
+            $('#aAsignarGuardarObservarExp' + NombreCampo + '').css({ "display": "none" });
+            $('#aAsignarCancelarObservarExp' + NombreCampo + '').css({ "display": "none" });
+            //$('#aValidarObservarExp' + NombreCampo + '').css("display", "");
+            $('#aCancelarGeneralExp' + NombreCampo + '').css("display", "none");
+            $('#aObservarEditarExp' + NombreCampo + '').css({ "display": "" });
+            $('#aMasivoObservarExp' + NombreCampo + '').css({ "display": "none" });
+        }
+
+
+        $(function () {
+            sut.editProcedimiento.BaseLegal.init();
+            /*habilitar observación*/
+            $("#aCancelarObservarExp").css({ "display": "none" });
+            $("#aGuardarObservarExp").css({ "display": "none" });
+            $("#aEditarObservarExp").css({ "display": "" });
+            $("#txtaObservarExp").prop("disabled", true)
+
+            /*fin observación*/
+
+            $('#form-editar').validate({
+                errorPlacement: function (error, element) {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+
+                },
+                messages: {
+
+                }
+            });
+        });
+    </script>
+}

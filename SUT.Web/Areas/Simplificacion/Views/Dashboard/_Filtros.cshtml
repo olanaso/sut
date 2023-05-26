@@ -1,0 +1,97 @@
+﻿@using Sut.Entities
+@model Expediente
+
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+
+
+    ViewBag.Icon = "fa fa-bar-chart";
+    ViewBag.Title = "Dashboard ";
+    ViewBag.Descripcion = "";
+
+}
+
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title"> <i class="fa fa-fw fa-filter"></i>   Filtros <i class="fa fa-fw fa-info-circle" data-toggle="tooltip" title="El filtro permite al usuario seleccionar valores específicos para una o varias columnas y filtrar los datos en consecuencia"></i>:  </h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
+        </div>
+    </div>
+
+    <div class="box-body">
+
+        <div class="col-sm-12 col-xs-12">
+
+
+
+            <div class="col-sm-2 col-xs-3">
+                <label class="labelFilter">Tipo: </label>
+                <i class="fa fa-fw fa-info-circle" data-toggle="tooltip" title="Lista de las Entidades del Estado como: Municipalidades, Gobiernos Regionales, Ministerio y otros.">
+                </i>
+                @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.publicarEstadoTipo as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
+            </div>
+
+            <div class="col-sm-2 col-xs-3">
+                <label>Estado:<i class="fa fa-fw fa-info-circle" data-toggle="tooltip" title="Lista de las Entidades del Estado como: Municipalidades, Gobiernos Regionales, Ministerio y otros."></i> </label>
+                @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.publicarEstado as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
+            </div>
+
+            <div class="col-sm-2 col-xs-3">
+                <label>Entidad <i class="fa fa-fw fa-info-circle" data-toggle="tooltip" title="Lista de las Entidades del Estado como: Municipalidades, Gobiernos Regionales, Ministerio y otros."></i> </label>
+                @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.ListaEntidades as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
+            </div>
+            <div class="col-sm-2 col-xs-3">
+                <label>Gobierno </label>
+                @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.ListaGobierno as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
+            </div>
+            <div class="col-sm-2 col-xs-3">
+                <label>Sector </label>
+                @Html.DropDownListFor(model => model.SectorId, ViewBag.ListaSector as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-xs-12">
+            <div class="col-sm-2 col-xs-3">
+                <label>Región:  </label>
+                @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.ListaDepartamento as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
+            </div>
+            <div class="col-sm-2 col-xs-3">
+                <label>Provincia:  </label>
+                @Html.DropDownListFor(model => model.SectorId, ViewBag.ListaProvincia as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
+            </div>
+
+            <div class="col-sm-2 col-xs-3">
+                <label>Fecha Inicio: </label>
+                @Html.TextBoxFor(model => model.Descripcion, "{0:yyyy-MM-dd}", new { @class = "form-control input-sm selectfilter", @type = "date", @id = "fechainicio" })
+            </div>
+
+            <div class="col-sm-2 col-xs-3">
+                <label>Fecha Fin </label>
+                @Html.TextBoxFor(model => model.Descripcion, "{0:yyyy-MM-dd}", new { @class = "form-control input-sm selectfilter", @type = "date", @id = "fechafin" })
+            </div>
+
+        </div>
+
+
+        <div class="col-sm-12 col-xs-12">
+            <div class="col-sm-1 col-xs-3">
+                <br />
+
+                <button type="button" class="btn btn-block btn-danger btn-lg"> Filtrar</button>
+
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+    <div class="box-footer">
+        Elige un filtro para poder genenerar las graficas
+    </div>
+</div>
+

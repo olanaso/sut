@@ -1,0 +1,185 @@
+﻿@model Sut.Entities.PlazoAtencion
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">Plazo Atención</h4>
+        </div>
+        <div class="modal-body form-horizontal">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-modal-editar" }))
+            {
+                @Html.HiddenFor(model => model.ProcedimientoId)
+                @Html.HiddenFor(model => model.PlazoAtencionId)
+                if (@ViewBag.pantalla != 1)
+                {
+                    <div class="form-group">
+                        <label class="control-label col-sm-3 col-xs-12">Descripcion</label>
+                        <div class="col-sm-9 col-xs-12">
+                            @Html.TextBoxFor(model => model.Descripcion, new { @class = "form-control input-sm", @placeholder = "Colocar la Descripcion" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3 col-xs-12">Plazo</label>
+                        <div class="col-sm-9 col-xs-12">
+                            @Html.TextBoxFor(model => model.Plazo, new { @class = "form-control input-sm", @placeholder = "Colocar el Costo" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3 col-xs-12">Tipo Plazo</label>
+                        <div class="col-sm-9 col-xs-12">
+                            @Html.DropDownListFor(model => model.TipoPlazo, ViewBag.tipoplazo as List<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        <label class="control-label col-sm-3 col-xs-12">Base legal del Plazo de Atención</label>
+                        <div class="col-sm-9 col-xs-12">
+                            @Html.TextAreaFor(model => model.Sustento, new { @class = "form-control input-sm", @placeholder = "Colocar el Sustento" })
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer">
+            @if (@ViewBag.pantalla != 1)
+            {
+                <button type="button" class="btn btn-success btn-sm" onclick="sut.Reproduccion.guardar()"><i class="fa fa-check"></i> Aceptar</button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-success btn-sm" onclick="sut.Reproduccion.guardarSustento()"><i class="fa fa-check"></i> Aceptar</button>
+            }
+            
+           
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+    </div>
+</div>
+<script>
+    sut.Reproduccion = {
+        guardar: function () {
+
+            debugger;
+
+
+            if ($("#form-modal-editar").valid()) {
+                var model = $('#form-modal-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Simplificacion/Inductor/Guardar",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/GuardarPlazoAtencio")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, function () {
+                            //sut.Inductor.listar(1);
+                            window.location = '@Url.Action("DatosGenerales", "Procedimiento", new { @area = "Simplificacion", @id = @ViewBag.indexProcedimientoId })' + '?tab=edit-info-basica';
+                        });
+                    },
+                    error: function (result) {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            }
+        },
+        guardarSustento: function () {
+
+            debugger;
+
+
+            if ($("#form-modal-editar").valid()) {
+                var model = $('#form-modal-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Simplificacion/Inductor/Guardar",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/GuardarPlazoAtencioSustento")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, function () {
+                            //sut.Inductor.listar(1);
+                                   window.location = '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId';
+                        });
+                    },
+                    error: function (result) {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            }
+        }
+    };
+
+    $(function () {
+        debugger;
+
+        @{
+            var j = (int)Model.TipoPlazo;
+        }
+        $("#TipoPlazo").val(@j.ToString());
+
+
+
+        $('#form-modal-editar').validate({
+            errorPlacement: function (error, element) {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                Descripcion: 'required',
+                Plazo: 'required',
+                Sustento: 'required'
+            },
+            messages: {
+
+            }
+        });
+
+
+    });
+
+</script>
+
+

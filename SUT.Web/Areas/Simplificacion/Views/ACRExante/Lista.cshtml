@@ -1,0 +1,294 @@
+﻿
+@model Sut.Entities.VListaEntidadACREXANTE
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    ViewBag.Title = "Análisis de Calidad Regulatoria - ACR (Exante)";
+    ViewBag.Descripcion = "Enlazar Información del ACR al SUT";
+}
+
+<div id="mensajes"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body">
+                <div class="table-responsive">
+                        <table id="tblacrexante" class="table table-bordered table-striped table-hover"
+                               data-pagesize="90000"
+                               data-page="1"
+                               data-totalrows="0"
+                               data-function="sut.ACRexante.listar"
+                               data-paginator="paginator">
+                            <thead>
+                                <tr>
+
+                                    <th></th>
+                                    <th style="width:100px">Código ACR</th>
+                                    <th style="width:70px">Entidad</th>
+                                    <th style="width:100px">Acrónimo</th>
+                                    <th>Proyecto</th>
+                                    <th>Nombre PA</th>
+                                    <th style="width:250px">Migración a la Entidad</th>
+                                    <th style="width:250px">Norma Aprobatoria</th>
+                                    <th colspan="2" >accion</th>
+                                </tr>
+                                <tr>
+                                    <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" ><i class="fa fa-filter"></i></button></th>
+                                    <th><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></th>
+                                    <th><input id="txtFilterNombre" type="text" class="form-control input-sm" /></th>
+                                    <th><input id="txtFilterAcronimo" type="text" class="form-control input-sm" /></th>
+                                    <th><input id="txtFilterProyecto" type="text" class="form-control input-sm" /></th>
+                                    <th><input id="txtFilterDenominacion" type="text" class="form-control input-sm" /></th>
+                                    <td></td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr><td colspan="9"><div id="paginator"></div></td></tr>
+                            </tfoot>
+                        </table>   
+                </div>
+            </div>
+        </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+            <div id="ventana-container">
+            </div>
+        </div>
+
+        @section Style {
+            <style type="text/css">
+                        table#tblLista thead tr th {
+                            text-align: center;
+                        }
+
+                        table#tblLista tbody tr td[colspan="9"] {
+                            font-weight: bold;
+                            text-align: center;
+                        }
+
+                        #tblLista .colNro {
+                            width: 10px;
+                            text-align: center;
+                        }
+
+                        #tblLista .colAction {
+                            width: 30px;
+                        }
+
+                        /*tfoot .pagination {
+                    margin: 0px 0px;
+                }*/
+            </style>
+        }
+        @section Script {
+            <script>
+
+                sut.ACRexante = {
+                    listar: function ( page) {
+
+                        var asdasd=$('#txtFilterAcronimo').val();
+                        debugger;
+                        table = $('#tblacrexante');
+                        var model = {
+                            'filtro.EntidadId': @user.EntidadId,
+                            'filtro.Codigo': $('#txtFilterCodigo').val(),
+                            'filtro.Nombre': $('#txtFilterNombre').val(),
+                            'filtro.Acronimo': $('#txtFilterAcronimo').val(),
+                            'filtro.nomproyecto': $('#txtFilterProyecto').val(),
+                            'filtro.Denominacion': $('#txtFilterDenominacion').val(),
+                            'pageIndex': page,
+                            'pageSize': table.data('pagesize')
+                        };
+
+                        $.ajax({
+                            url: '@Url.Content("~/Simplificacion/ACRExante/GetAllLikePagin")',
+                            type: 'GET',
+                            data: model,
+                            dataType: 'json',
+                            beforeSend: function () {
+                                sut.wait.appendProgress('#tblacrexante .modal-footer');
+                            },
+                            success: function (data) {
+                                debugger;
+                                sut.wait.removeOverlay('#boxLista');
+                                table.data('page', page);
+                                table.data('totalrows', data.totalRows);
+                                sut.ACRexante.generar(data.lista);
+                                if (data.totalRows == 0) $('#tblacrexante tbody').append("<tr><td colspan='3' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+
+
+                            },
+                            error: function (data) {
+                                sut.error.show('mensajes', data.responseText);
+                            }
+                        });
+                    },
+                    generar: function (lista) {
+                        var table = $('#tblacrexante');
+                        var tabla = table.children('tbody');
+                        tabla.children('tr').remove();
+                        var rows = '';
+                        var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                        $.each(lista, function (i, r) {
+                            rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                            rows += sut.string.format('<td>{0}</td>', r.Codigo);
+                            rows += sut.string.format('<td>{0}</td>', r.Nombre);
+                            rows += sut.string.format('<td>{0}</td>', r.Acronimo);
+                            rows += sut.string.format('<td>{0}</td>', r.nomproyecto);
+                            rows += sut.string.format('<td>{0}</td>', r.Denominacion);
+                            if(r.MigrarEntidad== null){
+                                rows += sut.string.format('<td>{0}</td>',"");
+                            }else
+                            {
+                                rows += sut.string.format('<td>{0}</td>', r.MigrarEntidad);
+                            }
+                            if(r.NORMASUT== null){
+                                rows += sut.string.format('<td>{0}</td>',"");
+                                rows += '<td>';
+                                debugger;
+                                if ("@user.rolmenu[0].Reemplazar" == "True"){
+                                    rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Reemplazar" href="javascript:sut.ACRexante.Reemplazar({0})" ><i class="fa fa-clone"></i></a>', r.ICODCALIDADEXANTE);
+                                }
+                                rows += '</td>';
+                                rows += '<td>';
+                                if ("@user.rolmenu[0].Nuevo" == "True"){
+                                    rows += sut.string.format('<a class="btn btn-danger btn-xs" data-toggle="tooltip" data-placement="left" title="Nuevo" href="javascript:sut.ACRexante.nuevo({0})" ><i class="fa fa-plus"></i></a>', r.ICODCALIDADEXANTE);
+                                }
+                                rows += '</td>';
+                            }else
+                            {
+                                rows += sut.string.format('<td>{0}</td>', r.NORMASUT);
+                                rows += '<td>';
+                                rows += '</td>';
+                                rows += '<td>';
+                                rows += '</td>';
+                            }
+
+                            rows += '</tr>';
+                        });
+                        sut.pagination.update(table);
+                        tabla.append(rows);
+
+                    },
+                    Generar: (id) => {
+
+                        $.ajax({
+                            type: "POST",
+                            //url: '/Simplificacion/ACR/Guardar',
+                            url: '@Url.Content("~/Simplificacion/ACRExante/Guardar")',
+                            data: { id: id },
+                            beforeSend: function () {
+                                sut.wait.appendOverlay('#boxLista');
+                            },
+                            success: function (data) {
+                                sut.wait.removeOverlay('#boxLista');
+                                //alert(data.mensaje);
+                                debugger;
+                                if (data.valid) {
+                                } else {
+                                    location.reload();
+                                }
+
+                            },
+                            error: function (data) {
+
+                                sut.error.clientErrorShow('mensajes', [data.responseText]);
+                            }
+                        });
+
+                    },
+                    Reemplazar: (id) => {
+                        debugger;
+                        $.ajax({
+                            type: "GET",
+                            //url: '/Simplificacion/ACR/Guardar',
+                            url: '@Url.Content("~/Simplificacion/ACRExante/Nuevo")',
+                            data: { ICODCALIDADEXANTE: id,EntidadId:@user.EntidadId , Pantalla:2  },
+                            cache: false,
+                            beforeSend: function () {
+                                sut.wait.modal('ventana-container');
+                                $('#modal-ventana').modal('show');
+                            },
+                            success: function (data) {
+                                $('#ventana-container').html(data);
+                            },
+                            error: function (result) {
+                                debugger;
+                                $('#modal-ventana').modal('hide');
+                                sut.error.clientErrorShow('mensajes', "Favor de crear un Expediente - Regular, para reemplazar un procedimiento del ACR-EXANTE.");
+                            }
+                        });
+
+                    },
+                    nuevo: (id) => {
+                        debugger;
+                        $.ajax({
+                            type: "GET",
+                            //url: '/Simplificacion/ACR/Guardar',
+                            url: '@Url.Content("~/Simplificacion/ACRExante/Nuevo")',
+                            data: { ICODCALIDADEXANTE: id,EntidadId:@user.EntidadId , Pantalla:1  },
+                            cache: false,
+                            beforeSend: function () {
+                                sut.wait.modal('ventana-container');
+                                $('#modal-ventana').modal('show');
+                            },
+                            success: function (data) {
+                                $('#ventana-container').html(data);
+                            },
+                            error: function (result) {
+                                debugger;
+                                $('#modal-ventana').modal('hide');
+                                sut.error.clientErrorShow('mensajes', "Favor de crear un Expediente - Regular, para agregar un procedimiento del ACR-EXANTE.");
+                            }
+                        });
+
+                    }
+                };
+
+                $(function () {
+
+                    sut.ACRexante.listar( 1);
+
+                    $('#txtFilterCodigo').keypress(function (e) {
+                        var key = e.keyCode || event.keyCode;
+                        if (key == 13)           sut.ACRexante.listar( 1);
+                    });
+                    $('#txtFilterNombre').keypress(function (e) {
+                        var key = e.keyCode || event.keyCode;
+                        if (key == 13)           sut.ACRexante.listar( 1);
+                    });
+                    $('#txtFilterAcronimo').keypress(function (e) {
+                        var key = e.keyCode || event.keyCode;
+                        if (key == 13)           sut.ACRexante.listar( 1);
+                    });
+                    $('#txtFilterProyecto').keypress(function (e) {
+                        var key = e.keyCode || event.keyCode;
+                        if (key == 13)           sut.ACRexante.listar( 1);
+                    });
+                    $('#txtFilterDenominacion').keypress(function (e) {
+                        var key = e.keyCode || event.keyCode;
+                        if (key == 13)          sut.ACRexante.listar( 1);
+                    });
+
+                    $('#tblacrexante thead button').click(function (e) {
+                        debugger;
+                        $('#txtFilterCodigo').val('');
+                        $('#txtFilterNombre').val('');
+                        $('#txtFilterAcronimo').val('');
+                        $('#txtFilterProyecto').val('');
+                        $('#txtFilterDenominacion').val('');
+                        sut.ACRexante.listar(1);
+                    });
+
+                });
+
+                function reFresh() {
+                    location.reload();
+                }
+
+            </script>
+        }

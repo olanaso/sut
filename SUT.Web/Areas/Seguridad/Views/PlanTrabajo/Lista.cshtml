@@ -1,0 +1,583 @@
+﻿@model List<Sut.Entities.PlanTrabajo>
+@{
+    ViewBag.Title = "Plan de Trabajo";
+    ViewBag.Descripcion = "Registro de Planes de Trabajo";
+
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+}
+
+<div id="mensajes"></div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body">
+                @if (@user.Ayuda == 1)
+                { 
+                    <a class="btn btn-success pulsesut-button" href="javascript:sut.PlanTrabajo.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>
+                }
+                else
+                {
+                    if (@user.rolmenu[0].Nuevo == true) {
+                    <a class="btn btn-success" href="javascript:sut.PlanTrabajo.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>
+                    }
+                }
+ 
+                <br />
+                <div class="table-responsive">
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="100"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.PlanTrabajo.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th class="colAction">Nro.</th>
+                                <th>Nombre</th>
+                                <th style="width:150px">Fecha Actualización</th>
+                                <th style="width:50px">Archivo</th>
+                                <th class="colAction"></th>
+                            </tr>
+                            <tr>
+                                <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                <th><input id="txtFilterDescripcion" type="text" class="form-control input-sm" /></th>
+                                <th></th>
+                                <th></th>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr><td colspan="5"><div id="paginator"></div></td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+
+
+<div class="modal fade mymodal" id="modalSeguimiento">
+    <div class="modal-dialog modal-lg" style="width:90%">
+        <div class="modal-content" style="border-radius: 40px 40px 0 0;">
+
+            <div class="modal-body" id="contenido" style="padding:0px">
+                <div class="bar-title">
+                    @*<a class="close"  data-dismiss="modal" style="padding: 80px; top: -80px; background: transparent"> <i class='fa fa-times fa-2x'></i> </a>*@
+                    @*<a class="close modalMinimize" style="padding:100px; right: 20px;  top: -100px; background: transparent"> <i class='fa fa-minus fa-2x'></i> </a>*@
+                    @*<button class="close modalMinimize"> <i class='fa fa-minus'></i> </button>*@
+                    <span>
+                        <h5 id="ihtitulo1" style="font-size: xx-large;text-align: center;font-family: initial;"> Hola @user.Nombres, bienvenido al Sistema Único de Trámites</h5>
+                        <h5 id="ihtitulo2" style="font-size: x-large;text-align: center;font-family: initial;"> </h5>
+                    </span>
+                </div>
+                <div class="col-sm-12 col-xs-12">
+
+                    <div class="col-sm-12 col-xs-12" id="idtitulo3" style="text-align:center">
+
+                        <div id="colorNavContenido">
+
+                        </div>
+
+                        <div class="col-sm-12 col-xs-12">
+                            <img src="~/dist/img/hola.png" style="width: 160px;" />
+                            <div class="caja">
+                                <h5 style="font-size: 20px;text-align: center;font-family: initial;">
+                                    Muy bien! Felicidades a hora has Clic en el boton <label id="nombremenu"></label>  para comenzar!
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-xs-12">
+                            <div class="col-sm-6 col-xs-12" style="text-align: left;">
+                                <a class="btn btn-success" href="javascript:sut.PlanTrabajo.Avanzar(0)" style="font-size: xx-large;"><i class="fa fa-arrow-left"></i> Retroceder</a>
+                            </div>
+                        </div>  
+                         
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<div class="minmaxConayuda">
+    <div class="modal fade mymodal" id="modalAyudaAvatar1">
+        <div class="modal-dialog  ">
+            <div class="modal-content">
+                <div class="modal-body" id="contenido" style="padding:0px">
+                    <div class="bar-title" id="tituloocultar">
+                        <a class="close modalMinimize" style="padding:110px; right: 20px;  top: -100px; background: transparent"> <i class='fa fa-clone '></i> </a>
+                        <span>
+                            <h3 id="ihtitulo1" style="font-size: x-large;text-align: center;font-family: initial;"> Hola @user.Nombres </h3>
+                        </span>
+                    </div>
+
+                    <div>  
+                        <div id="idtitulo1" style="text-align:left">
+                            <div class="col-sm-3 col-xs-2">
+                                <a class="modalMinimize" title="Minimizar" style="color:black"> <i class='fa fa-minus fa-2x'></i> </a>
+                                <img src="~/dist/img/hola.png" class="img-rounded" alt="Cinque Terre" />
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje1" style="display: none; width:409px;height:100%;top:137px">
+                                <sp style="text-align: left;font-family: initial;"> Clic en</sp>
+                                <a class="btn btn-success btn-xs" href="#"><i class="fa fa-plus"></i> Nuevo</a>
+                                <l style="text-align: left;font-family: initial;">para agregar el Plan de Trabajo ¡Suerte!</l>
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje2" style="display: none; width:440px;height:100%;top:103px">
+                                <j2 style="text-align: left;font-family: initial;">¡Felicidades! ¿Registraste el plan de trabajo? Si es así, avancemos al siguiente paso. Clic </j2>
+                                <a id="clic" style="display: none;" class="btn btn-warning" href="javascript:sut.PlanTrabajo.GuardarMenu(4)"><i class="fa fa-arrow-right"></i>Aqui</a>
+                                <l1 style="text-align: left;font-family: initial;"> Para continuar. ¡Tú puedes! </l1>
+                            </div>
+                        </div> 
+
+                    </div>
+                </div>
+                @*<div class="modal-footer">
+
+                    </div>*@
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<div class="minmaxCon"></div>
+
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="5"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 30px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        }
+
+
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.PlanTrabajo = {
+            editar: (id) => {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Seguridad/PlanTrabajo/Editar',
+                    url: '@Url.Content("~/Seguridad/PlanTrabajo/Editar")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            listar: (page) => {
+                table = $('#tblLista');
+                var model = {
+                    'filtro.Descripcion': $('#txtFilterDescripcion').val(),
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+                $.ajax({
+                    //url: "/Seguridad/PlanTrabajo/GetAllLikePagin",
+                    url: '@Url.Content("~/Seguridad/PlanTrabajo/GetAllLikePagin")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: () => {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: (data) => {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.PlanTrabajo.generar(data.lista);
+                        if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='5' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+
+                        debugger;
+
+                        if (data.totalRows < 1)
+                        {
+                            $('#mensaje2').hide();
+                            $('#mensaje1').show();
+                        }else
+                        {
+                            $('#mensaje2').show();
+                            $('#mensaje1').hide();
+                            sut.control.Actualizartexto();
+
+                        }
+                    },
+                    error: (data) => {
+                        sut.error.show('mensajes', data.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            generar: (lista) => {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, (i, r) => {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += sut.string.format('<td>{0}</td>', r.Descripcion);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.Fecha);
+                    rows += '<td style="text-align: center;">';
+                    rows += '<div class="btn-group">';
+                    if (r.ArchivoAdjuntoId!=null){
+                        if ("@user.rolmenu[0].Descargar" == "True"){
+                            rows += sut.string.format('<a class="btn btn-primary btn-xs"  data-placement="left" title="Archivo" href="@Url.Content("~/General/Adjunto/Descargar/"){0}" ><i class="fa fa-download"></i></a>', r.ArchivoAdjuntoId);
+                        }
+                    }
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += '<td style="text-align: center;">';
+                    if ("@user.rolmenu[0].Editar" == "True")
+                    {
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Editar" href="javascript:sut.PlanTrabajo.editar({0})" ><i class="fa fa-pencil"></i></a>', r.PlanTrabajoId);
+                    rows += '</div>';
+                    }
+                    rows += '</td>';
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            },
+            Avanzar: (estado) => {
+
+                if (estado == 1) {
+                    $('#modalAyudaAvatar1').modal('hide');
+                    $('#modalSeguimiento').modal('show');
+                } else {
+                    $('#modalSeguimiento').modal('hide');
+                    $('#modalAyudaAvatar1').modal({ backdrop: 'static', keyboard: false })
+                    $(".modal-backdrop").addClass("display-none");
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                    //$('#modalAyudaAvatar1').modal('show');
+                }
+            },
+            comenzar: function () {
+                window.location = '@Url.Content("~/Simplificacion/UnidadOrganica/Lista")';
+            },
+            GuardarMenu: (menuid) => {
+
+                $.ajax({
+                    type: "GET",
+                    //url: '/Seguridad/Miembro/Eliminar',
+                    url: '@Url.Content("~/Seguridad/Miembro/GuardarMenu")',
+                    data: { menuid: menuid,ruta:menuid },
+                    cache: false,
+                    beforeSend: () => {
+
+                    },
+                    success: (data) => {
+                        if (data.exito) {
+
+                            $('#modalAyudaAvatar1').modal('hide');
+                            $('#modalSeguimiento').modal('show');
+                            $('#modalSeguimiento').modal({backdrop: 'static', keyboard: false})
+                            sut.PlanTrabajo.listarayuda();
+
+                        }
+                    },
+                    error: (result) => {
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+
+            },
+            listarayuda: function () {
+
+                $.ajax({
+                    type: 'POST',
+                    //url: '/Seguridad/Portada/EnviarAutorizacionMef',
+                    url: '@Url.Content("~/Seguridad/Portada/GenerarListamenulista")',
+                    data: {},
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#mensajes").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                    },
+                    success: function (result) {
+                        $('#modal-ventana').modal('hide');
+
+                        var count = 1;
+                        var countejecutar = 1;
+                        var i=0;
+                        var recorerr = 0;
+
+                        debugger;
+                        var rows = '';
+                        var asdas= result.cantidad;
+
+                        $('#colorNav').remove();
+
+                        rows += '<nav id="colorNav" style="text-align:left;">'
+                        rows += '<ul>'
+                        for (i = recorerr; i < result.cantidad; i++)
+                        {
+                            if (result.menu[i].MenuId == 20)
+                            {
+                                if (@user.Sector == 80 || @user.Sector == 79)
+                                {
+                                    rows += '<li class="'+result.menu[i].Estilo+'" style="'+result.menu[i].Dimension+'">'
+                                    rows += '<button class="pulse4-button" style="font-size:20px">'+countejecutar+'</button><br />'
+                                    rows += '<span style="font-size: 15px;color: white;"> '+result.menu[i].Descripcion +'</span> <br />'
+                                    rows += '<a href="'+ result.menu[i].url+'" class="'+result.menu[i].Gragico+'"></a>'
+
+                                    rows += '<ul style="z-index:10">'
+
+                                    for (var sub = i; sub < result.cantidad; sub++)
+                                    {
+                                        if (result.menu[sub].IdPadreMenu != result.menu[i].IdPadreMenu)
+                                        {
+                                            i = sub - 1;
+                                            break;
+
+                                        }
+                                        rows += '<li style="'+result.menu[sub].Estilo+'"> <a href="'+result.menu[sub].url+'">'+result.menu[sub].Descripcion+'</a></li>'
+
+                                    }
+                                    rows += '</ul>'
+                                    rows += '</li>'
+                                }
+                                else
+                                {
+                                    i = i + 1;
+                                }
+                            }
+                            else if (result.menu[i].MenuId == 22)
+                            {
+                                if (@user.CodPadre == "1")
+                                {
+                                    rows += '<li class="'+result.menu[i].Estilo+'" style="'+result.menu[i].Dimension+'">'
+                                    rows += '	<button class="pulse4-button" style="font-size:20px">'+countejecutar+'</button><br />'
+                                    rows += '	<span style="font-size: 15px;color: white;"> '+result.menu[i].Descripcion+' </span> <br />'
+                                    rows += '	<a href="'+result.menu[i].url+'" class="'+result.menu[i].Gragico+'"></a>'
+                                    if (result.menu[i].IdPadreMenu != 0)
+                                    {
+                                        i = i + 1;
+                                        rows += '<ul style="z-index:10">'
+
+                                        for (var sub = i; sub < result.cantidad; sub++)
+                                        {
+                                            if (result.menu[sub].IdPadreMenu != result.menu[i].IdPadreMenu)
+                                            {
+                                                i = sub - 1;
+                                                break;
+
+                                            }
+                                            rows += '<li style="'+result.menu[sub].Estilo+'" > <a href="'+result.menu[sub].url+'" > '+result.menu[sub].Descripcion+'</a></li>'
+
+                                        }
+                                        rows += '</ul>'
+                                    }
+
+                                    rows += '</li>'
+                                }
+                                else
+                                {
+                                    i = i + 1;
+                                }
+                            }
+                            else
+                            {
+                                rows += '<li class="'+result.menu[i].Estilo+'" style="'+result.menu[i].Dimension+'">'
+                                rows += ' <button class="pulse4-button" style="font-size:20px">'+countejecutar+'</button><br />'
+                                rows += ' <span style="font-size: 15px;color: white;"> '+result.menu[i].Descripcion+' </span> <br />'
+                                rows += ' <a href="'+result.menu[i].url+'" class="'+result.menu[i].Gragico+'"></a>'
+
+                                if (result.menu[i].IdPadreMenu != 0)
+                                {
+                                    i = i + 1;
+                                    rows += '<ul style="z-index:10">'
+
+                                    for (var sub = i; sub < result.cantidad; sub++)
+                                    {
+                                        if (result.menu[sub].IdPadreMenu != result.menu[i].IdPadreMenu)
+                                        {
+                                            i = sub - 1;
+                                            break;
+
+                                        }
+                                        rows += '<li style="'+result.menu[sub].Estilo+'"> <a href="'+result.menu[sub].url+'">'+result.menu[sub].Descripcion+'</a></li>'
+
+                                    }
+                                    rows += '</ul>'
+                                }
+
+                                rows += '</li>'
+                            }
+                            countejecutar = countejecutar + 1;
+
+                        }
+                        rows += '</ul>'
+                        rows += '</nav>'
+
+                        $("#colorNavContenido").append(rows);
+
+                        document.querySelector('#nombremenu').innerText = result.nombremenu;
+
+
+                    },
+                    error: function (result) {
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+            },
+        };
+
+        $(() => {
+            sut.PlanTrabajo.listar(1);
+
+            $('#txtFilterDescripcion').keypress((e) => {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.PlanTrabajo.listar(1);
+            });
+            $('#tblLista thead button').click((e) => {
+                $('#txtFilterDescripcion').val('');
+                sut.PlanTrabajo.listar(1);
+            });
+
+
+
+
+
+            /*desarrollo de la ayuda*/
+            /*minimizar un modal*/
+
+            var $content, $modal, $apnData, $modalCon;
+
+            $content = $(".min");
+
+
+            //To fire modal
+            $(".mdlFire").click(function (e) {
+                debugger;
+                e.preventDefault();
+
+                var $id = $(this).attr("data-target");
+
+                $($id).modal({ backdrop: false, keyboard: false });
+
+            });
+
+            debugger;
+
+            if(@user.Ayuda==1){
+                $('#edit-fase-preparatoria').addClass('active');
+                $('a[href="#edit-fase-preparatoria"]').parent().addClass('active');
+
+
+                $('#tituloocultar').hide();
+
+
+                $('#modalAyudaAvatar1').modal({backdrop: 'static', keyboard: false})
+                $modal = "#modalAyudaAvatar1"
+                $($modal).toggleClass("min");
+                $modal = "#modalAyudaAvatar1";
+                $(".modal-backdrop").addClass("display-none");
+                $(".minmaxConayuda").append($apnData);
+                $(".modal").css({
+                    backgroundColor: "transparent"
+                });
+
+            }
+
+
+
+            /*fin*/
+
+            $(".modalMinimize").on("click", function(){
+                debugger;
+                $modalCon = $(this).closest(".mymodal").attr("id");
+                $apnData = $(this).closest(".mymodal");
+                $modal = "#" + $modalCon;
+                $(".modal-backdrop").addClass("display-none");
+
+                $($modal).toggleClass("min2");
+                if ( $($modal).hasClass("min2") ){
+                    $('#tituloocultar').show();
+                    $(".minmaxCon").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-minus fa-2x').toggleClass( 'fa-clone fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                }
+                else {
+                    $('#tituloocultar').hide();
+                    $(".minmaxConayuda").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-clone fa-2x').toggleClass( 'fa-minus fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                };
+            });
+        });
+    </script>
+}

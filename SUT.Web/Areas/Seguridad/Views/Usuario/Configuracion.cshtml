@@ -1,0 +1,103 @@
+﻿@model Sut.Entities.Usuario
+@{
+    ViewBag.Title = "Actualizar Contraseña";
+}
+
+
+
+
+<div id="mensajes">
+    @{Html.RenderPartial("_Error");}
+</div>
+
+<div class="nav-tabs-custom">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#tab1" data-toggle="tab">Actualizar Contraseña</a></li>
+        <li><a href="#tab2" data-toggle="tab">Cambiar Idioma</a></li>
+
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="tab1">
+            <div class="row">
+                <div class="col-xs-12">
+                    @using (Html.BeginForm("Configuracion", "Usuario", new { @area = "Seguridad" }, FormMethod.Post, new { @id = "form-modal-editar" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="box-body form-horizontal">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3 col-xs-12">Clave Actual</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    @Html.Password("ClaveActual", "", new { @class = "form-control input-sm" })
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="form-group">
+                                <label class="control-label col-sm-3 col-xs-12">Nueva Clave</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    @Html.Password("NuevaClave", "", new { @class = "form-control input-sm" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3 col-xs-12">Confirmar Clave</label>
+                                <div class="col-sm-6 col-xs-12">
+                                    @Html.Password("ConfirmarClave", "", new { @class = "form-control input-sm" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box-footer text-center">
+                            <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> @Resources.Content.guardar</button>
+                        </div>
+
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="tab2">
+            <a href="@Url.Action("ChangeLanguage", "Usuario", new { lang = "en" })">Español</a> |
+            <a href="@Url.Action("ChangeLanguage", "Usuario", new { lang = "quz" })">Quechua</a> 
+            <br />
+        </div>
+
+    </div>
+</div>
+
+
+
+@section Script {
+    <script>
+        $(() => {
+
+            $.validator.addMethod('formClave', function (value, element) {
+                return this.optional(element) || value.length >= 8 && /\d/.test(value) && /[A-Z]/i.test(value) && /[^A-Za-z0-9]/.test(value) && /[A-Z]/.test(value);
+            }, 'La contraseña debe contener al menos 8 caracteres, al menos un número y letras mayúsculas y minúsculas y caracteres especiales')
+
+
+            $('#form-modal-editar').validate({
+                errorPlacement: (error, element) => {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+                    ClaveActual: {
+                        required: true,
+                        minlength: 4
+                    },
+                    NuevaClave: {
+                        required: true, formClave: true
+                    },
+                    ConfirmarClave: {
+                        required: true,
+                        equalTo: 'input[name="NuevaClave"]',, formClave: true
+                    }
+                },
+                messages: {
+
+                }
+            });
+        });
+    </script>
+}

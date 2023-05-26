@@ -1,0 +1,218 @@
+﻿<div id="buscarSede" class="modal-dialog" style="width: 80%;">
+    <div class="modal-content" >
+        <div class="modal-header">
+            <h4 class="modal-title">Seleccionar Tabla ASME</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-buscar-sede", @class = "form-horizontal" })) 
+            {
+                <div class="table-responsive">
+                    <table id="tblBuscarSede" class="table table-bordered table-striped table-hover"
+                           data-pagesize="10000"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.Masivo.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th class="colCheck">
+                                    @if (ViewBag.Multi)
+                                    {
+                                        @*<input type="checkbox" id="buscarUndOrgTodo" class="icheck" />*@
+                                    }
+                                </th>
+                                <th>Código</th>
+                                <th>Denominación</th>
+                                <th>Tabla Asme</th>
+                            </tr> 
+                            <tr>
+                                <th><button type="button" class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                <th><input name="CodigoCorto" type="text" class="form-control input-sm" /></th>
+                                <th><input name="Denominacion" type="text" class="form-control input-sm" /></th>
+                                <th><input name="TablaAsme" type="text" class="form-control input-sm" /></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        @*<tfoot>
+                            <tr><td colspan="4"><div id="paginator"></div></td></tr>
+                        </tfoot>*@
+                    </table>
+                </div>
+
+
+            }
+        </div>
+        <div class="modal-footer">
+            @if (ViewBag.Multi)
+            {
+                <a class="btn btn-success btn-sm" href="javascript:sut.Masivo.aceptar();"><i class="fa fa-check"></i> Aceptar</a>
+            }
+            <button type="button" class="btn btn-danger btn-sm" onclick="$(this).parent().parent().parent().parent().parent().modal('hide');"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+</style>
+
+<script>
+
+    var multi = @Html.Raw(ViewBag.multi ? "true" : "false");
+    var expedienteId = @Html.Raw(ViewBag.ExpedienteId);
+    var tablaAsmeId = @Html.Raw(ViewBag.TablaAsmeId);
+    var procedimientoIdDes = @Html.Raw(ViewBag.ProcedimientoIdDes);
+
+    sut.Masivo = {
+        listar: function (table, page) {
+            debugger;
+            table = $('#' + table);
+            var model = {
+                'filtro.Procedimiento.ExpedienteId': expedienteId,
+                'filtro.Procedimiento.CodigoCorto': $('#form-buscar-sede input[name="CodigoCorto"]').val(),
+                'filtro.Procedimiento.Denominacion': $('#form-buscar-sede input[name="Denominacion"]').val(),
+                'filtro.Descripcion': $('#form-buscar-sede input[name="TablaAsme"]').val(),
+                'pageIndex': page,
+                'pageSize': table.data('pagesize'),
+                'tablaAsmeId':tablaAsmeId
+            };
+
+            //var sede1 = document.getElementsByName("ProcedimientoSede[0].SedeId");
+            //alert(sede1.value);
+
+            $.ajax({
+                //url: '/Simplificacion/Procedimiento/GetAllLikePaginMasivoObservacion',
+                url: '@Url.Content("~/Simplificacion/Procedimiento/GetAllLikePaginMasivoAsme")',
+                type: 'GET',
+                data: model,
+                dataType: 'json',
+                beforeSend: function () {
+                    sut.wait.appendProgress('#buscarSede .modal-footer');
+                },
+                success: function (data) {
+                    sut.wait.removeProgress('#buscarSede .modal-footer');
+                    table.data('page', page);
+                    table.data('totalrows', data.totalRows);
+                    sut.Masivo.generar(table, data.lista);
+                    if (data.totalRows == 0){
+                        $('#tblBuscarSede tbody').append('<tr><td colspan="4" class="text-center text-bold">NO EXISTEN REGISTROS</td></td>');
+                    }
+
+
+                },
+                error: function (data) {
+                    sut.error.show('mensajes', data.responseText);
+                }
+            });
+        },
+        generar: function (table, lista) {
+            var tabla = table.children('tbody');
+            tabla.children('tr').remove();
+            var rows = '';
+            var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+            $.each(lista, function (i, r) {
+                debugger;
+                if (multi)
+                {
+                    rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarSede{0}" type="checkbox" value="{0}|{1}|{2}|{3}|{4}" /></td><td>{1}</td><td>{2}</td><td>{3}</td></tr>',
+                            r.TablaAsmeId, r.CodigoCorto, r.Denominacion,r.Descripcion,r.ProcedimientoId );
+                } else {
+                    rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarSede{0}" type="hidden" value="{0}|{1}|{2}|{3}|{4}" /></td><td>{1}</td><td>{2}</td><td>{3}</td></tr>',
+                        r.TablaAsmeId, r.CodigoCorto, r.Denominacion,r.Descripcion,r.ProcedimientoId);
+                }
+            });
+            sut.pagination.update(table);
+            tabla.append(rows);
+
+        },
+        aceptar: function () {
+            debugger;
+            var inputs = $('#tblBuscarSede tbody tr td input:checked');
+            if (inputs.length > 0) {
+                var data = [];
+                $.each(inputs, function (i, r) {
+                    var v = $(r).val().split('|');
+                    data.push({ ProcedimientoId: Number(v[0]), Codigo: v[1], Denominacion: v[2],datocampo : datocampo , Texto1:texto1, Texto2:texto2});
+                });
+                fnAdd(data);
+
+
+            }
+        },
+        aceptarSingle: function (tr) {
+            debugger;
+            var input = $(tr).find('input[id^="chkbuscarSede"]');
+            var v = input.val().split('|');
+            var id=Number(v[0]);
+            var nomtablaasme=v[3];
+            var procedimientoIdOrigen=Number(v[4]);
+            sut.msg.confirm('Que deseas Copiar la tabla Asme '+ nomtablaasme , function () {
+
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/CopiarProcedimientoTablaASME")',
+                    data: { ExpedienteId: @Html.Raw(ViewBag.ExpedienteId),TablaAsmeIdSeleccionado: @Html.Raw(ViewBag.TablaAsmeId),TablaAsmeIdCopiar: id,ProcedimientoIdDestino:@Html.Raw(ViewBag.ProcedimientoIdDes),ProcedimientoIdOrigen:procedimientoIdOrigen},
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                        window.location='@Url.Content("~/Simplificacion/TablaAsme/Editar/")@Html.Raw(ViewBag.TablaAsmeId)'; 
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        debugger;
+                        showNotification('top', 'right', 'Ya Existe Información en la tabla Asme, favor de eliminar las actividades para poder copiar', 2);
+                        //sut.error.show('mensajes', "Ya Existe Información en la tabla Asme favor de eliminar las actividades para poder copiar");
+                    }
+                });
+
+
+            });
+        }
+    };
+
+    $(function () {
+        debugger;
+        sut.Masivo.listar('tblBuscarSede', 1);
+
+        $('#form-buscar-sede input[name="CodigoCorto"]').keypress(function (e) {
+            var key = e.keyCode || event.keyCode
+            if (key == 13) {
+                sut.Masivo.listar('tblBuscarSede', 1);
+                e.preventDefault();
+            }
+        });
+
+
+        $('#form-buscar-sede input[name="Denominacion"]').keypress(function (e) {
+            var key = e.keyCode || event.keyCode
+            if (key == 13) {
+                sut.Masivo.listar('tblBuscarSede', 1);
+                e.preventDefault();
+            }
+        });
+
+
+        $('#form-buscar-sede input[name="TablaAsme"]').keypress(function (e) {
+            var key = e.keyCode || event.keyCode
+            if (key == 13) {
+                sut.Masivo.listar('tblBuscarSede', 1);
+                e.preventDefault();
+            }
+        });
+
+        $('#tblBuscarSede button').eq(0).click(function (e) {
+            $('#form-buscar-sede input[name="CodigoCorto"]').val(""),
+            $('#form-buscar-sede input[name="Denominacion"]').val(""),
+            $('#form-buscar-sede input[name="TablaAsme"]').val(""),
+            sut.Masivo.listar('tblBuscarSede', 1);
+        });
+
+
+        sut.table.selectRow('#tblBuscarSede', multi, sut.Masivo.aceptarSingle);
+    });
+
+</script>

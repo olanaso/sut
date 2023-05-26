@@ -1,0 +1,95 @@
+D:\Desarrollo_SUT\SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll.config
+D:\Desarrollo_SUT\SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll
+D:\Desarrollo_SUT\SUT\Sut.Extensions\bin\Debug\Sut.Extensions.pdb
+D:\Desarrollo_SUT\SUT\Sut.Extensions\bin\Debug\EntityFramework.dll
+D:\Desarrollo_SUT\SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.dll
+D:\Desarrollo_SUT\SUT\Sut.Extensions\bin\Debug\EntityFramework.xml
+D:\Desarrollo_SUT\SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.xml
+D:\Desarrollo_SUT\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csprojAssemblyReference.cache
+D:\Desarrollo_SUT\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CopyComplete
+D:\Desarrollo_SUT\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.dll
+D:\Desarrollo_SUT\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.pdb
+C:\Users\leon1\source\Workspaces\SUTNEW\SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll.config
+C:\Users\leon1\source\Workspaces\SUTNEW\SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll
+C:\Users\leon1\source\Workspaces\SUTNEW\SUT\Sut.Extensions\bin\Debug\Sut.Extensions.pdb
+C:\Users\leon1\source\Workspaces\SUTNEW\SUT\Sut.Extensions\bin\Debug\EntityFramework.dll
+C:\Users\leon1\source\Workspaces\SUTNEW\SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\leon1\source\Workspaces\SUTNEW\SUT\Sut.Extensions\bin\Debug\EntityFramework.xml
+C:\Users\leon1\source\Workspaces\SUTNEW\SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\leon1\source\Workspaces\SUTNEW\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.AssemblyReference.cache
+C:\Users\leon1\source\Workspaces\SUTNEW\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CoreCompileInputs.cache
+C:\Users\leon1\source\Workspaces\SUTNEW\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CopyComplete
+C:\Users\leon1\source\Workspaces\SUTNEW\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.dll
+C:\Users\leon1\source\Workspaces\SUTNEW\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.pdb
+D:\Software\SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll.config
+D:\Software\SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll
+D:\Software\SUT\Sut.Extensions\bin\Debug\Sut.Extensions.pdb
+D:\Software\SUT\Sut.Extensions\bin\Debug\EntityFramework.dll
+D:\Software\SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.dll
+D:\Software\SUT\Sut.Extensions\bin\Debug\EntityFramework.xml
+D:\Software\SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.xml
+D:\Software\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.AssemblyReference.cache
+D:\Software\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CoreCompileInputs.cache
+D:\Software\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CopyComplete
+D:\Software\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.dll
+D:\Software\SUT\Sut.Extensions\obj\Debug\Sut.Extensions.pdb
+C:\Users\aplicativosssar\source\repos\GithubDesarrollo\pcm-ogti\PRY-078-SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll.config
+C:\Users\aplicativosssar\source\repos\GithubDesarrollo\pcm-ogti\PRY-078-SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll
+C:\Users\aplicativosssar\source\repos\GithubDesarrollo\pcm-ogti\PRY-078-SUT\Sut.Extensions\bin\Debug\Sut.Extensions.pdb
+C:\Users\aplicativosssar\source\repos\GithubDesarrollo\pcm-ogti\PRY-078-SUT\Sut.Extensions\bin\Debug\EntityFramework.dll
+C:\Users\aplicativosssar\source\repos\GithubDesarrollo\pcm-ogti\PRY-078-SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\aplicativosssar\source\repos\GithubDesarrollo\pcm-ogti\PRY-078-SUT\Sut.Extensions\bin\Debug\EntityFramework.xml
+C:\Users\aplicativosssar\source\repos\GithubDesarrollo\pcm-ogti\PRY-078-SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\aplicativosssar\source\repos\GithubDesarrollo\pcm-ogti\PRY-078-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.AssemblyReference.cache
+C:\Users\aplicativosssar\source\repos\GithubDesarrollo\pcm-ogti\PRY-078-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CoreCompileInputs.cache
+C:\Users\aplicativosssar\source\repos\GithubDesarrollo\pcm-ogti\PRY-078-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CopyComplete
+C:\Users\aplicativosssar\source\repos\GithubDesarrollo\pcm-ogti\PRY-078-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.dll
+C:\Users\aplicativosssar\source\repos\GithubDesarrollo\pcm-ogti\PRY-078-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.pdb
+C:\git_pcm\SIS-094-SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll.config
+C:\git_pcm\SIS-094-SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll
+C:\git_pcm\SIS-094-SUT\Sut.Extensions\bin\Debug\Sut.Extensions.pdb
+C:\git_pcm\SIS-094-SUT\Sut.Extensions\bin\Debug\EntityFramework.dll
+C:\git_pcm\SIS-094-SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.dll
+C:\git_pcm\SIS-094-SUT\Sut.Extensions\bin\Debug\EntityFramework.xml
+C:\git_pcm\SIS-094-SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.xml
+C:\git_pcm\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.AssemblyReference.cache
+C:\git_pcm\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CoreCompileInputs.cache
+C:\git_pcm\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CopyComplete
+C:\git_pcm\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.dll
+C:\git_pcm\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.pdb
+D:\Pronsace-Productos\Codigo2023\SIS-094-SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll.config
+D:\Pronsace-Productos\Codigo2023\SIS-094-SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll
+D:\Pronsace-Productos\Codigo2023\SIS-094-SUT\Sut.Extensions\bin\Debug\Sut.Extensions.pdb
+D:\Pronsace-Productos\Codigo2023\SIS-094-SUT\Sut.Extensions\bin\Debug\EntityFramework.dll
+D:\Pronsace-Productos\Codigo2023\SIS-094-SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.dll
+D:\Pronsace-Productos\Codigo2023\SIS-094-SUT\Sut.Extensions\bin\Debug\EntityFramework.xml
+D:\Pronsace-Productos\Codigo2023\SIS-094-SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.xml
+D:\Pronsace-Productos\Codigo2023\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.AssemblyReference.cache
+D:\Pronsace-Productos\Codigo2023\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CoreCompileInputs.cache
+D:\Pronsace-Productos\Codigo2023\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CopyComplete
+D:\Pronsace-Productos\Codigo2023\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.dll
+D:\Pronsace-Productos\Codigo2023\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.pdb
+C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll.config
+C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\bin\Debug\Sut.Extensions.dll
+C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\bin\Debug\Sut.Extensions.pdb
+C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\bin\Debug\EntityFramework.dll
+C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.dll
+C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\bin\Debug\EntityFramework.xml
+C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.xml
+C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.AssemblyReference.cache
+C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CoreCompileInputs.cache
+C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CopyComplete
+C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.dll
+C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\obj\Debug\Sut.Extensions.pdb
+C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\bin\Debug\Sut.Extensions.dll.config
+C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\bin\Debug\Sut.Extensions.dll
+C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\bin\Debug\Sut.Extensions.pdb
+C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\bin\Debug\EntityFramework.dll
+C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.dll
+C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\bin\Debug\EntityFramework.xml
+C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.xml
+C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.AssemblyReference.cache
+C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CoreCompileInputs.cache
+C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CopyComplete
+C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.dll
+C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.pdb

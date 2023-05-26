@@ -1,0 +1,138 @@
+﻿ 
+@using Sut.Entities
+@model Sut.Entities.TablaAsme
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">Asignar Evaluador </h4>
+        </div>
+        <div class="modal-body form-horizontal">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-editar-Asignacion" }))
+            {
+                @Html.HiddenFor(model => model.TablaAsmeId)
+                @Html.HiddenFor(model => model.ArchivoAdjuntoId)
+
+                <div class="form-group">
+                    <div class="col-sm-3 col-xs-12" style="text-align:center">
+                        <label class="control-label col-sm-3 col-xs-12">Seleccionar</label>
+                    </div>
+                    <div class="col-sm-6 col-xs-12">
+                        <label class="control-label col-sm-3 col-xs-12">Nombres</label>
+                    </div>
+                </div>
+                for (int i = 0; i < @ViewBag.DatosUsuario.Count; i++)
+                {
+                   
+        <div class="form-group">
+            @if (@ViewBag.DatosUsuario[i].chekActivar == 1)
+            {
+                <div class="col-sm-3 col-xs-12" style="text-align:center">
+                    <input type="checkbox" title="Nuevo" id="@ViewBag.DatosUsuario[i].UsuarioId" name="[@ViewBag.DatosUsuario[i].UsuarioId].chkNuevo" Checked /><input name="[@ViewBag.DatosUsuario[i].UsuarioId].Nuevo" type="hidden" value="@ViewBag.DatosUsuario[i].UsuarioId" />
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-3 col-xs-12" style="text-align:center">
+                    <input type="checkbox" title="Nuevo" id="@ViewBag.DatosUsuario[i].UsuarioId" name="[@ViewBag.DatosUsuario[i].UsuarioId].chkNuevo"  /><input name="[@ViewBag.DatosUsuario[i].UsuarioId].Nuevo" type="hidden" value="@ViewBag.DatosUsuario[i].UsuarioId" />
+                </div>
+            }
+            <div class="col-sm-6 col-xs-12">
+                @ViewBag.DatosUsuario[i].Usuario.MiembroEquipo.NombreCompleto
+            </div>
+        </div>
+                    
+
+                }
+            }
+
+            </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success btn-sm" onclick="sut.asignarUsuario.guardar(@ViewBag.expedienteID)"><i class="fa fa-save"></i> Enviar </button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+    </div>
+</div> 
+
+<script>
+
+        sut.asignarUsuario = {
+
+        guardar: (id) => {
+
+
+            debugger;
+            var data = [];
+            $('input[type=checkbox]:checked').each(function () {
+                console.log("Checkbox " + $(this).prop("id") + " (" + $(this).val() + ") Seleccionado");
+                var n = $(this).prop("id").replace("Checked", "CheckNuevo");
+
+
+                data.push({ UsuarioId: n, expediente: id });
+            });
+
+
+
+            $.ajax({
+                type: "POST",
+                //url: "/Seguridad/Opcion/Guardar",
+                url: '@Url.Content("~/Seguridad/Portada/AsignarBandeja")',
+                data: { Expediente: id, opcionbandeja: data,},
+                dataType: 'json',
+                beforeSend: () => {
+                    sut.wait.appendProgress('.modal-footer');
+                },
+                complete: () => {
+                    sut.wait.removeProgress('.modal-footer');
+                },
+                success: (result) => {
+                    $('#modal-ventana').modal('hide');
+                    sut.msg.success(result.mensaje, function () {
+                        //location.reload();
+                    });
+
+                },
+                error: (result) => {
+                    sut.wait.removeProgress('.modal-footer');
+                    showNotification('top', 'right', 'Error al guardar.', 2);
+                },
+                statusCode: {
+                    203: () => { window.location.reload(); }
+                }
+            });
+        },
+
+
+    };
+
+    $(function () {
+
+
+
+        debugger;
+        var model = $('#form-editar-autorizacion').serialize();
+        debugger;
+        $('#form-editar-autorizacion').validate({
+            errorPlacement: function (error, element) {
+                debugger;
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            messages: {
+
+            }
+        });
+    });
+
+</script>

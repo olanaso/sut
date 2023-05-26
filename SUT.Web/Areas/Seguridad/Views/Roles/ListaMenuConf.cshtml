@@ -1,0 +1,487 @@
+﻿@using Sut.Entities;
+@model Sut.Entities.Roles
+@{
+    ViewBag.Title = "Menu";
+    ViewBag.Descripcion = "Comfiguración Roles - Menu";
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Asignación de Rol - " + Model.Descripcion;
+    ViewBag.Descripcion = "";
+}
+<div class="callout callout-warning" style="display: inherit;height: inherit; padding: inherit;">
+    Para efectos de comunicados y notificaciones formales: Los datos registrados en este apartado deben responder a la verdad y mantenerse actualizados, bajo responsabilidad del Administrador del SUT
+</div>
+<div id="mensajes"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body" >    
+                <div class="table-responsive">
+
+                    @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-edit" }))
+                    {
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="1000"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.MenuConf.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th class="colAction">Nro.</th>
+                                <th colspan="40" style="width:400px">Descripción</th>
+                                <th style="width:100px">Ver</th>
+                                <th style="width:100px">Nuevo</th>
+                                <th style="width:100px">Editar</th>
+                                <th style="width:100px">Guardar</th>
+                                <th style="width:100px">Eliminar</th>
+                                <th style="width:100px">Descargar</th>
+                                <th style="width:100px">Agregar</th>
+                                <th style="width:100px">Copiar</th>
+                                <th style="width:100px">Terminar</th>
+                                <th style="width:100px">Importar</th>
+                                <th style="width:100px">Procesar</th>
+                                <th style="width:100px">Anular</th>
+                                <th style="width:100px">Activar</th>
+                                <th style="width:100px">Generar</th>
+                                <th style="width:100px">Reemplazar</th>
+                                <th style="width:100px">Presentar</th>
+                                <th style="width:100px">Sustentar</th>
+                                <th style="width:100px">Observar</th>
+                                <th style="width:100px">Publicar</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        @*<tfoot>
+                            <tr><td colspan="14"><div id="paginator"></div></td></tr>
+                        </tfoot>*@
+                    </table> 
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;">
+    @*<a class="btn btn-default" href="#"><i class="fa fa-download"></i> Tabla ASME Actual</a>*@
+    <div class="btn-group pull-right">
+        @*<a href="javascript:sut.Asme.salir('/Simplificacion/Procedimiento/TablaAsme/@Model.ProcedimientoId')" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+        <a href="javascript:sut.MenuConf.salir('@Url.Content("~/Seguridad/Roles/Lista")')" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+        <a id="btnSaveAsme" href="javascript:sut.MenuConf.guardar()" class="btn btn-primary pull-right"><i class="fa fa-save"></i> Guardar</a>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+    </div>
+</div>
+
+  
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="14"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 60px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        } 
+
+    </style>
+}
+@section Script {
+    <script>
+
+
+
+        sut.MenuConf = {
+            editar: (id) => {
+
+                $.ajax({
+                    type: "GET",
+                    //url: '/Seguridad/Miembro/Editar',
+                    url: '@Url.Content("~/Seguridad/Roles/Editar")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            salir: function (expediente) {
+                $(location).attr('href', expediente);
+            },
+            guardar: () => {
+                debugger;
+                var model = $('#form-edit').serialize();
+                $.ajax({
+                    type: 'POST',
+                    //url: '/Simplificacion/Configuracion/GuardarSubvencion',
+                    url: '@Url.Content("~/Seguridad/Roles/GuardarrolesMenu")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#mensajes").hide();
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    complete: function () {
+
+                    },
+                    success: function (result) {
+                        sut.wait.removeOverlay('#boxLista'); 
+                        sut.msg.success(result.mensaje, () => {
+                            sut.MenuConf.listar(1);
+                        });
+                      
+                    },
+                    error: function (result) {
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            listar: (page) => {
+                debugger;
+                table = $('#tblLista');
+                var model = {
+                    idrol: @Model.RolId,
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+                $.ajax({
+                    //url: "/Seguridad/Miembro/GetAllLikePagin",
+                    url: '@Url.Content("~/Seguridad/Roles/ListaMenuConf")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: () => {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: (data) => {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.MenuConf.generar(data.lista);
+                        debugger;
+                        if (data.totalRows == 0)  $('#tblLista tbody').append("<tr><td colspan='14' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+
+                        debugger;
+
+                        if (data.totalRows < 2)
+                        {
+                            $('#mensaje2').hide();
+                            $('#mensaje1').show();
+                        }else
+                        {
+                            $('#mensaje2').show();
+                            $('#mensaje1').hide();
+                            //sut.control.Actualizartexto();
+                        }
+                    },
+                    error: (data) => {
+                        sut.error.show('mensajes', data.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            generar: (lista) => {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                var numpadre1 = 0;
+                var numpadre2 = 0;
+                var numpadre3 = 0;
+                var numpadre4 = 0;
+                $.each(lista, (i, r) => {
+                    debugger;
+                    var num = ++numero;
+                    rows += sut.string.format('<tr>');
+                    /*configurar Menu*/
+
+                    if (r.IdPadreMenu == 0) {
+                        var coldes = "40";
+
+                        numpadre1 = numpadre1 + 1;
+                        rows += sut.string.format('</td> <td class="colNro" > {0}</td>', numpadre1);
+
+                        numpadre2 = 0;
+                    }
+                    if (r.IdPadreMenu == 1 || r.IdPadreMenu == 6 || r.IdPadreMenu == 18 || r.IdPadreMenu == 41) {
+                        var coldes = "39";
+                        var colnum = "1";
+                        numpadre2 = numpadre2 + 1;
+
+                        rows += sut.string.format('<td colspan=' + colnum + ' class="colNro"></td> <td class="colNro" > {0}.{1}</td>', numpadre1, numpadre2);
+
+                        numpadre3 = 0;
+
+                    }
+                    if (r.IdPadreMenu == 9 || r.IdPadreMenu == 20) {
+                        var coldes = "37";
+                        var colnum = "3";
+
+                        numpadre3 = numpadre3 + 1;
+                        rows += sut.string.format('<td colspan=' + colnum + ' class="colNro"></td> <td class="colNro" > {0}.{1}.{2}</td>', numpadre1, numpadre2, numpadre3);
+
+
+                        numpadre4 = 0;
+                    }
+                    if (r.IdPadreMenu == 27) {
+                        var coldes = "35";
+                        var colnum = "5";
+
+                        numpadre4 = numpadre4 + 1;
+                        rows += sut.string.format('<td colspan=' + colnum + ' class="colNro"></td> <td class="colNro" > {0}.{1}.{2}.{3}</td>', numpadre1, numpadre2, numpadre3, numpadre4);
+                    }
+
+
+                    if (num == 1) {
+                        rows += sut.string.format('<td style="width: 20%;"  colspan=' + coldes + '>{0}</td>', r.Descripcion);
+                    } else {
+                        rows += sut.string.format('<td   colspan=' + coldes + '>{0}</td>', r.Descripcion);
+                    }
+                    /*fin configurar Menu*/
+
+                    rows += sut.string.format('<input id="Codigo{2}" name="[{2}].MenuId"  type="hidden" name="[{0}].Codigo"  value="{1}" />', r.MenuId, r.MenuId, i);
+
+                    rows += sut.string.format('<input id="RolId{2}" name="[{2}].RolId"  type="hidden" name="[{0}].RolId"  value="{1}" />', @Model.RolId, @Model.RolId, i);
+                
+
+                    if (r.Ver_Ac == 1) {
+                        rows += sut.string.format('<td  style="text-align: center;"><input type="checkbox" title="Ver" id="CheckVer{0}"  name="[{0}].chkVer" {1} /><input name="[{0}].Ver" type="hidden" value="{2}" /></td>', i, r.Ver ? 'checked' : '', r.Ver);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Nuevo_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Nuevo" id="CheckNuevo{0}"  name="[{0}].chkNuevo" {1} /><input name="[{0}].Nuevo" type="hidden" value="{2}" /></td>', i, r.Nuevo ? 'checked' : '', r.Nuevo);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Editar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Editar" id="CheckEditar{0}"  name="[{0}].chkEditar" {1} /><input name="[{0}].Editar" type="hidden" value="{2}" /></td>', i, r.Editar ? 'checked' : '', r.Editar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Guardar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Guardar" id="CheckGuardar{0}"  name="[{0}].chkGuardar" {1} /><input name="[{0}].Guardar" type="hidden" value="{2}" /></td>', i, r.Guardar ? 'checked' : '', r.Guardar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Eliminar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Eliminar" id="CheckEliminar{0}"  name="[{0}].chkEliminar" {1} /><input name="[{0}].Eliminar" type="hidden" value="{2}" /></td>', i, r.Eliminar ? 'checked' : '', r.Eliminar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Descargar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Descargar" id="CheckDescargar{0}"  name="[{0}].chkDescargar" {1} /><input name="[{0}].Descargar" type="hidden" value="{2}" /></td>', i, r.Descargar ? 'checked' : '', r.Descargar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Agregar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Agregar" id="CheckAgregar{0}"  name="[{0}].chkAgregar" {1} /><input name="[{0}].Agregar" type="hidden" value="{2}" /></td>', i, r.Agregar ? 'checked' : '', r.Agregar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Copiar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Copiar" id="CheckCopiar{0}"  name="[{0}].chkCopiar" {1} /><input name="[{0}].Copiar" type="hidden" value="{2}" /></td>', i, r.Copiar ? 'checked' : '', r.Copiar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Terminar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Terminar" id="CheckVer{0}"  name="[{0}].chkTerminar" {1} /><input name="[{0}].Terminar" type="hidden" value="{2}" /></td>', i, r.Terminar ? 'checked' : '', r.Terminar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Importar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Importar" id="CheckImportar{0}"  name="[{0}].chkImportar" {1} /><input name="[{0}].Importar" type="hidden" value="{2}" /></td>', i, r.Importar ? 'checked' : '', r.Importar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Procesar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Procesar" id="CheckProcesar{0}"  name="[{0}].chkProcesar" {1} /><input name="[{0}].Procesar" type="hidden" value="{2}" /></td>', i, r.Procesar ? 'checked' : '', r.Procesar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Anular_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Anular" id="CheckAnular{0}"  name="[{0}].chkAnular" {1} /><input name="[{0}].Anular" type="hidden" value="{2}" /></td>', i, r.Anular ? 'checked' : '', r.Anular);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Activar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Activar" id="CheckActivar{0}"  name="[{0}].chkActivar" {1} /><input name="[{0}].Activar" type="hidden" value="{2}" /></td>', i, r.Activar ? 'checked' : '', r.Activar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Generar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Generar" id="CheckGenerar{0}"  name="[{0}].chkGenerar" {1} /><input name="[{0}].Generar" type="hidden" value="{2}" /></td>', i, r.Generar ? 'checked' : '', r.Generar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+
+                    if (r.Reemplazar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Reemplazar" id="CheckReemplazar{0}"  name="[{0}].chkReemplazar" {1} /><input name="[{0}].Reemplazar" type="hidden" value="{2}" /></td>', i, r.Reemplazar ? 'checked' : '', r.Reemplazar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Presentar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Presentar" id="CheckPresentar{0}"  name="[{0}].chkPresentar" {1} /><input name="[{0}].Presentar" type="hidden" value="{2}" /></td>', i, r.Presentar ? 'checked' : '', r.Presentar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Sustentar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Sustentar" id="CheckSustentar{0}"  name="[{0}].chkSustentar" {1} /><input name="[{0}].Sustentar" type="hidden" value="{2}" /></td>', i, r.Sustentar ? 'checked' : '', r.Sustentar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Observar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Observar" id="CheckObservar{0}"  name="[{0}].chkObservar" {1} /><input name="[{0}].Observar" type="hidden" value="{2}" /></td>', i, r.Observar ? 'checked' : '', r.Observar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+                    if (r.Publicar_Ac == 1) {
+                        rows += sut.string.format('<td style="text-align: center;"><input type="checkbox" title="Publicar" id="CheckPublicar{0}"  name="[{0}].chkPublicar" {1} /><input name="[{0}].Publicar" type="hidden" value="{2}" /></td>', i, r.Publicar ? 'checked' : '', r.Publicar);
+                    } else {
+                        rows += sut.string.format('<td> </td>');
+                    }
+
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            }
+
+        };
+
+        $(() => {
+            debugger;
+            sut.MenuConf.listar(1);
+            $('#tblLista tbody').on('change', 'tr td input[name$="Ver"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Ver"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Nuevo"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Nuevo"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Editar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Editar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Guardar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Guardar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Eliminar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Eliminar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Descargar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Descargar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Agregar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Agregar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Copiar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Copiar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Terminar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Terminar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Importar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Importar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Procesar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Procesar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Anular"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Anular"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Activar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Activar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Generar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Generar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Reemplazar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Reemplazar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Presentar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Presentar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Sustentar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Sustentar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Observar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Observar"]').val(chk.is(':checked'));
+            });
+            $('#tblLista tbody').on('change', 'tr td input[name$="Publicar"]', (e) => {
+                debugger;
+                var chk = $(e.target);
+                $(e.target).parent().parent().find('input[name$="Publicar"]').val(chk.is(':checked'));
+            });
+
+
+        });
+
+
+    </script>
+}

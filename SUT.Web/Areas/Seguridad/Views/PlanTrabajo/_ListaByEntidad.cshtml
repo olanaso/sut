@@ -1,0 +1,120 @@
+﻿@model long
+
+<div id="buscarResolucion" class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Plan de Trabajo</h4>
+        </div>
+        <div class="modal-body">
+            <div class="table-responsive">
+                <table id="tblBuscarResolucion" class="table table-bordered table-striped table-hover"
+                       data-pagesize="20"
+                       data-page="1"
+                       data-totalrows="0"
+                       data-function="sut.Resolucion.listar"
+                       data-paginator="paginator">
+                    <thead>
+                        <tr>
+                            <th class="colAction">Nro.</th>
+                            <th>Descripción</th>
+                            <th style="width:150px">Fecha Actualización</th>
+                            <th style="width:120px">Archivo</th>
+                        </tr>
+                        <tr>
+                            <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                            <th><input id="txtFilterDescripcion" type="text" class="form-control input-sm" /></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr><td colspan="4"><div id="paginator"></div></td></tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-sm" onclick="$(this).parent().parent().parent().parent().parent().modal('hide');"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+</style>
+
+<script>
+    sut.Resolucion = {
+        listar: (page) => {
+            table = $('#tblBuscarResolucion');
+            var model = {
+                'filtro.Descripcion': $('#txtFilterDescripcion').val(),
+                'filtro.EntidadId': @Model ,
+                pageIndex: page,
+                pageSize: table.data('pagesize')
+            };
+            $.ajax({
+                //url: "/Seguridad/PlanTrabajo/GetAllLikePaginByEntidad",
+                url:'@Url.Content("~/Seguridad/PlanTrabajo/GetAllLikePaginByEntidad")',
+                type: "GET",
+                data: model,
+                dataType: "json",
+                beforeSend: () => {
+                    sut.wait.appendOverlay('#boxLista');
+                },
+                success: (data) => {
+                    sut.wait.removeOverlay('#boxLista');
+                    table.data('page', page);
+                    table.data('totalrows', data.totalRows);
+                    sut.Resolucion.generar(data.lista);
+                    if (data.totalRows == 0) $('#tblBuscarResolucion tbody').append("<tr><td colspan='4' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                },
+                error: (data) => {
+                    sut.error.show('mensajes', data.responseText);
+                },
+                statusCode: {
+                    203: () => { window.location.reload(); }
+                }
+            });
+        },
+        generar: (lista) => {
+            var table = $('#tblBuscarResolucion');
+            var tabla = table.children('tbody');
+            tabla.children('tr').remove();
+            var rows = '';
+            var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+            $.each(lista, (i, r) => {
+                rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                rows += sut.string.format('<td>{0}</td>', r.Descripcion);
+                rows += sut.string.format('<td>{0}</td>', r.Fecha);
+                rows += '<td>';
+                rows += '<div class="btn-group">';
+                rows += sut.string.format('<a class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="left" title="Archivo" href="@Url.Content("~/General/Adjunto/Descargar/"){0}" ><i class="fa fa-download"></i></a>', r.ArchivoAdjuntoId);
+                rows += '</div>';
+                rows += '</td>';
+                rows += '</tr>';
+            });
+            sut.pagination.update(table);
+            tabla.append(rows);
+        },
+    };
+
+    $(function () {
+        sut.Resolucion.listar(1);
+
+        $('#txtFilterDescripcion').keypress(function (e) {
+            var key = e.keyCode || event.keyCode
+            if (key == 13) {
+                sut.Resolucion.listar(1);
+                e.preventDefault();
+            }
+        });
+
+        $('#tblBuscarResolucion button').eq(0).click(function (e) {
+            $('#txtFilterDescripcion').val('');
+            sut.Resolucion.listar('tblBuscarRecurso', 1);
+        });
+    });
+
+</script>
+

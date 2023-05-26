@@ -1,0 +1,837 @@
+﻿@using Sut.Entities;
+@model Procedimiento
+
+@{
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Tabla ASME-VM - " + Model.CodigoCorto;
+    ViewBag.Descripcion = "";
+    Sut.Security.UsuarioInfo user = ViewBag.User as Sut.Security.UsuarioInfo;
+
+}
+
+<div id="mensajes">
+    @{Html.RenderPartial("_Error");}
+</div>
+
+@using (Html.BeginForm("SustentoTecnico", "Procedimiento", new { @area = "Simplificacion" }, FormMethod.Post, new { @id = "form-editar" }))
+{
+    @Html.HiddenFor(model => model.ProcedimientoId)
+    @Html.HiddenFor(model => model.Operacion)
+    @Html.HiddenFor(model => model.ObsDG)
+    @Html.HiddenFor(model => model.ObsDGH)
+    @Html.HiddenFor(model => model.ObsSTL)
+    @Html.HiddenFor(model => model.ObsSTLH)
+    @Html.HiddenFor(model => model.ObsASME)
+    @Html.HiddenFor(model => model.ObsASMEH)
+
+    @Html.HiddenFor(model => model.EstadodatosEva)
+    @Html.HiddenFor(model => model.EstadoInfoEva)
+    @Html.HiddenFor(model => model.EstadostlEva)
+    @Html.HiddenFor(model => model.EstadotablaasmeEva)
+
+    <div class="box box-danger" style="display:none;visibility:collapse;">
+        <div class="box-body form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label" for="Denominacion">Denominación :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.TextBoxFor(model => model.Denominacion, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Tipo :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.TipoProcedimiento(Model.TipoProcedimiento)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Dependencia a Cargo :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.TextBoxFor(model => model.UndOrgResponsable.Nombre, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    if (Model.Operacion != OperacionExpediente.Eliminacion)
+    {
+        if (Model.Expediente.TipoExpediente != TipoExpediente.CargaInicial)
+        {
+            <div class="box box-default" style="display:none;visibility:collapse;">
+                <div class="box-header with-border">
+                    <h3 class="box-title"> Sustento Técnico de la Calificación</h3>
+                </div>
+                <div class="box-body form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-2 col-xs-12 control-label">Calificación :</label>
+                        <div class="col-sm-10 col-xs-12">
+                            <input type="text" value="@ViewBag.Calificacion" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-xs-12 control-label">Sustento de la Calificación :</label>
+                        <div class="col-sm-10 col-xs-12">
+                            @Html.TextAreaFor(model => model.SustTecCalificacion, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="box box-default" style="display:none;visibility:collapse;">
+            <div class="box-header with-border">
+                <h3 class="box-title"> Sustento Técnico-Legal de los Requisitos</h3>
+            </div>
+            <div class="box-body form-horizontal">
+                <h3>Requisitos Generales</h3>
+                <br />
+                <div class="table-responsive">
+
+                    <table id="tblRequisito"
+                           class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th style="width:40px;">
+
+                                </th>
+                                <th style="width:30%">Nombre</th>
+                                <th>Sustento Legal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Requisito.Count > 0)
+                            {
+                                for (int i = 0; i < Model.Requisito.Count; i++)
+                                {
+                                    if (Model.Requisito[i].TipoRequisito == TipoRequisito.General)
+                                    {
+
+
+                                        <tr>
+                                            <td rowspan="2" style="text-align: right">
+                                                @MvcHtmlString.Create((i + 1).ToString())
+                                                @Html.HiddenFor(model => model.Requisito[i].RequisitoId)
+                                            </td>
+                                            <td>@Model.Requisito[i].Nombre</td>
+                                            <td rowspan="2">
+                                                @Html.HiddenFor(model => model.Requisito[i].BaseLegalId)
+                                                @Html.HiddenFor(model => model.Requisito[i].BaseLegal.BaseLegalId)
+                                                <div class="table-responsive">
+                                                    <table id="tblBaseLegal_@MvcHtmlString.Create(i.ToString())" class="table table-condensed table-bordered table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width:80px;">
+                                                                    <a href="javascript:sut.editProcedimiento.BaseLegal.edit(@MvcHtmlString.Create(i.ToString()))" class="btn btn-success btn-xs"><i class="fa fa-plus"></i> Agregar</a>
+                                                                </th>
+                                                                <th style="width:100px;">Tipo de Norma</th>
+                                                                <th style="width:60px;">Número</th>
+                                                                <th>Descripción</th>
+                                                                <th style="width:100px;">Fecha Publicación</th>
+                                                                <th style="width:60px;">Artículo</th>
+                                                                @*<th style="width:100px;">Documento</th>*@
+                                                                <th style="width:60px;"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Sustento Técnico
+                                                @Html.TextAreaFor(model => model.Requisito[i].SustentoTecnico, new { @class = "form-control", @required = true })
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="4" style="font-weight:bold; text-align:center;">NO EXISTEN REGISTROS</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <br />
+                <h3>Requisitos Especificos</h3>
+                <br />
+                <div class="table-responsive">
+                    <table id="tblRequisito"
+                           class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th style="width:40px;">
+
+                                </th>
+                                <th style="width:30%">Nombre</th>
+                                <th>Sustento Legal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Requisito.Count > 0)
+                            {
+                                for (int i = 0; i < Model.Requisito.Count; i++)
+                                {
+                                    if (Model.Requisito[i].TipoRequisito == TipoRequisito.Especifico)
+                                    {
+
+
+
+                                        <tr>
+                                            <td rowspan="2" style="text-align: right">
+                                                @MvcHtmlString.Create((i + 1).ToString())
+                                                @Html.HiddenFor(model => model.Requisito[i].RequisitoId)
+                                            </td>
+                                            <td>@Model.Requisito[i].Nombre</td>
+                                            <td rowspan="2">
+                                                @Html.HiddenFor(model => model.Requisito[i].BaseLegalId)
+                                                @Html.HiddenFor(model => model.Requisito[i].BaseLegal.BaseLegalId)
+                                                <div class="table-responsive">
+                                                    <table id="tblBaseLegal_@MvcHtmlString.Create(i.ToString())" class="table table-condensed table-bordered table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width:80px;">
+                                                                    <a href="javascript:sut.editProcedimiento.BaseLegal.edit(@MvcHtmlString.Create(i.ToString()))" class="btn btn-success btn-xs"><i class="fa fa-plus"></i> Agregar</a>
+                                                                </th>
+                                                                <th style="width:100px;">Tipo de Norma</th>
+                                                                <th style="width:60px;">Número</th>
+                                                                <th>Descripción</th>
+                                                                <th style="width:100px;">Fecha Publicación</th>
+                                                                <th style="width:60px;">Artículo</th>
+                                                                @*<th style="width:100px;">Documento</th>*@
+                                                                <th style="width:60px;"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody></tbody>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Sustento Técnico
+                                                @Html.TextAreaFor(model => model.Requisito[i].SustentoTecnico, new { @class = "form-control", @required = true })
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="4" style="font-weight:bold; text-align:center;">NO EXISTEN REGISTROS</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="box box-default">
+            <div class="box-header with-border">
+                <h3 class="box-title"> Tablas ASME del Procedimiento/Servicio</h3>
+            </div>
+            <div class="box-body">
+                <div class="table-responsive">
+                    <table id="tblSustento" class="table table-condensed table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width:40px;">
+
+                                </th>
+                                <th style="width:120px;">Código</th>
+                                <th>Descripción</th>
+                                <th style="width:50px;"></th>
+                                <th style="width:50px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TablaAsme.Count > 0)
+                            {
+                                for (int i = 0; i < Model.TablaAsme.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            @MvcHtmlString.Create((i + 1).ToString())
+                                        </td>
+                                        <td>@Model.TablaAsme[i].Codigo</td>
+                                        <td>@Model.TablaAsme[i].Descripcion</td>
+                                        <td>
+                                            @*<a class="btn btn-success btn-xs" href="javascript:window.location='/Simplificacion/TablaAsme/Editar/@Model.TablaAsme[i].TablaAsmeId'"><i class="fa fa-table"></i></a>*@
+                                            <a class="btn btn-success btn-xs" href="javascript:window.location='@Url.Content("~/Simplificacion/TablaAsme/Editar/")@Model.TablaAsme[i].TablaAsmeId'"><i class="fa fa-table"></i></a>
+                                        </td>
+                                        <td>
+                                            @if (@user.rolmenu[0].Copiar == true)
+                                            {
+                                                <a class="btn btn-danger btn-xs" title="Copiar Tabla Asme" href="javascript:sut.editProcedimiento.copiartablaasme(@Model.ExpedienteId,@Model.TablaAsme[i].TablaAsmeId,@Model.ProcedimientoId);"><i class="fa fa-clone"></i></a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="4" style="font-weight:bold; text-align:center;">NO EXISTEN REGISTROS</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="box box-default">
+            <div class="box-header with-border">
+                <h3 class="box-title"> Sustento Técnico de los Requisitos</h3>
+            </div>
+            <div class="box-body">
+                @Html.TextAreaFor(model => model.SustentoEliminacion, new { @class = "form-control" })
+            </div>
+        </div>
+    }
+
+
+    @*<div class="box box-default">
+        <div class="box-body">
+            <div class="btn-group pull-right">
+                <a href="/Simplificacion/Expediente/Editar/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+                <a href="javascript:sut.editProcedimiento.guardar()" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</a>
+                    @if (ViewBag.User.Rol == (short)Rol.Coordinador || ViewBag.User.Rol == (short)Rol.Administrador)
+                    {
+                        <a href="javascript:sut.editProcedimiento.terminar()" class="btn btn-success"><i class="fa fa-check"></i> Terminar</a>
+                    }
+
+
+                </div>
+            </div>
+        </div>*@
+
+
+
+
+}
+<div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;z-index: 5;">
+
+    @*<a href="/Simplificacion/Expediente/Editar/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+    <a href="javascript:sut.editProcedimiento.AtrasPA(@Model.ExpedienteId,@Model.ExplorarNum)" class="btn btn-danger"><i class="fa fa-id-card-o"></i> ATRAS </a>
+    <a href="javascript:sut.editProcedimiento.SiguientePA(@Model.ExpedienteId,@Model.ExplorarNum)" class="btn btn-danger"><i class="fa fa-id-card-o"></i> SIGUIENTE </a>
+
+    <a href="@Url.Content("~/Simplificacion/Procedimiento/InformacionCiudadano/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Inf. Ciudadano </a>
+    <a href="@Url.Content("~/Simplificacion/Procedimiento/DatosGenerales/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Ir Datos Generales </a>
+    @if (Model.Expediente.TipoExpediente == TipoExpediente.ExpedienteRegular)
+    {
+        <a href="@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-file-pdf-o"></i> Ir Sus. Tec. Legal</a>
+        <a href="#" class="btn btn-success"><i class="fa fa-id-card-o"></i> Tabla Asme</a>
+    }
+    <a href="@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+
+    @if (@user.rolmenu[0].Terminar == true)
+    {
+        <a href="javascript:sut.editProcedimiento.BaseLegal.terminarasme()" class="btn btn-success"><i class="fa fa-check"></i> Terminar</a>
+    }
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+
+<div class="minmaxConayuda">
+    <div class="modal fade mymodal" id="modalAyudaAvatar1">
+        <div class="modal-dialog  ">
+            <div class="modal-content">
+                <div class="modal-body" id="contenido" style="padding:0px">
+                    <div class="bar-title" id="tituloocultar">
+                        <a class="close modalMinimize" style="padding:110px; right: 20px;  top: -100px; background: transparent"> <i class='fa fa-clone '></i> </a>
+                        <span>
+                            <h3 id="ihtitulo1" style="font-size: x-large;text-align: center;font-family: initial;"> Hola @user.Nombres </h3>
+                        </span>
+                    </div>
+                    <div>
+                        <div id="idtitulo1" style="text-align:left">
+                            <div class="col-sm-3 col-xs-2">
+                                <a class="modalMinimize" title="Minimizar" style="color:black"> <i class='fa fa-minus fa-2x'></i> </a>
+                                <img src="~/dist/img/hola.png" class="img-rounded" alt="Cinque Terre" />
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje1" style="width:409px;height:100%;top:137px">
+                                <sp style="text-align: left;font-family: initial;"> Clic </sp>
+                                <a class="btn btn-success btn-xs" href="#"><i class="fa fa-table"></i> </a>
+                                <l style="text-align: left; font-family: initial;">Para continuar.¡Suerte!</l>
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje2" style="display: none; width:440px;height:100%;top:103px">
+                                <j2 style="text-align: left;font-family: initial;">¡Felicidades! ¿Completaste toda tu información? Si es así, avancemos al siguiente paso. Clic </j2>
+                                <a id="clic" style="display: none;" class="btn btn-success" href="#"><i class="fa fa-check"></i>Terminar</a>
+                                <l1 style="text-align: left;font-family: initial;"> y luego clic en "VOLVER" Para continuar. ¡Tú puedes! </l1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="minmaxCon"></div>
+
+
+@section Style {
+    <style>
+        table thead tr th {
+            vertical-align: middle;
+        }
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.editProcedimiento = {
+
+
+            SiguientePA: (Expediente, ExplorarNum) => {
+                debugger;
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/SiguientePA")',
+                    data: { pExpediente: Expediente, pExplorarNum: ExplorarNum  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+
+                            if (data.estado == 0) {
+
+                                sut.msg.msgUsuario('No existe PA para Avanzar', 'Alerta');
+                            } else
+                            {
+                                //~/Simplificacion/Procedimiento / InformacionCiudadano /
+                                window.location = '/Simplificacion/Procedimiento/InformacionCiudadano/' + data.estado;
+                            }
+
+
+
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+
+            AtrasPA: (Expediente, ExplorarNum) => {
+                debugger;
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/AtrasPA")',
+                    data: { pExpediente: Expediente, pExplorarNum: ExplorarNum  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                           debugger;
+                        $('#modal-ventana').modal('hide');
+                            if (data.estado == 0) {
+
+                                sut.msg.msgUsuario('No existe PA para retroceder', 'Alerta');
+                            } else
+                            {
+                                //~/Simplificacion/Procedimiento / InformacionCiudadano /
+                                window.location = '/Simplificacion/Procedimiento/InformacionCiudadano/' + data.estado;
+                            }
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            BaseLegal: {
+                data: @Html.Raw(ViewBag.ListaBaseLegal != null ? ViewBag.ListaBaseLegal : "[]") ,
+                init: () => {
+                    sut.editProcedimiento.BaseLegal.generar();
+                },
+                edit: (k, index) => {
+                    var model = {};
+                    if (index != null) {
+                        var r = sut.editProcedimiento.BaseLegal.data[k][index];
+                        console.log(r);
+                        model['model.BaseLegalNormaId'] = r.BaseLegalNormaId;
+                        model['model.TipoBaseLegal'] = r.TipoBaseLegal;
+                        model['model.NormaId'] = r.NormaId;
+                        model['model.Descripcion'] = r.Descripcion == 'null' ? '' : r.Descripcion;
+                        model['model.TipoNormaId'] = r.TipoNormaId;
+                        model['model.Numero'] = r.Numero;
+                        model['model.FechaPublicacion'] = r.FechaPublicacion;
+                        model['model.Articulo'] = r.Articulo;
+                        model['model.Url'] = r.Url == 'null' ? '' : r.Url;
+                        model['model.ArchivoAdjuntoId'] = r.ArchivoAdjuntoId;
+                    }
+
+                    model['nuevo'] = index == null ? 1 : 0;
+                    model['index'] = index == null ? 0 : index;
+                    model['fnAdd'] = sut.string.format('sut.editProcedimiento.BaseLegal.add({0})', k);
+
+                    $.ajax({
+                        type: "GET",
+                        //url: '/General/BaseLegal/EditarDetalle',
+                        url: '@Url.Content("~/General/BaseLegal/EditarDetalle")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                generar: () => {
+                    for (var k = 0; k < sut.editProcedimiento.BaseLegal.data.length; k++) {
+                        var tabla = $('#tblBaseLegal_' + k + ' tbody');
+                        $('#tblBaseLegal_' + k + ' tbody tr').remove();
+                        if (sut.editProcedimiento.BaseLegal.data[k].length > 0) {
+                            var rows = '';
+                            $.each(sut.editProcedimiento.BaseLegal.data[k], function (i, r) {
+                                rows += sut.string.format('<tr data-index="{0}" >', i);
+                                rows += '<td>';
+                                rows += sut.string.format('<span>{0}</span>', i + 1);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].BaseLegalId" value="{2}" />', k, i, r.BaseLegalId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].BaseLegalNormaId" value="{2}" />', k, i, r.BaseLegalNormaId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].TipoBaseLegal" value="{2}" />', k, i, r.TipoBaseLegal);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].NormaId" value="{2}" />', k, i, r.NormaId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].Descripcion" value="{2}" />', k, i, r.Descripcion);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].TipoNormaId" value="{2}" />', k, i, r.TipoNormaId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].Numero" value="{2}" />', k, i, r.Numero);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].FechaPublicacion" value="{2}" />', k, i, r.FechaPublicacion);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].Articulo" value="{2}" />', k, i, r.Articulo);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].ArchivoAdjuntoId" value="{2}" />', k, i, r.ArchivoAdjuntoId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].Url" value="{2}" />', k, i, r.Url);
+                                rows += '</td>';
+                                rows += sut.string.format('<td>{0}</td>', r.NormaTipo);
+                                rows += sut.string.format('<td>{0}</td>', r.Numero);
+                                rows += sut.string.format('<td>{0}</td>', r.Descripcion);
+                                rows += sut.string.format('<td>{0}</td>', r.FechaPublicacion);
+                                rows += sut.string.format('<td>{0}</td>', r.Articulo);
+                                //rows += '<td class="text-center">';
+                                //if (r.TipoBaseLegal == 3) {
+                                //    rows += sut.string.format('<a href="{0}" class="btn btn-primary btn-xs" target="_blank" ><i class="fa fa-link"></i></a>', r.Url);
+                                //} else {
+                                //    rows += sut.string.format('<a href="{0}" class="btn btn-primary btn-xs" target="_blank" ><i class="fa fa-file"></i></a>', '');
+                                //}
+                                //rows += '</td>';
+                                rows += '<td><div class="btn-group">';
+                                rows += sut.string.format('<a class="btn btn-success btn-xs" href="javascript:sut.editProcedimiento.BaseLegal.edit({0}, {1})" ><i class="fa fa-pencil" ></i></a>', k, i);
+                                rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.BaseLegal.delete({0}, {1})" ><i class="fa fa-close" ></i></a>', k, i);
+                                rows += '</div></td>';
+                                rows += '</tr>';
+                            });
+                            tabla.append(rows);
+                        }
+                    }
+                },
+
+                terminarasme: function () {
+                    sut.msg.confirm('Si finaliza el registro no podrá modificarlo nuevamente.', () => {
+                        $.ajax({
+                            type: 'POST',
+                            //url: '/Simplificacion/Procedimiento/TerminarSustento',
+                            url: '@Url.Content("~/Simplificacion/Procedimiento/TerminarSustento")',
+                            data: {tipo: 6, ProcedimientoId: @Model.ProcedimientoId, estadoExpediente: '@Model.Expediente.EstadoExpediente', ExpedienteId: @Model.ExpedienteId},
+                            dataType: 'json',
+                            beforeSend: function () {
+                                $("#mensajes").hide();
+                            },
+                            complete: function () {
+
+                            },
+                            success: function (result) {
+                                if(result.valid) {
+                                    sut.msg.success(result.mensaje, function () {
+                                        @*window.location = '/Simplificacion/Procedimiento/SustentoTecnico/@Model.ProcedimientoId';*@
+                                        window.location = '@Url.Content("~/Simplificacion/Procedimiento/TablaAsme/")@Model.ProcedimientoId';
+                                    });
+
+                                    //showNotification('top', 'right', 'El Registro se Termino Satisfactoriamente', 1);
+                                    //setTimeout("reFresh()", 800);
+
+                                } else {
+
+                                    sut.error.clientErrorShow('mensajes', result.mensaje);
+                                }
+                            },
+                            error: function (result) {
+                                debugger;
+                                //alert('verde');
+                                sut.error.show('mensajes', result.responseText);
+                                //showNotification('top', 'right', result.mensaje + 'Debe terminar el registro de Sustento Tecnico.', 2);
+                            }
+                        });
+                    });
+                },
+
+                add: (k) => {
+                    return function (r) {
+                        $('#modal-ventana').modal('hide');
+                        if (r.Nuevo == 1) {
+                            sut.editProcedimiento.BaseLegal.data[k].push(r);
+                        } else {
+                            var arr = [];
+                            $.each(sut.editProcedimiento.BaseLegal.data[k], function (i, d) {
+                                if (i != r.Index) arr.push(d);
+                                else arr.push(r);
+                            });
+                            sut.editProcedimiento.BaseLegal.data[k] = arr;
+                        }
+                        sut.editProcedimiento.BaseLegal.generar();
+                    }
+                },
+                delete: (k, index) => {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                        var arr = [];
+                        $.each(sut.editProcedimiento.BaseLegal.data[k], function (i, d) {
+                            if (i != index) arr.push(d);
+                        });
+                        sut.editProcedimiento.BaseLegal.data[k] = arr;
+                        sut.editProcedimiento.BaseLegal.generar();
+                    //});
+                }
+            },
+            guardar: function () {
+                var valid = true;
+                $.each(sut.editProcedimiento.BaseLegal.data, function (i, r) {
+                    if (r.length == 0) valid = false;
+                });
+
+                if (!valid) sut.error.clientErrorShow('mensajes', 'Debe agregar al menos una Base Legal para cada requisito.');
+                //if (!valid) showNotification('top', 'right', 'Debe agregar al menos una Base Legal para cada requisito.', 2);
+
+                if ($('#form-editar').valid() && valid) {
+                    var model = $('#form-editar').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/SustentoTecnico',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                @*window.location = '/Simplificacion/Procedimiento/SustentoTecnico/@Model.ProcedimientoId';*@
+                                window.location = '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico")@Model.ProcedimientoId';
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }
+            },
+            terminar: function () {
+                sut.msg.confirm('Si finaliza el registro no podrá modificarlo nuevamente.', () => {
+                    if ($('#form-editar').valid()) {
+                        var model = $('#form-editar').serialize();
+                        $.ajax({
+                            type: 'POST',
+                            //url: '/Simplificacion/Procedimiento/SustentoTecnico',
+                            url: '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico")',
+                            data: model,
+                            dataType: 'json',
+                            beforeSend: function () {
+                                $("#mensajes").hide();
+                            },
+                            complete: function () {
+
+                            },
+                            success: function (result) {
+                                debugger;
+                                $.ajax({
+                                    type: 'POST',
+                                    //url: '/Simplificacion/Procedimiento/TerminarSustento',
+                                    url: '@Url.Content("~/Simplificacion/Procedimiento/TerminarSustento")',
+                                    data: {tipo: 2, ProcedimientoId: @Model.ProcedimientoId},
+                                    dataType: 'json',
+                                    beforeSend: function () {
+                                        $("#mensajes").hide();
+                                    },
+                                    complete: function () {
+
+                                    },
+                                    success: function (result) {
+                                        if(result.valid) {
+                                            sut.msg.success(result.mensaje, function () {
+                                                @*window.location = '/Simplificacion/Procedimiento/SustentoTecnico/@Model.ProcedimientoId';*@
+                                                window.location = '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico")@Model.ProcedimientoId';
+                                            });
+                                        } else {
+                                            sut.error.clientErrorShow('mensajes', result.mensaje);
+                                        }
+                                    },
+                                    error: function (result) {
+                                        sut.error.show('mensajes', result.responseText);
+                                    }
+                                });
+                            },
+                            error: function (result) {
+                                sut.error.show('mensajes', result.responseText);
+                            }
+                        });
+                    }
+                });
+            },
+
+            copiartablaasme: function (expedienteId,tablaAsmeId,procedimientoId) {
+
+                debugger;
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/SelectCopiarAsme")',
+                    data: { multi: true, ExpedienteId:expedienteId,TablaAsmeId: tablaAsmeId,ProcedimientoId:procedimientoId},
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+
+
+            },
+
+        };
+
+        $(function () {
+            sut.editProcedimiento.BaseLegal.init();
+
+            $('#form-editar').validate({
+                errorPlacement: function (error, element) {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+                    SustTecCalificacion: 'required'
+                },
+                messages: {
+
+                }
+            });
+
+
+
+
+            /*desarrollo de la ayuda*/
+            /*minimizar un modal*/
+
+            var $content, $modal, $apnData, $modalCon;
+
+            $content = $(".min");
+
+
+            //To fire modal
+            $(".mdlFire").click(function (e) {
+                debugger;
+                e.preventDefault();
+
+                var $id = $(this).attr("data-target");
+
+                $($id).modal({ backdrop: false, keyboard: false });
+
+            });
+
+            debugger;
+
+            if(@user.Ayuda==1){
+                $('#edit-fase-preparatoria').addClass('active');
+                $('a[href="#edit-fase-preparatoria"]').parent().addClass('active');
+
+
+                $('#tituloocultar').hide();
+
+
+                $('#modalAyudaAvatar1').modal({backdrop: 'static', keyboard: false})
+                $modal = "#modalAyudaAvatar1"
+                $($modal).toggleClass("min");
+                $modal = "#modalAyudaAvatar1";
+                $(".modal-backdrop").addClass("display-none");
+                $(".minmaxConayuda").append($apnData);
+                $(".modal").css({
+                    backgroundColor: "transparent"
+                });
+
+            }
+
+
+
+            /*fin*/
+
+            $(".modalMinimize").on("click", function(){
+                debugger;
+                $modalCon = $(this).closest(".mymodal").attr("id");
+                $apnData = $(this).closest(".mymodal");
+                $modal = "#" + $modalCon;
+                $(".modal-backdrop").addClass("display-none");
+
+                $($modal).toggleClass("min2");
+                if ( $($modal).hasClass("min2") ){
+                    $('#tituloocultar').show();
+                    $(".minmaxCon").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-minus fa-2x').toggleClass( 'fa-clone fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                }
+                else {
+                    $('#tituloocultar').hide();
+                    $(".minmaxConayuda").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-clone fa-2x').toggleClass( 'fa-minus fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                };
+            });
+
+        });
+    </script>
+}

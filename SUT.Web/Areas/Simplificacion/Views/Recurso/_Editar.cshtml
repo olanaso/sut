@@ -1,0 +1,710 @@
+﻿@using Sut.Entities
+@model Sut.Entities.Recurso
+
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">@ViewBag.Title</h4>
+        </div>
+        @using (Html.BeginForm("Guardar", "Simplificacion/Recurso", FormMethod.Post, new { @id = "form-modal-editar" }))
+            {
+            @Html.HiddenFor(model => model.RecursoId)
+            @Html.HiddenFor(model => model.EntidadId)
+            @Html.HiddenFor(model => model.TipoRecurso)
+
+            <div class="modal-body form-horizontal">
+                @if (Model.TipoRecurso == TipoRecurso.Personal)
+                {
+                    <div class="form-group">
+                        @if (@ViewBag.Id == 0)
+                        {
+                            <a id="add_field" class="btn btn-success" style="padding: 1px 6px;"><i class="fa fa-plus"></i></a>
+                        }
+                        <label class="control-label col-sm-2 col-xs-12">Nombre</label>
+                        <div class="col-sm-9 col-xs-12" id="listasRecursos">
+                            @if (@ViewBag.Id != 0)
+                            {
+                                @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control input-sm", onkeydown = "enterToTab(event);" })
+                            }
+                            else
+                            {
+                                <div><input type="text" class="form-control input-sm" style="width:93%; display:-webkit-inline-box" id="NombreLista" name="listaNombre[]" onkeydown="enterToTab(event);"> </div>
+                            }
+                            @*<div class="callout callout-warning" style="width:93%;visibility:hidden;padding: 3px 8px 5px 15px; margin: inherit;" id="titulorecurso1">
+                                       Ejemplos:
+                                </div>*@
+
+                        </div>
+                    </div>
+                }
+
+                @if (Model.TipoRecurso != TipoRecurso.Personal && Model.TipoRecurso != TipoRecurso.Depreciacion)
+                {
+
+                    <div class="form-group" style="text-align:right">
+
+                        @if (@ViewBag.Id == 0)
+                        {
+                            <a id="add_fieldPersonal" class="btn btn-success" style="padding: 1px 9px;"><i class="fa fa-plus"></i></a>
+                        }
+                        <label class="control-label col-sm-3 col-xs-12">Nombre</label>
+                        <label class="control-label col-sm-7 col-xs-12">Unidad de Medida</label>
+
+                        <div class="col-sm-12 col-xs-12" id="listasRecursos2">
+
+                            @if (@ViewBag.Id != 0)
+                            {
+                                <div class="col-sm-6 col-xs-12">
+                                    @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control input-sm", onkeydown = "enterToTab(event);" })
+                                </div>
+
+                                <div class="col-sm-6 col-xs-12">
+                                    @Html.DropDownListFor(model => model.UnidadMedidaId, ViewBag.UnidadMedida as List<SelectListItem>, new { @class = "form-control" })
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-sm-12 col-xs-12">
+                                    <input type="text" class="form-control input-sm" style="width:50%;display:inline!important" id="NombreLista" name="listaNombre[]" onkeydown="enterToTab(event);">
+                                    <select name="listaUnidadMedidaId[]" class="form-control" style="width: 48%;display:inline!important">
+                                        @foreach (var md in (ViewBag.UnidadMedida as List<SelectListItem>))
+                                        {
+                                            <option value="@md.Value.ToString()">
+                                                @md.Text
+                                            </option>
+                                        }
+                                    </select>
+                                    @*<div class="callout callout-warning" style="margin: inherit;visibility:hidden;padding: 3px 8px 5px 15px;text-align:left" id="titulorecurso2">
+                                            Ejemplos:
+                                        </div>*@
+                                </div>
+
+
+                            }
+
+                        </div>
+
+
+                        <div class="col-sm-12 col-xs-12" id="listasRecursos21">
+
+                            @if (@ViewBag.Id == 0)
+                            { 
+                                <div class="col-sm-12 col-xs-12">
+                                    <div class="callout callout-warning" style="margin: inherit;visibility:hidden;padding: 3px 8px 5px 15px;text-align:left;display: inherit;height: inherit;" id="titulorecurso2">
+                                        <input type="checkbox" id="buscarUndOrgTodo"   />   Ejemplos:
+                                    </div> 
+                                    
+                                </div>
+
+
+                            }
+
+                        </div>
+                    </div>
+
+                }
+
+                @if (Model.TipoRecurso == TipoRecurso.Depreciacion)
+                {
+                    <div class="form-group" style="text-align:right">
+
+                        @if (@ViewBag.Id == 0)
+                        {
+                            <a id="add_fieldDepreciacion" class="btn btn-success" style="padding: 1px 9px;"><i class="fa fa-plus"></i></a>
+                        }
+                        <label class="control-label col-sm-2 col-xs-12">Nombre</label>
+                        <label class="control-label col-sm-4 col-xs-12">Unidad de Medida</label>
+                        <label class="control-label col-sm-4 col-xs-12">Tipo de Depreciación</label>
+
+                        <div class="col-sm-12 col-xs-12" id="listasRecursos3">
+
+                            @if (@ViewBag.Id != 0)
+                            {
+                                <div class="col-sm-3 col-xs-12">
+                                    @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control input-sm", onkeydown = "enterToTab(event);" })
+                                </div>
+
+                                <div class="col-sm-4 col-xs-12">
+                                    @Html.DropDownListFor(model => model.UnidadMedidaId, ViewBag.UnidadMedida as List<SelectListItem>, new { @class = "form-control" })
+                                </div>
+
+                                <div class="col-sm-5 col-xs-12">
+                                    @Html.DropDownListFor(model => model.TipoDepreciacionId, ViewBag.TipoDepreciacion as List<SelectListItem>, new { @class = "form-control" })
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-sm-12 col-xs-12">
+                                        <input type="text" class="form-control input-sm" style="width:30%;display:inline!important" id="NombreLista" name="listaNombre[]" onkeydown = "enterToTab(event);">
+                                        <select name="listaUnidadMedidaId[]" class="form-control" style="width: 25%;display:inline!important">
+                                            @foreach (var md in (ViewBag.UnidadMedida as List<SelectListItem>))
+                                            {
+                                                <option value="@md.Value.ToString()">
+                                                    @md.Text
+                                                </option>
+                                            }
+                                        </select>
+                                        <select name="listaTipoDepreciacionId[]" class="form-control" style="width: 44%;display:inline!important">
+                                            @foreach (var md in (ViewBag.TipoDepreciacion as List<SelectListItem>))
+                                            {
+                                                <option value="@md.Value.ToString()">
+                                                    @md.Text
+                                                </option>
+                                            }
+                                        </select>
+                                        @*<div class="callout callout-warning" style="margin: inherit;visibility:hidden; padding: 3px 8px 5px 15px; text-align:left" id="titulorecurso3">
+                                            Ejemplos:
+                                        </div>*@
+                                    </div>
+
+                            }
+                        </div>
+
+                        <div class="col-sm-12 col-xs-12" id="listasRecursos31">
+
+                            @if (@ViewBag.Id == 0)
+                            {
+                                <div class="col-sm-12 col-xs-12"> 
+                                    <div class="callout callout-warning" style="margin: inherit;visibility:hidden; display: inherit;height: inherit; text-align:left" id="titulorecurso3">
+                                        <input type="checkbox" id="buscarUndOrgTodo" />  Ejemplos:
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                }
+            </div>
+            <div id="msgEditar"></div>
+            <div class="modal-footer">
+                @if (ViewBag.User.rolmenu[0].Guardar == true)
+                {
+                  <button type="button" class="btn btn-primary btn-sm" onclick="sut.EditarRecurso.guardar()"><i class="fa fa-save"></i> Guardar</button>
+                }
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+    </div>
+</div>
+
+<style>
+    .modal-header {
+        cursor: move;
+    }
+</style>
+
+<script>
+
+
+    //MOVER EL MODAL EN LA PANTALLA
+    $(".modal-header").on("mousedown", function(mousedownEvt) {
+        var $draggable = $(this);
+        var x = mousedownEvt.pageX - $draggable.offset().left,
+            y = mousedownEvt.pageY - $draggable.offset().top;
+        $("body").on("mousemove.draggable", function(mousemoveEvt) {
+            $draggable.closest(".modal-dialog").offset({
+                "left": mousemoveEvt.pageX - x,
+                "top": mousemoveEvt.pageY - y
+            });
+        });
+        $("body").one("mouseup", function() {
+            $("body").off("mousemove.draggable");
+        });
+        $draggable.closest(".modal").one("bs.modal.hide", function() {
+            $("body").off("mousemove.draggable");
+        });
+    });
+    //MOVER EL MODAL EN LA PANTALLA
+
+
+    //proceso Inicio 3
+    var campos_max = 15;   //max de 10 campos
+    var x = 0;
+    $('#add_fieldDepreciacion').click(function (e) {
+        //document.getElementById("titulorecurso3").style.visibility = "visible";
+        e.preventDefault();     //prevenir novos clicks
+        if (x < campos_max) {
+            $('#listasRecursos3').append('<div class="col-sm-12 col-xs-12"> \
+                                <input type="text" class="form-control input-sm"  style="width:30%;display:inline!important" name="listaNombre[]" onkeydown = "enterToTab(event);">\
+                                <select name="listaUnidadMedidaId[]" id="unidad'+ x +'" class="form-control" style="width:25%;display:inline!important"> </select> \
+                                <select name="listaTipoDepreciacionId[]" id="depreciacion'+ x +'" class="form-control" style="width:41%;display:inline!important"> </select> \
+                                <a href="#" class="remover_campo3"><i class="fa fa-minus-circle fa-2x" style="color:#dd4b39" aria-hidden="true"></i></a> \
+                                </div>\
+                               '
+                                );
+            //combo 1
+            var modtagerId = $('#unidad'+ x);
+            @foreach (var item in (@ViewBag.UnidadMedida as List<SelectListItem>))
+            {
+                <text>
+            var value = "@(item.Value)";
+            var text = "@(Html.Raw(item.Text))";
+            $("<option />", {
+                val: value,
+                text: text
+            }).appendTo(modtagerId);
+            </text>
+            }
+
+
+            //combo2
+            var modtagerId = $('#depreciacion'+ x);
+            @foreach (var item2 in (@ViewBag.TipoDepreciacion as List<SelectListItem>))
+                    {
+                        <text>
+
+            var value = "@(item2.Value)";
+            var text = "@(Html.Raw(item2.Text))";
+            $("<option />", {
+                val: value,
+                text: text
+            }).appendTo(modtagerId);
+            </text>
+                    }
+
+        }
+
+        x++;
+
+    });
+
+
+    // Remover o div anterior
+    $('#listasRecursos3').on("click", ".remover_campo3", function (e) {
+        e.preventDefault();
+        $(this).parent('div').remove();
+
+        var nombre= document.getElementsByName("listaNombre[]");
+        if(nombre.length == 1){
+            //document.getElementById("titulorecurso3").style.visibility = "hidden";
+        }
+        x--;
+    });
+    //proceso FIN 3
+
+
+
+
+
+    //proceso Inicio 2
+    var campos_max = 15;   //max de 10 campos
+    var x = 0;
+    $('#add_fieldPersonal').click(function (e) {
+        e.preventDefault();     //prevenir novos clicks
+        if (x < campos_max) {
+            $('#listasRecursos2').append('<div class="col-sm-12 col-xs-12"> \
+                                <input type="text" class="form-control input-sm"  style="width:50%;display:inline!important" name="listaNombre[]" onkeydown = "enterToTab(event);">\
+                                <select name="listaUnidadMedidaId[]" id="unidad'+ x +'" class="form-control" style="width:45%;display:inline!important"> </select> \
+                                <a href="#" class="remover_campo2"><i class="fa fa-minus-circle fa-2x" style="color:#dd4b39" aria-hidden="true"></i></a> \
+                                </div>\
+                               '
+                                );
+
+            var modtagerId = $('#unidad'+ x);
+            @foreach (var item in (@ViewBag.UnidadMedida as List<SelectListItem>))
+                {
+                    <text>
+            var value = "@(item.Value)";
+            var text = "@(Html.Raw(item.Text))";
+            $("<option />", {
+                val: value,
+                text: text
+            }).appendTo(modtagerId);
+            </text>
+                }
+            x++;
+        }
+        //document.getElementById("titulorecurso2").style.visibility = "visible";
+    });
+
+    // Remover o div anterior
+    $('#listasRecursos2').on("click", ".remover_campo2", function (e) {
+        e.preventDefault();
+        $(this).parent('div').remove();
+
+        var nombre= document.getElementsByName("listaNombre[]");
+        if(nombre.length == 1){
+            //document.getElementById("titulorecurso2").style.visibility = "hidden";
+        }
+
+        x--;
+    });
+    //proceso FIN 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //proceso Inicio 1
+
+    $('#add_field').click(function (e) {
+        e.preventDefault();     //prevenir novos clicks
+        if (x < campos_max) {
+            $('#listasRecursos').append('<div>\
+                                <input type="text" class="form-control input-sm"  style="width:93%; display:-webkit-inline-box" name="listaNombre[]" onkeydown = "enterToTab(event);">\
+                                <a href="#" class="remover_campo"><i class="fa fa-minus-circle fa-2x" style="color:#dd4b39" aria-hidden="true"></i></a>\
+                                </div>'
+                                );
+            x++;
+        }
+        //document.getElementById("titulorecurso1").style.visibility = "visible";
+
+    });
+    // Remover o div anterior
+    $('#listasRecursos').on("click", ".remover_campo", function (e) {
+        e.preventDefault();
+        $(this).parent('div').remove();
+
+        var nombre= document.getElementsByName("listaNombre[]");
+        if(nombre.length == 1){
+            document.getElementById("titulorecurso1").style.visibility = "hidden";
+        }
+
+
+
+        x--;
+    });
+    //proceso FIN 1
+
+
+    sut.EditarRecurso = {
+        guardar: function () {
+
+            debugger;
+            //var asdasda= $('input[name="listaNombre"]').val
+
+            var checked = $(".icheck:checked").length;
+
+            var nombre= document.getElementsByName("listaNombre[]");
+
+            if(checked == 0 && nombre.length == 1 && nombre[0].value=="" ){
+                //if(nombre[0].value==""){
+                showNotification('top', 'right', 'Favor de Seleccionar un Ejemplo o Ingresar la Información', 2);
+                NombreLista.focus();     return;
+            }
+
+            var unidad= document.getElementsByName("listaUnidadMedidaId[]");
+            if(checked == 0 && unidad.length == 1 && unidad[0].value=="0"){
+                //if(nombre[0].value==""){
+
+                showNotification('top', 'right', 'Seleccionar Unidad Medida', 2);
+                NombreLista.focus();     return;
+            }
+
+            var Depreciacion= document.getElementsByName("listaTipoDepreciacionId[]");
+            if(checked == 0 && Depreciacion.length == 1 && Depreciacion[0].value=="0"){
+                //if(nombre[0].value==""){
+
+                showNotification('top', 'right', 'Seleccionar Depreciacion', 2);
+                NombreLista.focus();     return;
+            }
+
+
+
+
+
+            if ($("#form-modal-editar").valid()) {
+                var model = $('#form-modal-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Simplificacion/Recurso/Guardar",
+                    url: '@Url.Content("~/Simplificacion/Recurso/Guardar")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: function (result) {
+                        debugger;
+
+                        if (result.Estado == 2) {
+                            sut.msg.alerta(result.mensaje, function () {
+
+                            });
+                        }
+                        else {
+                            $('#modal-ventana').modal('hide');
+                            sut.msg.success(result.mensaje, () => {
+                                sut.Recurso.listar(1);
+                            });
+                        } 
+                    },
+                    error: function (result) {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            }
+        }
+    };
+
+    function enterToTab(e) {
+        var intKey = window.Event ? e.which : e.KeyCode;
+
+
+        if (intKey == 13)
+            e.returnValue = false;
+
+
+    }
+    $(function () {
+        //$('.icheck').iCheck({
+        //    checkboxClass: 'icheckbox_square-blue',
+        //    radioClass: 'iradio_square-blue',
+        //    increaseArea: '20%' // optional
+        //});
+
+        $('#buscarUndOrgTodo').on('change', function (e) {
+            $('input[id^="chkbuscarUndOrg"]').prop({checked : $('#buscarUndOrgTodo').is(':checked')});
+        });
+     
+        //generar imput 1
+        debugger;
+        if (@ViewBag.Id == 0)
+        {
+            var count2=0;
+            var count3=0;
+            @foreach (var item1 in @ViewBag.DetalleMaestro)
+            {
+
+
+                @*<text>
+            var text1 = "@(Html.Raw(item1.Nombre))";
+            $('#listasRecursos').append('<div>\
+                                <input type="text" class="form-control input-sm"  style="width:93%; display:-webkit-inline-box" name="listaNombre[]" onkeydown = "enterToTab(event);" value="'+text1+'">\
+                                <a href="#" class="remover_campo"><i class="fa fa-minus-circle fa-2x" style="color:#dd4b39" aria-hidden="true"></i></a>\
+                                </div>'
+                                );
+            </text>*@
+                   <text>
+
+            var text1 = "@(Html.Raw(item1.Nombre))";
+            $('#listasRecursos').append('<div>\
+                                <input type="text" class="form-control input-sm"  style="width:93%; display:-webkit-inline-box" name="listaNombre[]" onkeydown = "enterToTab(event);" value="'+text1+'">\</div>'
+                                );
+
+            </text>
+
+            }
+
+            //generar fin 1
+
+            debugger;
+            @if (Model.TipoRecurso != TipoRecurso.Depreciacion)
+            {
+
+                //generar imput 2
+                foreach (var item2 in (@ViewBag.DetalleMaestro as List<DetalleMaestro>))
+                {
+
+                        @*<text>
+
+            document.getElementById("titulorecurso2").style.visibility = "visible";
+
+
+            var UnidadMedida = "@(item2.UnidadMedidaId)";
+            var value2 = "@(item2.DetalleMaestroId)";
+            var text2 = "@(Html.Raw(item2.Nombre))";
+            $('#listasRecursos2').append('<div class="col-sm-12 col-xs-12"> \
+                                                <input type="text" class="form-control input-sm"  style="width:50%;display:inline!important" name="listaNombre[]" onkeydown = "enterToTab(event);" value="'+text2+'">\
+                                                <select name="listaUnidadMedidaId[]" id="unidad'+ value2 +'" class="form-control" style="width:45%;display:inline!important"> </select> \
+                                                <a href="#" class="remover_campo2"><i class="fa fa-minus-circle fa-2x" style="color:#dd4b39" aria-hidden="true"></i></a> \
+                                                </div>\
+                                               '
+                            );
+
+            var modtagerId = $('#unidad'+ value2);
+            @foreach (var item in (@ViewBag.UnidadMedida as List<SelectListItem>))
+                            {
+                                <text>*@
+             <text>
+
+            document.getElementById("titulorecurso2").style.visibility = "visible";
+
+
+
+            var UnidadMedida = "@(item2.UnidadMedidaId)";
+            var value2 = "@(item2.DetalleMaestroId)";
+            var text2 = "@(Html.Raw(item2.Nombre))";
+
+            $('#listasRecursos21').append('<div class="col-sm-12 col-xs-12"> \
+                                                <input name="chkbuscarUndOrg[]" id="chkbuscarUndOrg'+ value2 +'"  class="icheck"  type="checkbox" value="'+count2+'">\
+                                                <input type="text" class="form-control input-sm"  style="width:50%;display:inline!important" name="listaNombreCargado[]" onkeydown = "enterToTab(event);" value="'+text2+'">\
+                                                <select name="listaUnidadMedidaIdCargado[]" id="unidad'+ value2 +'" class="form-control" style="width:45%;display:inline!important"> </select> \ </div>\
+                                               '
+                            );
+            count2 = count2 + 1;
+
+            var modtagerId = $('#unidad'+ value2);
+            @foreach (var item in (@ViewBag.UnidadMedida as List<SelectListItem>))
+                            {
+                                <text>
+
+
+
+            var value = "@(item.Value)";
+            var text = "@(Html.Raw(item.Text))";
+            $("<option />", {
+                val: value,
+                text: text
+            }).appendTo(modtagerId);
+            </text>
+                            }
+
+            $('#unidad'+ value2).val(UnidadMedida);
+
+            </text>
+                }
+
+                //generar fin 2
+
+            }
+
+            //generar imput 3
+            @foreach (var item3 in (@ViewBag.DetalleMaestro as List<DetalleMaestro>))
+            {
+
+                @*<text>
+
+
+
+            var TipoDepreciacionId = "@(item3.TipoDepreciacionId)";
+            var UnidadMedida = "@(item3.UnidadMedidaId)";
+            var value3 = "@(item3.DetalleMaestroId)";
+            var text3 = "@(Html.Raw(item3.Nombre))";
+            $('#listasRecursos3').append('<div class="col-sm-12 col-xs-12"> \
+                                <input type="text" class="form-control input-sm"  style="width:30%;display:inline!important" name="listaNombre[]" onkeydown = "enterToTab(event);" value="'+text3+'">\
+                                <select name="listaUnidadMedidaId[]" id="unidador'+ value3 +'" class="form-control" style="width:25%;display:inline!important"> </select> \
+                                <select name="listaTipoDepreciacionId[]" id="depreciacion'+ value3 +'" class="form-control" style="width:41%;display:inline!important"> </select> \
+                                <a href="#" class="remover_campo3"><i class="fa fa-minus-circle fa-2x" style="color:#dd4b39" aria-hidden="true"></i></a> \
+                                </div>\
+                               '
+                           );
+
+            var modtagerId = $('#unidador'+ value3);
+            @foreach (var item in (@ViewBag.UnidadMedida as List<SelectListItem>))
+                {
+                    <text>*@
+
+
+
+                <text>
+
+
+
+            var TipoDepreciacionId = "@(item3.TipoDepreciacionId)";
+            var UnidadMedida = "@(item3.UnidadMedidaId)";
+            var value3 = "@(item3.DetalleMaestroId)";
+            var text3 = "@(Html.Raw(item3.Nombre))";
+            $('#listasRecursos31').append('<div class="col-sm-12 col-xs-12"> \
+                                <input class="icheck" name="chkbuscarUndOrg[]" id="chkbuscarUndOrg'+ value3 +'" type="checkbox" value="'+count3+'">\
+                                <input type="text" class="form-control input-sm"  style="width:30%;display:inline!important" name="listaNombreCargado[]" onkeydown = "enterToTab(event);" value="'+text3+'">\
+                                <select name="listaUnidadMedidaIdCargado[]" id="unidador'+ value3 +'" class="form-control" style="width:25%;display:inline!important"> </select> \
+                                <select name="listaTipoDepreciacionIdCargado[]" id="depreciacion'+ value3 +'" class="form-control" style="width:41%;display:inline!important"> </select> \</div>\
+                               '
+                           );
+            count3 = count3 + 1;
+            var modtagerId = $('#unidador'+ value3);
+            @foreach (var item in (@ViewBag.UnidadMedida as List<SelectListItem>))
+                {
+                    <text>
+
+            var value = "@(item.Value)";
+            var text = "@(Html.Raw(item.Text))";
+            $("<option />", {
+                val: value,
+                text: text
+            }).appendTo(modtagerId);
+            </text>
+                }
+
+            $('#unidador'+ value3).val(UnidadMedida);
+
+
+            //combo2
+            var depreciacion = $('#depreciacion'+ value3);
+            @foreach (var item2 in (@ViewBag.TipoDepreciacion as List<SelectListItem>))
+                {
+                    <text>
+
+            var value = "@(item2.Value)";
+            var text = "@(Html.Raw(item2.Text))";
+            $("<option />", {
+                val: value,
+                text: text
+            }).appendTo(depreciacion);
+            </text>
+                }
+
+            $('#depreciacion'+ value3).val(TipoDepreciacionId);
+
+            </text>
+
+            }
+
+            //generar fin 3
+
+        }
+        if ('@Model.TipoRecurso' == '@TipoRecurso.Depreciacion')
+        {
+            document.getElementById("titulorecurso3").style.visibility = "visible";
+        }
+        // fin
+
+
+
+
+
+        $.validator.addMethod('selUM', $.validator.methods.min, 'Debe seleccionar Unidad de Medida.');
+        $.validator.addMethod('selTipoDepreciacion', $.validator.methods.min, 'Debe seleccionar un Tipo de Depreciación.');
+
+        $('#form-modal-editar').validate({
+            errorPlacement: function (error, element) {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                //Codigo: 'required',
+                Nombre: 'required',
+                UnidadMedidaId: { selUM: 1 },
+                TipoDepreciacionId: { selTipoDepreciacion : 1}
+            },
+            messages: {
+
+            }
+        });
+    });
+
+</script>
+

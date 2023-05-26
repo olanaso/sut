@@ -1,0 +1,190 @@
+﻿@model List<Sut.Entities.Norma>
+@{
+    ViewBag.Title = "Normas Legales";
+    ViewBag.Descripcion = "Registro de normas legales";
+}
+
+<div id="mensajes"></div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body">
+                <a class="btn btn-success" href="javascript:sut.Norma.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>
+                <br />
+                <div class="table-responsive">
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="20"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.Norma.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th class="colAction">Nro.</th>
+                                <th>Tipo</th>
+                                <th>Descripción</th>
+                                <th>Número</th>
+                                <th>Fecha de Publicación</th>
+                                <th class="colAction"></th>
+                            </tr>
+                            <tr>
+                                <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                <th><input id="txtFilterTipo" type="text" class="form-control input-sm" /></th>
+                                <th><input id="txtFilterDescripcion" type="text" class="form-control input-sm" /></th>
+                                <th><input id="txtFilterNumero" type="text" class="form-control input-sm" /></th>
+                                <th></th>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr><td colspan="6"><div id="paginator"></div></td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="6"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 30px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        }
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.Norma = {
+            editar: function (id) {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/Norma/Editar',
+                    url: '@Url.Content("~/Simplificacion/Norma/Editar")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            listar: function (page) {
+                table = $('#tblLista');
+                var model = {
+
+                    'filtro.TipoNorma': $('#txtFilterTipo').val(),
+                    'filtro.Descripcion': $('#txtFilterDescripcion').val(),
+                    'filtro.Numero': $('#txtFilterNumero').val(),
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+                $.ajax({
+                    //url: "/Simplificacion/Norma/GetAllLikePagin",
+                    url: '@Url.Content("~/Simplificacion/Norma/GetAllLikePagin")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.Norma.generar(data.lista);
+                        if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='6' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            },
+            generar: function (lista) {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += sut.string.format('<td>{0}</td>', r.TipoNorma);
+                    rows += sut.string.format('<td>{0}</td>', r.Descripcion);
+                    rows += sut.string.format('<td>{0}</td>', r.Numero);
+                    rows += sut.string.format('<td>{0}</td>', r.FechaPublicacion);
+                    rows += '<td>';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.Norma.editar({0})" ><i class="fa fa-pencil"></i></a>', r.NormaId);
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            }
+        };
+
+        $(function () {
+            sut.Norma.listar(1);
+
+            $('#txtFilterNumero').keypress(function (e) {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.Norma.listar(1);
+            });
+
+            $('#txtFilterTipo').keypress(function (e) {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.Expediente.listar(1);
+            });
+
+            $('#txtFilterDescripcion').keypress(function (e) {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.Expediente.listar(1);
+            });
+
+
+
+
+            $('#tblLista thead button').click(function (e) {
+                $('#txtFilterNombre').val('');
+                sut.Norma.listar(1);
+            });
+        });
+    </script>
+}

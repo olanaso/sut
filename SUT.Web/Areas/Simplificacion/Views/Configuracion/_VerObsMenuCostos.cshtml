@@ -1,0 +1,351 @@
+﻿@model Sut.Entities.Expediente
+@{
+    var activar = "active";
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+}
+
+<div class="nav-tabs-custom">
+
+    <ul class="nav nav-tabs" style="text-align:center">
+        @if (@ViewBag.TipoRecursos == 1)
+        { 
+            if (@Model.ObsCPH == 0)
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(0)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Personal</a>
+                </li>
+            }
+            else
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(0)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Personal</a>
+                </li>
+            }
+        }
+        else
+        {
+            if (@Model.ObsCPH == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(0)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Personal</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(0)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Personal</a>
+                </li>
+            } 
+        }
+
+        @if (@ViewBag.TipoRecursos == 2)
+        {
+            if (@Model.ObsCMFH == 0)
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(1)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Material Fungible</a>
+                </li>
+            }
+            else
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(1)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Material Fungible</a>
+                </li>
+            }
+
+
+        }
+        else
+        {
+            if (@Model.ObsCMFH == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(1)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Material Fungible</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(1)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Material Fungible</a>
+                </li>
+            }
+        }
+
+        @if (@ViewBag.TipoRecursos == 3)
+        {
+            if (@Model.ObsCSIH == 0)
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica2" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(2)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Servicio Identificable</a>
+                </li>
+            }
+            else
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica2" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(2)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Servicio Identificable</a>
+                </li>
+            }
+
+        }
+        else
+        {
+            if (@Model.ObsCSIH == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica2" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(2)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Servicio Identificable</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica2" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(2)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Servicio Identificable</a>
+                </li>
+            }
+        }
+
+
+        @if (@ViewBag.TipoRecursos == 4)
+        {
+
+            if (@Model.ObsCMNFH == 0)
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica3" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(3)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Material No Fungible</a>
+                </li>
+            }
+            else
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica3" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(3)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Material No Fungible</a>
+                </li>
+            }
+
+        }
+        else
+        {
+            if (@Model.ObsCMNFH == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica3" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(3)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Material No Fungible</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica3" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(3)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Material No Fungible</a>
+                </li>
+            }
+        }
+
+
+        @if (@ViewBag.TipoRecursos == 5)
+        {
+            if (@Model.ObsCSTH == 0)
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica4" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(4)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Servicio de Terceros</a>
+                </li>
+            }
+            else
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica4" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(4)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Servicio de Terceros</a>
+                </li>
+            }
+
+        }
+        else
+        {
+            if (@Model.ObsCSTH == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica4" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(4)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Servicio de Terceros</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica4" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(4)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Servicio de Terceros</a>
+                </li>
+            }
+        }
+
+        @if (@ViewBag.TipoRecursos == 6)
+        {
+
+            if (@Model.ObsCDAH == 0)
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica5" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(5)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Depreciación y Amortización</a>
+                </li>
+
+            }
+            else
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica5" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(5)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Depreciación y Amortización</a>
+                </li>
+            }
+        }
+        else
+        {
+            if (@Model.ObsCDAH == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica5" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(5)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Depreciación y Amortización</a>
+                </li>
+
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica5" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(5)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Depreciación y Amortización</a>
+                </li>
+            }
+        }
+
+
+        @if (@ViewBag.TipoRecursos == 7)
+        {
+            if (@Model.ObsCFH == 0)
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(6)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos <br /> Fijos </a>
+                </li>
+            }
+            else
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(6)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos <br /> Fijos </a>
+                </li>
+            }
+        }
+        else
+        {
+            if (@Model.ObsCFH == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(6)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos <br /> Fijos </a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(6)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos <br /> Fijos </a>
+                </li>
+            }
+        }
+
+
+        @if (@ViewBag.TipoRecursos == 8)
+        {
+            if (@Model.ObsVIH == 0)
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(7)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Valores de <br /> Inductores</a>
+                </li>
+            }
+            else
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(7)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Valores de <br /> Inductores</a>
+                </li>
+            }
+
+        }
+        else
+        {
+            if (@Model.ObsVIH == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(7)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Valores de <br /> Inductores</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(7)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Valores de <br /> Inductores</a>
+                </li>
+            }
+        }
+
+
+
+        @if (@ViewBag.TipoRecursos == 9)
+        {
+            if (@Model.ObsIACH == 0)
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(8)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Inductor de <br /> Asignación de Costos</a>
+                </li>
+            }
+            else
+            {
+                <li class="@activar">
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(8)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Inductor de <br /> Asignación de Costos</a>
+                </li>
+            }
+
+        }
+        else
+        {
+            if (@Model.ObsIACH == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(8)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Inductor de <br /> Asignación de Costos</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.VerObsMenuCostos.VerObsvisualizar(8)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Inductor de <br /> Asignación de Costos</a>
+                </li>
+            }
+        } 
+    </ul>
+</div>
+ 
+@section Script {
+    <script>
+        function openCity(evt, cityName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        sut.VerObsMenuCostos = {
+            VerObsvisualizar: function (valor) { 
+
+                if (valor == 0) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoPersonal/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 1) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoMatFungible/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 2) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoServIdentificable/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 3) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoMatNoFungible/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 4) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoServTerceros/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 5) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoDepreciacion/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 6) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsCostoFijo/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 7) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsConfigInductor/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 8) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsFactorTupa/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                } else if (valor == 9) {
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/VerObsResumen/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver';
+                }
+            }
+        };
+
+    </script>
+}

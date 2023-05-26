@@ -1,0 +1,164 @@
+﻿@using Sut.Entities
+@model Sede
+
+<div class="modal-dialog"  style="width: 95%;">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">@ViewBag.Title</h4>
+        </div>
+
+        @using (Html.BeginForm("Guardar", "Simplificacion/Sede", FormMethod.Post, new { @id = "form-modal-editar" }))
+        {
+            @Html.HiddenFor(model => model.SedeId)
+            @Html.HiddenFor(model => model.EntidadId)
+
+           <table  id="tblBuscarProcedimiento"
+           	   class="table table-bordered table-striped table-hover"
+           	   data-pagesize="10000"
+           	   data-page="1"
+           	   data-totalrows="0"
+           	   data-function="sut.AgregarSede.listarDetalle" 
+           	   data-paginator="paginator">
+           	<thead>
+           		<tr>
+           			<th class="colCheck">
+           			</th>
+           			<th>Tipo</th>
+           			<th> Nombre</th>
+           			<th>Distrito-Provincia-Departamento	</th>
+           			<th>Dirección</th>
+           			<th>Recepción Documentaria	</th>
+           			<th>Horario de atención		</th>
+           		</tr> 
+           	</thead>
+           	<tbody></tbody>
+           	@*<tfoot>
+           		<tr><td colspan="7"><div id="paginator"></div></td></tr>
+           	</tfoot>*@
+           </table>
+
+            <div id="msgEditar"></div>
+            <div class="modal-footer"> 
+                  <button type="button" class="btn btn-primary btn-sm" onclick="sut.AgregarSede.guardar()"><i class="fa fa-save"></i> Agregar</button>
+         
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana-editar" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+
+<script>
+
+    sut.AgregarSede = {
+        listarDetalle: function (page) {
+            debugger;
+            table = $('#tblBuscarProcedimiento');
+            var model = {
+                'filtro.Nombre': $('#txtFilterNombre').val(),
+                'filtro.Direccion': $('#txtFilterDireccion').val(),
+                'filtro.SedeId': @ViewBag.SedeId ,
+                'pageIndex': page,
+                'pageSize': 10000
+            };
+
+            $.ajax({
+                //url: '/Simplificacion/Procedimiento/GetAllLikePaginByTupa',
+                url: '@Url.Content("~/Simplificacion/Sede/GetAllLikePaginDetalleSede")',
+                type: 'GET',
+                data: model,
+                dataType: 'json',
+                beforeSend: function () {
+                    sut.wait.appendProgress('#tblBuscarProcedimiento .modal-footer');
+                },
+                success: function (data) {
+                    sut.wait.removeProgress('#tblBuscarProcedimiento .modal-footer');
+                    table.data('page', page);
+                    table.data('totalrows', data.totalRows);
+                    sut.AgregarSede.generardetalle(table, data.lista);
+                },
+                error: function (data) {
+                    sut.error.show('mensajes', data.responseText);
+                }
+            });
+        },
+        generardetalle: function (table, lista) {
+            debugger;
+            var tabla = table.children('tbody');
+            tabla.children('tr').remove();
+            var rows = '';
+            var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+            $.each(lista, function (i, r) {
+
+                rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarProcedimiento{0}" type="checkbox"    value="{0}" /></td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td><td>{6}</td></tr>',
+                                    r.SedeId,r.TipoSede, r.Nombre, r.Ubigeo, r.Direccion, r.ListaUndOrganica, r.Horario);
+            });
+            sut.pagination.update(table);
+            tabla.append(rows);
+        },
+        guardar: () => {
+
+
+            debugger;
+            var data = [];
+            $('input[type=checkbox]:checked').each(function () {
+                console.log("Checkbox " + $(this).prop("id") + " (" + $(this).val() + ") Seleccionado");
+                var n = $(this).prop("id").replace("Checked", "MetaDatoId");
+                var n = $('#'+n).val();
+
+                data.push({ SedeId: n });
+            }); 
+          
+         
+
+            $.ajax({
+                type: "POST",
+                //url: "/Seguridad/Opcion/Guardar",
+                url: '@Url.Content("~/Simplificacion/Sede/Agregargrupo")',
+                data: {  SedeId: @ViewBag.SedeId,  opcionsede: data,},
+                dataType: 'json',
+                beforeSend: () => {
+                    sut.wait.appendProgress('.modal-footer');
+                },
+                complete: () => {
+                    sut.wait.removeProgress('.modal-footer');
+                },
+                success: (result) => {
+                    $('#modal-ventana').modal('hide');
+                    sut.msg.success(result.mensaje, function () {
+                        location.reload();
+                    });
+
+                },
+                error: (result) => {
+                    sut.wait.removeProgress('.modal-footer');
+                    showNotification('top', 'right', 'Error al guardar.', 2);
+                },
+                statusCode: {
+                    203: () => { window.location.reload(); }
+                }
+            });
+        },
+
+
+    };
+
+    $(function () {
+
+        sut.AgregarSede.listarDetalle(1);
+
+    });
+
+</script>
+
+
+
+

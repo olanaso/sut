@@ -1,0 +1,209 @@
+﻿@{
+    ViewBag.Title = "Mapa de Procedimientos";
+    ViewBag.Descripcion = "Registro de Categorías, Temáticas, Tipo, SubTipo y Específicas de Procedimientos";
+}
+
+<div id="mensajes"></div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body">
+                <div class="btn-group">
+                    <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-plus"></i> Agregar <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="javascript:sut.MapaProcedimiento.editar(0, 1)">Categoría</a></li>
+                        <li><a href="javascript:sut.MapaProcedimiento.editar(0, 2)">Temática</a></li>
+                        <li><a href="javascript:sut.MapaProcedimiento.editar(0, 3)">Tipo</a></li>
+                        <li><a href="javascript:sut.MapaProcedimiento.editar(0, 4)">Sub Tipo</a></li>
+                        <li><a href="javascript:sut.MapaProcedimiento.editar(0, 5)">Específica</a></li>
+                    </ul>
+                </div>
+
+                <br />
+                <div id="divLista"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+@section Style {
+    <style type="text/css">
+        
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.MapaProcedimiento = {
+            init: () => {
+                jcd.create('JsonStore', { id: 'stTipo', recordId: 'Value', fields: [{ name: 'Text' }, { name: 'Value' }], data: @Html.Raw(ViewBag.ListaTipo) });
+
+                jcd.create('Grid', {
+                    id: 'gridLista',
+                    store: jcd.create('JsonStore', {
+                        id: 'stLista',
+                        recordId: 'MapaProcedimientoId',
+                        fields: [
+                            { name: 'MapaProcedimientoId' },
+                            { name: 'PadreId' },
+                            { name: 'Codigo' },
+                            { name: 'Nombre' },
+                            { name: 'Tipo' },
+                        ],
+                        pageIndex: 1,
+                        pageSize: 20,
+                        ajax: {
+                            url: '@Url.Action("GetAllLikePagin", "MapaProcedimiento", new { area = "Simplificacion" })',
+                            data: {
+                                'filtro.Codigo': () => App.txtFilterCodigo.$().val(),
+                                'filtro.Nombre': () => App.txtFilterNombre.$().val(),
+                                'filtro.FilterTipo': () => App.cbFilterTipo.$().val(),
+                            },
+                            autoLoad: false
+                        },
+                    }),
+                    header: [
+                        jcd.create('Button', {
+                            icon: 'fa fa-filter', aditionalClass: 'btn-xs', handler: {
+                                click: (e) => {
+                                    App.cbFilterTipo.$().val('0');
+                                    App.txtFilterCodigo.$().val('');
+                                    App.txtFilterNombre.$().val('');
+                                    App.stLista.reload({ pageIndex: 1 });
+                                }
+                            }
+                        }),
+                        jcd.create('TextBox', {
+                            id: 'txtFilterCodigo',
+                            aditionalClass: 'input-sm',
+                            handler: {
+                                keypress: (e) => {
+                                    if (e.which == 13)
+                                        App.stLista.reload({ pageIndex: 1 });
+                                }
+                            }
+                        }),
+                        jcd.create('TextBox', {
+                            id: 'txtFilterNombre',
+                            aditionalClass: 'input-sm',
+                            handler: {
+                                keypress: (e) => {
+                                    if (e.which == 13)
+                                        App.stLista.reload({ pageIndex: 1 });
+                                }
+                            }
+                        }),
+                        jcd.create('ComboBox', { id: 'cbFilterTipo', store: 'stTipo', displayField: 'Text', valueField: 'Value', aditionalClass: 'input-sm', handler: { change: (e) => App.stLista.reload({ pageIndex: 1 }) } }),
+                        ''
+                    ],
+                    columns: [
+                        jcd.create('RowNumberColumn', { width: 50 }),
+                        jcd.create('GridColumn', { name: 'Código', dataIndex: 'Codigo' }),
+                        jcd.create('GridColumn', { name: 'Nombre' }),
+                        jcd.create('GridColumn', { name: 'Tipo' }),
+                        jcd.create('ActionColumn', {
+                            width: 50,
+                            commands: [
+                                { icon: 'fa fa-pencil', color: 'btn-success', callback: (e) => { sut.MapaProcedimiento.editar(e.record.MapaProcedimientoId); } }
+                            ]
+                        })
+                    ],
+                    footer: [jcd.create('Paginator', { id: 'pagLista', store: 'stLista' })]
+                });
+
+                App.gridLista.renderTo($('#divLista'));
+                App.cbFilterTipo.update();
+                App.stLista.reload();
+            },
+            editar: function (id, tipo) {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/MapaProcedimiento/Editar',
+                    url: '@Url.Content("~/Simplificacion/MapaProcedimiento/Editar")',
+                    data: { id: id, tipo: tipo },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            listar: function (page) {
+                table = $('#tblLista');
+                var model = {
+                    'filtro.Nombre': $('#txtFilterNombre').val(),
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+                $.ajax({
+                    //url: "/Simplificacion/UnidadOrganica/GetAllLikePagin",
+                    url: '@Url.Content("~/Simplificacion/UnidadOrganica/GetAllLikePagin")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.UnidadOrganica.generar(data.lista);
+                        if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='3' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            },
+            generar: function (lista) {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += sut.string.format('<td>{0}</td>', r.Nombre);
+                    rows += '<td>';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.UnidadOrganica.editar({0})" ><i class="fa fa-pencil"></i></a>', r.UnidadOrganicaId);
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            }
+        };
+
+        $(function () {
+            sut.MapaProcedimiento.init();
+            //sut.UnidadOrganica.listar(1);
+
+            $('#txtFilterNombre').keypress(function (e) {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.UnidadOrganica.listar(1);
+            });
+            $('#tblLista thead button').click(function (e) {
+                $('#txtFilterNombre').val('');
+                sut.UnidadOrganica.listar(1);
+            });
+        });
+    </script>
+}

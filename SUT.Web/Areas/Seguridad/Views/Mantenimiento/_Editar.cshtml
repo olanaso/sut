@@ -1,0 +1,106 @@
+﻿@model Sut.Entities.MetaDato
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">Plan de Trabajo</h4>
+        </div>
+        <div class="modal-body form-horizontal">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-editar" }))
+            {
+                @Html.HiddenFor(model => model.MetaDatoId)
+                @Html.HiddenFor(model => model.PadreId)
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Nombre</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control input-sm"})
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12"> Tipo Evaluación </label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => model.TipoRegla, ViewBag.tiporegla as List<SelectListItem>, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+            }            
+        </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer"> 
+           <button type="button" class="btn btn-success btn-sm" onclick="sut.editMantenimiento.guardar()"><i class="fa fa-save"></i> Guardar</button> 
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+
+<script>
+    sut.editMantenimiento = {
+        guardar: () => { 
+            if ($("#form-editar").valid()) {
+           
+                var model = $('#form-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/PlanTrabajo/Guardar",
+                    url: '@Url.Content("~/Seguridad/Mantenimiento/Guardar")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-editar button').eq(0).removeAttr("disabled");
+                        $('#form-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, function () {
+                            sut.Mantenimiento.listar(1);
+                        });
+                    },
+                    error: function (result) {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-editar button').eq(0).removeAttr("disabled");
+                        $('#form-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            }
+        }  
+    }; 
+    $(function () { 
+
+        $('#form-editar').validate({
+            errorPlacement: function (error, element) {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                Nombre: 'required'
+            },
+            messages: {
+
+            }
+        });
+    });
+
+</script>
+
+
+
+

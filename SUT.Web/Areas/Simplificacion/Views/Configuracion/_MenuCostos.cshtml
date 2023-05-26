@@ -1,0 +1,397 @@
+﻿@model Sut.Entities.Expediente
+@{
+    
+    var activar = "active";
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+}
+
+<div class="nav-tabs-custom">
+
+    <ul class="nav nav-tabs" style="text-align:center">
+        @if (@ViewBag.TipoRecursos == 1)
+        {
+            if (@user.rolmenu[0].Ver == true) { 
+                if (@Model.ObsCP == 0)
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(0)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Personal</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(0)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Personal</a>
+                    </li>
+                }
+            }
+        }
+        else
+        {
+            if (@Model.ObsCP == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(0)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Personal</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(0)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Personal</a>
+                </li>
+            } 
+        }
+
+        @if (@ViewBag.TipoRecursos == 2)
+        {
+            if (@user.rolmenu[0].Ver == true)
+            {
+                if (@Model.ObsCMF == 0)
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(1)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Material Fungible</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(1)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Material Fungible</a>
+                    </li>
+                }
+
+
+            }
+        }
+        else
+        {
+            if (@Model.ObsCMF == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(1)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Material Fungible</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(1)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Material Fungible</a>
+                </li>
+            }
+        }
+
+        @if (@ViewBag.TipoRecursos == 3)
+        {
+            if (@user.rolmenu[0].Ver == true)
+            {
+
+                if (@Model.ObsCSI == 0)
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica2" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(2)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Servicio Identificable</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica2" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(2)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Servicio Identificable</a>
+                    </li>
+                }
+
+
+            }
+        }
+        else
+        {
+            if (@Model.ObsCSI == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica2" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(2)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Servicio Identificable</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica2" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(2)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Servicio Identificable</a>
+                </li>
+            }
+        }
+
+
+        @if (@ViewBag.TipoRecursos == 4)
+        {
+            if (@user.rolmenu[0].Ver == true)
+            {
+                if (@Model.ObsCMNF == 0)
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica3" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(3)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Material No Fungible</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica3" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(3)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Material No Fungible</a>
+                    </li>
+                }
+
+            }
+        }
+        else
+        {
+            if (@Model.ObsCMNF == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica3" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(3)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Material No Fungible</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica3" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(3)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Material No Fungible</a>
+                </li>
+            }
+        }
+
+
+        @if (@ViewBag.TipoRecursos == 5)
+        {
+            if (@user.rolmenu[0].Ver == true)
+            {
+
+                if (@Model.ObsCST == 0)
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica4" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(4)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Servicio de Terceros</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica4" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(4)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Servicio de Terceros</a>
+                    </li>
+                }
+
+
+            }
+        }
+        else
+        {
+            if (@Model.ObsCST == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica4" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(4)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Servicio de Terceros</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica4" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(4)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Servicio de Terceros</a>
+                </li>
+            } 
+        }
+
+        @if (@ViewBag.TipoRecursos == 6)
+        {
+            if (@user.rolmenu[0].Ver == true)
+            {
+
+                if (@Model.ObsCDA == 0)
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica5" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(5)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Depreciación y Amortización</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica5" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(5)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Depreciación y Amortización</a>
+                    </li>
+                }
+
+
+            }
+        }
+        else
+        {            
+            if (@Model.ObsCDA == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica5" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(5)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos de <br /> Depreciación y Amortización</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica5" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(5)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos de <br /> Depreciación y Amortización</a>
+                </li>
+            } 
+        }
+
+
+        @if (@ViewBag.TipoRecursos == 7)
+        {
+            if (@user.rolmenu[0].Ver == true)
+            {
+
+                if (@Model.ObsCF == 0)
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(6)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos <br /> Fijos </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(6)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos <br /> Fijos </a>
+                    </li>
+                }
+
+            }
+        }
+        else
+        {
+            if (@Model.ObsCF == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(6)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Costos <br /> Fijos </a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(6)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Costos <br /> Fijos </a>
+                </li>
+            }
+             
+        }
+
+
+        @if (@ViewBag.TipoRecursos == 8)
+        {
+            if (@user.rolmenu[0].Ver == true)
+            {
+                if (@Model.ObsVI == 0)
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(7)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Valores de <br /> Inductores</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(7)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Valores de <br /> Inductores</a>
+                    </li>
+                }
+
+            }
+        }
+        else
+        {
+            if (@Model.ObsVI == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(7)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Valores de <br /> Inductores</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(7)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Valores de <br /> Inductores</a>
+                </li>
+            }
+        }
+
+
+
+        @if (@ViewBag.TipoRecursos == 9)
+        {
+            if (@user.rolmenu[0].Ver == true)
+            {
+                if (@Model.ObsIAC == 0)
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(8)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Inductor de <br /> Asignación de Costos</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="@activar">
+                        <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(8)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Inductor de <br /> Asignación de Costos</a>
+                    </li>
+                }
+
+            }
+        }
+        else
+        {
+            if (@Model.ObsIAC == 0)
+            {
+                <li>
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(8)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Inductor de <br /> Asignación de Costos</a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#edit-info-basica6" data-toggle="tab" onclick="javascript:sut.MenuCostos.visualizar(8)" aria-expanded="false" style="border-radius: 10px;background: #ff00002e;"><i class="fa fa-file"></i> Inductor de <br /> Asignación de Costos</a>
+                </li>
+            }
+        }
+         
+    </ul>
+</div>
+ 
+@section Script {
+    <script>
+        function openCity(evt, cityName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        sut.MenuCostos = {
+            visualizar: function (valor) {
+                debugger;
+
+
+                if (valor == 0) {
+                    @*window.location = '/Simplificacion/Configuracion/CostoPersonal/@Model.ExpedienteId';*@
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoPersonal/")@Model.ExpedienteId';
+                } else if (valor == 1) {
+                    @*window.location = '/Simplificacion/Configuracion/CostoMatFungible/@Model.ExpedienteId';*@
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoMatFungible/")@Model.ExpedienteId';
+                } else if (valor == 2) {
+                    @*window.location = '/Simplificacion/Configuracion/CostoServIdentificable/@Model.ExpedienteId';*@
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoServIdentificable/")@Model.ExpedienteId';
+                } else if (valor == 3) {
+                    @*window.location = '/Simplificacion/Configuracion/CostoMatNoFungible/@Model.ExpedienteId';*@
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoMatNoFungible/")@Model.ExpedienteId';
+                } else if (valor == 4) {
+                    @*window.location = '/Simplificacion/Configuracion/CostoServTerceros/@Model.ExpedienteId';*@
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoServTerceros/")@Model.ExpedienteId';
+                } else if (valor == 5) {
+                    @*window.location = '/Simplificacion/Configuracion/CostoDepreciacion/@Model.ExpedienteId';*@
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoDepreciacion/")@Model.ExpedienteId';
+                } else if (valor == 6) {
+                    @*window.location = '/Simplificacion/Configuracion/CostoFijo/@Model.ExpedienteId';*@
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/CostoFijo/")@Model.ExpedienteId';
+                } else if (valor == 7) {
+                    @*window.location = '/Simplificacion/Configuracion/ConfigInductor/@Model.ExpedienteId';*@
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/ConfigInductor/")@Model.ExpedienteId';
+                } else if (valor == 8) {
+                    @*window.location = '/Simplificacion/Configuracion/FactorTupa/@Model.ExpedienteId';*@
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/FactorTupa/")@Model.ExpedienteId';
+                } else if (valor == 9) {
+                    @*window.location = '/Simplificacion/Configuracion/Resumen/@exp.ExpedienteId';*@
+                    window.location = '@Url.Content("~/Simplificacion/Configuracion/Resumen/")@Model.ExpedienteId';
+                }
+            }
+        };
+
+    </script>
+}

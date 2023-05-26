@@ -1,0 +1,77 @@
+﻿
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">Seleccionar</h4>
+        </div>
+        <div class="modal-body">
+            <br />
+            <label><input type="radio" name="punto1" id="rbPunto1" checked />Expediente Carga Inicial</label>
+            <br />
+            Permite registrar el contenido del TUPA vigente. Se registran los procedimientos administrativos y servicios prestados en exclusividad con sus correspondientes “Datos generales” (Información contenida en el TUPA vigente) e “Información complementaria para la ciudadanía” (sedes de atención, áreas de recepción de documentación, notas, pasos a seguir, canales de atención, formas de pago, entre otros). 
+            <br />
+            <br />
+            <label><input type="radio" name="punto1" /> Expediente Regular</label>
+            Permite elaborar o modificar el TUPA de la Entidad. Se registran los procedimientos administrativos y servicios prestados en exclusividad con sus correspondientes “Datos generales”, “Sustentos técnico legal”, “Tablas ASME” e “Información complementaria para la ciudadanía”; además, se debe calcular los derechos de tramitación con el nuevo “Módulo de Costos” incluido en el expediente regular. 
+            <br/>
+            <br/>
+            <strong> La entidad puede decidir realizar el “Expediente Regular”, por considerar necesaria la actualización del TUPA vigente o por no contar con TUPA.</strong> 
+           
+        </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success btn-sm" onclick="sut.DeclaracionJurada.aceptar()"><i class="fa fa-check"></i> Aceptar</button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+<script>
+
+    sut.DeclaracionJurada = {
+        aceptar: function () {
+            var flag = $('#rbPunto1').is(':checked');
+
+            $.ajax({
+                type: "POST",
+                //url: "/Simplificacion/Expediente/GeneraNuevo",
+                url: '@Url.Content("~/Simplificacion/Expediente/GeneraNuevo")',
+                data: { tipo: (flag ? 1 : 2) },
+                dataType: 'json',
+                beforeSend: function () {
+                    $("#msgEditar").hide();
+                    sut.wait.appendProgress('.modal-footer');
+                    $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                    $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                },
+                complete: function () {
+                    sut.wait.removeProgress('.modal-footer');
+                    $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                    $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                },
+                success: function (result) {
+                    $('#modal-ventana').modal('hide');
+                    if (result.exito) {
+                        //window.location = '/Simplificacion/Expediente/Editar/' + result.ExpedienteId;
+                        window.location = '@Url.Content("~/Simplificacion/Expediente/Editar/")' + result.ExpedienteId;
+                    }
+                },
+                error: function (result) {
+                    sut.wait.removeProgress('.modal-footer');
+                    $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                    $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+        }
+    };
+
+    $(() => {
+
+    });
+
+</script>
+
+

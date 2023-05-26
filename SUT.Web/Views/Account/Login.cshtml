@@ -1,0 +1,555 @@
+﻿@model Sut.Web.Models.LoginModel
+@using CaptchaMvc.HtmlHelpers
+@using CaptchaMvc;
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+
+    var captcha = Html.Captcha("Refrescar", "Escriba el texto de la imagen.", 5, "Is required field.", true);
+    var captchaStr = captcha.RenderMarkup().ToHtmlString().Replace("<br/>", "");
+}
+
+<section class="col-sm-12 wrapper-frmSesion">
+    <div class="container">
+        <div class="card col-sm-12">
+            <div class="form-login">
+                <div class="card-title pb-3">
+                    <h1 style="text-align:center; font-size: 4.0rem; line-height: 1; font-family:'Beam Weapon';color: #bf0909 !important;text-shadow: 2px 2px 4px rgba(0,0,0,.4);">SUT<sup style="font-size: 2.3rem;"></sup></h1>
+                    <h1 style="text-align:center; font-size: 1.1rem; line-height: 1; font-family:'Beam Weapon';color: #bf0909 !important;text-shadow: 2px 2px 4px rgba(0,0,0,.4);">SISTEMA ÚNICO DE TRÁMITES</h1>
+                </div>
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form", @id = "form-account-login" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                    <div class="text-left">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                            </div>
+                            @Html.DropDownListFor(model => model.TipoDoc, ViewBag.TipoDoc as List<SelectListItem>, new { id = "TipoDoc", @class = "form-control", @style = "background: #e8f0fe;" })
+                        </div>
+                    </div>
+                    <div class="text-left">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            @*@Html.TextBoxFor(m => m.UserName, new { id = "UserName", @class = "form-control", placeholder = "Nro de Documento", autocomplete = "off", oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);", type = "number", maxlength = "8" }) @style = "height: calc(2.0em + .95rem + 2px);background: #e8f0fe;"*@
+                            @Html.TextBoxFor(m => m.UserName, new { id = "UserName", @class = "form-control", placeholder = "Nro de Documento", autocomplete = "off", oninput = "numero(this.id);", maxlength = "8" })
+
+                            @Html.TextBoxFor(m => m.UserNameEncrypt, new { id = "UserNameEncrypt", @class = "form-control", type = "hidden", placeholder = "Nro de Documento", @maxlength = 12, autocomplete = "off" })
+                            @Html.TextBoxFor(m => m.NombreCompleto, new { id = "UserFullName", @class = "form-control", type = "hidden", @Value = @Model.NombreCompleto })
+                            @Html.TextBoxFor(m => m.DaysChangePassword, new { id = "DaysChangePassword", @class = "form-control", type = "hidden", @Value = @Model.DaysChangePassword })
+                        </div>
+                    </div>
+                    <div class="text-left">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            </div>
+                            @Html.TextBoxFor(m => m.Password, new { id = "Password", @class = "form-control", type = "password", placeholder = "Contraseña", autocomplete = "off" })
+
+                        </div>
+                    </div>
+
+                    <div style=" color:red">
+                        @Html.Raw(captchaStr)
+                    </div>
+                    <button type="submit" onclick="SubmitsEncry()" class="btn btn-rojo-oscuro py-md-3 mb-3" style="font-weight: inherit;">Iniciar Sesión</button>
+
+                }
+
+
+
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<div class="modal fade in" id="modal-ventana" data-backdrop="static" data-keyboard="false" data-keyboard="false">
+    <div id="ventana-container">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <section class="wrapper-frmSesion">
+
+
+                    <div class="container">
+                        <div class="card col-sm-12">
+                            <div class="form-login">
+
+                                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+
+                                    @Html.TextBoxFor(m => m.TipoDoc, new { id = "idTipoDoc", @class = "form-control", type = "hidden", autocomplete = "off" })
+                                    @Html.TextBoxFor(m => m.UserNameEncrypt, new { id = "idUserName", @class = "form-control", type = "hidden", autocomplete = "off" })
+
+
+                                    <div class="card-title pb-3">
+                                        <h1 style="text-align:center; font-size: 1.1rem; line-height: 1; font-family:'Beam Weapon';color: #bf0909 !important;text-shadow: 2px 2px 4px rgba(0,0,0,.4);">ACTUALIZAR CONTRASEÑA</h1>
+                                    </div>
+
+                                    <div class="text-left">
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                            </div>
+
+                                            @Html.TextBoxFor(m => m.PasswordOld, new { id = "PasswordAntiguo", @class = "form-control", type = "password", placeholder = "Contraseña Actual", autocomplete = "off", @required = "required", oninput = "validaPassword('');" })
+                                            @Html.TextBoxFor(m => m.Password, new { id = "hdfPassword", @class = "form-control", type = "hidden", autocomplete = "off" })
+
+
+                                        </div>
+                                    </div>
+
+                                    <div id="MsjClave" class="alert alert-danger" role="alert">
+                                        Hemos detectado que su contraseña no es segura, lo cual lo pone en riesgo ante un posible ataque de suplantación de identidad. El Sistema Único de Trámites recomienda actualizar su contraseña.
+                                    </div>
+
+
+                                    <div class="text-left">
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                            </div>
+                                            @Html.TextBoxFor(m => m.PasswordNew, new { id = "PasswordNuevo", @class = "form-control", type = "password", placeholder = "Contraseña Nueva", autocomplete = "off", oninput = "checkStrength(this.id);", @required = "required" })
+                                        </div>
+                                    </div>
+
+
+                                    <div class="text-left">
+                                        <div class="input-group mb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                            </div>
+
+                                            @Html.PasswordFor(model => model.PasswordNew, new { id = "PasswordNuevo2", @class = "form-control", type = "password", placeholder = "Confirmar Contraseña Nueva", autocomplete = "off", oninput = "checkStrength(this.id);", @required = "required" })
+                                        </div>
+                                    </div>
+
+                                    <div id="strengthMessage" class="alert alert-danger ocultar" role="alert">
+
+                                    </div>
+
+                                    <!-- Mensajes de Verificación -->
+                                    <div id="error" class="alert alert-danger ocultar" role="alert">
+                                        Las Contraseñas no coinciden, vuelve a intentar !
+                                    </div>
+
+                                    <!-- Fin Mensajes de Verificación -->
+
+
+
+                                    <div id="msgEditar"></div>
+
+                                    <div col-sm-12>
+                                        <button id="btnCambiarContrasena" @*type="button" onclick="sut.Metodos.GrabarClave()"*@ type="submit" onclick="SubmitsEncry2()" class="btn btn-rojo-oscuro py-md-3 mb-3" disabled style="font-weight: inherit;">Actualizar Contraseña</button>
+                                        <button id="btnCancelar" type="button" onclick="FOcultarModal()" class="btn btn-secondary py-md-3 mb-3" style="font-weight: inherit;">Cancelar</button>
+
+                                    </div>
+
+                                }
+                            </div>
+
+
+
+
+                        </div>
+                    </div>
+
+                </section>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="modal-ventana2" data-backdrop="static" data-keyboard="false">
+    <div class="swal2-loader" data-button-to-replace="" style="display: flex;"></div>
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+
+
+<style>
+    .ocultar {
+        display: none;
+    }
+
+    .mostrar {
+        display: block;
+    }
+
+    .sweet_footer_login {
+        display: inline-block !important;
+        justify-content: left;
+    }
+</style>
+
+<script type="text/javascript">
+
+
+    @Model.JavascriptToRun
+
+    function ShowValidatedPassword() {
+
+        //$.ajax({
+        //    url: 'http://localhost:54889/resolver',
+        //    type: 'GET',
+        //    data: { tt: t },
+        //    dataType: 'json',
+        //    success: function (response) {
+        //        // Hacer algo con la respuesta
+        //        let result = response.result;
+        //        console.log(result)
+        //    },
+        //    error: function (xhr, status, error) {
+        //        // Manejar error
+        //        console.error(error);
+        //    }
+        //});
+
+
+        var formulario = document.getElementById("form-account-login");
+
+        var txtUserFullName = document.getElementById("UserFullName").value.trim();
+        var txtDaysChangePassword = document.getElementById("DaysChangePassword").value.trim();
+        var htmlFooter = '';
+        var btnOmitir = false;
+
+        document.getElementById("btnCancelar").classList.remove("ocultar");
+        document.getElementById("btnCancelar").classList.add("mostrar");
+
+        if (parseInt(txtDaysChangePassword) > 0) {
+            btnOmitir = true;
+            htmlFooter = '<span class="swal2-confirm swal2-styled swal2-default-outline" aria-label="" style="display: block; background-color: rgb(221, 51, 51); float: left; margin: 4px -64px -48px;">' + txtDaysChangePassword + ' días restantes para actualizar su contraseña.</span>';
+
+            if (parseInt(txtDaysChangePassword) == 1) {
+                htmlFooter = '<span class="swal2-confirm swal2-styled swal2-default-outline" aria-label="" style="display: block; background-color: rgb(221, 51, 51); float: left; margin: 4px -64px -48px;">' + txtDaysChangePassword + ' día restante para actualizar su contraseña.</span>';
+
+            }
+        }
+
+        if (parseInt(txtDaysChangePassword) == 0) {
+            btnOmitir = true;
+            htmlFooter = '<span class="swal2-confirm swal2-styled swal2-default-outline" aria-label="" style="display: block; background-color: rgb(221, 51, 51); float: left; margin: 4px -64px -48px;">Hoy es el último día para actualizar su contraseña.</span>';
+
+
+        }
+
+        Swal.fire({
+            //position: 'bottom-end',
+            title: 'SISTEMA ÚNICO DE TRÁMITES',
+            html:
+                '<p align="left">Saludos ' + txtUserFullName + ':</p><br/>' +
+                '<p align="justify">' +
+                'Hemos detectado que su contraseña no es segura, lo cual lo pone en riesgo ante un posible ataque de suplantación de identidad.<br/>' +
+                'El Sistema Único de Trámites recomienda actualizar su contraseña la cual debe contener como minimo 10 caracteres, una letra mayúscula y una minúscula, un número y un carácter especial.</p>',
+            width: 650,
+            padding: '3em',
+            color: '#bf0909',
+            background: '#fff url(../dist/img/fondo_aplicativo.svg) no-repeat 2em 21.0cm fixed',
+            //   backdrop: 'rgba(0,0,123,0.4)  url("/images/nyan-cat.gif") left top  no-repeat',
+            showCancelButton: true,
+            showConfirmButton: btnOmitir,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            showLoaderOnConfirm: true,
+            confirmButtonText: 'OMITIR',
+            cancelButtonText: 'ACTUALIZAR CONTRASEÑA',
+            reverseButtons: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+            customClass: {
+                footer: 'sweet_footer_login'
+            },
+            footer: htmlFooter,
+            preConfirm: (login) => {
+                return fetch(`//api.github.com/users/${login}`)
+                    .then(response => {
+                        if (!response.ok) {
+                        }
+                        return response.json()
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(
+
+                        )
+                    })
+            }
+
+        }).then((result) => {
+            if (result.isConfirmed) {
+                FMostrarLoading();
+                document.getElementById("UserFullName").value = 'omitir';
+                formulario.submit();
+            }
+            else {
+                FMostrarModal();
+            }
+        })
+
+    }
+
+    function FMostrarModal() {
+
+        document.getElementById("UserName").value = "";
+        document.getElementById("Password").value = "";
+        $('#modal-ventana').modal('show');
+    }
+
+    function FOcultarModal() {
+        document.getElementById("UserName").value = "";
+        document.getElementById("Password").value = "";
+        $('#modal-ventana').modal('hide');
+    }
+
+    function FMostrarLoading() {
+
+        $('#modal-ventana2').modal('show');
+    }
+
+
+</script>
+
+
+<script src="~/Scripts/aes.min.js"></script>
+<script>
+
+
+    function numero(id) {
+        var element = document.getElementById(id);
+        element.value = element.value.replace(/[^0-9]/gi, "");
+    }
+
+    function SubmitsEncry() {
+
+        FMostrarLoading();
+
+        var txtUserName = document.getElementById("UserName").value.trim();
+        var txtpassword = document.getElementById("Password").value.trim();
+        document.getElementById("hdfPassword").value = txtpassword;
+
+
+        var key = CryptoJS.enc.Utf8.parse('8080808080808080');
+        var iv = CryptoJS.enc.Utf8.parse('8080808080808080');
+        var encryptedlogin = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtUserName), key,
+            {
+                keySize: 128 / 8,
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+        var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpassword), key,
+            {
+                keySize: 128 / 8,
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+        document.getElementById("UserNameEncrypt").value = encryptedlogin;
+        document.getElementById("Password").value = encryptedpassword;
+
+        //document.getElementById("idUserName").value = encryptedlogin;
+        //document.getElementById("idTipoDoc").value = document.getElementById("TipoDoc").value.trim();
+
+
+    }
+
+    function SubmitsEncry2() {
+
+        FMostrarLoading();
+
+        var txtpasswordOld = document.getElementById("PasswordAntiguo").value.trim();
+        var txtpasswordNew = document.getElementById("PasswordNuevo").value.trim();
+        var txtpasswordNew2 = document.getElementById("PasswordNuevo2").value.trim();
+
+
+        var key = CryptoJS.enc.Utf8.parse('8080808080808080');
+        var iv = CryptoJS.enc.Utf8.parse('8080808080808080');
+
+        var encryptedTxtpasswordOld = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpasswordOld), key,
+            {
+                keySize: 128 / 8,
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+
+        var encryptedTxtpasswordNew = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpasswordNew), key,
+            {
+                keySize: 128 / 8,
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+
+        var encryptedTxtpasswordNew2 = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpasswordNew2), key,
+            {
+                keySize: 128 / 8,
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+
+
+
+
+        document.getElementById("PasswordAntiguo").value = encryptedTxtpasswordOld;
+        document.getElementById("PasswordNuevo").value = encryptedTxtpasswordNew;
+        document.getElementById("PasswordNuevo2").value = encryptedTxtpasswordNew2;
+
+
+        document.getElementById("UserName").value = "";
+        document.getElementById("Password").value = "";
+
+        document.getElementById("btnCancelar").classList.remove("mostrar");
+        document.getElementById("btnCancelar").classList.add("ocultar");
+
+        return true;
+
+    }
+
+    function checkStrength(id) {
+
+        var password = document.getElementById(id).value;
+        document.getElementById("btnCambiarContrasena").disabled = true;
+
+        var pass1 = document.getElementById('PasswordNuevo');
+        var pass2 = document.getElementById('PasswordNuevo2');
+        var mensaje = '';
+
+        if (password.length < 10) {
+            mensaje = 'La contraseña debe tener al menos 10 caracteres <br/>';
+        }
+
+        if (!password.match(/([A-Z])/)) {
+            mensaje = mensaje + ' La contraseña debe tener al menos 1 mayuscula <br/>';
+        }
+
+        if (!password.match(/([a-z])/)) {
+            mensaje = mensaje + ' La contraseña debe tener al menos 1 minuscula <br/>';
+        }
+
+        if (!password.match(/([0-9])/)) {
+            mensaje = mensaje + ' La contraseña debe tener al menos 1 numero <br/>';
+        }
+
+        if (!password.match(/([()",\-\,!,%,&,#,$,^,*,?,_,~,/,@@])/)) {
+            mensaje = mensaje + ' La contraseña debe tener al menos 1 caracter especial "-(@@/&$#!%_?*)<br/>';
+        }
+
+        if (mensaje != '') {
+
+            document.getElementById("strengthMessage").classList.add("mostrar");
+            document.getElementById("strengthMessage").innerHTML = mensaje;
+            document.getElementById("btnCambiarContrasena").disabled = true;
+
+        }
+        else {
+
+            document.getElementById("strengthMessage").classList.remove("mostrar");
+            document.getElementById("strengthMessage").innerHTML = '';
+
+
+            if (pass1.value != pass2.value) {
+                document.getElementById("error").classList.add("mostrar");
+                document.getElementById("btnCambiarContrasena").disabled = true;
+            }
+            else {
+                document.getElementById("error").classList.remove("mostrar");
+
+                if (mensaje.length > 0) {
+                    document.getElementById("btnCambiarContrasena").disabled = true;
+                }
+                else {
+                    console.log('checkStrength');
+                    document.getElementById("btnCambiarContrasena").disabled = false;
+                }
+
+
+            }
+
+
+        }
+        validaPassword(mensaje);
+
+    }
+
+
+    function validaPassword(mensaje) {
+
+        var txtpasswordOld = document.getElementById("PasswordAntiguo").value.trim();
+
+        var pass1 = document.getElementById('PasswordNuevo');
+        var pass2 = document.getElementById('PasswordNuevo2');
+
+
+        if (txtpasswordOld == null || txtpasswordOld == '') {
+
+            document.getElementById("btnCambiarContrasena").disabled = true;
+        }
+        else {
+
+
+            var key = CryptoJS.enc.Utf8.parse('8080808080808080');
+            var iv = CryptoJS.enc.Utf8.parse('8080808080808080');
+            var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(txtpasswordOld), key,
+                {
+                    keySize: 128 / 8,
+                    iv: iv,
+                    mode: CryptoJS.mode.CBC,
+                    padding: CryptoJS.pad.Pkcs7
+                });
+
+
+
+            if (document.getElementById("hdfPassword").value == encryptedpassword) {
+                document.getElementById("MsjClave").classList.remove("mostrar");
+                document.getElementById("MsjClave").classList.add("ocultar");
+                document.getElementById("MsjClave").innerHTML = '';
+                console.log('validaPassword');
+                document.getElementById("btnCambiarContrasena").disabled = false;
+            }
+            else {
+                document.getElementById("MsjClave").classList.add("mostrar");
+                document.getElementById("MsjClave").innerHTML = 'La contraseña no es correcta';
+                document.getElementById("btnCambiarContrasena").disabled = true;
+            }
+
+        }
+
+        if (pass1.value != pass2.value) {
+            document.getElementById("btnCambiarContrasena").disabled = true;
+        }
+
+        if (pass1.value.length == 0 || pass2.value.length == 0) {
+            document.getElementById("btnCambiarContrasena").disabled = true;
+        }
+
+
+        if (mensaje != '') {
+
+            document.getElementById("strengthMessage").classList.add("mostrar");
+            document.getElementById("strengthMessage").innerHTML = mensaje;
+            document.getElementById("btnCambiarContrasena").disabled = true;
+
+        }
+
+    }
+
+  
+
+
+                
+
+</script>
+

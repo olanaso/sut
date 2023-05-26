@@ -1,0 +1,1507 @@
+﻿ @using Sut.Entities;
+@model MaestroFijo
+@{
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Información Predeterminada";
+    ViewBag.Descripcion = "Estos datos se agregarán a todos los procedimientos nuevos del Expediente activo";
+
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo; 
+}
+
+<div class="callout callout-warning" style="display: inherit;height: inherit; padding: inherit;">
+    Seleccione los datos que apareceran marcados por defecto en nuevos procedimientos administrativos o servicios prestados en exclusividad.
+    <br />También podrá copiar la información seleccionada a todos los Procedimientos Administrativos.
+</div>
+
+<div id="mensajes">
+    @{Html.RenderPartial("_Error");}
+</div>
+
+<div class="menu-compensador" style="display:none"></div>
+@*<div class="menu-movil">
+    <div id="divBotones" class="box box-solid fijo">
+        <div class="box-body">
+            <div class="btn-group pull-right">
+                <a href="javascript:sut.MaestroFijo.guardar()" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</a>
+            </div>
+        </div>
+    </div>
+</div>*@
+
+
+@using (Html.BeginForm("Editart", "MaestroFijo", new { @area = "Simplificacion" }, FormMethod.Post, new { @id = "form-editar" }))
+{
+    @Html.HiddenFor(model => model.MaestroFijoId)
+    @Html.HiddenFor(model => model.EntidadId)
+    
+    <div class="box box-danger" id="idgeneral">
+        <div class="box-body form-horizontal">
+
+            <div class="table-responsive" >
+                <h3>Sede de atención de los trámites</h3>
+                <table id="tblSede" class="table table-condensed table-bordered table-striped" data-cant="0">
+                    <thead>
+                        <tr>
+                            <th style="width:50px;"></th>
+                            <th>Nombre</th>
+                            <th>Distrito-Provincia-Departamento</th>
+                            <th>Dirección</th>
+                            <th style="width:50px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @*@if (Model.MaestroFijoSede.Count() > 0)
+                            {
+                                for (i = 0; i < Model.MaestroFijoSede.Count(); i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.HiddenFor(model => model.MaestroFijoSede[i].MaestroFijoId)
+                                            @Html.HiddenFor(model => model.MaestroFijoSede[i].SedeId)
+                                            @Html.CheckBoxFor(model => model.MaestroFijoSede[i].Checked)
+                                        </td>
+                                        <td>@Model.MaestroFijoSede[i].Sede.Nombre</td>
+                                        <td>@Model.MaestroFijoSede[i].Sede.Distrito.Ruta</td>
+                                        <td>@Model.MaestroFijoSede[i].Sede.Direccion</td>
+                                        <td>
+                                            <a class="btn btn-default btn-xs" href="#"><i class="fa fa-copy"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5">NO EXISTEN SEDES REGISTRADAS EN LA ENTIDAD.</td>
+                                </tr>
+                            }*@
+
+                    </tbody>
+                </table>
+            </div>
+
+            <hr />
+
+
+            <div class="table-responsive">
+                <table id="tblNota" class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;">
+                    <thead>
+                        <tr>
+                            <th style="width:100px;">
+                                @if (@user.rolmenu[0].Agregar == true) {
+                                <a href="javascript:sut.MaestroFijo.Nota.add()" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
+                                }
+                            </th>
+                            <th colspan="2">Notas al Ciudadano</th>
+                            <th style="width:50px;"></th>
+                        </tr>
+                        <tr>
+                            <th colspan="4">
+                                <div class="callout callout-warning" style="height: inherit; padding: inherit;display: block;">
+                                    Colocar las observaciones o información necesaria que facilite el entendimiento del procedimiento.
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <hr />
+
+            <div class="table-responsive">
+                <h3>Pasos a seguir para la atención de un trámite</h3>
+                <table id="tblPasoSeguir" class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;">
+                    <thead>
+                        <tr>
+                            <th style="width:100px;">
+                            @if (@user.rolmenu[0].Agregar == true) {
+                               <a href="javascript:sut.MaestroFijo.PasoSeguir.add()" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
+                            }
+                            </th>
+                            <th>Pasos a Seguir</th>
+                            <th style="width:50px;"></th>
+                        </tr>
+                        <tr>
+                            <th colspan="4">
+                                <div class="callout callout-warning" style="height: inherit; padding: inherit;display: block;">
+                                    Colocar los pasos necesarios que debe seguir el usuario para el procedimiento.
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 0;
+                        }
+
+                        @for (i = 0; i < Model.MaestroFijoPasoSeguir.Count(); i++)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.HiddenFor(model => model.MaestroFijoPasoSeguir[i].PasoSeguirId)
+                                    <span>@(i + 1)</span>
+                                </td>
+                                <td>@Html.TextAreaFor(model => model.MaestroFijoPasoSeguir[i].Descripcion, new { @class = "form-control", style = "scroll-behavior: smooth;resize:vertical;" ,@esbasedatos = true })</td>
+                                <td>
+                                    @if (@user.rolmenu[0].Copiar == true) {
+                                    <a class="btn btn-default btn-xs" data-copiar="1" href="#"><i class="fa fa-copy"></i></a>
+                                    }
+                                    @if (@user.rolmenu[0].Eliminar == true)
+                                    {
+                                    <a class="btn btn-default btn-xs" href="javascript:sut.MaestroFijo.PasoSeguir.delete(@Model.MaestroFijoPasoSeguir[i].PasoSeguirId)"><i class="fa fa-close"></i></a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <hr />
+
+            <div class="table-responsive">
+                <table id="tblCanales" class="table table-condensed table-bordered table-striped" >
+                    <thead>
+                        <tr>
+                            <th style="width:50px;"></th>
+                            <th style="width:30%;">Canales de Atención</th>
+                            <th style="width:70%;">Comentarios</th>
+                            <th style="width:50px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+                        @if (Model.MaestroFijoDatoAdicional.Count(x => x.Tipo == 1) > 0)
+                        {
+                            for (i = 0; i < Model.MaestroFijoDatoAdicional.Count(x => x.Tipo == 1); i++)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.HiddenFor(model => model.MaestroFijoDatoAdicional[i].MaestroFijoId)
+                                        @Html.HiddenFor(model => model.MaestroFijoDatoAdicional[i].MetaDatoId)
+                                        @Html.CheckBoxFor(model => model.MaestroFijoDatoAdicional[i].Checked)
+                                    </td>
+                                    <td>@Model.MaestroFijoDatoAdicional[i].MetaDato.Nombre</td>
+                                    @*@if (!@Model.MaestroFijoDatoAdicional[i].MetaDato.Nombre.Equals("Oficinas de la Entidad"))
+                                        {*@
+                                    <td>@Html.TextAreaFor(model => model.MaestroFijoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.MaestroFijoDatoAdicional[i].MetaDato.Texto01 })</td>
+                                    @*}*@
+
+                                    <td>
+                                        @*@if (!@Model.MaestroFijoDatoAdicional[i].MetaDato.Nombre.Equals("Oficinas de la Entidad"))
+                                            {*@
+                                        @if (@user.rolmenu[0].Copiar == true) { 
+                                        <a class="btn btn-default btn-xs" href="javascript:sut.MaestroFijo.copiaDatoAdicionalCambios(@Model.MaestroFijoDatoAdicional[i].MaestroFijoId,@Model.MaestroFijoDatoAdicional[i].MetaDatoId,'@Model.MaestroFijoDatoAdicional[i].Checked','@Model.MaestroFijoDatoAdicional[i].Comentario')"><i class="fa fa-copy"></i></a>
+                                        }
+                                        @*}*@
+
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="4">NO SE TIENEN CANALES DE ATENCIÓN DISPONIBLES</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <hr />
+
+            <div class="table-responsive">
+                <table id="tblFormasPago" class="table table-condensed table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:50px;"></th>
+                            <th style="width:30%;">Formas de Pago</th>
+                            <th style="width:70%;">Comentarios</th>
+                            <th style="width:50px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.MaestroFijoDatoAdicional.Count(x => x.Tipo == 2) > 0)
+                        {
+                            for (; i < Model.MaestroFijoDatoAdicional.Count(); i++)
+                            {
+                                if (Model.MaestroFijoDatoAdicional[i].MetaDato.Entero01 != Model.MaestroFijoDatoAdicional[i - 1].MetaDato.Entero01)
+                                {
+                                    <tr>
+                                        <td></td>
+                                        <td><strong>@Model.MaestroFijoDatoAdicional[i].MetaDato.Padre.Nombre</strong></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td>
+                                        @Html.HiddenFor(model => model.MaestroFijoDatoAdicional[i].MaestroFijoId)
+                                        @Html.HiddenFor(model => model.MaestroFijoDatoAdicional[i].MetaDatoId)
+                                        @Html.CheckBoxFor(model => model.MaestroFijoDatoAdicional[i].Checked)
+                                    </td>
+                                    <td>@Model.MaestroFijoDatoAdicional[i].MetaDato.Nombre</td>
+                                    <td>@Html.TextAreaFor(model => model.MaestroFijoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.MaestroFijoDatoAdicional[i].MetaDato.Texto01 })</td>
+                                    <td>
+                                        @if (@user.rolmenu[0].Copiar == true)
+                                        {
+                                        <a class="btn btn-default btn-xs" href="javascript:sut.MaestroFijo.copiaDatoAdicionalCambios(@Model.MaestroFijoDatoAdicional[i].MaestroFijoId,@Model.MaestroFijoDatoAdicional[i].MetaDatoId,'@Model.MaestroFijoDatoAdicional[i].Checked','@Model.MaestroFijoDatoAdicional[i].Comentario')"><i class="fa fa-copy"></i></a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="4">NO SE TIENEN FORMAS DE PAGO DISPONIBLES</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <hr />
+
+            <h3>Atención de Consultas sobre el Procedimiento:</h3>
+            <div class="form-group atenciaConsulta">
+                <label class="col-sm-4 col-xs-12 control-label">Teléfono :</label>
+                <div class="col-sm-8 col-xs-12">
+                    <div class="input-group">
+                        @Html.TextAreaFor(model => model.Telefono, new { @class = "form-control", @style = "scroll-behavior: smooth;resize:vertical;" })
+                        <span class="input-group-btn">
+                            @if (@user.rolmenu[0].Copiar == true) {
+                            <a class="btn btn-default" href="#"><i class="fa fa-copy"></i></a>
+                            }
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group atenciaConsulta">
+                <label class="col-sm-4 col-xs-12 control-label">Anexo :</label>
+                <div class="col-sm-8 col-xs-12">
+                    <div class="input-group">
+                        @Html.TextAreaFor(model => model.Anexo, new { @class = "form-control", @style = "scroll-behavior: smooth;resize:vertical;" })
+                        <span class="input-group-btn">
+                            @if (@user.rolmenu[0].Copiar == true)
+                            {
+                              <a class="btn btn-default" href="#"><i class="fa fa-copy"></i></a> 
+                            }
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group atenciaConsulta">
+                <label class="col-sm-4 col-xs-12 control-label">Correo Electrónico :</label>
+                <div class="col-sm-8 col-xs-12">
+                    <div class="input-group">
+                        @Html.TextAreaFor(model => model.Correo, new { @class = "form-control", @style = "scroll-behavior: smooth;resize:vertical;" })
+                        <span class="input-group-btn">
+                            @if (@user.rolmenu[0].Copiar == true)
+                            {
+                              <a class="btn btn-default" href="#"><i class="fa fa-copy"></i></a>
+                            }
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+        </div>
+    </div>
+                            }
+
+    <div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;">
+
+       
+        @if (Model.InfPredeterminadaTerminado == false)
+        {
+            if (@user.rolmenu[0].Guardar == true)
+            {
+                <a href="javascript:sut.MaestroFijo.guardar()" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</a>
+
+            }
+            if (@user.rolmenu[0].Terminar == true)
+            {
+
+                <a href="javascript:sut.MaestroFijo.terminar()" class="btn btn-success"><i class="fa fa-check"></i> Terminar</a>
+            }
+        }
+        else
+        {
+            if (@user.rolmenu[0].Activar == true)
+            {
+                <a href="javascript:sut.MaestroFijo.activar()" class="btn btn-warning"><i class="fa fa-check"></i> Activar</a>
+            }
+        }
+    </div>
+
+
+
+<div class="modal fade" id="modal-ventana-editar" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+<div class="modal fade mymodal" id="modalSeguimiento">
+    <div class="modal-dialog modal-lg" style="width:90%">
+        <div class="modal-content" style="border-radius: 40px 40px 0 0;">
+
+            <div class="modal-body" id="contenido" style="padding:0px">
+                <div class="bar-title">
+                    @*<a class="close"  data-dismiss="modal" style="padding: 80px; top: -80px; background: transparent"> <i class='fa fa-times fa-2x'></i> </a>*@
+                    @*<a class="close modalMinimize" style="padding:100px; right: 20px;  top: -100px; background: transparent"> <i class='fa fa-minus fa-2x'></i> </a>*@
+                    @*<button class="close modalMinimize"> <i class='fa fa-minus'></i> </button>*@
+                    <span>
+                        <h5 id="ihtitulo1" style="font-size: xx-large;text-align: center;font-family: initial;"> Hola @user.Nombres, bienvenido al Sistema Único de Trámites</h5>
+                        <h5 id="ihtitulo2" style="font-size: x-large;text-align: center;font-family: initial;"> </h5>
+                    </span>
+                </div>
+                <div class="col-sm-12 col-xs-12">
+                    <div class="col-sm-12 col-xs-12" id="idtitulo3" style="text-align:center">
+                        <div id="colorNavContenido">
+
+                        </div>
+
+                        <div class="col-sm-12 col-xs-12">
+                            <img src="~/dist/img/hola.png" style="width: 160px;" />
+                            <div class="caja">
+                                <h5 style="font-size: 20px;text-align: center;font-family: initial;">
+                                    Muy bien! Felicidades a hora has Clic en el boton <label id="nombremenu"></label>  para comenzar!
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-xs-12">
+                            <div class="col-sm-6 col-xs-12" style="text-align: left;">
+                                <a class="btn btn-success" href="javascript:sut.MaestroFijo.Avanzar(0)" style="font-size: xx-large;"><i class="fa fa-arrow-left"></i> Retroceder</a>
+                            </div>
+                        </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+<div class="minmaxConayuda">
+    <div class="modal fade mymodal" id="modalAyudaAvatar1">
+        <div class="modal-dialog  ">
+            <div class="modal-content" >
+                <div class="modal-body" id="contenido" style="padding:0px">
+                    <div class="bar-title" id="tituloocultar">
+                        <a class="close modalMinimize" style="padding:110px; right: 20px;  top: -100px; background: transparent"> <i class='fa fa-clone '></i> </a>
+                        <span>
+                            <h3 id="ihtitulo1" style="font-size: x-large;text-align: center;font-family: initial;"> Hola @user.Nombres </h3>
+                        </span>
+                    </div>
+
+                    <div>  
+                        <div id="idtitulo1" style="text-align:left">
+                            <div class="col-sm-3 col-xs-2">
+                                <a class="modalMinimize" title="Minimizar" style="color:black"> <i class='fa fa-minus fa-2x'></i> </a>
+                                <img src="~/dist/img/hola.png" class="img-rounded" alt="Cinque Terre" />
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje1" style="display: none; width:409px;height:100%;top:137px">
+                                <sp style="text-align: left;font-family: initial;"> Clic </sp>
+                                <a href="#" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</a>
+                                <l style="text-align: left;font-family: initial;">Una vez registre la información predeterminada que sea necesario ¡Suerte!</l>
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje2" style="display: none; width:440px;height:100%;top:103px">
+                                <j2 style="text-align: left;font-family: initial;"> ¿Registraste toda la Información Predeterminada necesaria? Si es así, avancemos al siguiente paso. Clic </j2>
+                                <a id="clic" style="display: none;" class="btn btn-warning" href="javascript:sut.MaestroFijo.GuardarMenu(16)"><i class="fa fa-arrow-right"></i>Aqui</a>
+                                <l1 style="text-align: left;font-family: initial;"> Para continuar. ¡Tú puedes! </l1>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="minmaxCon"></div>
+
+@section Style{
+    <style>
+    </style>
+}
+@section Script {
+    <script>
+
+        sut.MaestroFijo = {
+
+            Avanzar: (estado) => {
+
+                if (estado == 1) {
+                    $('#modalAyudaAvatar1').modal('hide');
+                    $('#modalSeguimiento').modal('show');
+                } else {
+                    $('#modalSeguimiento').modal('hide');
+                    $('#modalAyudaAvatar1').modal({ backdrop: 'static', keyboard: false })
+                    $(".modal-backdrop").addClass("display-none");
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                    //$('#modalAyudaAvatar1').modal('show');
+                }
+            },
+            comenzar: function () {
+                window.location = '@Url.Content("~/Simplificacion/Expediente/Lista")';
+            },
+
+            GuardarMenu: (menuid) => {
+
+                $.ajax({
+                    type: "GET",
+                    //url: '/Seguridad/Miembro/Eliminar',
+                    url: '@Url.Content("~/Seguridad/Miembro/GuardarMenu")',
+                    data: { menuid: menuid,ruta:menuid },
+                    cache: false,
+                    beforeSend: () => {
+
+                    },
+                    success: (data) => {
+                        if (data.exito) {
+
+                            $('#modalAyudaAvatar1').modal('hide');
+                            $('#modalSeguimiento').modal('show');
+                            $('#modalSeguimiento').modal({backdrop: 'static', keyboard: false})
+                            sut.MaestroFijo.listarayuda();
+
+                        }
+                    },
+                    error: (result) => {
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+
+            },
+            listarayuda: function () {
+
+                $.ajax({
+                    type: 'POST',
+                    //url: '/Seguridad/Portada/EnviarAutorizacionMef',
+                    url: '@Url.Content("~/Seguridad/Portada/GenerarListamenulista")',
+                    data: {},
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#mensajes").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                    },
+                    success: function (result) {
+                        $('#modal-ventana').modal('hide');
+
+                        var count = 1;
+                        var countejecutar = 1;
+                        var i=0;
+                        var recorerr = 0;
+
+                        debugger;
+                        var rows = '';
+                        var asdas= result.cantidad;
+                        $('#colorNav').remove();
+
+                        rows += '<nav id="colorNav" style="text-align:left;">'
+                        rows += '<ul>'
+                        for (i = recorerr; i < result.cantidad; i++)
+                        {
+                            if (result.menu[i].MenuId == 20)
+                            {
+                                if (@user.Sector == 80 || @user.Sector == 79)
+                                {
+                                    rows += '<li class="'+result.menu[i].Estilo+'" style="'+result.menu[i].Dimension+'">'
+                                    rows += '<button class="pulse4-button" style="font-size:20px">'+countejecutar+'</button><br />'
+                                    rows += '<span style="font-size: 15px;color: white;"> '+result.menu[i].Descripcion +'</span> <br />'
+                                    rows += '<a href="'+ result.menu[i].url+'" class="'+result.menu[i].Gragico+'"></a>'
+
+                                    rows += '<ul style="z-index:10">'
+
+                                    for (var sub = i; sub < result.cantidad; sub++)
+                                    {
+                                        if (result.menu[sub].IdPadreMenu != result.menu[i].IdPadreMenu)
+                                        {
+                                            i = sub - 1;
+                                            break;
+
+                                        }
+                                        rows += '<li style="'+result.menu[sub].Estilo+'"> <a href="'+result.menu[sub].url+'">'+result.menu[sub].Descripcion+'</a></li>'
+
+                                    }
+                                    rows += '</ul>'
+                                    rows += '</li>'
+                                }
+                                else
+                                {
+                                    i = i + 1;
+                                }
+                            }
+                            else if (result.menu[i].MenuId == 22)
+                            {
+                                if (@user.CodPadre == "1")
+                                {
+                                    rows += '<li class="'+result.menu[i].Estilo+'" style="'+result.menu[i].Dimension+'">'
+                                    rows += '	<button class="pulse4-button" style="font-size:20px">'+countejecutar+'</button><br />'
+                                    rows += '	<span style="font-size: 15px;color: white;"> '+result.menu[i].Descripcion+' </span> <br />'
+                                    rows += '	<a href="'+result.menu[i].url+'" class="'+result.menu[i].Gragico+'"></a>'
+                                    if (result.menu[i].IdPadreMenu != 0)
+                                    {
+                                        i = i + 1;
+                                        rows += '<ul style="z-index:10">'
+
+                                        for (var sub = i; sub < result.cantidad; sub++)
+                                        {
+                                            if (result.menu[sub].IdPadreMenu != result.menu[i].IdPadreMenu)
+                                            {
+                                                i = sub - 1;
+                                                break;
+
+                                            }
+                                            rows += '<li style="'+result.menu[sub].Estilo+'" > <a href="'+result.menu[sub].url+'" > '+result.menu[sub].Descripcion+'</a></li>'
+
+                                        }
+                                        rows += '</ul>'
+                                    }
+
+                                    rows += '</li>'
+                                }
+                                else
+                                {
+                                    i = i + 1;
+                                }
+                            }
+                            else
+                            {
+                                rows += '<li class="'+result.menu[i].Estilo+'" style="'+result.menu[i].Dimension+'">'
+                                rows += ' <button class="pulse4-button" style="font-size:20px">'+countejecutar+'</button><br />'
+                                rows += ' <span style="font-size: 15px;color: white;"> '+result.menu[i].Descripcion+' </span> <br />'
+                                rows += ' <a href="'+result.menu[i].url+'" class="'+result.menu[i].Gragico+'"></a>'
+
+                                if (result.menu[i].IdPadreMenu != 0)
+                                {
+                                    i = i + 1;
+                                    rows += '<ul style="z-index:10">'
+
+                                    for (var sub = i; sub < result.cantidad; sub++)
+                                    {
+                                        if (result.menu[sub].IdPadreMenu != result.menu[i].IdPadreMenu)
+                                        {
+                                            i = sub - 1;
+                                            break;
+
+                                        }
+                                        rows += '<li style="'+result.menu[sub].Estilo+'"> <a href="'+result.menu[sub].url+'">'+result.menu[sub].Descripcion+'</a></li>'
+
+                                    }
+                                    rows += '</ul>'
+                                }
+
+                                rows += '</li>'
+                            }
+                            countejecutar = countejecutar + 1;
+
+                        }
+                        rows += '</ul>'
+                        rows += '</nav>'
+
+                        $("#colorNavContenido").append(rows);
+                        document.querySelector('#nombremenu').innerText = result.nombremenu;
+
+
+                    },
+                    error: function (result) {
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+            },
+            copiaDatoAdicional:(btn) => {
+                debugger;
+                sut.msg.confirm('Se copiará el dato seleccionado a todos los procedimientos.', () => {
+                    var id = btn.parent().parent().find('input[name$="MetaDatoId"]').val();
+                    debugger;
+                    var text = btn.parent().parent().find('input[name$=".Comentario"]').val();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/MaestroFijo/FijarDatoAdicional',
+                        url: '@Url.Content("~/Simplificacion/MaestroFijo/FijarDatoAdicional")',
+                        data: {
+                            'model.MetaDatoId': id,
+                            'model.Comentario': text
+                        },
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                });
+            },
+            copiaDatoAdicionalCambios: (MaestroFijoId,metaDatoId,Checked,comentario) => {
+                debugger;
+                if (Checked != "")
+                {
+                    Checked=true;
+                }
+                else
+                {
+                    Checked=false;
+                }
+
+
+                sut.msg.confirm('Se copiará el dato seleccionado a todos los procedimientos.', () => {
+                    //var id = btn.parent().parent().find('input[name$="MetaDatoId"]').val();
+                    debugger;
+                    //var text = btn.parent().parent().find('input[name$=".Comentario"]').val();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/MaestroFijo/FijarDatoAdicional',
+                        url: '@Url.Content("~/Simplificacion/MaestroFijo/FijarDatoAdicional")',
+                        data: {
+                            'model.MetaDatoId': metaDatoId,
+                            'model.Comentario': comentario,
+                            'model.Checked': Checked
+                        },
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                });
+            },
+            copiaDatoConsultaTramite: (btn) => {
+                var input = btn.parent().parent().find('input');
+                var key = 'model.' + input.attr('name');
+                var model = {};
+                model[key] = input.val();
+                sut.msg.confirm('Se copiará el dato seleccionado a todos los procedimientos.', () => {
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/MaestroFijo/FijarDatoConsultaTramite',
+                        url: '@Url.Content("~/Simplificacion/MaestroFijo/FijarDatoConsultaTramite")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                });
+            },
+            copiaSede: (btn) => {
+                sut.msg.confirm('Se copiará el dato seleccionado a todos los procedimientos.', () => {
+                    var id = btn.parent().parent().find('input[name$="SedeId"]').val();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/MaestroFijo/FijarSede',
+                        url: '@Url.Content("~/Simplificacion/MaestroFijo/FijarSede")',
+                        data: {
+                            'model.SedeId': id
+                        },
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                });
+            },
+            copiaPasoSeguir: (btn) => {
+                sut.msg.confirm('Se copiará el dato seleccionado a todos los procedimientos.', () => {
+                    var text = btn.parent().parent().find('textarea[name$="Descripcion"]').val();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/MaestroFijo/FijarPasoSeguir',
+                        url: '@Url.Content("~/Simplificacion/MaestroFijo/FijarPasoSeguir")',
+                        data: {
+                            'model.Descripcion': text
+                        },
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                });
+            },
+            terminar: function () {
+                
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/ActivarSustento',
+                        url: '@Url.Content("~/Simplificacion/MaestroFijo/ActivarInfPredeterminada")',
+                        data: {tipo: 1, EntidadId: @Model.EntidadId},
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) { 
+
+
+                            showNotification('top', 'right', 'El Registro se Termino Satisfactoriamente', 1);
+                            setTimeout("reFresh()", 800);
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    }); 
+
+            },
+            activar: function () {
+
+                sut.msg.confirm('Si activa el registro podrá modificarlo nuevamente.', () => {
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/ActivarSustento',
+                        url: '@Url.Content("~/Simplificacion/MaestroFijo/ActivarInfPredeterminada")',
+                        data: {tipo: 0, EntidadId: @Model.EntidadId},
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) { 
+
+                            showNotification('top', 'right', 'El Registro se Activo Satisfactoriamente', 1);
+                            setTimeout("reFresh()", 800);
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                });
+
+            },
+
+
+            guardar: () => {
+
+                $.each($("#tblSede input[name$='Mostrar']"), function (i, v) {
+                    if ($(this).is(':checked')) {
+                        $(this).attr("value", true);
+                        $(this).attr("checked", true);
+                    } else {
+                        $(this).attr("value", false);
+                        $(this).attr("checked", false);
+                    }
+                });
+
+
+                if ($('#form-editar').valid()) {
+                    var model = $('#form-editar').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/MaestroFijo/Guardar',
+                        url: '@Url.Content("~/Simplificacion/MaestroFijo/Guardar")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            debugger;
+                            if(result.valid== false)
+                            {
+                                    window.location.reload();
+                            }
+                            else
+                            {
+                                sut.msg.success(result.mensaje, function () {
+                                    window.location.reload();
+                                });
+                            }
+
+                        },
+                        error: function (result) {
+                            debugger;
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }
+            },
+            PasoSeguir: {
+                add: function () {
+                    var tabla = $('#tblPasoSeguir tbody');
+                    var rows = '';
+                    rows += '<tr>';
+                    rows += '<td>';
+                    rows += '<span>0</span>';
+                    rows += '<input type="hidden" name="MaestroFijoPasoSeguir[0].PasoSeguirId" value="0" />';
+                    rows += '</td>';
+                    rows += sut.string.format('<td><textarea name="MaestroFijoPasoSeguir[0].Descripcion" class="form-control" style="scroll-behavior: smooth;resize:vertical;"></textarea></td>', '');
+                    rows += '<td>';
+                    //rows += sut.string.format('<a class="btn btn-default btn-xs" href="javascript:sut.MaestroFijo.copiaPasoSeguir({0})" ><i class="fa fa-copy" ></i></a>', 0);
+                    if ("@user.rolmenu[0].Copiar" == "True"){
+                        rows += sut.string.format('<a class="btn btn-default btn-xs" href="javascript:sut.MaestroFijo.PasoSeguir.delete({0})" ><i class="fa fa-close" ></i></a>', 0);
+                    }
+                    rows += '</td>';
+                    rows += '</tr>';
+
+                    tabla.append(rows);
+                    sut.MaestroFijo.PasoSeguir.update();
+                },
+                delete: function (id) {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                        var num = 1;
+                        $.each($('#tblPasoSeguir tbody tr'), function (index, tr) {
+                            var NotaCiudadanoId = Number($(tr).find('td input[name$="PasoSeguirId"]').val());
+                            if (NotaCiudadanoId == id) $(tr).remove();
+                        });
+                        sut.MaestroFijo.PasoSeguir.update();
+                    //});
+                },
+                update: function () {
+                    $.each($('#tblPasoSeguir tbody tr'), function (i, tr) {
+                        $(tr).find('td span').html(i + 1);
+                        $(tr).find('td input[name$="PasoSeguirId"]').attr('name', sut.string.format('MaestroFijoPasoSeguir[{0}].PasoSeguirId', i)).val(i + 1);
+                        $(tr).find('td textarea[name$="Descripcion"]').attr('name', sut.string.format('MaestroFijoPasoSeguir[{0}].Descripcion', i));
+                        $(tr).find('td a').attr('href', sut.string.format('javascript:sut.MaestroFijo.PasoSeguir.delete({0})', i + 1));
+                    });
+                },
+            },
+            Nota: {
+
+                tipos: @Html.Raw(ViewBag.TipoNota != null ? ViewBag.TipoNota : "[]"),
+                comboTipo: function (index, id) {
+                    var cb = sut.string.format('<select class="form-control" name="MaestroFijoNotaCiudadano[{0}].MetaDatoTipoNotaId" >', index);
+                    $.each(sut.MaestroFijo.Nota.tipos, function (i, r) {
+                        cb += sut.string.format('<option value="{0}" {2}>{1}</option>', r.MetaDatoId, r.Nombre, r.MetaDatoId == id ? 'selected' : '');
+                    });
+                    cb += '</select>';
+                    return cb;
+                },
+                init: function () {
+                    debugger;
+                    var lista = @Html.Raw(ViewBag.ListaNota != null ? ViewBag.ListaNota : "[]");
+                    var tabla = $('#tblNota tbody');
+
+                    if (lista.length > 0) {
+                        var data = [];
+                        $.each(lista, function (i, r) {
+                            var rows = '';
+                            rows += '<tr>';
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="MaestroFijoNotaCiudadano[{0}].NotaCiudadanoId" value="{1}" />', i, r.NotaCiudadanoId);
+                            rows += sut.string.format('<input type="hidden" name="MaestroFijoNotaCiudadano[{0}].Orden" value="{1}" />', i, i + 1);
+                            rows += '</td>';
+                            rows += sut.string.format('<td>{0}</td>', sut.MaestroFijo.Nota.comboTipo(i, r.MetaDatoTipoNotaId));
+                            rows += sut.string.format('<td><textarea name="MaestroFijoNotaCiudadano[{0}].Comentario" class="form-control" style="scroll-behavior: smooth;resize:vertical;" required>{1}</textarea></td>', i, r.Comentario);
+                            rows += '<td><div class="btn-group">';
+                            if ("@user.rolmenu[0].Copiar" == "True"){
+                                rows += sut.string.format('<a class="btn btn-default btn-xs" href="javascript:sut.MaestroFijo.Nota.copiaNota({0},{1},{2})" ><i class="fa fa-copy" ></i></a>', r.NotaCiudadanoId, "'" + r.Comentario + "'", r.MetaDatoTipoNotaId);
+                            }
+                            if ("@user.rolmenu[0].Eliminar" == "True"){
+                                rows += sut.string.format('<a class="btn btn-default btn-xs" href="javascript:sut.MaestroFijo.Nota.delete({0})" ><i class="fa fa-close" ></i></a>', r.NotaCiudadanoId);
+                            }
+                            rows += '</div></td>';
+                            rows += '</tr>';
+
+                            tabla.append(rows);
+                        });
+                    }
+                },
+                add: function () {
+                    var tabla = $('#tblNota tbody');
+                    var rows = '';
+                    rows += '<tr>';
+                    rows += '<td>';
+                    rows += '<span>0</span>';
+                    rows += '<input type="hidden" name="MaestroFijoNotaCiudadano[0].NotaCiudadanoId" value="0" />';
+                    rows += '<input type="hidden" name="MaestroFijoNotaCiudadano[0].Orden" value="0" />';
+                    rows += '</td>';
+                    rows += sut.string.format('<td>{0}</td>', sut.MaestroFijo.Nota.comboTipo(0, 0));
+                    rows += sut.string.format('<td><textarea name="MaestroFijoNotaCiudadano[0].Comentario" class="form-control" style="scroll-behavior: smooth;resize:vertical;" required></textarea></td>', '');
+                    rows += '<td><div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-default btn-xs" href="javascript:sut.MaestroFijo.Nota.delete({0})" ><i class="fa fa-close" ></i></a>', 0);
+                    rows += '</div></td>';
+                    rows += '</tr>';
+
+                    tabla.append(rows);
+                    sut.MaestroFijo.Nota.update();
+                },
+                delete: function (id) {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+
+                        var num = 1;
+                        $.each($('#tblNota tbody tr'), function (index, tr) {
+                            var NotaCiudadanoId = Number($(tr).find('td input[name$="NotaCiudadanoId"]').val());
+                            if (NotaCiudadanoId == id) $(tr).remove();
+                        });
+                        sut.MaestroFijo.Nota.update();
+                    //});
+                },
+                update: function () {
+                    $.each($('#tblNota tbody tr'), function (i, tr) {
+                        debugger;
+                        $(tr).find('td span').html(i + 1);
+                        $(tr).find('td input[name$="NotaCiudadanoId"]').attr('name', sut.string.format('MaestroFijoNotaCiudadano[{0}].NotaCiudadanoId', i)).val(i + 1);
+                        $(tr).find('td input[name$="Orden"]').attr('name', sut.string.format('MaestroFijoNotaCiudadano[{0}].Orden', i)).val(i + 1)
+                        //$(tr).find('td input[name$="Orden"]').attr('name', sut.string.format('MaestroFijoNotaCiudadano[{0}].Orden', i)).val(i + 1)
+                        //$(tr).find('td textarea[name$="Nota"]').attr('name', sut.string.format('NotaCiudadano[{0}].Nota', i))
+                        $(tr).find('td textarea[name$="Comentario"]').attr('name', sut.string.format('MaestroFijoNotaCiudadano[{0}].Comentario', i));
+                        $(tr).find('td select[name$="MetaDatoTipoNotaId"]').attr('name', sut.string.format('MaestroFijoNotaCiudadano[{0}].MetaDatoTipoNotaId', i));
+                        $(tr).find('td div a').attr('href', sut.string.format('javascript:sut.MaestroFijo.Nota.delete({0})', i + 1));
+                    });
+                },
+
+                copiaNota: (id,comentario,metaDatoTipoNotaId) => {
+                    debugger;
+
+
+                    sut.msg.confirm('Se copiará el dato seleccionado a todos los procedimientos.', () => {
+
+
+                        $.ajax({
+                            type: 'POST',
+                            //url: '/Simplificacion/MaestroFijo/FijarNotaCiudadano',
+                            url: '@Url.Content("~/Simplificacion/MaestroFijo/FijarNotaCiudadano")',
+                            data: {
+                                'model.NotaCiudadanoId': id,
+                                'model.Comentario': comentario,
+                                'model.MetaDatoTipoNotaId': metaDatoTipoNotaId
+
+                            },
+                            dataType: 'json',
+                            beforeSend: function () {
+                                sut.wait.modal('ventana-container');
+                                $('#modal-ventana').modal('show');
+                            },
+                            success: function (result) {
+                                sut.wait.removeOverlay('#boxLista');
+                                sut.msg.success(result.mensaje, function () {
+
+                                });
+                            },
+                            error: function (result) {
+                                sut.error.show('mensajes', result.responseText);
+                            }
+                        });
+                    });
+                },
+            },
+            Sedes : {
+                init : function(){
+                    debugger;
+                    var tblSede = $('#tblSede tbody');
+                    var lista = @Html.Raw(ViewBag.MaestroFijoSede != null ? ViewBag.MaestroFijoSede : "[]");
+                    var listaUndOrgSede = @Html.Raw(ViewBag.MaestroUndOrgSede != null ? ViewBag.MaestroUndOrgSede : "[]");
+
+                    if (lista.length <= 0) {
+                        $('#mensaje2').hide();
+                        $('#mensaje1').show();
+                    } else {
+                        $('#mensaje2').show();
+                        $('#mensaje1').hide();
+                        sut.control.Actualizartexto();
+                    }
+
+                    if(lista.length > 0){
+                        debugger;
+                        $.each(lista,function(i,r){
+                            var rows = '';
+                            var rowUndOrg = "";
+                            rows += "<tr>";
+                            rows += "<td>";
+                            rows += sut.string.format('<input type="hidden" name="MaestroFijoSede[{0}].MaestroFijoId" value="{1}" />',i,r.MaestroFijoId);
+                            rows += sut.string.format('<input type="hidden" name="MaestroFijoSede[{0}].SedeId" value="{1}" />',i,r.SedeId);
+                            rows += sut.string.format('<input type="checkbox" name="MaestroFijoSede[{0}].Mostrar" value="0" {1} />',i,r.Mostrar ? "checked" : "");
+                            rows += "</td>";
+                            rows += sut.string.format("<td>{0}</td>",r.Nombre);
+                            rows += sut.string.format("<td>{0}</td>",r.Ruta);
+                            rows += sut.string.format("<td>{0}</td>",r.Direccion);
+                            rows += '<td>';
+                            if ("@user.rolmenu[0].Copiar" == "True"){
+                                rows += '<a class="btn btn-default btn-xs" href="#" data-copy="1" ><i class="fa fa-copy"></i></a>';
+                            }
+                            rows += '</td>';
+                            rows += "</tr>";
+                            rows += "<tr>";
+                            rows += sut.string.format('<tr><td colspan="5"><table class="table table-condensed table-bordered" data-indexParent="{0}">',i);
+                            rows += '<thead><tr><th style="width:100px;"></th><th style="width:100px;">';
+
+                            var cadena= sut.MaestroFijo.UndOrgRecepcion.newFiladata(i,listaUndOrgSede,r.MaestroFijoId,r.SedeId);
+                            if ("@user.rolmenu[0].Agregar" == "True"){
+                                rows += sut.string.format('<a href="javascript:sut.MaestroFijo.UndOrgRecepcion.openSelectUndOrg({0},{1},{2},{3})" data-UndOrg="1" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>', r.MaestroFijoId, r.SedeId,"'" + cadena.substr(1, cadena.length - 1) + "'",i);
+                            }
+                            rows += '</th><th>Unidades donde se presenta la documentación:</th><th style="width:100px;"></th></tr></thead><tbody>';
+
+
+
+                            rows += '</tbody></table></td></tr>';
+                            rows += "</tr>";
+
+
+                            tblSede.append(rows);
+
+                            var tabla = $('table[data-indexParent=' + i +'] tbody').eq(0);
+
+                            tabla.append(sut.MaestroFijo.UndOrgRecepcion.newFila(i,listaUndOrgSede,r.MaestroFijoId,r.SedeId));
+
+
+
+                        })
+                    }
+                },
+                generar : function(){
+
+                },
+                update:function(){
+
+                }
+
+            },
+            UndOrgRecepcion : {
+                MaestroFijoId:0,
+                pSedeId:0,
+                IndexParent : 0,
+                newFila : function(pIndexParent,UndOrgSede,pMaestroFijoId,pSedeId){
+
+                    var rows = "";
+                    var count = 0;
+                    $.each(UndOrgSede,function(i,r){
+
+                        if(pMaestroFijoId == r.MaestroFijoId && pSedeId == r.SedeId){
+                            rows += sut.string.format('<tr data-index="{0}" class="UndOrg" >', count);
+                            rows += "<td></td>";
+                            rows += '<td>';
+                            //rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="MaestroFijoSede[{0}].MaestroFijoUndOrgRecepcionDocum[{1}].UnidadOrganicaId" value="{2}" />', pIndexParent,count, r.UnidadOrganicaId);
+                            rows += sut.string.format('<input type="hidden" name="MaestroFijoSede[{0}].MaestroFijoUndOrgRecepcionDocum[{1}].MaestroFijoId" value="{2}" />', pIndexParent, count , r.MaestroFijoId);
+                            rows += sut.string.format('<input type="hidden" name="MaestroFijoSede[{0}].MaestroFijoUndOrgRecepcionDocum[{1}].SedeId" value="{2}" />', pIndexParent,count, r.SedeId);
+                            rows += '</td>';
+                            rows += sut.string.format("<td>{0}</td>",r.nombre);
+                            if ("@user.rolmenu[0].Eliminar" == "True"){
+                                rows += sut.string.format('<td><a class="btn btn-danger btn-xs" href="javascript:sut.MaestroFijo.UndOrgRecepcion.borrar({0},{1})" ><i class="fa fa-close" ></i></a></td>', pIndexParent,count);
+                            }
+                            rows += '</tr>'
+                            count++;
+                        }
+                    });
+
+                    return rows;
+                },
+
+                newFiladata : function(pIndexParent,UndOrgSede,pMaestroFijoId,pSedeId){
+
+                    debugger;
+                    var rows = "";
+                    $.each(UndOrgSede,function(i,r){
+
+                        if(pMaestroFijoId == r.MaestroFijoId && pSedeId == r.SedeId){
+                            rows=  rows +','+ r.nombre ;
+                        }
+                    });
+
+                    return rows;
+                },
+                seleccionar : function(){
+
+                },
+                openSelectUndOrg: function (pMaestroFijoId,pSedeId,text,pIndexParent) {
+
+                    MaestroFijoId = pMaestroFijoId;
+                    SedeId = pSedeId;
+                    IndexParent = pIndexParent;
+
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/UnidadOrganica/Select',
+                        url: '@Url.Content("~/Simplificacion/UnidadOrganica/Select")',
+                        data: { multi: true, fnAdd: 'sut.MaestroFijo.UndOrgRecepcion.setUndOrg' ,texto:text, SedeId : SedeId},
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container-editar');
+                            $('#modal-ventana-editar').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container-editar').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana-editar').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                setUndOrg: function (data) {
+                    debugger;
+                    $('#modal-ventana-editar').modal('hide');
+
+                    if (!$.isArray(data)) data = [data];
+
+
+                    var tabla = $('table[data-indexParent=' + IndexParent +'] tbody').eq(0);
+                    var s = tabla.children('tr').size();
+
+                    var trUndOrg =  $('table[data-indexParent=' + IndexParent +'] tbody tr');
+
+                    $.each(trUndOrg,function(i,v){
+
+                        var idUndOrg = parseInt($(v).find("td input[name$=UnidadOrganicaId]").val());
+                        var find = false;
+                        $.each(data,function(ix,vx){
+                            if(vx.id === idUndOrg){
+                                data.splice(ix,1);
+                                find = true;
+                            }
+
+                            if(find)
+                                return false;
+                        })
+                    });
+
+
+                    var rows = '';
+                    $.each(data, (i, r) => {
+                        rows += sut.string.format('<tr data-index="{0}" class="UndOrg" >', i);
+                        rows += "<td></td>";
+                        rows += '<td>';
+                        //rows += sut.string.format('<span>{0}</span>', i + 1);
+                        rows += sut.string.format('<input type="hidden" name="MaestroFijoSede[{0}].MaestroFijoUndOrgRecepcionDocum[{1}].UnidadOrganicaId" value="{2}" />', IndexParent,s, r.id);
+                        rows += sut.string.format('<input type="hidden" name="MaestroFijoSede[{0}].MaestroFijoUndOrgRecepcionDocum[{1}].MaestroFijoId" value="{2}" />', IndexParent,s, MaestroFijoId);
+                        rows += sut.string.format('<input type="hidden" name="MaestroFijoSede[{0}].MaestroFijoUndOrgRecepcionDocum[{1}].SedeId" value="{2}" />', IndexParent,s, SedeId);
+                        rows += '</td>';
+                        rows += sut.string.format("<td>{0}</td>",r.nombre);
+                        rows += sut.string.format('<td><a class="btn btn-danger btn-xs" href="javascript:sut.MaestroFijo.UndOrgRecepcion.borrar({0},{1})" ><i class="fa fa-close" ></i></a></td>', IndexParent,s);
+                        rows += '</tr>'
+                    });
+
+                    tabla.append(rows);
+
+                    sut.MaestroFijo.UndOrgRecepcion.actualizar(IndexParent);
+
+
+                },
+                borrar : function(pIndexParent, index){
+                    var tr = $('table[data-indexParent=' + pIndexParent +'] tbody tr');
+
+                    $(tr).eq(index).remove();;
+
+
+                    sut.MaestroFijo.UndOrgRecepcion.actualizar(pIndexParent);
+                },
+                actualizar : function(pIndexParent){
+
+                    var rows = $('table[data-indexParent=' + pIndexParent +'] tbody').eq(0).find("tr");
+
+                    $.each(rows,function(i,tr){
+                        $(tr).data("index",i);
+                        //$(tr).find('td span').html(i+1);
+                        $(tr).find('td input[name$="UnidadOrganicaId"]').attr("name", sut.string.format('MaestroFijoSede[{0}].MaestroFijoUndOrgRecepcionDocum[{1}].UnidadOrganicaId', pIndexParent, i));
+                        $(tr).find('td input[name$="MaestroFijoId"]').attr("name", sut.string.format('MaestroFijoSede[{0}].MaestroFijoUndOrgRecepcionDocum[{1}].MaestroFijoId', pIndexParent, i));
+                        $(tr).find('td input[name$="SedeId"]').attr("name", sut.string.format('MaestroFijoSede[{0}].MaestroFijoUndOrgRecepcionDocum[{1}].SedeId', pIndexParent, i));
+                        $(tr).find('td a').attr('href',sut.string.format('javascript:sut.MaestroFijo.UndOrgRecepcion.borrar({0},{1})', pIndexParent ,i));
+                    });
+                }
+            },
+            Scroll: {
+                pos: 0,
+                init: () => {
+                    //$('.menu-compensador').css('height', $('#divBotones').height());
+                    //sut.MaestroFijo.Scroll.pos = $('#divBotones').offset().top;
+                    //window.onscroll = sut.MaestroFijo.Scroll.ejecutar;
+                    //sut.MaestroFijo.Scroll.ejecutar();
+                },
+                ejecutar: () => {
+                    var sc = window.pageYOffset;
+                    var menu = $('#divBotones');
+                    //var mot = menu.offset().top;
+                    if (sc > sut.MaestroFijo.Scroll.pos) {
+                        if (!menu.hasClass('fixed')) {
+                            menu.addClass('fixed');
+                            menu.appendTo($('.menu-fijo'));
+                            $('.menu-compensador').show();
+                        }
+                    } else if (menu.hasClass('fixed')) {
+                        menu.removeClass('fixed');
+                        menu.appendTo($('.menu-movil'));
+                        $('.menu-compensador').hide();
+                    }
+                },
+                getScrollOffsets: () => {
+                    /* Esto funciona para todos los navegadores excepto para IE8 y anteriores */
+                    if (window.pageXOffset != null) {
+                        return {
+                            x: window.pageXOffset,
+                            y: window.pageYOffset
+                        };
+                    }
+
+                    /* Funciona para navegadores standards */
+                    var doc = window.document;
+                    if (document.compatMode === "CSS1Compat") {
+                        return {
+                            x: doc.documentElement.scrollLeft,
+                            y: doc.documentElement.scrollTop
+                        };
+                    }
+
+                    /* Funciona para navegadores con compatibilidad con navegadores antiguos */
+                    return {
+                        x: doc.body.scrollLeft,
+                        y: doc.body.scrollTop
+                    };
+                }
+            },
+            Copia: (btn)=> {
+                sut.msg.confirm('Se copiará el dato seleccionado a todos los procedimientos.', () => {
+                    var id = btn.parent().parent().find('input[name$="SedeId"]').val();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/MaestroFijo/FijarSede',
+                        url: '@Url.Content("~/Simplificacion/MaestroFijo/FijarSede")',
+                        data: {
+                            'model.SedeId': id
+                        },
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                });
+            },
+
+        };
+        function reFresh() {
+            window.location.reload();
+        }
+        $(() => {
+
+         
+            if("@Model.InfPredeterminadaTerminado"=="True"){
+
+                $("#idgeneral").css({ "pointer-events":"none" });
+                $(".btn-success").css({ "background-color":"#d2d6de" });
+                $(".btn-success").css({ "border-color":"#d2d6de" });
+                
+            } 
+            sut.MaestroFijo.Sedes.init();
+
+            sut.MaestroFijo.Scroll.init();
+
+            sut.MaestroFijo.Nota.init();
+
+            $.each($('#tblCanales input[type="checkbox"], #tblFormasPago input[type="checkbox"]'), (i, r) => {
+                debugger;
+                var chk = $(r);
+                if (!chk.is(':checked')) {
+                    chk.parent().next().next().find('textarea').attr('disabled', 'disabled');
+                }
+            });
+
+            $('#tblCanales input[type="checkbox"], #tblFormasPago input[type="checkbox"]').on('change', (e) => {
+                debugger;
+                var chk = $(e.target);
+                if (!chk.is(':checked')) {
+                    chk.parent().next().next().find('textarea').attr('disabled', 'disabled');
+                } else {
+                    chk.parent().next().next().find('textarea').removeAttr('disabled');
+                    if (chk[0].id=='MaestroFijoDatoAdicional_0__Checked'){
+                        $("#MaestroFijoDatoAdicional_0__Comentario").val("Sedes de la Entidad. \n Centro de Mejora Atención al Ciudadano – MAC:");
+                    }
+                }
+            });
+
+            //$('#tblCanales tbody tr td a, #tblFormasPago tbody tr td a').on('click', (e) => {
+            //    sut.MaestroFijo.copiaDatoAdicional($(e.currentTarget));
+            //    e.preventDefault();
+            //});
+
+            $('.atenciaConsulta a').on('click', (e) => {
+                sut.MaestroFijo.copiaDatoConsultaTramite($(e.currentTarget));
+                e.preventDefault();
+            });
+
+            $('#tblSede tbody tr td a[data-copy="1"]').on('click', (e) => {
+                sut.MaestroFijo.copiaSede($(e.currentTarget));
+                e.preventDefault();
+            });
+
+            $('#tblSede tbody tr td a[data-copy="1"]').on('click', (e) => {
+                sut.MaestroFijo.copiaSede($(e.currentTarget));
+                e.preventDefault();
+            });
+
+            $('#tblPasoSeguir tbody tr td a[data-copiar="1"]').on('click', (e) => {
+                debugger;
+                sut.MaestroFijo.Nota.copiaNota($(e.currentTarget));
+                e.preventDefault();
+            });
+
+            $('#tblPasoSeguir tbody tr td a[data-copiar="1"]').on('click', (e) => {
+                sut.MaestroFijo.copiaPasoSeguir($(e.currentTarget));
+                e.preventDefault();
+            });
+
+            $('#form-editar').validate({
+                errorPlacement: function (error, element) {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+
+                },
+                messages: {
+
+                }
+            });
+            //$("#MaestroFijoDatoAdicional_0__Comentario").val("Sedes de la Entidad.\nCentro de Mejora Atención al Ciudadano – MAC:");
+
+
+            @*if(@ViewBag.valorsede!=0)
+            {
+                $('#mensaje2').hide();
+                $('#mensaje1').show();
+            } else {
+                $('#mensaje2').show();
+                $('#mensaje1').hide();
+
+            }*@
+
+            /*desarrollo de la ayuda*/
+            /*minimizar un modal*/
+
+            var $content, $modal, $apnData, $modalCon;
+
+            $content = $(".min");
+
+
+
+
+            debugger;
+
+            if(@user.Ayuda==1){
+                $('#edit-fase-preparatoria').addClass('active');
+                $('a[href="#edit-fase-preparatoria"]').parent().addClass('active');
+
+
+                $('#tituloocultar').hide();
+                $('#modalAyudaAvatar1').modal({backdrop: 'static',keyboard: false})
+
+                $modal = "#modalAyudaAvatar1"
+                $($modal).toggleClass("min");
+                $modal = "#modalAyudaAvatar1";
+                $(".modal-backdrop").addClass("display-none");
+                $(".minmaxConayuda").append($apnData);
+                $(".modal").css({
+                    backgroundColor: "transparent"
+                });
+
+            }
+
+
+
+            /*fin*/
+
+            $(".modalMinimize").on("click", function(){
+                debugger;
+                $modalCon = $(this).closest(".mymodal").attr("id");
+                $apnData = $(this).closest(".mymodal");
+                $modal = "#" + $modalCon;
+                $(".modal-backdrop").addClass("display-none");
+
+                $($modal).toggleClass("min2");
+                if ( $($modal).hasClass("min2") ){
+                    $('#tituloocultar').show();
+                    $(".minmaxCon").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-minus fa-2x').toggleClass( 'fa-clone fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                }
+                else {
+                    $('#tituloocultar').hide();
+                    $(".minmaxConayuda").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-clone fa-2x').toggleClass( 'fa-minus fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                };
+            });
+
+
+
+
+        });
+
+    </script>
+}

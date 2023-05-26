@@ -1,0 +1,454 @@
+﻿@*@model List<Sut.Entities.Expediente>*@
+@using Sut.Security
+@model UsuarioInfo 
+
+@{
+    ViewBag.Title = "Activar Procedimientos";
+    var expestado = 0;
+} 
+ 
+<div id="mensajes"></div>
+
+ 
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body">
+                
+                <div class="table-responsive">
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="100"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.Expediente.listar"
+                           data-paginator="paginator"> 
+                        
+                                <thead>
+                                    <tr>
+                                        <th class="colNro">Nro.</th>
+                                        <th>Expediente</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Tipo</th>
+                                        <th>Entidad</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
+                                        <th>CodigoPA</th>
+                                        <th>Denominación</th>
+                                        <th colspan="5" style="vertical-align: middle !important;">Activar Funciones</th> 
+                                    </tr>
+                                    <tr>
+                                        <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                        <th><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></th>
+                                        <th><input id="txtFilterEntidad" type="text" class="form-control input-sm" /></th>
+                                        <th><input id="txtFilterCodigoPA" type="text" class="form-control input-sm" /></th>
+                                        <th><input id="txtFilterDenominacion" type="text" class="form-control input-sm" /></th>
+										<td style="text-align:center; vertical-align: middle !important;">AtencionTlf</td>
+                                        <td style="text-align:center; vertical-align: middle !important;">Plazo</td>
+                                        <td style="text-align:center; vertical-align: middle !important;">Denominación</td>
+                                        <td style="text-align:center; vertical-align: middle !important;">Agregar Req.</td>
+                                        <td style="text-align:center; vertical-align: middle !important;">Sin nota</td>
+                                        <td style="text-align:center; vertical-align: middle !important;">Reclamación</td>
+                                        <td style="text-align:center; vertical-align: middle !important;">Revision</td>
+                                        <td style="text-align:center; vertical-align: middle !important;">Calificaciones</td>
+                                    </tr>
+                                </thead> 
+                           
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr><td colspan="16"><div id="paginator"></div></td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div> 
+ 
+
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="6"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 60px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        }
+         
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.Expediente = {
+            tipoExpColor: ['', 'label-warning', 'label-primary'],
+            tipoExpediente: ['', 'CARGA INICIAL', 'EXPEDIENTE REGULAR'],
+
+            estadoExpColor: ['', 'label-primary', 'label-warning', 'label-success', 'label-danger', 'bg-gray-active', 'label-info', 'label-public'],
+            estadoExpediente: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+
+            estadoRactificador: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+            estadoEvaluadorMinisterio: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+            estadoEvaluadorPCM: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+            estadoEvaluadorMEF: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+            estadoFiscalizadorPCM: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+            estadoFiscalizadorMEF: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+            estadoFiscalizadorINDECOPI: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+
+            alerta:function () {
+                showNotification('top', 'right', 'Implementando en la operación', 3);
+            },
+            nuevo: function () {
+
+                debugger;
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/Expediente/Nuevo',
+                    url:'@Url.Content("~/Simplificacion/Expediente/Nuevo")',
+                    data: {},
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.appendProgress('boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeProgress('boxLista');
+                        if (data.cargainicial) {
+
+
+                            $.ajax({
+                                type: "GET",
+                                //url: '/Simplificacion/Expediente/DeclaracionJurada',
+                                url:'@Url.Content("~/Simplificacion/Expediente/DeclaracionJurada")',
+                                data: { },
+                                cache: false,
+                                beforeSend: function () {
+                                    sut.wait.modal('ventana-container');
+                                    $('#modal-ventana').modal('show');
+                                },
+                                success: function (data) {
+                                    $('#ventana-container').html(data);
+                                },
+                                error: function (result) {
+                                    $('#modal-ventana').modal('hide');
+                                    sut.error.show('mensajes', result.responseText);
+                                }
+                            });
+
+
+
+                        } else {
+
+                            $.ajax({
+                                type: "GET",
+                                //url: '/Simplificacion/Expediente/ValidarNuevoExpediente',
+                                url:'@Url.Content("~/Simplificacion/Expediente/ValidarNuevoExpediente")',
+                                data: { tipo: 2 },
+                                cache: false,
+                                beforeSend: function () {
+                                    sut.wait.appendProgress('boxLista');
+                                },
+                                success: function (data) {
+                                    if (data.resultado == "") {
+                                        sut.msg.confirm('Se generará un nuevo expediente', function () {
+                                            $.ajax({
+                                                type: "GET",
+                                                //url: '/Simplificacion/Expediente/GeneraNuevo',
+                                                url:'@Url.Content("~/Simplificacion/Expediente/GeneraNuevo")',
+                                                data: { tipo: 2 },
+                                                cache: false,
+                                                beforeSend: function () {
+                                                    sut.wait.appendProgress('boxLista');
+                                                },
+                                                success: function (data) {
+                                                    sut.wait.removeProgress('boxLista');
+                                                    if (data.exito) {
+                                                        //window.location = '/Simplificacion/Expediente/Editar/' + data.ExpedienteId;
+                                                        window.location = '@Url.Content("~/Simplificacion/Expediente/Editar/")'+data.ExpedienteId;
+                                                    }
+                                                },
+                                                error: function (result) {
+                                                    sut.wait.removeProgress('boxLista');
+                                                    sut.error.show('mensajes', result.responseText);
+                                                }
+                                            });
+                                        });
+                                    } else {
+                                        sut.wait.removeProgress('boxLista');
+                                        showNotification('top', 'right', data.resultado, 2);
+                                    }
+
+                                },
+                                error: function (result) {
+                                    sut.wait.removeProgress('boxLista');
+                                    sut.error.show('mensajes', result.responseText);
+                                }
+                            });
+
+
+                        }
+                    },
+                    error: function (result) {
+                        sut.wait.removeProgress('boxLista');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            detalleDes: function (id) {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/Expediente/InformacionAdicional',
+                    url:'@Url.Content("~/Simplificacion/Expediente/InformacionAdicional")',
+                    data: { id: id},
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            editar: function (id) {
+                //window.location = '/Simplificacion/Expediente/Editar/' + id;
+                window.location = '@Url.Content("~/Simplificacion/Expediente/Editar/")'+id;
+            },
+            Activar: function (ProcedimientoId, Estado, Tipo) {
+
+
+                //sut.msg.confirm('Está seguro de otorgar permiso ', function () {
+
+                    debugger;
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Content("~/Simplificacion/Expediente/Guardaractivarproce")',
+                        data: { procedimientoId: ProcedimientoId, estado: Estado, tipo: Tipo },
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            //$('#modal-ventana').modal('hide');
+                            showNotification('top', 'right', 'Se activo correctamente', 1);
+                            //location.reload();
+                            sut.Expediente.listar(1);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            debugger;
+                            showNotification('top', 'right', 'Ya Existe Información en la tabla Asme, favor de eliminar las actividades para poder copiar', 2);
+                            //sut.error.show('mensajes', "Ya Existe Información en la tabla Asme favor de eliminar las actividades para poder copiar");
+                        }
+                    });
+
+  
+            },
+            listar: function (page) {
+                debugger;
+                table = $('#tblLista'); 
+                var model = {
+                    'filtro.Expediente.Codigo': $('#txtFilterCodigo').val(),
+                    'filtro.Expediente.Entidad.Nombre': $('#txtFilterEntidad').val(),
+                    'filtro.CodigoCorto': $('#txtFilterCodigoPA').val(),
+                    'filtro.Denominacion': $('#txtFilterDenominacion').val(),
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+
+                $.ajax({
+
+                    //url: '/Simplificacion/Expediente/GetAllLikePagin',
+                    url:'@Url.Content("~/Simplificacion/Expediente/GetAllLikePaginConfProcedimiento")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                    sut.wait.appendOverlay('#boxLista');
+                },
+                    success: function (data) {
+                    sut.wait.removeOverlay('#boxLista');
+                    table.data('page', page);
+                    table.data('totalrows', data.totalRows);
+                    debugger;
+                
+                        sut.Expediente.generarfiscalizadoratodo(data.lista);
+                    
+                    if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='6' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                   
+                },
+                                error: function (data) {
+                    sut.error.show('mensajes', data.responseText);
+                }
+            });
+            }, 
+            generarfiscalizadoratodo: function (lista) {
+                debugger;
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);                   
+                    rows += sut.string.format('<td>{0}</td>', r.Codigo);
+                    rows += sut.string.format('<td><small class="label {0}">{1}</small></td>', sut.Expediente.tipoExpColor[r.TipoExpediente], sut.Expediente.tipoExpediente[r.TipoExpediente]);
+                    rows += sut.string.format('<td>{0}</td>', r.NomEntidad);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecModificacion);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoExpediente], sut.Expediente.estadoExpediente[r.EstadoExpediente]);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.CodigoCorto);
+                    rows += sut.string.format('<td >{0}</td>', r.Denominacion);
+					rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    if (r.ActivarTlf == 0) {
+                        rows += sut.string.format('<a class="btn btn-primary btn-xs"   data-placement="left" title="Atención Tlf" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Inactivo</i></a>', r.ProcedimientoId, 1, 8);
+                    } else {
+                        rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Atención Tlf" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Activado</a>', r.ProcedimientoId, 0, 8);
+                    }
+                    rows += '</div>';
+                    rows += '</td>';
+
+                    rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    if (r.Activar == 1) {
+                        rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Plazos Atención" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Activado</a>', r.ProcedimientoId, 0, 1);
+                    } else                                                            
+                    {                                                                 
+                        rows += sut.string.format('<a class="btn btn-primary btn-xs"   data-placement="left" title="Plazos Atención" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Inactivo</i></a>', r.ProcedimientoId, 1, 1);
+                    } 
+                    rows += '</div>';
+                    rows += '</td>';
+
+                    rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    if (r.Activar2 == 1) {
+                        rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Denominación" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Activado</a>', r.ProcedimientoId, 0, 2);
+                    } else {                                                          
+                        rows += sut.string.format('<a class="btn btn-primary btn-xs"   data-placement="left" title="Denominación" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Inactivo</i></a>', r.ProcedimientoId, 1, 2);
+                    }
+                    rows += '</div>';
+                    rows += '</td>';
+
+                    rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    if (r.Activar3 == 1) {
+                        rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Agresar Requisitos" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Activado</a>', r.ProcedimientoId, 0, 3);
+                    } else {                                                          
+                        rows += sut.string.format('<a class="btn btn-primary btn-xs"   data-placement="left" title="Agresar Requisitos" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Inactivo</i></a>', r.ProcedimientoId, 1, 3);
+                    }
+                    rows += '</div>';
+                    rows += '</td>';
+
+                    rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    if (r.sinnotas == 1) {
+                        rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Sin notas" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Activado</a>', r.ProcedimientoId, 0, 4);
+                    } else {
+                        rows += sut.string.format('<a class="btn btn-primary btn-xs"   data-placement="left" title="Sin notas" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Inactivo</i></a>', r.ProcedimientoId, 1, 4);
+                    }
+                    rows += '</div>';
+                    rows += '</td>';
+
+
+
+                    rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    if (r.reclamacion == 1) {
+                        rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Agresar Reclamación" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Activado</a>', r.ProcedimientoId, 0, 5);
+                    } else {
+                        rows += sut.string.format('<a class="btn btn-primary btn-xs"   data-placement="left" title="Agresar Reclamación" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Inactivo</i></a>', r.ProcedimientoId, 1, 5);
+                    }
+                    rows += '</div>';
+                    rows += '</td>';
+
+
+
+                    rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    if (r.revision == 1) {
+                        rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Agresar Revisión" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Activado</a>', r.ProcedimientoId, 0, 6);
+                    } else {
+                        rows += sut.string.format('<a class="btn btn-primary btn-xs"   data-placement="left" title="Agresar Revisión" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Inactivo</i></a>', r.ProcedimientoId, 1, 6);
+                    }
+                    rows += '</div>';
+                    rows += '</td>';
+
+                    debugger;
+                    rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    if (r.Calificaciones == 1) {
+                        rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Agresar Calificación" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Activado</a>', r.ProcedimientoId, 0, 7);
+                    } else {
+                        rows += sut.string.format('<a class="btn btn-primary btn-xs"   data-placement="left" title="Agresar Calificación" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Inactivo</i></a>', r.ProcedimientoId, 1, 7);
+                    }
+                    rows += '</div>';
+                    rows += '</td>';
+
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+
+            },    
+        };
+
+        $(function () {
+            sut.Expediente.listar(1);
+
+            $('#txtFilterCodigo').keypress(function (e) {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.Expediente.listar(1);
+            });
+            $('#txtFilterEntidad').keypress(function (e) {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.Expediente.listar(1);
+            });
+            $('#txtFilterCodigoPA').keypress(function (e) {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.Expediente.listar(1);
+            });
+            $('#txtFilterDenominacion').keypress(function (e) {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.Expediente.listar(1);
+            });
+            $('#tblLista thead button').click(function (e) {
+                $('#txtFilterCodigo').val('');
+                $('#txtFilterEntidad').val('');
+                $('#txtFilterCodigoPA').val('');
+                $('#txtFilterDenominacion').val('');
+                sut.Expediente.listar(1);
+            });
+             
+          
+
+ 
+
+        });
+
+    </script>
+}

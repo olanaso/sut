@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{322BB845-631D-4E3B-B66E-288E1855C041}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sut.ApplicationServices</RootNamespace>
+    <AssemblyName>Sut.ApplicationServices</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActividadService.cs" />
+    <Compile Include="ArMotivoAdjuntoService.cs" />
+    <Compile Include="ArchivoAdjuntoService.cs" />
+    <Compile Include="DashboardService.cs" />
+    <Compile Include="IncentivosFormulasCorteService.cs" />
+    <Compile Include="IncentivosFormulasService.cs" />
+    <Compile Include="IncentivosCorteService.cs" />
+    <Compile Include="BandejaService.cs" />
+    <Compile Include="CalendarioActividadesServic.cs" />
+    <Compile Include="GrupoEntidadService.cs" />
+    <Compile Include="IngresoSUTService.cs" />
+    <Compile Include="BaseLegalService.cs" />
+    <Compile Include="InductorValorService.cs" />
+    <Compile Include="MenuService.cs" />
+    <Compile Include="FeriadosAnualesService.cs" />
+    <Compile Include="NotificacionExpedientesService.cs" />
+    <Compile Include="PreguntasFrecuentesService.cs" />
+    <Compile Include="DocumentosNormaService.cs" />
+    <Compile Include="AuditoriaService.cs" />
+    <Compile Include="ComunicadoService.cs" />
+    <Compile Include="ObservacionService.cs" />
+    <Compile Include="ProcedimientoUndOrgResponsableService.cs" />
+    <Compile Include="ProcedimientoCargosOtrosService.cs" />
+    <Compile Include="ProcedimientoCargosServiceApe.cs" />
+    <Compile Include="ProcedimientoCategoriaService.cs" />
+    <Compile Include="DetalleMaestroService.cs" />
+    <Compile Include="MenuayudaService.cs" />
+    <Compile Include="PlazoAtencionService.cs" />
+    <Compile Include="IncentivosService.cs" />
+    <Compile Include="NotificacionService.cs" />
+    <Compile Include="CorreosService.cs" />
+    <Compile Include="SedeGrupoService.cs" />
+    <Compile Include="TablaAsmeReproduccionService.cs" />
+    <Compile Include="RolMenuService.cs" />
+    <Compile Include="RolesService.cs" />
+    <Compile Include="ProcedimientoCargosService.cs" />
+    <Compile Include="InformeService.cs" />
+    <Compile Include="InformeDocumentosService.cs" />
+    <Compile Include="UsuarioRolService.cs" />
+    <Compile Include="VCalidadRequisitos_4_2EXANTEService.cs" />
+    <Compile Include="VCalidadRequisitos_4_2Service.cs" />
+    <Compile Include="VCalidadRequisitos_5_4EXANTEService.cs" />
+    <Compile Include="VCalidadRequisitos_5_4Service.cs" />
+    <Compile Include="VCalidadRequisitos_CABECERAEXANTEService.cs" />
+    <Compile Include="VCalidadRequisitos_CABECERAService.cs" />
+    <Compile Include="VCalidadEXANTEService.cs" />
+    <Compile Include="VCalidadService.cs" />
+    <Compile Include="VCalidadRequisitosService.cs" />
+    <Compile Include="VListaEntidadACRService.cs" />
+    <Compile Include="UITService.cs" />
+    <Compile Include="DatoService.cs" />
+    <Compile Include="DepartamentoService.cs" />
+    <Compile Include="DistritoService.cs" />
+    <Compile Include="EntidadService.cs" />
+    <Compile Include="EnumeradoService.cs" />
+    <Compile Include="ExpedienteNormaService.cs" />
+    <Compile Include="ExpedienteService.cs" />
+    <Compile Include="FactorDedicacionService.cs" />
+    <Compile Include="InductorService.cs" />
+    <Compile Include="MaestroFijoService.cs" />
+    <Compile Include="MapaProcedimientoService.cs" />
+    <Compile Include="MetaDatoService.cs" />
+    <Compile Include="MiembroEquipoService.cs" />
+    <Compile Include="NormaService.cs" />
+    <Compile Include="PlanTrabajoService.cs" />
+    <Compile Include="ProcedimientoService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProvinciaService.cs" />
+    <Compile Include="RecursoCostoService.cs" />
+    <Compile Include="RecursoService.cs" />
+    <Compile Include="ReporteService.cs" />
+    <Compile Include="RequisitoService.cs" />
+    <Compile Include="ResolucionEquipoService.cs" />
+    <Compile Include="SedeService.cs" />
+    <Compile Include="SeguridadService.cs" />
+    <Compile Include="TablaAsmeService.cs" />
+    <Compile Include="TupaService.cs" />
+    <Compile Include="UbigeoService.cs" />
+    <Compile Include="UnidadMedidaService.cs" />
+    <Compile Include="UnidadOrganicaService.cs" />
+    <Compile Include="UsuarioService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sut.Context\Sut.Context.csproj">
+      <Project>{8EBC26D8-0EF0-4465-B9BC-F501401CF6E8}</Project>
+      <Name>Sut.Context</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sut.Entities\Sut.Entities.csproj">
+      <Project>{146c2418-3106-41fb-be95-92e0771465bd}</Project>
+      <Name>Sut.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sut.IApplicationServices\Sut.IApplicationServices.csproj">
+      <Project>{EC87F7AE-2136-4DE4-AB89-4EDAA856C1AD}</Project>
+      <Name>Sut.IApplicationServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sut.IDomainServices\Sut.IDomainServices.csproj">
+      <Project>{780F70BF-E986-44FE-8623-FBC73E287DA6}</Project>
+      <Name>Sut.IDomainServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sut.IRepositories\Sut.IRepositories.csproj">
+      <Project>{E85351EC-7224-42CA-8E29-270B6DFAEF10}</Project>
+      <Name>Sut.IRepositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sut.Log\Sut.Log.csproj">
+      <Project>{4b66ba21-7a2a-4762-9d3a-118833357c79}</Project>
+      <Name>Sut.Log</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sut.Repositories\Sut.Repositories.csproj">
+      <Project>{E720690C-0929-40B1-8C3D-96BDB0D4D053}</Project>
+      <Name>Sut.Repositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sut.Security\Sut.Security.csproj">
+      <Project>{ED948E4C-4BD1-4712-A434-6297C9973912}</Project>
+      <Name>Sut.Security</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

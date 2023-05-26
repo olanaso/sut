@@ -1,0 +1,1072 @@
+﻿@model List<Sut.Entities.Incentivos>
+@{
+    ViewBag.Title = "Licencia de Funcionamiento";
+    ViewBag.Descripcion = "Registro Licencia de Funcionamiento";
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+
+    Sut.Security.Filtros fil = ViewBag.filtro as Sut.Security.Filtros;
+}
+<div class="callout callout-warning" style="height: inherit;padding: inherit;display: block;">
+    Toda la información registrada se encuentra sujeta a verificación posterior
+</div>
+<div id="mensajes"></div>
+<div class="row">
+    <div class="col-xs-12">
+
+        <div id="boxLista" class="box box-body">
+            @if (@user.EntidadId == 4105)
+            {
+                <div class="col-sm-4 col-xs-2" id="idFiltros">
+                    <label style="padding: 0.5rem;" class="col-sm-12 col-xs-2 control-label">Departamento :</label>
+                    <div class="col-sm-12 col-xs-12">
+                        @Html.DropDownList("DepartamentoId", ViewBag.ListaDepartamento as List<SelectListItem>, new { @id = "DepartamentoId", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-sm-4 col-xs-2" id="idFiltros">
+                    <label style="padding: 0.5rem;" class="col-sm-12 col-xs-2 control-label">Provincia :</label>
+                    <div class="col-sm-12 col-xs-12">
+                        @Html.DropDownList("ProvinciaId", ViewBag.ListaProvincia as List<SelectListItem>, new { @id = "ProvinciaId", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-sm-4 col-xs-2" id="idFiltros">
+                    <label style="padding: 0.5rem;" class="col-sm-12 col-xs-2 control-label">Entidad:</label>
+                    <div class="col-sm-12 col-xs-12">
+                        @Html.DropDownList("EntidadId", ViewBag.ListaEntidad as List<SelectListItem>, new { @id = "EntidadId", @class = "form-control", @style = "width: 100 %" })
+                    </div>
+                </div>
+                }
+                <div class="col-sm-4 col-xs-2" id="idFiltros">
+                    <label style="padding: 0.5rem;" class="col-sm-12 col-xs-2 control-label">Seleccionar periodo :</label>
+                    <div class="col-sm-12 col-xs-12">
+                        @Html.DropDownListFor(model => @fil.Periodo, ViewBag.periodos as List<SelectListItem>, new { @class = "form-control " })
+                    </div>
+                </div>
+                <div class="col-sm-8 col-xs-2" id="idFiltros" style="text-align: end;">
+                    <br />
+                    <br />
+                    <a class="btn btn-facebook" id="aplicarfiltro" href="javascript:sut.Incentivos.listar(1);"><i class="fa fa-filter"></i> Consultar</a>
+                    @if (@user.EntidadId != 4105)
+                    {
+                    <a class="btn btn-success" href="javascript:sut.Incentivos.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>
+                    }
+
+                    <a class="btn btn-success" href="javascript:sut.Incentivos.procesar()"><i class="fa fa-spinner"></i> Procesar</a>
+                    @if (@user.EntidadId == 4105)
+                    {
+
+                        <div class="btn-group">
+                            <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-download"></i> Reporte <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+
+                                <li>
+                                    <a class="btn btn-success" style="color: white;text-align: inherit; " href="javascript:sut.Incentivos.reporte0()"><i class="fa fa-download"></i> Resultado</a>
+                                </li>
+
+                                <li id="tipo0">
+                                    <a class="btn btn-success" style="color: white;text-align: inherit;  " href="javascript:sut.Incentivos.reporte1(0)"><i class="fa fa-download"></i> Imformación</a>
+
+                                </li>
+                                <li id="tipo1" style="display:none">
+                                    <a class="btn btn-success" style="color: white; text-align: inherit; " href="javascript:sut.Incentivos.reporte1(1)"><i class="fa fa-download"></i> Imformación</a>
+
+                                </li>
+                                <li id="tipo2" style="display:none">
+                                    <a class="btn btn-success" style="color: white; text-align: inherit; " href="javascript:sut.Incentivos.reporte1(2)"><i class="fa fa-download"></i> Imformación</a>
+
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="btn-group">
+                            <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-download"></i> Reporte <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+
+                                <li>
+                                    <a class="btn btn-success" style="color: white; text-align: inherit; " href="@Url.Content("~/General/Reporte/Incentivos")?EntidadId=@user.EntidadId" target="_blank">
+                                        <i class="fa fa-download"></i> Resultado
+                                    </a>
+                                </li>
+
+                                <li id="tipo0">
+                                    <a class="btn btn-success" style="color: white; text-align: inherit; " href="@Url.Content("~/General/Reporte/ImformacionIncentivos")?EntidadId=@user.EntidadId&Tipoperiodo=0&Roles=@user.Rol" target="_blank">
+                                        <i class="fa fa-download"></i> Imformación
+                                    </a>
+                                </li>
+                                <li id="tipo1" style="display:none">
+                                    <a class="btn btn-success" style="color: white; text-align: inherit; " href="@Url.Content("~/General/Reporte/ImformacionIncentivos")?EntidadId=@user.EntidadId&Tipoperiodo=1&Roles=@user.Rol" target="_blank">
+                                        <i class="fa fa-download"></i> Imformación
+                                    </a>
+                                </li>
+                                <li id="tipo2" style="display:none">
+                                    <a class="btn btn-success" style="color: white; text-align: inherit; " href="@Url.Content("~/General/Reporte/ImformacionIncentivos")?EntidadId=@user.EntidadId&Tipoperiodo=2&Roles=@user.Rol" target="_blank">
+                                        <i class="fa fa-download"></i> Imformación
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+
+
+            </div>
+
+            <div id="boxLista" class="box box-danger">
+
+            
+                <div class="box-body"> 
+                  
+
+                    
+                    <br />
+
+                    @*<input type="hidden" value="0" id="ContenidoValor" />*@
+                    <div class="table-responsive">
+                        <table id="tblLista" class="table table-bordered table-striped table-hover"
+                               data-pagesize="99999"
+                               data-page="1"
+                               data-totalrows="0"
+                               data-function="sut.Incentivos.listar"
+                               data-paginator="paginator">
+                            <thead>
+                                <tr>
+                                    <th class="colAction">Nro.</th>
+                                    <th style="margin: 1rem;padding: 1rem;">N° Expediente</th>
+                                    <th>Fecha Ingreso </br> Solicitud</th>
+                                    <th style="margin: 1rem;padding: 1rem;">Nivel Riesgo</th>
+                                    <th>Fecha Emisión </br> Licencia Funcionamiento</th>
+                                    <th>Fecha Notificación </br> Licencia Funcionamiento</th>
+                                    <th>Fecha Emisión </br> Certificado ITSE</th>
+                                    <th>Fecha Notificación </br> Certificado ITSE</th>
+                                    <th>Fecha Suspencion </br> ITSE Subsanacion</th>
+                                    <th>¿Cumple </br>  Condición? </th>
+                                    @if (@user.EntidadId == 4105) 
+                                    {
+                                    <th>Entidad</th> 
+                                    }
+                                    @*<th style="width:100px;margin: 1rem;padding: 1rem;">Estado</th>*@
+                                    <th class="colAction"></th>
+                                    @*<th class="colAction"></th>*@
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr><td colspan="14"><div id="paginator"></div></td></tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div class="table-responsive" id="tabla2" style="display:none;text-align:center;width:40%">
+                        <br />
+                        <label class="col-sm-12 col-xs-12 control-label">Resumen de Datos </label>
+                        <br /><br />
+                        <table id="tblListaFormula" style="text-align:center" class="table table-bordered table-striped table-hover"
+                               data-pagesize="99999"
+                               data-page="1"
+                               data-totalrows="0"
+                               data-function="sut.Incentivos.listar"
+                               data-paginator="paginator">
+                            <thead>
+                                <tr>
+                                    <th class="colAction"></th>
+                                    <th style="margin: 1rem;padding: 1rem;text-align:center">Nivel </br> Riesgo</th>
+                                    <th style="margin: 1rem;padding: 1rem;text-align:center">Número de licencias </br> emitidas</th>
+                                    <th style="margin: 1rem;padding: 1rem;text-align:center">Licencia notificada en 2 días </br>y </br>con Certificado ITSE notificado en 9 días</th>
+                                    <th style="margin: 1rem;padding: 1rem;text-align:center">Certificado ITSE emitido en 7 días  </br>y </br>con Licencia notificada en 8 días</th>
+                                    <th class="colAction"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr><td colspan="14"><div id="paginator"></div></td></tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+    </div>
+</div>
+ 
+<div class="modal fade mymodal" id="modalSeguimiento">
+    <div class="modal-dialog modal-lg" style="width:90%">
+        <div class="modal-content" style="border-radius: 40px 40px 0 0;">
+
+            <div class="modal-body" id="contenido" style="padding:0px">
+                <div class="bar-title">
+                    @*<a class="close"  data-dismiss="modal" style="padding: 80px; top: -80px; background: transparent"> <i class='fa fa-times fa-2x'></i> </a>*@
+                    @*<a class="close modalMinimize" style="padding:100px; right: 20px;  top: -100px; background: transparent"> <i class='fa fa-minus fa-2x'></i> </a>*@
+                    @*<button class="close modalMinimize"> <i class='fa fa-minus'></i> </button>*@
+                    <span>
+                        <h5 id="ihtitulo1" style="font-size: xx-large;text-align: center;font-family: initial;">Hola @user.Nombres, bienvenido al Sistema Único de Trámites </h5>
+                        <h5 id="ihtitulo2" style="font-size: x-large;text-align: center;font-family: initial;"> </h5>
+                    </span>
+                </div>
+                <div class="col-sm-12 col-xs-12">
+
+                    <div class="col-sm-12 col-xs-12" id="idtitulo3" style="text-align:center">
+
+
+                        <div id="colorNavContenido">
+
+                        </div>
+
+
+
+                        <div class="col-sm-12 col-xs-12">
+                            <img src="~/dist/img/hola.png" style="width: 160px;" />
+                            <div class="caja">
+                                <h5 style="font-size: 20px;text-align: center;font-family: initial;">
+                                    Muy bien! Felicidades a hora has Clic en el boton <label id="nombremenu"></label>  para comenzar!
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-xs-12">
+                            <div class="col-sm-6 col-xs-12" style="text-align: left;">
+                                <a class="btn btn-success" href="javascript:sut.Incentivos.Avanzar(0)" style="font-size: xx-large;"><i class="fa fa-arrow-left"></i> Retroceder</a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<div class="minmaxConayuda">
+    <div class="modal fade mymodal" id="modalAyudaAvatar1">
+        <div class="modal-dialog  ">
+            <div class="modal-content">
+                <div class="modal-body" id="contenido" style="padding:0px">
+                    <div class="bar-title" id="tituloocultar">
+                        <a class="close modalMinimize" style="padding:110px; right: 20px;  top: -100px; background: transparent"> <i class='fa fa-clone '></i> </a>
+                        <span>
+                            <h3 id="ihtitulo1" style="font-size: x-large;text-align: center;font-family: initial;"> Hola @user.Nombres </h3>
+                        </span>
+                    </div> 
+                    <div> 
+                        <div id="idtitulo1" style="text-align:left">
+                            <div class="col-sm-3 col-xs-2">
+                                <a class="modalMinimize" title="Minimizar" style="color:black"> <i class='fa fa-minus fa-2x'></i> </a>
+                                <img src="~/dist/img/hola.png" class="img-rounded" alt="Cinque Terre" />
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje1" style="display: none; width:409px;height:100%;top:137px">
+                                <sp style="text-align: left;font-family: initial;"> Clic en </sp>
+                                <a class="btn btn-success btn-xs" href="#"><i class="fa fa-plus"></i> Nuevo</a> 
+                                <l style="text-align: left;font-family: initial;">para registrar nuestro Equipo de Trabajo ¡Suerte!</l>
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje2" style="display: none; width:440px;height:100%;top:103px">
+                                <j2 style="text-align: left;font-family: initial;">¡Felicidades! ¿Registraste a todo el equipo? Si es así, avancemos al siguiente paso. Clic </j2>
+                                <a id="clic" style="display: none;" class="btn btn-warning" href="javascript:sut.Incentivos.GuardarMenu(1)"><i class="fa fa-arrow-right"></i>Aqui</a>
+                                <l1 style="text-align: left;font-family: initial;"> Para continuar. ¡Tú puedes! </l1>
+                            </div> 
+                        </div> 
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div> 
+</div>
+<div class="minmaxCon"></div>
+
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="14"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 60px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        } 
+
+
+          /*table#tblLista1 thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista1 tbody tr td[colspan="14"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista1 .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista1 .colAction {
+            width: 60px;
+        }
+
+        #tblLista1 tfoot .pagination {
+            margin: 0px 0px;
+        }*/ 
+
+    </style>
+}
+@section Script {
+    <script>
+        sut.Incentivos = {
+            editar: (id) => {
+
+                $.ajax({
+                    type: "GET",
+                    //url: '/Seguridad/Miembro/Editar',
+                    url: '@Url.Content("~/Seguridad/Incentivos/Editar")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+
+
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+
+            reporte0: () => {
+
+                var entidadId = $('select[name="EntidadId"]').val();
+
+                 if (entidadId == 0) {
+                    showNotification('top', 'right', 'Favor de seleccionar una entidad para ejecutar el proceso', 2);
+                    return;
+                }
+
+
+
+                showNotification('top', 'right', 'Procesando descarga  resultado licencia!', 2);
+                window.location = "@Url.Content("~/General/Reporte/Incentivos")?EntidadId=" + entidadId  ;
+                //showNotification('top', 'right', 'Descarga Completada', 1);
+
+
+            },
+            reporte1: (valor) => {
+                var entidadId = $('select[name="EntidadId"]').val();
+
+
+
+                showNotification('top', 'right', 'Procesando descarga  reporte licencia!', 2);
+                window.location = "@Url.Content("~/General/Reporte/ImformacionIncentivos")?EntidadId=" + entidadId + '&Tipoperiodo=' + valor + '&Roles=' + @user.Rol;
+                //showNotification('top', 'right', 'Descarga Completada', 1);
+
+
+            },
+
+            procesar: () => {
+
+                var Periodo = $('select[name="fil.Periodo"] option:selected').val();
+
+                if (@user.EntidadId == 4105) {
+
+                    var entidadId = $('select[name="EntidadId"]').val();
+
+                    if (Periodo == 0) {
+                        showNotification('top', 'right', 'Favor de seleccionar un periodo para ejecutar el proceso', 2);
+                        return;
+                    } else if (entidadId == 0) {
+                        showNotification('top', 'right', 'Favor de seleccionar una entidad para ejecutar el proceso', 2);
+                        return;
+                    }
+                } else
+                {
+                    var entidadId = @user.EntidadId;
+
+                    if (Periodo == 0) {
+                        showNotification('top', 'right', 'Favor de seleccionar un periodo para ejecutar el proceso', 2);
+                        return;
+                    }
+                }
+
+
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/Miembro/Guardar",
+                    url: '@Url.Content("~/Seguridad/Incentivos/Procesar")',
+                    data: { EntidadId: entidadId,tipoperiodo :Periodo },
+                    dataType: 'json',
+                    beforeSend: () => {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: () => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, () => {
+                            debugger;
+
+                            sut.Incentivos.listar(1);
+                            sut.Incentivos.generarFormula(result);
+                            $('#tabla2').show();
+
+
+                        });
+                    },
+                    error: (result) => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            listar: (page) => {
+                $('#tabla2').hide();
+                $('#tipo2').hide();
+                var Periodo=$('select[name="fil.Periodo"] option:selected').val();
+                    table = $('#tblLista');
+
+                    if(Periodo==0){
+                        $('#tipo2').hide();
+                        $('#tipo1').hide();
+                        $('#tipo0').show();
+
+                    } else if (Periodo == 1) {
+                        $('#tipo1').show();
+                        $('#tipo2').hide();
+                        $('#tipo0').hide();
+                    }
+                    else {
+                        $('#tipo1').hide();
+                        $('#tipo2').show();
+                        $('#tipo0').hide();
+                    }
+
+
+                if (@user.EntidadId == 4105) {
+                    var model = {
+                        pageIndex: page,
+                        pageSize: table.data('pagesize'),
+                        tipoperiodo: Periodo,
+                        EntidadId: $('select[name="EntidadId"]').val()
+                    };
+                } else
+                {
+                    var model = {
+                        pageIndex: page,
+                        pageSize: table.data('pagesize'),
+                        tipoperiodo: Periodo,
+                        EntidadId: @user.EntidadId
+                    };
+                }
+
+                ////Se crear una referencia a JavaScriptSerializer
+                //var serializer = new JavaScriptSerializer();
+                ////Se cambia el Length directo a nuestra referencia
+                //serializer.MaxJsonLength = 500000000;
+
+                $.ajax({
+                    //url: "/Seguridad/Miembro/GetAllLikePagin",
+                    url: '@Url.Content("~/Seguridad/Incentivos/GetAllLikePagin")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: () => {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: (data) => {
+                        debugger;
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.Incentivos.generar(data.lista);
+                        debugger;
+                        if (data.totalRows == 0)  $('#'+table+'tbody').append("<tr><td colspan='14' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+
+                        debugger;
+
+                        if (data.totalRows < 2)
+                        {
+                            $('#mensaje2').hide();
+                            $('#mensaje1').show();
+                        }else
+                        {
+                            $('#mensaje2').show();
+                            $('#mensaje1').hide();
+                            sut.control.Actualizartexto();
+                        }
+                    },
+                    error: (data) => {
+                        sut.error.show('mensajes', data.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            generar: (lista) => {
+
+                var table;
+
+                    table = $('#tblLista');
+
+                //var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, (i, r) => {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.NumExpediente);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.Fec_Ing_Sol);
+                    if (r.NivelRiesgo == 1) {
+                        var NivelRie = 'Bajo';
+                    } else if (r.NivelRiesgo == 2) {
+                        var NivelRie = 'Medio';
+                    }else if (r.NivelRiesgo == 3) {
+                        var NivelRie = 'Alto';
+                    }else if (r.NivelRiesgo == 4) {
+                        var NivelRie = 'Muy Alto';
+                    }
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', NivelRie);
+
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.Fec_Emision_Licencia_Funcionamiento);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.Fec_Notificacion_Licencia_Funcionamiento);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.Fec_Emision_Cert_ITSE);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.Fec_Notificacion_Cert_ITSE);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.Fec_Suspencion_ITSE_Subsanacion);
+
+
+                    if (r.EstadoIngreso == 1) {
+                        var EstadoIngreso = 'SI';
+                    } else {
+                        var EstadoIngreso = 'NO';
+                    }
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', EstadoIngreso);
+                    if (r.Estado == 1) {
+                        var estadotitulo = 'Activo';
+                    } else {
+                        var estadotitulo = 'Baja';
+                    }
+                    //rows += sut.string.format('<td style="text-align: center;">{0}</td>', estadotitulo);
+                    if (@user.EntidadId == 4105)
+                    {
+                        rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.Entidad);
+                    }
+
+                    rows += '<td style="text-align: center;">';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a  class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar Incentivos" href="javascript:sut.Incentivos.editar({0})" ><i class="fa fa-pencil"></i></a>', r.IncentivosId);
+                    rows += '</div>';
+                    rows += '</td>';
+
+                    //rows += '<td style="text-align: center;">';
+                    //rows += '<div class="btn-group">';
+                    //rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Descargar" href="javascript:sut.Incentivos.Menu({0})" ><i class="fa fa-list-alt"></i></a>', r.IncentivosId);
+                    //rows += '</div>';
+                    //rows += '</td>';
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            },
+            generarFormula: (lista) => {
+
+                var table;
+                var Periodo=$('select[name="fil.Periodo"] option:selected').val();
+                table = $('#tblListaFormula');
+
+                //var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+
+                    rows += '<tr>';
+                    rows += sut.string.format('<td class="colNro" ></td>');
+                    rows += sut.string.format('<td>Bajo</td>');
+                    rows += sut.string.format('<td>{0}</td>', lista.numerobajo);
+                    rows += sut.string.format('<td>{0}</td>', lista.cantidadbajo);
+                    rows += sut.string.format('<td>{0}</td>', "");
+                    rows += sut.string.format('<td></td>');
+                    rows += '</tr>';
+
+                    rows += '<tr>';
+                    rows += sut.string.format('<td class="colNro" ></td>');
+                    rows += sut.string.format('<td>Medio</td>');
+                    rows += sut.string.format('<td>{0}</td>', lista.numeromedio);
+                    rows += sut.string.format('<td>{0}</td>', lista.cantidadmedio);
+                    rows += sut.string.format('<td>{0}</td>', "");
+                    rows += sut.string.format('<td></td>');
+                    rows += '</tr>';
+
+                    rows += '<tr>';
+                    rows += sut.string.format('<td class="colNro" ></td>');
+                    rows += sut.string.format('<td>Alto</td>');
+                    rows += sut.string.format('<td>{0}</td>', lista.numeroAlto);
+                    rows += sut.string.format('<td>{0}</td>', "");
+                    rows += sut.string.format('<td>{0}</td>', lista.cantidadAlto);
+                    rows += sut.string.format('<td></td>');
+                    rows += '</tr>';
+
+                    rows += '<tr>';
+                    rows += sut.string.format('<td class="colNro" ></td>');
+                    rows += sut.string.format('<td>Muy Alto</td>');
+                    rows += sut.string.format('<td>{0}</td>', lista.numeroMuyAlto);
+                    rows += sut.string.format('<td>{0}</td>', "");
+                    rows += sut.string.format('<td>{0}</td>', lista.cantidadMuyAlto);
+                    rows += sut.string.format('<td></td>');
+                    rows += '</tr>';
+
+                    rows += '<tr>';
+                    rows += sut.string.format('<td colspan="5" ></td>');
+                    rows += '</tr>';
+                    rows += '<tr>';
+                    rows += sut.string.format('<td colspan="5" ><b>Cálculo del indicador</b></td>');
+                    rows += '</tr>';
+                    rows += '<tr>';
+                    rows += sut.string.format('<td colspan="5" ></td>');
+                    rows += '</tr>';
+
+                    rows += '<tr>';
+                    rows += sut.string.format('<td class="colNro" ></td>');
+                    rows += sut.string.format('<td>Bajo y medio</td>');
+                    rows += sut.string.format('<td>{0}</td>', lista.valor1);
+                    rows += sut.string.format('<td>{0}</td>', "");
+                    rows += sut.string.format('<td>{0}</td>', "");
+                    rows += sut.string.format('<td></td>');
+                    rows += '</tr>';
+
+                    rows += '<tr>';
+                    rows += sut.string.format('<td class="colNro" ></td>');
+                    rows += sut.string.format('<td>Alto y Muy Alto</td>');
+                    rows += sut.string.format('<td>{0}</td>', lista.valor2);
+                    rows += sut.string.format('<td>{0}</td>', "");
+                    rows += sut.string.format('<td>{0}</td>', "");
+                    rows += sut.string.format('<td></td>');
+                    rows += '</tr>';
+
+
+                    rows += '<tr>';
+                    rows += sut.string.format('<td class="colNro" ></td>');
+                    rows += sut.string.format('<td>Meta total</td>');
+                    rows += sut.string.format('<td>{0} %</td>', lista.Meta_Total);
+                    rows += sut.string.format('<td>{0}</td>', "");
+                    rows += sut.string.format('<td>{0}</td>', "");
+                    rows += sut.string.format('<td></td>');
+                    rows += '</tr>';
+
+                    rows += '<tr>';
+                    rows += sut.string.format('<td colspan="5" ></td>');
+                    rows += '</tr>';
+                    rows += '<tr>';
+                    rows += sut.string.format('<td colspan="5" ><b>Cálculo del Indicador</b></td>');
+                    rows += '</tr>';
+                    if(Periodo==1){
+                        rows += '<tr>';
+                        rows += sut.string.format('<td colspan="5" style="font-size: x-large;" > Cumplimiento Meta - Primer Periodo =[({0}+{1})/({2}+{3}) x0.5)+(({4}+{5})/({6}+{7})x0.5)]x100={8} %</td>', lista.cantidadbajo, lista.cantidadmedio, lista.numerobajo, lista.numeromedio, lista.cantidadAlto, lista.cantidadMuyAlto, lista.numeroAlto, lista.numeroMuyAlto, lista.Meta_Total);
+                        rows += '</tr>';
+                    }else
+                    {
+                        rows += '<tr>';
+                        rows += sut.string.format('<td colspan="5" style="font-size: x-large;" > Cumplimiento Meta - Segundo Periodo =[({0}+{1})/({2}+{3}) x0.5)+(({4}+{5})/({6}+{7})x0.5)]x100={8} %</td>', lista.cantidadbajo, lista.cantidadmedio, lista.numerobajo, lista.numeromedio, lista.cantidadAlto, lista.cantidadMuyAlto, lista.numeroAlto, lista.numeroMuyAlto, lista.Meta_Total);
+                        rows += '</tr>';
+                    }
+
+                tabla.append(rows);
+            },
+            Avanzar: (estado) => {
+                if(estado==1)
+                {
+                    $('#modalAyudaAvatar1').modal('hide');
+                    $('#modalSeguimiento').modal('show');
+                    $('#modalSeguimiento').modal({backdrop: 'static', keyboard: false})
+                }else
+                {
+                    $('#modalSeguimiento').modal('hide');
+                    $('#modalAyudaAvatar1').modal({backdrop: 'static', keyboard: false})
+                    $(".modal-backdrop").addClass("display-none");
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                }
+            },
+            GuardarMenu: (menuid) => {
+
+                $.ajax({
+                    type: "GET",
+                    //url: '/Seguridad/Miembro/Eliminar',
+                    url: '@Url.Content("~/Seguridad/Miembro/GuardarMenu")',
+                    data: { menuid: menuid,ruta:menuid },
+                    cache: false,
+                    beforeSend: () => {
+
+                    },
+                    success: (data) => {
+                        if (data.exito) {
+
+                            $('#modalAyudaAvatar1').modal('hide');
+                            $('#modalSeguimiento').modal('show');
+                            $('#modalSeguimiento').modal({backdrop: 'static', keyboard: false})
+                            sut.Incentivos.listarayuda();
+
+                        }
+                    },
+                    error: (result) => {
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+
+            },
+            comenzar: function () {
+                window.location = '@Url.Content("~/Seguridad/Usuario/ListaUsr")';
+            }
+            ,
+            listarayuda: function () {
+
+                $.ajax({
+                    type: 'POST',
+                    //url: '/Seguridad/Portada/EnviarAutorizacionMef',
+                    url: '@Url.Content("~/Seguridad/Portada/GenerarListamenulista")',
+                    data: {},
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#mensajes").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                    },
+                    success: function (result) {
+                        $('#modal-ventana').modal('hide');
+
+                        var count = 1;
+                        var countejecutar = 1;
+                        var i=0;
+                        var recorerr = 0;
+
+                        debugger;
+                        var rows = '';
+                        var asdas= result.cantidad;
+                        $('#colorNav').remove();
+
+                        rows += '<nav id="colorNav" style="text-align:left;">'
+                        rows += '<ul>'
+                        for (i = recorerr; i < result.cantidad; i++)
+                        {
+                            if (result.menu[i].MenuId == 20)
+                            {
+                                if (@user.Sector == 80 || @user.Sector == 79)
+                                {
+                                    rows += '<li class="'+result.menu[i].Estilo+'" style="'+result.menu[i].Dimension+'">'
+                                    rows += '<button class="pulse4-button" style="font-size:20px">'+countejecutar+'</button><br />'
+                                    rows += '<span style="font-size: 15px;color: white;"> '+result.menu[i].Descripcion +'</span> <br />'
+                                    rows += '<a href="'+ result.menu[i].url+'" class="'+result.menu[i].Gragico+'"></a>'
+
+                                    rows += '<ul style="z-index:10">'
+
+                                    for (var sub = i; sub < result.cantidad; sub++)
+                                    {
+                                        if (result.menu[sub].IdPadreMenu != result.menu[i].IdPadreMenu)
+                                        {
+                                            i = sub - 1;
+                                            break;
+
+                                        }
+                                        rows += '<li style="'+result.menu[sub].Estilo+'"> <a href="'+result.menu[sub].url+'">'+result.menu[sub].Descripcion+'</a></li>'
+
+                                    }
+                                    rows += '</ul>'
+                                    rows += '</li>'
+                                }
+                                else
+                                {
+                                    i = i + 1;
+                                }
+                            }
+                            else if (result.menu[i].MenuId == 22)
+                            {
+                                if (@user.CodPadre == "1")
+                                {
+                                    rows += '<li class="'+result.menu[i].Estilo+'" style="'+result.menu[i].Dimension+'">'
+                                    rows += '	<button class="pulse4-button" style="font-size:20px">'+countejecutar+'</button><br />'
+                                    rows += '	<span style="font-size: 15px;color: white;"> '+result.menu[i].Descripcion+' </span> <br />'
+                                    rows += '	<a href="'+result.menu[i].url+'" class="'+result.menu[i].Gragico+'"></a>'
+                                    if (result.menu[i].IdPadreMenu != 0)
+                                    {
+                                        i = i + 1;
+                                        rows += '<ul style="z-index:10">'
+
+                                        for (var sub = i; sub < result.cantidad; sub++)
+                                        {
+                                            if (result.menu[sub].IdPadreMenu != result.menu[i].IdPadreMenu)
+                                            {
+                                                i = sub - 1;
+                                                break;
+
+                                            }
+                                            rows += '<li style="'+result.menu[sub].Estilo+'" > <a href="'+result.menu[sub].url+'" > '+result.menu[sub].Descripcion+'</a></li>'
+
+                                        }
+                                        rows += '</ul>'
+                                    }
+
+                                    rows += '</li>'
+                                }
+                                else
+                                {
+                                    i = i + 1;
+                                }
+                            }
+                            else
+                            {
+                                rows += '<li class="'+result.menu[i].Estilo+'" style="'+result.menu[i].Dimension+'">'
+                                rows += ' <button class="pulse4-button" style="font-size:20px">'+countejecutar+'</button><br />'
+                                rows += ' <span style="font-size: 15px;color: white;"> '+result.menu[i].Descripcion+' </span> <br />'
+                                rows += ' <a href="'+result.menu[i].url+'" class="'+result.menu[i].Gragico+'"></a>'
+
+                                if (result.menu[i].IdPadreMenu != 0)
+                                {
+                                    i = i + 1;
+                                    rows += '<ul style="z-index:10">'
+
+                                    for (var sub = i; sub < result.cantidad; sub++)
+                                    {
+                                        if (result.menu[sub].IdPadreMenu != result.menu[i].IdPadreMenu)
+                                        {
+                                            i = sub - 1;
+                                            break;
+
+                                        }
+                                        rows += '<li style="'+result.menu[sub].Estilo+'"> <a href="'+result.menu[sub].url+'">'+result.menu[sub].Descripcion+'</a></li>'
+
+                                    }
+                                    rows += '</ul>'
+                                }
+
+                                rows += '</li>'
+                            }
+                            countejecutar = countejecutar + 1;
+
+                        }
+                        rows += '</ul>'
+                        rows += '</nav>'
+
+                        $("#colorNavContenido").append(rows);
+
+                        document.querySelector('#nombremenu').innerText = result.nombremenu;
+
+
+                    },
+                    error: function (result) {
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+            },
+
+        };
+
+        $(() => {
+            //sut.Incentivos.listarayuda();
+            debugger;
+            if (@user.Rol!= 1)
+            {
+                sut.Incentivos.listar(1);
+            }
+
+
+
+
+
+        $('select[name$="DepartamentoId"]').on('change', (e) => {
+            $.ajax({
+                type: "POST",
+                //url: "/Seguridad/Entidad/GetProvincias",
+                url: '@Url.Content("~/Seguridad/Usuario/GetProvincias")',
+                data: { id: $('select[name$="DepartamentoId"]').val() },
+                dataType: 'json',
+                beforeSend: function () {
+                },
+                complete: function () {
+                },
+                success: function (result) {
+                    debugger;
+                    var sel = $('select[name$="ProvinciaId"]');
+                    sel.find('option').remove();
+                    $.each(result.data, (i, r) => {
+                        sel.append($('<option></option>').attr('value', r.ProvinciaId).html(r.Nombre));
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        //url: "/Seguridad/Entidad/GetProvincias",
+                        url: '@Url.Content("~/Seguridad/Usuario/GetEntidades")',
+                        data: { id: $('select[name$="ProvinciaId"]').val() },
+                        dataType: 'json',
+                        beforeSend: function () {
+                        },
+                        complete: function () {
+                        },
+                        success: function (result) {
+                            var sel = $('select[name$="EntidadId"]');
+                            sel.find('option').remove();
+                            $.each(result.data, (i, r) => {
+                                sel.append($('<option></option>').attr('value', r.EntidadId).html(r.Nombre));
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('msgEditar', result.responseText);
+                        }
+                    });
+
+                },
+                error: function (result) {
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+        });
+
+
+        $('select[name$="ProvinciaId"]').on('change', (e) => {
+            debugger;
+            $.ajax({
+                type: "POST",
+                //url: "/Seguridad/Entidad/GetProvincias",
+                url: '@Url.Content("~/Seguridad/Usuario/GetEntidades")',
+                data: { id: $('select[name$="ProvinciaId"]').val() },
+                dataType: 'json',
+                beforeSend: function () {
+                },
+                complete: function () {
+                },
+                success: function (result) {
+                    var sel = $('select[name$="EntidadId"]');
+                    sel.find('option').remove();
+                    $.each(result.data, (i, r) => {
+                        sel.append($('<option></option>').attr('value', r.EntidadId).html(r.Nombre));
+                    });
+                },
+                error: function (result) {
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+        });
+
+
+
+
+            /*desarrollo de la ayuda*/
+            /*minimizar un modal*/
+
+            var $content, $modal, $apnData, $modalCon;
+
+            $content = $(".min");
+
+
+            //To fire modal
+            $(".mdlFire").click(function (e) {
+                debugger;
+                e.preventDefault();
+
+                var $id = $(this).attr("data-target");
+
+                $($id).modal({ backdrop: false, keyboard: false });
+
+            });
+
+            debugger;
+
+            if(@user.Ayuda==1){
+                $('#edit-fase-preparatoria').addClass('active');
+                $('a[href="#edit-fase-preparatoria"]').parent().addClass('active');
+
+
+                $('#tituloocultar').hide();
+
+
+                $('#modalAyudaAvatar1').modal({backdrop: 'static', keyboard: false})
+                $modal = "#modalAyudaAvatar1"
+                $($modal).toggleClass("min");
+                $modal = "#modalAyudaAvatar1";
+                $(".modal-backdrop").addClass("display-none");
+                $(".minmaxConayuda").append($apnData);
+                $(".modal").css({
+                    backgroundColor: "transparent"
+                });
+
+            }
+
+
+
+            /*fin*/
+
+            $(".modalMinimize").on("click", function(){
+                debugger;
+                $modalCon = $(this).closest(".mymodal").attr("id");
+                $apnData = $(this).closest(".mymodal");
+                $modal = "#" + $modalCon;
+                $(".modal-backdrop").addClass("display-none");
+
+                $($modal).toggleClass("min2");
+                if ( $($modal).hasClass("min2") ){
+                    $('#tituloocultar').show();
+                    $(".minmaxCon").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-minus fa-2x').toggleClass( 'fa-clone fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                }
+                else {
+                    $('#tituloocultar').hide();
+                    $(".minmaxConayuda").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-clone fa-2x').toggleClass( 'fa-minus fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                };
+            });
+        });
+
+
+    </script>
+}

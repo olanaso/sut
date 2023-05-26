@@ -1,0 +1,1640 @@
+﻿
+@using Sut.Entities
+@model Expediente
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    Sut.Entities.Observacion obs = ViewBag.Observacion as Sut.Entities.Observacion;
+    Sut.Security.Filtros fil = ViewBag.filtro as Sut.Security.Filtros;
+
+    List<Usuario>  usub = ViewBag.DatosUsuario as List<Usuario>;
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Expediente " + Model.Codigo;
+    ViewBag.Descripcion = "";
+}
+
+<div id="mensajes">
+    @{Html.RenderPartial("_Error");}
+</div>
+
+@Html.HiddenFor(model => model.ExpedienteId)
+
+
+@if (Model.EstadoExpediente == EstadoExpediente.Observado || Model.EstadoExpediente == EstadoExpediente.Subsanado || Model.EstadoExpediente == EstadoExpediente.Aprobado ||
+                Model.EstadoExpediente == EstadoExpediente.Presentado)
+{
+    <div class="box box-danger">
+        <div class="box-body">
+            <div class="col-sm-12 col-xs-12" style="border-color:red">
+
+                <div class="pull-left col-sm-12 col-xs-12">
+
+                    <fieldset class="scheduler-border">
+                        <legend>
+                            Información Complementaria a la Observación
+                        </legend>
+                        <br />
+                        <div class="form-group">
+                            @if (obs != null)
+                            {
+                                <textarea rows="7" class="form-control" id="txtaObservarExp" style="border-color:red;background:#ff00002e;"> @obs.Descripcion</textarea>
+                            }
+                            else
+                            {
+                                <textarea rows="7" class="form-control" id="txtaObservarExp" style="border-color:red;background:#ff00002e;"> </textarea>
+                            }
+                        </div>
+
+                    </fieldset>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+@if (Model.OcultarDes == "1")
+{
+    <div class="box box-default" style="margin-bottom: 5px;">
+        <div class="box-header with-border">
+            <h3 class="box-title">&nbsp;&nbsp;&nbsp; Descripción del Expediente</h3>
+        </div>
+        <div>
+            <div style="position: absolute;left: 0px;top: 5px; /* padding-top: 15px; */ margin-bottom: 0;">
+                <a href="javascript:sut.Procedimiento.Expediente.guardarOcultarDes(@Model.ExpedienteId,2);" data-toggle="tooltip" data-placement="right" title="Expandir"
+                   class="btn btn-dropbox btn-xs"><i class="fa fa-expand"></i></a>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="box box-default">
+        <div class="box-body">
+            <div class="col-sm-12 col-xs-12">
+                <div class="col-sm-3 col-xs-3">
+                    <span>&nbsp;&nbsp;Tipo TUPA: </span>
+                    @Html.TipoTupa(Model.Entidad.TipoTupa)
+                </div>
+                <div class="col-sm-3 col-xs-3">
+                    <span>Tipo de Expediente: </span>
+                    @Html.TipoExpediente(Model.TipoExpediente)
+                </div>
+                <div class="col-sm-3 col-xs-3">
+                    <span>Estado de Expediente: </span>
+                    @Html.EstadoExpediente(Model.EstadoExpediente)
+                </div>
+                <div class="col-sm-3 col-xs-3">
+                    <span>Fecha de actualización: </span>
+                    @(Model.FecModificacion == null ? Model.FecCreacion : Model.FecModificacion)
+                </div>
+                <div style="position: absolute;left: -10px;top: -10px; /* padding-top: 15px; */ margin-bottom: 0;">
+                    <a href="javascript:sut.Procedimiento.Expediente.guardarOcultarDes(@Model.ExpedienteId,1);" data-toggle="tooltip" data-placement="right" title="Ocultar"
+                       class="btn btn-dropbox btn-xs"><i class="fa fa-compress"></i></a>
+                </div>
+
+            </div>
+            <br />
+            <br />
+            <div class="col-sm-12 col-xs-12">
+
+                <div class="pull-left col-sm-12 col-xs-12"> 
+                    <fieldset class="scheduler-border">
+                        <legend>
+                            Descripción del Expediente 
+                        </legend>
+                        <br />
+                        <div class="form-group">
+                            <textarea rows="3" class="form-control" id="txtaComentarioExp"> @Model.Descripcion</textarea>
+                        </div>
+
+                    </fieldset>
+
+                </div> 
+            </div>
+        </div>
+    </div>
+}
+ 
+
+@if (Model.OcultarNor == "1")
+{
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h3 class="box-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Norma que aprueba el TUPA</h3>
+        </div>
+        <div>
+            <div style="position: absolute;left: 0px;top: 5px; /* padding-top: 15px; */ margin-bottom: 0;">
+                <a href="javascript:sut.Procedimiento.Expediente.guardarOcultarNor(@Model.ExpedienteId,2);" data-toggle="tooltip" data-placement="right" title="Expandir"
+                   class="btn btn-dropbox btn-xs"><i class="fa fa-expand"></i></a>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h3 class="box-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Norma que aprueba el TUPA</h3>
+        </div>
+        <div class="box-body">
+            @if (Model.EstadoExpediente == EstadoExpediente.EnProceso || Model.EstadoExpediente == EstadoExpediente.Observado || Model.EstadoExpediente == EstadoExpediente.Subsanado)
+            {
+                if (user.Rol != 1)
+                {
+                    <div style="position: absolute;right: 15px;top: 5px; /* padding-top: 15px; */ margin-bottom: 0;">
+                        <a href="javascript:sut.Procedimiento.NormaAprobacion.editar(0)"
+                           class="btn btn-success"><i class="fa fa-plus"></i>Agregar</a>
+                    </div>
+                }
+
+            }
+
+            <div style="position: absolute;left: 0px;top: 5px; /* padding-top: 15px; */ margin-bottom: 0;">
+                <a href="javascript:sut.Procedimiento.Expediente.guardarOcultarNor(@Model.ExpedienteId,1);" data-toggle="tooltip" data-placement="right" title="Ocultar"
+                   class="btn btn-dropbox btn-xs"><i class="fa fa-compress"></i></a>
+            </div>
+            <div id="divNorma"></div>
+        </div>
+    </div>
+    @*}*@
+}
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-header with-border">
+                <div class="col-sm-11 col-xs-12">
+                    <h3 class="box-title"> Procedimientos Administrativos y/o Servicios prestados en exclusividad</h3>
+                </div>
+                @if (@user.Rol == 6 || @user.Rol != 7 || @user.Rol != 8)
+                {
+
+                    <div style="position: absolute;right: -8px;top: -13px;  padding-top: 15px;  margin-bottom: 0;">
+                        <div class="btn-group">
+                            <div class="col-sm-12 col-xs-12">
+                                <a class="btn btn-facebook" id="filtro" href="javascript:sut.Procedimiento.filtro()"><i class="fa fa-filter"></i> Filtros</a>
+                                <a class="btn btn-facebook" id="quitarfiltro" href="javascript:sut.Procedimiento.quitarfiltro()"><i class="fa fa-filter"></i> Quitar Filtro</a>
+
+                            </div>
+                        </div>
+                    </div>
+                    if (ViewBag.desactivar != 0)
+                    {
+
+                        <div style="position: absolute;right: 500px;top: -13px;  padding-top: 15px;  margin-bottom: 0;">
+                            <div class="btn-group">
+                                <div class="col-sm-12 col-xs-12">
+                                    <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> Inf.Cdno. <br> Terminado</label>
+                                    <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> Datos Generales <br> Terminado</label>
+                                    <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> STL <br> Terminado</label>
+                                    <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> Tabla Asme <br> Terminado</label>
+                                    <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> Sustento Costo <br> Terminado</label>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                    <div class="col-sm-12 col-xs-12" id="idFiltros">
+                        <br />
+                        <label class="col-sm-3 col-xs-3 control-label">Calificación :</label>
+                        <div class="col-sm-3 col-xs-3">
+                            @Html.DropDownListFor(model => @fil.Clasificacion, ViewBag.Calificacion as List<SelectListItem>, new { @class = "form-control " })
+                        </div>
+
+                        <label class="col-sm-2 col-xs-2 control-label">Prestaciones anuales :</label>
+                        <div class="col-sm-2 col-xs-2">
+                            @Html.DropDownListFor(model => @fil.Prestacionesanuales, ViewBag.OrdenarPrestacionesanuales as List<SelectListItem>, new { @class = "form-control " })
+                        </div>
+
+                        <label class="col-sm-3 col-xs-3 control-label">Derecho Tramitación :</label>
+                        <div class="col-sm-3 col-xs-3">
+                            @Html.DropDownListFor(model => @fil.PrestacionesCosto, ViewBag.OrdenarPrestacionesCosto as List<SelectListItem>, new { @class = "form-control " })
+                        </div>
+
+                        <label class="col-sm-2 col-xs-2 control-label">Duracion :</label>
+                        <div class="col-sm-2 col-xs-2">
+                            @Html.DropDownListFor(model => @fil.Duracion, ViewBag.OrdenarDuracion as List<SelectListItem>, new { @class = "form-control " })
+                        </div>
+
+                        <label class="col-sm-3 col-xs-3 control-label">Plazo Atencion :</label>
+                        <div class="col-sm-3 col-xs-3">
+                            @Html.DropDownListFor(model => @fil.PlazoAtencion, ViewBag.OrdenarPlazoAtencion as List<SelectListItem>, new { @class = "form-control " })
+                        </div>
+
+                        <label class="col-sm-2 col-xs-2 control-label">Requisitos :</label>
+                        <div class="col-sm-2 col-xs-2">
+                            @Html.DropDownListFor(model => @fil.Requisitos, ViewBag.OrdenarRequisitos as List<SelectListItem>, new { @class = "form-control " })
+                        </div>
+
+                        <a class="btn btn-facebook" id="aplicarfiltro" href="javascript:sut.Procedimiento.aplicarfiltro()"><i class="fa fa-filter"></i> Aplicar</a>
+
+                    </div>
+                    if (@fil != null)
+                    {
+                        if (@fil.estado != "1")
+                        {
+                            <script>
+                                window.addEventListener("load", function () {
+                                    $("#idFiltros").hide();
+                                    $("#quitarfiltro").hide();
+                                    $("#filtro").show();
+                                });
+                            </script>
+                        }
+                        else
+                        {
+                            <script>
+
+                                window.addEventListener("load", function () {
+                                    $("#idFiltros").show();
+                                    $("#quitarfiltro").show();
+                                    $("#filtro").hide();
+                                });
+                            </script>
+                        }
+                    }
+                    else
+                    {
+                        <script>
+
+                            window.addEventListener("load", function () {
+                                $("#idFiltros").hide();
+                                $("#quitarfiltro").hide();
+                                $("#filtro").show();
+                            });
+                        </script>
+                    }
+                }
+            </div>
+
+            <div class="box-body"> 
+
+                <div class="table-responsive">
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="7000"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.Procedimiento.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th style="width:60px">
+
+                                </th>
+                                <th style="width:30px">
+                                    Nro.
+                                </th>
+                                <th style="width:100px">
+                                    Operación
+                                </th>
+
+                                <th style="width:160px">
+                                    Órgano/Unidad Orgánica
+                                </th>
+                                <th style="width:80px">
+                                    Código
+                                </th>
+                                <th>
+                                    Denominación
+                                </th>
+                                <th style="width:120px">
+                                    Tipo
+                                </th>
+                                <th style="width:100px">
+                                    Categoría
+                                </th>
+                                @*<th style="width:60px">
+                                        Copiar<br />Procedimiento
+                                    </th>*@
+                                <th style="width:40px">
+                                    Inf.<br /> Cdno.
+                                </th>
+                                <th style="width:60px">
+                                    Datos <br />Generales
+                                </th>
+                                @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
+                                {
+                                    <th style="width:40px">
+                                        STL
+                                    </th>
+                                }
+                                @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
+                                {
+                                    <th style="width:20px">
+                                        Tabla <br /> Asme
+                                    </th>
+                                }
+
+                                <th style="width:40px">
+                                    Reporte <br /> Tupa
+                                </th>
+                                @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
+                                {
+                                    <th style="width:40px">
+                                        Reporte <br />  STL
+                                    </th>
+                                }
+                                @*<th style="width:40px">
+                                    Tasa
+                                </th>*@
+
+                                <th style="width:40px">
+                                    Plazo Atencion
+                                </th>
+
+                                <th style="width:40px">
+                                    Prest. anuales
+                                </th>
+
+                                @*<th style="width:40px">
+                                    Duracion
+                                </th>*@
+
+                                <th style="width:40px">
+                                    Requisitos
+                                </th>
+
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td class="text-center"><button type="button" class="btn btn-default btn-xs"><i class="fa fa-filter"></i></button></td>
+                                <td>
+                                    <select id="cbFilterOperacion" class="form-control input-sm">
+                                        <option value="0">ACTIVOS</option>
+                                        <option value="1">NUEVOS</option>
+                                        <option value="2">MODIFICADOS</option>
+                                        <option value="3">ELIMINADOS</option>
+                                        <option value="4">NINGUNA</option>
+                                    </select>
+                                </td>
+                                <td><input id="txtFilterOrgano" type="text" class="form-control input-sm" /></td>
+                                <td><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></td>
+                                <td><input id="txtFilterNombre" type="text" class="form-control input-sm" /></td>
+                                <td>
+                                    <select id="cbFilterTipoProcedimiento" class="form-control input-sm"> 
+                                        <option value="0">ACTIVOS</option>
+                                        <option value="1">PROC. ADMINISTRATIVO</option>
+                                        <option value="2">SERVICIO EXCLUSIVO</option>
+                                        <option value="3">PROC. ESTÁNDAR</option>
+                                        <option value="5">SERV. ESTÁNDAR</option>
+                                        <option value="4">ACR</option>
+                                        <option value="6">NO ACR</option>
+                                    </select>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
+                                {
+                                    <td></td>
+                                }
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4">
+                                    <div class="col-sm-6 col-xs-12">
+                                        <span class="control-label">Filas por Página</span>
+                                    </div>
+                                    <div class="col-sm-6 col-xs-12">
+                                        <select id="cbCantFilas" class="form-control input-sm">
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="75">75</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td colspan="18">
+                                    <div id="paginator"></div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        </div>
+</div>
+
+<div class="modal fade" id="AddDate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>*@
+                <h4 class="modal-title">Concluir Sección</h4>
+            </div> 
+            <div class="modal-body form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Sección</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => @fil.seccion, ViewBag.seccion as List<SelectListItem>, new { @class = "form-control " })
+                    </div>
+                </div> 
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Estado</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => @fil.estadoseccion, ViewBag.estadoseccion as List<SelectListItem>, new { @class = "form-control " })
+                    </div>
+                </div> 
+            </div>
+            <div id="msgEditar"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="sut.Procedimiento.GuardarSeccion()"><i class="fa fa-save"></i> Guardar</button>
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" onclick="sut.Procedimiento.CancelarSeccion()"><i class="fa fa-close"></i> Cancelar</button>
+                @*<button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box box-default">
+    <div class="box-body">
+        <div class="col-sm-12 col-xs-12">
+            
+                @*<a href="@Url.Content("~/General/Reporte/ReporteTupa")?ExpedienteId=@Model.ExpedienteId&&ProcedimientoId=0&&orden=1" target="_blank" class="btn btn-default"><i class="fa fa-money"></i> Reporte TUPA</a>*@
+            <a href="javascript:sut.Procedimiento.ReporteTupa(@Model.ExpedienteId,0,1)" class="btn btn-default"><i class="fa  fa-file-pdf-o"></i> Reporte TUPA</a>
+
+            @if (Model.TipoExpediente == TipoExpediente.ExpedienteRegular)
+            {
+                if (Model.ObsCOSTOH == 0)
+                {
+                    <a href="@Url.Content("~/Simplificacion/Configuracion/VerObsResumen/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver" class="btn btn-info  pull-right"><i class="fa fa-money"></i> Sustento de Costos</a>
+                }
+                else
+                {
+                    <a href="@Url.Content("~/Simplificacion/Configuracion/VerObsResumen/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver" class="btn btn-danger  pull-right"><i class="fa fa-money"></i> Sustento de Costos</a>
+                }
+            } 
+            @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
+            { 
+                @*<a href="@Url.Content("~/General/Reporte/FSLT")?tipo=1&id=@Model.ExpedienteId" target="_blank" class="btn btn-default"><i class="fa fa-download"></i> Reporte STL</a>*@
+                <a href="javascript:sut.Procedimiento.FSLT(1,@Model.ExpedienteId)" class="btn btn-default"><i class="fa fa-download"></i>   Reporte  STL</a>
+            }
+        </div>
+        <br />
+        <hr />
+        <div class="col-sm-4 col-xs-12">
+            <table class="table table-bordered table-condensed">
+                <tbody>
+                    <tr>
+                        <td>Total de Procedimientos/Servicios :</td>
+                        <td class="text-right">@ViewBag.Estadisticas["total"]</td>
+                    </tr>
+                    <tr>
+                        <td>Información Ciudadana terminados :</td>
+                        <td class="text-right">@ViewBag.Estadisticas["Informacion_ciudadano"] / @ViewBag.Estadisticas["total_dg"]</td>
+                    </tr>
+                    <tr>
+                        <td>Datos Generales registrados :</td>
+                        <td class="text-right">@ViewBag.Estadisticas["datos_generales"] / @ViewBag.Estadisticas["total_dg"]</td>
+                    </tr>
+                    @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
+                    {
+                        <tr>
+                            <td>Sustentos Técnico y Legal terminados :</td>
+                            <td class="text-right">@ViewBag.Estadisticas["sustento_tecnico"] / @ViewBag.Estadisticas["total_st"]</td>
+                        </tr>
+                        <tr>
+                            <td>Tabla Asme terminados :</td>
+                            <td class="text-right">@ViewBag.Estadisticas["tabla_asme"] / @ViewBag.Estadisticas["total_st"]</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+       
+            <div class="col-sm-2 col-xs-12 text-center">
+                <input type="text" class="knob" value="@ViewBag.Estadisticas["Informacion_ciudadano_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
+                <div class="knob-label">Información Ciudadana</div>
+            </div>
+            <div class="col-sm-2 col-xs-12 text-center">
+                <input type="text" class="knob" value="@ViewBag.Estadisticas["datos_generales_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
+                <div class="knob-label">Datos Generales</div>
+            </div>
+            @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
+            {
+                <div class="col-sm-2 col-xs-12 text-center">
+                    <input type="text" class="knob" value="@ViewBag.Estadisticas["sustento_tecnico_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
+                    <div class="knob-label">Sustento Técnico</div>
+                </div>
+                        <div class="col-sm-2 col-xs-12 text-center">
+                            <input type="text" class="knob" value="@ViewBag.Estadisticas["tabla_asme_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
+                            <div class="knob-label">Tabla Asme</div>
+                        </div>
+            }
+
+        @*<div class="col-sm-2 col-xs-12 text-center">
+                <input type="text" class="knob" value="10" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
+                <div class="knob-label">% Avance Expediente</div>
+            </div>*@
+    </div>
+</div>
+
+<div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;">
+    <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDatosUsuario"><i class="fa fa-check-circle"></i> Datos Usuario</a>
+    <a href="javascript:sut.Procedimiento.salir()" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+</div>
+
+
+
+<div class="modal fade" id="AddDatosUsuario" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>*@
+                <h4 class="modal-title">Datos de Contacto</h4>
+            </div>
+            <div class="modal-body form-horizontal">
+                @for (int i = 0; i < @usub.Count; i++)
+                {
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Nombres - @i </label>
+                    <div class="col-sm-9 col-xs-12">
+                        <label rows="3" class="form-control" id="txtaComentarioExp"> @usub[i].MiembroEquipo.NombreCompleto</label>
+                    </div>
+                    <label class="control-label col-sm-3 col-xs-12">Rol</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <label rows="3" class="form-control" id="txtaComentarioExp">@usub[i].Rol</label>
+                    </div>
+                    <label class="control-label col-sm-3 col-xs-12">Correo</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <label rows="3" class="form-control" id="txtaComentarioExp"> @usub[i].MiembroEquipo.Correo</label>
+                    </div>
+                    <label class="control-label col-sm-3 col-xs-12">Contacto</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <label class="form-control" id="txtaComentarioExp"> @usub[i].MiembroEquipo.TelefonoFijo - @usub[i].MiembroEquipo.TelefonoMovil </label>
+                    </div> 
+                    <label class="control-label col-sm-3 col-xs-12">Entidad</label>
+                    <div class="col-sm-9 col-xs-12">
+                        <label class="form-control" id="txtaComentarioExp"> @usub[i].Entidad.Nombre - @usub[i].Entidad.Acronimo </label>
+                    </div>
+                </div>
+                    <hr>
+
+                }
+            </div>
+            <div id="msgEditar"></div>
+            <div class="modal-footer"> 
+                @*<button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" onclick="sut.Procedimiento.CancelarSeccion()"><i class="fa fa-close"></i> Cancelar</button>*@
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+@section Style {
+    <style type="text/css">
+        table thead tr th {
+            text-align: center;
+            vertical-align: middle !important;
+        }
+
+        table td {
+            vertical-align: middle !important;
+        }
+
+        table tfoot .pagination {
+            margin: 5px 0px;
+        }
+
+        fieldset.scheduler-border {
+            border: 1px groove #ddd !important;
+            padding: 0 1.4em 0 1.4em !important;
+            margin: 0 0 1.5em 0 !important;
+            -webkit-box-shadow: 0px 0px 0px 0px #000;
+            box-shadow: 0px 0px 0px 0px #000;
+        }
+
+        .scheduler-border legend {
+            font-size: 1.2em !important;
+            font-weight: bold !important;
+            text-align: left !important;
+            width: auto !important;
+            margin-bottom: 0px !important;
+            padding: 0px !important;
+            border-bottom: none;
+        }
+    </style>
+}
+
+@section Script {
+    <script>
+
+
+        sut.Procedimiento = {
+            alerta:function () {
+                showNotification('top', 'right', 'Implementando en la operación', 3);
+            },
+            filtro: function () {
+
+
+
+                $("#idFiltros").show();
+                $("#quitarfiltro").show();
+                $("#filtro").hide();
+
+            },
+
+            init:function () {
+                $("#idFiltros").hide();
+                $("#quitarfiltro").hide();
+                $("#filtro").show();
+            },
+
+            quitarfiltro:function () {
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/QuitarFiltro',
+                    url: '@Url.Content("~/Simplificacion/Expediente/QuitarFiltro")',
+                    data: {  },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.appendProgress('.modal-footer');
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                    },
+                    success: function (data) {
+                        window.location.reload();
+                        $('#modal-ventana').modal('hide');
+                        $("#idFiltros").hide();
+                        $("#quitarfiltro").hide();
+                        $("#filtro").show();
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+
+            },
+            aplicarfiltro : function(){
+                debugger;
+
+
+                if ($('#fil_Clasificacion').val() == 0 && $('#fil_Prestacionesanuales').val() == 0 && $('#fil_PrestacionesCosto').val() == 0 && $('#fil_Duracion').val() == 0 && $('#fil_PlazoAtencion').val() == 0 && $('#fil_Requisitos').val() == 0) {
+                    showNotification('top', 'right', 'Seleccionar por lo menos un filtro', 2);
+                    return;
+                }
+                var model = {
+                    'filtros.Clasificacion':  $('#fil_Clasificacion').val(),
+                    'filtros.Prestacionesanuales': $('#fil_Prestacionesanuales').val(),
+                    'filtros.PrestacionesCosto': $('#fil_PrestacionesCosto').val(),
+                    'filtros.Duracion':  $('#fil_Duracion').val(),
+                    'filtros.PlazoAtencion': $('#fil_PlazoAtencion').val(),
+                    'filtros.Requisitos': $('#fil_Requisitos').val(),
+                };
+
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/AplicarFiltro',
+                    url: '@Url.Content("~/Simplificacion/Expediente/AplicarFiltro")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.appendProgress('.modal-footer');
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                    },
+                    success: function (data) {
+                        window.location.reload();
+                        $('#modal-ventana').modal('hide');
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            GuardarSeccion : function(){
+                debugger;
+
+
+                if ($('#fil_seccion').val() == 0   ) {
+                    showNotification('top', 'right', 'Seleccionar Sección', 2);
+                    return;
+                }
+                if (  $('#fil_estadoseccion').val() == 0 ) {
+                    showNotification('top', 'right', 'Seleccionar Estado', 2);
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/AplicarFiltro',
+                    url: '@Url.Content("~/Simplificacion/Expediente/guardarseccion")',
+                    data: { Id: @Model.ExpedienteId,  Seccion: $('#fil_seccion').val(), Estadoseccion:  $('#fil_estadoseccion').val()},
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.appendProgress('.modal-footer');
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                    },
+                    success: function (data) {
+                        //window.location.reload();
+                        //$('#modal-ventana').modal('hide');
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            CancelarSeccion : function(){
+                 window.location.reload();
+                        $('#modal-ventana').modal('hide');
+            },
+
+            salir: function () {
+                debugger;
+                //window.location = '/Simplificacion/Expediente/Lista';
+                window.location = '@Url.Content("~/Simplificacion/Observacion/ListaObservacion")';
+            },
+            nuevo: function () {
+                @*window.location = '/Simplificacion/Procedimiento/Nuevo/' + @Html.Raw(Model.ExpedienteId);*@
+                window.location = '@Url.Content("~/Simplificacion/Procedimiento/Nuevo/")'+ @Html.Raw(Model.ExpedienteId);
+            },
+            Expediente : {
+                comentario : "",
+                editarComentarioExp : function(){
+                    $("#aEditarComentarioExp").css({ "display": "none" });
+                    $("#aGuardarComentarioExp").css({ "display": "" });
+                    $("#aCancelarComentarioExp").css({ "display": "" });
+                    $("#txtaComentarioExp").prop("disabled", false);
+                    comentario = $("#txtaComentarioExp").val();
+                },
+                guardarComentarioExp : function(idExpediente){
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/EditarExpediente',
+                        url: '@Url.Content("~/Simplificacion/Expediente/EditarExpediente")',
+                        data: { id: idExpediente, comentario: $("#txtaComentarioExp").val() },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+
+                            $('#modal-ventana').modal('hide');
+                            $("#aCancelarComentarioExp").css({ "display": "none" });
+                            $("#aGuardarComentarioExp").css({ "display": "none" });
+                            $("#aEditarComentarioExp").css({ "display": "" });
+                            $("#txtaComentarioExp").prop("disabled", true);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                },
+                guardarOcultarDes : function(idExpediente,ocultardes){
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/EditarOcultarDes',
+                        url: '@Url.Content("~/Simplificacion/Expediente/EditarOcultarDes")',
+                        data: { id: idExpediente, OcultarDes: ocultardes },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.appendProgress('.modal-footer');
+                        },
+                        complete: function () {
+                            sut.wait.removeProgress('.modal-footer');
+                        },
+                        success: function (data) {
+                            window.location.reload();
+                            $('#modal-ventana').modal('hide');
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                },
+                guardarOcultarNor : function(idExpediente,ocultarnor){
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/EditarOcultarNor',
+                        url: '@Url.Content("~/Simplificacion/Expediente/EditarOcultarNor")',
+                        data: { id: idExpediente, OcultarNor: ocultarnor },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.appendProgress('.modal-footer');
+                        },
+                        complete: function () {
+                            sut.wait.removeProgress('.modal-footer');
+                        },
+                        success: function (data) {
+                            window.location.reload();
+                            $('#modal-ventana').modal('hide');
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                },
+                CancelarComentarioExp : function () {
+                    $("#aCancelarComentarioExp").css({ "display": "none" });
+                    $("#aGuardarComentarioExp").css({ "display": "none" });
+                    $("#aEditarComentarioExp").css({ "display": "" });
+                    $("#txtaComentarioExp").prop("disabled", true);
+                    $("#txtaComentarioExp").val(comentario);
+                }
+            },
+            Observarexp: {
+                comentario: "",
+                editarObservarExp: function () {
+                    $("#aEditarObservarExp").css({ "display": "none" });
+                    $("#aGuardarObservarExp").css({ "display": "" });
+                    $("#aCancelarObservarExp").css({ "display": "" });
+                    $("#txtaObservarExp").prop("disabled", false);
+                    comentario = $("#txtaObservarExp").val();
+                },
+                guardarObservarExp: function (idExpediente) {
+                    if ($('#txtaObservarExp').val().trim() == ""){
+                        showNotification('top', 'right', 'No puedes Guardar una obseracion en blanco', 2);
+                        return;
+                    }
+
+                    var model = {
+                        'filtro.ExpedienteId': idExpediente,
+                        'filtro.Descripcion': $('#txtaObservarExp').val().trim(),
+                        'filtro.CodValidacion': '1',
+                        'filtro.TipoEstado': '1',
+                        'filtro.NombreCampo': 'Nota de Ayuda General Expediente',
+                        'filtro.Pantalla': 'General Expediente',
+                        'filtro.Estado': '1',
+                    };
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/AgregarObservacion',
+                        url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+
+                            $('#modal-ventana').modal('hide');
+                            $("#aCancelarObservarExp").css({ "display": "none" });
+                            $("#aGuardarObservarExp").css({ "display": "none" });
+                            $("#aEditarObservarExp").css({ "display": "" });
+                            $("#txtaObservarExp").prop("disabled", true);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                },
+                CancelarObservarExp: function () {
+                    $("#aCancelarObservarExp").css({ "display": "none" });
+                    $("#aGuardarObservarExp").css({ "display": "none" });
+                    $("#aEditarObservarExp").css({ "display": "" });
+                    $("#txtaObservarExp").prop("disabled", true);
+                    $("#txtaObservarExp").val(comentario);
+                }
+            },
+            copiar: (id) => {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/Procedimiento/Copia',
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/Copia")',
+                    data: { id: id, ExpedienteId: @Model.ExpedienteId },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            Estandar: {
+                openSelect: () => {
+
+                    debugger;
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/Procedimiento/Select',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/Select")',
+                        data: { tipo: 2, multi: true, fnAdd: 'sut.Procedimiento.Estandar.add' },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                add: (data) => {
+                    $('#modal-ventana').modal('hide');
+                    debugger;
+                    var form = $('<form></form>');
+                    form.append('<input type="hidden" name="ExpedienteId" value="@Model.ExpedienteId" />');
+                    for (var i = 0; i < data.length; i++) {
+                        form.append(sut.string.format('<input type="hidden" name="ids[{0}]" value="{1}" />', i, data[i].ProcedimientoId));
+                    }
+
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/AddEstandar',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/AddEstandar")',
+                        data: form.serialize(),
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                sut.Procedimiento.listar(1);
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }
+            },
+            modificar: (id) => {
+                sut.msg.confirm('Si modifica el Procedimiento/Servicio, debe actualizar los sustentos correspondientes.', () => {
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/CambiarOperacion',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/CambiarOperacion")',
+                        data: { operacion: 2, ProcedimientoId: id },
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                sut.Procedimiento.listar(1);
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                });
+            },
+            eliminar: (id) => {
+                sut.msg.confirm('Si elimina el Procedimiento/Servicio, debe elaborar el sustento técnico para la eliminación dentro del TUPA.', () => {
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/CambiarOperacion',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/CambiarOperacion")',
+                        data: { operacion: 3, ProcedimientoId: id },
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                sut.Procedimiento.listar(1);
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                });
+            },
+            eliminarNuevo: (id) => {
+                sut.msg.confirm('Si elimina el Procedimiento/Servicio, por ser nuevo, será eliminado permanentemente.', () => {
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/EliminarProcedimientoNuevo',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/EliminarProcedimientoNuevo")',
+                        data: { ProcedimientoId: id },
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success('Se eliminó el procedimiento correctamente.', function () {
+                                sut.Procedimiento.listar(1);
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                });
+            },
+
+            anular: () => {
+                sut.msg.confirm('Si anula el expediente no podrá editarlo nuevamente.', () => {
+                    $.ajax({
+                        @*url: "/Simplificacion/Expediente/Anular/@Model.ExpedienteId",*@
+                        url:'@Url.Content("~/Simplificacion/Expediente/Anular/")@Model.ExpedienteId',
+                        type: "GET",
+                        data: {},
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            if (data.valid) {
+                                //window.location = '/Simplificacion/Expediente/Lista';
+                                window.location = '@Url.Content("~/Simplificacion/Expediente/Lista")';
+                            }
+                        },
+                        error: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            sut.error.show('mensajes', data.responseText);
+                            console.log(data.responseText);
+                        }
+                    });
+                });
+            },
+            presentar: () => {
+
+                sut.msg.confirm('Si finaliza y presentar el expediente, no podrá editarlo hasta que sea observado o aprobado.', () => {
+                    $.ajax({
+                        @*url: "/Simplificacion/Expediente/FinalizarPresentar/@Model.ExpedienteId",*@
+                        url:'@Url.Content("~/Simplificacion/Expediente/FinalizarPresentar/")@Model.ExpedienteId',
+                        type: "GET",
+                        data: {},
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            if (data.valid) {
+                                //window.location = '/Simplificacion/Expediente/Lista';
+                                window.location = '@Url.Content("~/Simplificacion/Expediente/Lista")';
+                            }
+                        },
+                        error: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            sut.error.show('mensajes', data.responseText);
+                            console.log(data.responseText);
+                        }
+                    });
+                });
+            },
+            observar: () => {
+
+
+                    if (@ViewBag.RevInfCdno != 2 || @ViewBag.RevDatosGenerales != 2 || @ViewBag.RevSutentoTecnico != 2 || @ViewBag.RevTablaAsme != 2 || @ViewBag.RevSustentoCosto != 2)
+                    {
+                        showNotification('top', 'right', 'Concluya todas la secciones para poder observar el expediente', 2);
+                        return;
+                    }
+
+
+                sut.msg.confirm('Si observa el expediente, esté volvera a estar disponible para ser editado por la entidad.', () => {
+                    $.ajax({
+                        @*url: "/Simplificacion/Expediente/Observar/@Model.ExpedienteId",*@
+                        url:'@Url.Content("~/Simplificacion/Expediente/Observar/")@Model.ExpedienteId',
+                        type: "GET",
+                        data: {},
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            if (data.valid) {
+                                //window.location = '/Simplificacion/Expediente/Lista';
+                                window.location = '@Url.Content("~/Simplificacion/Expediente/Lista")';
+                            }
+                        },
+                        error: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            sut.error.show('mensajes', data.responseText);
+                            console.log(data.responseText);
+                        }
+                    });
+                });
+            },
+
+            aprobar: () => {
+                debugger;
+                if (@ViewBag.RevInfCdno != 2 || @ViewBag.RevDatosGenerales != 2 || @ViewBag.RevSutentoTecnico != 2 || @ViewBag.RevTablaAsme != 2 || @ViewBag.RevSustentoCosto != 2)
+                {
+                    showNotification('top', 'right', 'Concluya todas la sección para poder aprobar el expediente', 2);
+                    return;
+                }
+
+                sut.msg.confirm('Si aprueba el expediente, este se convertirá en el TUPA vigente de la entidad correspondiente. para su publicación', () => {
+                    $.ajax({
+                        @*url: "/Simplificacion/Expediente/Aprobar/@Model.ExpedienteId",*@
+                        url:'@Url.Content("~/Simplificacion/Expediente/Aprobar/")@Model.ExpedienteId',
+                        type: "GET",
+                        data: {},
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            if (data.valid) {
+                                //window.location = '/Simplificacion/Expediente/Lista';
+                                window.location = '@Url.Content("~/Simplificacion/Expediente/Lista")';
+                            }
+                        },
+                        error: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            sut.error.show('mensajes', data.responseText);
+                            console.log(data.responseText);
+                        }
+                    });
+                });
+            },
+            publicar: () => {
+                sut.msg.confirm('Si finaliza y publica el expediente, este pasará a ser un expediente aprobado y por lo tanto es el TUPA Vigente. Por favor, agregar normas que aprueban el TUPA de darse el caso', () => {
+                    $.ajax({
+                        @*url: "/Simplificacion/Expediente/FinalizarPublicar/@Model.ExpedienteId",*@
+                        url:'@Url.Content("~/Simplificacion/Expediente/FinalizarPublicar/")@Model.ExpedienteId',
+                        type: "GET",
+                        data: {},
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            if (data.valid) {
+                                //window.location = '/Simplificacion/Expediente/Lista';
+                                window.location = '@Url.Content("~/Simplificacion/Expediente/Lista")';
+                            }
+                        },
+                        error: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            sut.error.show('mensajes', data.responseText);
+                            console.log(data.responseText);
+                        }
+                    });
+                });
+            },
+            listar: function (page) {
+                table = $('#tblLista');
+                var model = {
+                    'filtro.Codigo': $('#txtFilterCodigo').val(),
+                    'filtro.UndOrgResponsable.Nombre': $('#txtFilterOrgano').val(),
+                    'filtro.Denominacion': $('#txtFilterNombre').val(),
+                    'filtro.ExpedienteId': @Model.ExpedienteId,
+                    'filtro.FiltroOperacion': $('#cbFilterOperacion').val(),
+                    'filtro.FiltroTipoProcedimiento': $('#cbFilterTipoProcedimiento').val(),
+                    'exp.EstadoExpediente': '@Model.EstadoExpediente',
+                    'exp.TipoExpediente': '@Model.TipoExpediente',
+                    pageIndex: page,
+                    pageSize: table.data('pagesize'),
+                    estado: @MvcHtmlString.Create(((short)Model.EstadoExpediente).ToString()),
+                };
+                $.ajax({
+                    //url: "/Simplificacion/Procedimiento/GetAllLikePaginObservacion",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/GetAllLikePaginVerObservacion")',
+                    type: "GET",
+                    data: model,
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        debugger;
+                        sut.Procedimiento.generar(data, page);
+                    },
+                    error: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        sut.error.show('mensajes', data.responseText);
+                        console.log(data.responseText);
+                    }
+                });
+            },
+            generar: function (data, page) {
+                var table = $('#tblLista');
+                table.children('tbody').remove();
+                table.append(data);
+                table.data('page', page);
+                table.data('totalrows', table.children('tbody').data('totalrows'));
+                sut.pagination.update(table);
+
+
+                $('.icheck').iCheck({
+                    checkboxClass: 'icheckbox_square-red',
+                    radioClass: 'iradio_square-red',
+                    increaseArea: '20%' // optional
+                });
+            },
+
+            verObsDatosGenerales: function (id) {
+                //window.location = '/Simplificacion/Procedimiento/DatosGenerales/' + id;
+                window.location = '@Url.Content("~/Simplificacion/Procedimiento/VerObsDatosGenerales/")'+id+ '?entidadid=' + @ViewBag.entidadver;
+            },
+            verObsSustentoTecnico: function (id) {
+                //window.location = '/Simplificacion/Procedimiento/SustentoTecnico/' + id;
+                window.location = '@Url.Content("~/Simplificacion/Procedimiento/VerObsSustentoTecnico/")'+id+ '?entidadid=' + @ViewBag.entidadver;
+            },
+            verObsSustentoLegal: function (id) {
+                //window.location = '/Simplificacion/Procedimiento/SustentoLegal/' + id;
+                window.location = '@Url.Content("~/Simplificacion/Procedimiento/VerObsSustentoLegal/")'+id+ '?entidadid=' + @ViewBag.entidadver;
+            },
+            verObsNotasCiudadano : function (id) {
+                //window.location = '/Simplificacion/Procedimiento/InformacionCiudadano/' + id;
+                window.location = '@Url.Content("~/Simplificacion/Procedimiento/VerObsInformacionCiudadano/")'+ id + '?entidadid=' + @ViewBag.entidadver;
+            },
+            verObsTablaAsme: function (id) {
+                debugger;
+                //window.location = '/Simplificacion/Procedimiento/TablaAsme/' + id;
+                window.location = '@Url.Content("~/Simplificacion/Procedimiento/VerObsTablaAsme/")'+id+ '?entidadid=' + @ViewBag.entidadver;
+            },
+            ReporteTupa: (expedienteId,procedimientoId,Orden) => {
+                showNotification('top', 'right', 'Procesando descarga del reporte TUPA!', 2);
+                $.ajax({
+                    @*url: "/Simplificacion/Expediente/FinalizarPresentar/@Model.ExpedienteId",*@
+                    url: '@Url.Content("~/General/Reporte/ReporteTupa")',
+                    type: "POST",
+                    data: {ExpedienteId:expedienteId,ProcedimientoId:procedimientoId,orden:Orden},
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        debugger;
+                        sut.wait.removeOverlay('#boxLista');
+                        if (data.valid) {
+                            //window.location = '/Simplificacion/Expediente/Lista';
+                            showNotification('top', 'right', 'Descarga Completada', 1);
+                            document.location.target='_blank';
+                            window.location.href = "@Url.Content("~/General/Reporte/descargarArchivos")?Nombre=" +data.nombre +'&Ruta=' + data.ruta;
+                        }
+                        else
+                        {
+                            showNotification('top', 'right', 'Favor de volver a generar en 3 minutos, si el problema persiste comunicarse con el administrador del sut', 3);
+                        }
+                    },
+                    error: function (data) {
+                        debugger;
+                        sut.wait.removeOverlay('#boxLista');
+                        //sut.error.show('mensajes', data.responseText);
+                        //console.log(data.responseText);
+                        showNotification('top', 'right', 'Favor de volver a generar en 3 minutos, si el problema persiste comunicarse con el administrador del sut', 3);
+                    }
+                });
+            },
+
+                RptTupaPer: (expedienteId,procedimientoId,Orden) => {
+                    showNotification('top', 'right', 'Procesando descarga del reporte TUPA el peruano!', 2);
+                        $.ajax({
+                            @*url: "/Simplificacion/Expediente/FinalizarPresentar/@Model.ExpedienteId",*@
+                            url: '@Url.Content("~/General/Reporte/ReporteTupaElDiarioPeruano")',
+                            type: "POST",
+                            data: {ExpedienteId:expedienteId,ProcedimientoId:procedimientoId,orden:Orden},
+                            beforeSend: function () {
+                                sut.wait.appendOverlay('#boxLista');
+                            },
+                            success: function (data) {
+                                debugger;
+                                sut.wait.removeOverlay('#boxLista');
+                                if (data.valid) {
+                                    //window.location = '/Simplificacion/Expediente/Lista';
+                                    showNotification('top', 'right', 'Descarga Completada', 1);
+                                    document.location.target='_blank';
+                                    window.location.href = "@Url.Content("~/General/Reporte/descargarArchivos")?Nombre=" +data.nombre +'&Ruta=' + data.ruta;
+                                }
+                                else
+                                {
+                                    showNotification('top', 'right', 'Descarga Completada', 1);
+                                    document.location.target='_blank';
+                                    window.location.href = "@Url.Content("~/General/Reporte/descargarArchivos")?Nombre=" +data.nombre +'&Ruta=' + data.ruta;
+                                    showNotification('top', 'right', 'Favor de volver a generar en 3 minutos, si el problema persiste comunicarse con el administrador del sut', 3);
+                                }
+                            },
+                            error: function (data) {
+                                debugger;
+                                sut.wait.removeOverlay('#boxLista');
+                                //sut.error.show('mensajes', data.responseText);
+                                //console.log(data.responseText);
+                                showNotification('top', 'right', 'Favor de volver a generar en 3 minutos, si el problema persiste comunicarse con el administrador del sut', 3);
+                            }
+                        });
+                },
+            FSLT: (Tipo,procedimientoId) => {
+                showNotification('top', 'right', 'Procesando descarga del sustento tecnico legal!', 2);
+                $.ajax({
+                    @*url: "/Simplificacion/Expediente/FinalizarPresentar/@Model.ExpedienteId",*@
+                    url: '@Url.Content("~/General/Reporte/FSLT")',
+                    type: "POST",
+                    data: {tipo:Tipo,id:procedimientoId},
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        debugger;
+                        sut.wait.removeOverlay('#boxLista');
+                        if (data.valid) {
+                            //window.location = '/Simplificacion/Expediente/Lista';
+                            showNotification('top', 'right', 'Descarga Completada', 1);
+                            document.location.target='_blank';
+                            window.location.href = "@Url.Content("~/General/Reporte/descargarArchivos")?Nombre=" +data.nombre +'&Ruta=' + data.ruta;
+                        } else
+                        {
+                            showNotification('top', 'right', 'Favor de volver a generar en 3 minutos, si el problema persiste comunicarse con el administrador del sut', 3);
+                        }
+                    },
+                    error: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        //sut.error.show('mensajes', data.responseText);
+                        //console.log(data.responseText);
+
+                        showNotification('top', 'right', 'Favor de volver a generar en 3 minutos, si el problema persiste comunicarse con el administrador del sut', 3);
+                    }
+                });
+            },
+
+            NormaAprobacion: {
+                init: () => {
+                    jcd.create('Grid', {
+                        id: 'gridNorma',
+                        store: jcd.create('JsonStore', {
+                            id: 'stNorma',
+                            recordId: 'NormaId',
+                            fields: [
+                                { name: 'NormaId' },
+                                { name: 'TipoNorma' },
+                                { name: 'tipoNormaAprobacion' },
+                                { name: 'Descripcion' },
+                                { name: 'Fecha', type: 'date' },
+                                { name: 'Descargar Documento' },
+                                { name: 'ArchivoAdjuntoId' },
+                                { name: 'ArMotivoAdjuntoId' },
+                            ],
+                            pageIndex: 1,
+                            pageSize: 50,
+                            ajax: {
+                                url: '@Url.Action("NormaGetAllLikePagin", "Expediente", new { area = "Simplificacion" })',
+                                data: {},
+                                autoLoad: false,
+                                success:  () => {
+                                    alert(data);
+                                }
+                            },
+                            //sort: { name: 'Fecha', direction: 'desc' }
+                        }),
+                        columns: [
+                            jcd.create('RowNumberColumn', { width: 50 }),
+                            jcd.create('GridColumn', { name: 'TipoNorma', width: 350 }),
+                            jcd.create('GridColumn', { name: 'tipoNormaAprobacion', width: 100 }),
+                            jcd.create('GridColumn', { name: 'Descripción', dataIndex: 'Descripcion' }),
+                            jcd.create('DateColumn', { name: 'Fecha', width: 100 }),
+                            jcd.create('ActionColumn', { width: 80,
+                                commands: [
+                                    { icon: 'fa fa-pencil', color: 'btn-success', callback: (e) => { sut.Procedimiento.NormaAprobacion.editar(e.record.NormaId); } }
+                                ]
+                            }),
+                            jcd.create('ActionColumn', { name: 'Descargar Documento',width: 120,
+                                commands: [
+                                    { icon: 'fa fa-download', color: 'btn-success', callback: (e) => { sut.Procedimiento.NormaAprobacion.descargar(e.record.ArchivoAdjuntoId); } },
+                                    //{ icon: 'fa fa-download', color: 'btn-success', callback: (e) => { sut.Procedimiento.NormaAprobacion.descargarmotivo(e.record.ArMotivoAdjuntoId); } }
+                                ]
+
+                            })
+                        ],
+                        //footer: [jcd.create('Paginator', { id: 'pagNorma', store: 'stNorma' })] // paginar información
+                    });
+
+                    App.gridNorma.renderTo($('#divNorma'));
+                    App.stNorma.reload({ExpedienteId : @Model.ExpedienteId });
+                },
+                initactualizar: () => {
+                    @*jcd.create('Grid', {
+                        //id: 'gridNorma',
+                        store: jcd.create('JsonStore', {
+                            //id: 'stNorma',
+                            //recordId: 'NormaId',
+                            fields: [
+                                { name: 'NormaId' },
+                                { name: 'TipoNorma' },
+                                { name: 'Descripcion' },
+                                { name: 'Fecha', type: 'date' },
+                            ],
+                            pageIndex: 1,
+                            pageSize: 10,
+                            ajax: {
+                                url: '@Url.Action("NormaGetAllLikePagin", "Expediente", new { area = "Simplificacion" })',
+                                data: {},
+                                autoLoad: false
+                            },
+                            //sort: { name: 'Fecha', direction: 'desc' }
+                        }),
+                        columns: [
+                            jcd.create('RowNumberColumn', { width: 50 }),
+                            jcd.create('GridColumn', { name: 'TipoNorma', width: 150 }),
+                            jcd.create('GridColumn', { name: 'Descripción', dataIndex: 'Descripcion' }),
+                            jcd.create('DateColumn', { name: 'Fecha', width: 120 }),
+                            jcd.create('ActionColumn', { width: 80,
+                                commands: [
+                                    { icon: 'fa fa-pencil', color: 'btn-success', callback: (e) => { sut.Procedimiento.NormaAprobacion.editar(e.record.NormaId); } }
+                                ]
+                            })
+                        ],
+                        //footer: [jcd.create('Paginator', { id: 'pagNorma', store: 'stNorma' })]
+                    });*@
+
+                    //App.gridNorma.renderTo($('#divNorma'));
+                    App.stNorma.reload({ExpedienteId : @Model.ExpedienteId });
+                },
+
+                editar: (id) => {
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/Expediente/EditarNorma',
+                        url:'@Url.Content("~/Simplificacion/Expediente/EditarNorma")',
+                        data: { id: id, ExpedienteId: @Model.ExpedienteId, Estado: '@Model.EstadoExpediente' },
+                        cache: false,
+                        beforeSend: () => {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+
+                        },
+                        success: (data) => {
+                            $('#ventana-container').html(data);
+
+                        },
+                        error: (result) => {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+
+                        },
+                        statusCode: {
+                            203: () => { window.location.reload(); }
+                        }
+                    });
+                },
+
+                //FVN descargar Inicio
+                descargar: (id) => {
+                    if (id == 'null' || id == null) {
+                        sut.msg.msgUsuario('No existe archivo adjunto.','Información');
+                        //sut.error.show('mensajes', 'No existe archivo adjunto.');
+                    }
+                    else {
+                        //window.location = '/General/Adjunto/Descargar/' + id;
+                        window.location = '@Url.Content("~/General/Adjunto/Descargar/")'+id;
+                    }
+
+                }
+                ,
+
+                //FVN descargar Inicio
+                descargarmotivo: (id) => {
+                    if (id == 'null' || id == null) {
+                        sut.msg.msgUsuario('No existe archivo adjunto.', 'Información');
+                        //sut.error.show('mensajes', 'No existe archivo adjunto.');
+                    }
+                    else {
+                        //window.location = '/General/MotivoAdjunto/Descargar/' + id;
+                        window.location = '@Url.Content("~/General/MotivoAdjunto/Descargar/")'+id;
+                    }
+
+                }
+                //FVN Fin
+            }
+        };
+
+        $(function () {
+            @*if (@Html.Raw(Model.TipoExpediente == TipoExpediente.CargaInicial ? "true" : "false") )
+            {*@
+            sut.Procedimiento.NormaAprobacion.init();
+            //}
+
+
+
+
+            sut.Procedimiento.listar(1);
+
+            $('#txtFilterCodigo, #txtFilterNombre, #txtFilterOrgano').keypress(function (e) {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.Procedimiento.listar(1);
+            });
+            /*habilitar observación*/
+            $("#aCancelarObservarExp").css({ "display": "none" });
+            $("#aGuardarObservarExp").css({ "display": "none" });
+            $("#aEditarObservarExp").css({ "display": "" });
+            $("#txtaObservarExp").prop("disabled", true)
+
+            /*fin observación*/
+
+
+            $("#aCancelarComentarioExp").css({ "display": "none" });
+            $("#aGuardarComentarioExp").css({ "display": "none" });
+            $("#aEditarComentarioExp").css({ "display": "" });
+            $("#txtaComentarioExp").prop("disabled", true)
+
+            $('#cbFilterOperacion, #cbFilterTipoProcedimiento').change(function (e) {
+                sut.Procedimiento.listar(1);
+            });
+            $('#tblLista thead button').click(function (e) {
+                $('#txtFilterCodigo').val('');
+                $('#txtFilterOrgano').val('');
+                $('#txtFilterNombre').val('');
+                $('#cbFilterOperacion').val('0');
+                $('#cbFilterTipoProcedimiento').val('0');
+                sut.Procedimiento.listar(1);
+            });
+
+            $('#cbCantFilas').change(function (e) {
+                $('#tblLista').data('pagesize', $('#cbCantFilas').val());
+                sut.Procedimiento.listar(1);
+            });
+
+
+            $(".knob").knob({
+                draw: function () {
+                    if (this.$.data('skin') == 'tron') {
+
+                        var a = this.angle(this.cv)  // Angle
+                            , sa = this.startAngle          // Previous start angle
+                            , sat = this.startAngle         // Start angle
+                            , ea                            // Previous end angle
+                            , eat = sat + a                 // End angle
+                            , r = true;
+
+                        this.g.lineWidth = this.lineWidth;
+
+                        this.o.cursor
+                        && (sat = eat - 0.3)
+                        && (eat = eat + 0.3);
+
+                        if (this.o.displayPrevious) {
+                            ea = this.startAngle + this.angle(this.value);
+                            this.o.cursor
+                            && (sa = ea - 0.3)
+                            && (ea = ea + 0.3);
+                            this.g.beginPath();
+                            this.g.strokeStyle = this.previousColor;
+                            this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sa, ea, false);
+                            this.g.stroke();
+                        }
+
+                        this.g.beginPath();
+                        this.g.strokeStyle = r ? this.o.fgColor : this.fgColor;
+                        this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sat, eat, false);
+                        this.g.stroke();
+
+                        this.g.lineWidth = 2;
+                        this.g.beginPath();
+                        this.g.strokeStyle = this.o.fgColor;
+                        this.g.arc(this.xy, this.xy, this.radius - this.lineWidth + 1 + this.lineWidth * 2 / 3, 0, 2 * Math.PI, false);
+                        this.g.stroke();
+
+                        return false;
+                    }
+                }
+            });
+        });
+    </script>
+}

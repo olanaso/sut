@@ -1,0 +1,849 @@
+﻿using Newtonsoft.Json;
+using Sut.Entities;
+using Sut.IApplicationServices;
+using Sut.Log;
+using Sut.Security;
+using Sut.Security.Filters;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Web.Mvc;
+
+namespace Sut.Web.Areas.Seguridad.Controllers
+{
+    [Autorizacion]
+    public class EntidadController : Controller
+    {
+        private readonly ILogService<EntidadController> _log;
+        private readonly IEntidadService _entidadService;
+        private readonly IMetaDatoService _metaDatoService;
+        private readonly IDepartamentoService _departamentoService;
+        private readonly IProvinciaService _provinciaService;
+        private readonly IAuditoriaService _AuditoriaService;
+        Auditoria objauditoria = new Auditoria();
+        public EntidadController(IEntidadService entidadService,
+                                IMetaDatoService metaDatoService,
+                                IDepartamentoService departamentoService,
+                                IAuditoriaService AuditoriaService,
+                                IProvinciaService provinciaService)
+        {
+            _log = new LogService<EntidadController>();
+            _entidadService = entidadService;
+            _metaDatoService = metaDatoService;
+            _departamentoService = departamentoService;
+            _provinciaService = provinciaService;
+            _AuditoriaService = AuditoriaService;
+        }
+
+        //[AutorizacionRol(Roles = "Administrador")]
+        public ActionResult Lista()
+        {
+            List<MetaDato> listaGobierno = _metaDatoService.GetByParent(43);
+            listaGobierno.Insert(0, new MetaDato() { MetaDatoId = 0, Nombre = " - TODOS - " });
+            ViewBag.ListaGobierno = JsonConvert.SerializeObject(listaGobierno.Select(x => new SelectListItem() { Value = x.MetaDatoId.ToString(), Text = x.Nombre }).ToList());
+
+            List<MetaDato> listaSector = _metaDatoService.GetByParent(47);
+            listaSector = listaSector.OrderBy(x => x.Nombre).ToList();
+            listaSector.Insert(0, new MetaDato() { MetaDatoId = 0, Nombre = " - TODOS - " });
+            ViewBag.ListaSector = JsonConvert.SerializeObject(listaSector.Select(x => new SelectListItem() { Value = x.MetaDatoId.ToString(), Text = x.Nombre }).ToList());
+
+            List<Departamento> listaDepartamento = _departamentoService.GetAll();
+            listaDepartamento = listaDepartamento.OrderBy(x => x.Nombre).ToList();
+            listaDepartamento.Insert(0, new Departamento() { DepartamentoId = 0, Nombre = " - TODOS - " });
+            ViewBag.ListaDepartamento = JsonConvert.SerializeObject(listaDepartamento.Select(x => new SelectListItem() { Value = x.DepartamentoId.ToString(), Text = x.Nombre }).ToList());
+
+
+            List<Provincia> listaProvincia = new List<Provincia>();
+            listaProvincia = listaProvincia.OrderBy(x => x.Nombre).ToList();
+            listaProvincia.Insert(0, new Provincia() { ProvinciaId = 0, Nombre = " - TODOS - " });
+            ViewBag.ListaProvincia = JsonConvert.SerializeObject(listaProvincia.Select(x => new SelectListItem() { Value = x.ProvinciaId.ToString(), Text = x.Nombre }).ToList());
+
+
+
+            return View();
+        }
+        public ActionResult Listadetalleentidad(long id, long entidaId, UsuarioInfo user)
+        {
+            try
+            {
+
+                ViewBag.Usuario = user;
+
+                ViewBag.UsuarioID = id;
+
+
+                Entidad model = _entidadService.GetOne(entidaId);
+
+                string viewName = string.Empty;
+
+
+
+                List<MetaDato> listaGobierno = _metaDatoService.GetByParent(43);
+                listaGobierno = listaGobierno.OrderBy(x => x.Nombre).ToList();
+                listaGobierno.Insert(0, new MetaDato() { MetaDatoId = 0, Nombre = " - TODOS - " });
+
+                ViewBag.ListaGobierno = listaGobierno.Select(x => new SelectListItem()
+                {
+                    Value = x.MetaDatoId.ToString(),
+                    Text = x.Nombre
+                })
+               .ToList();
+
+
+                List<MetaDato> listaSector = _metaDatoService.GetByParent(47);
+                listaSector = listaSector.OrderBy(x => x.Nombre).ToList();
+                listaSector.Insert(0, new MetaDato() { MetaDatoId = 0, Nombre = " - TODOS - " });
+
+                ViewBag.ListaSector = listaSector.Select(x => new SelectListItem()
+                {
+                    Value = x.MetaDatoId.ToString(),
+                    Text = x.Nombre
+                })
+               .ToList();
+
+
+                List<Departamento> listaDepartamento = _departamentoService.GetAll();
+                listaDepartamento = listaDepartamento.OrderBy(x => x.Nombre).ToList();
+                listaDepartamento.Insert(0, new Departamento() { DepartamentoId = 0, Nombre = " - TODOS - " });
+
+                ViewBag.ListaDepartamento = listaDepartamento.Select(x => new SelectListItem()
+                {
+                    Value = x.DepartamentoId.ToString(),
+                    Text = x.Nombre
+                })
+               .ToList();
+
+
+
+                List<Provincia> listaProvincia = new List<Provincia>();
+                listaProvincia = listaProvincia.OrderBy(x => x.Nombre).ToList();
+                listaProvincia.Insert(0, new Provincia() { ProvinciaId = 0, Nombre = " - TODOS - " });
+
+                ViewBag.ListaProvincia = listaProvincia.Select(x => new SelectListItem()
+                {
+                    Value = x.ProvinciaId.ToString(),
+                    Text = x.Nombre
+                })
+               .ToList();
+
+
+                viewName = "ListaAccesoEntidad";
+
+
+                return View(viewName, model);
+            }
+            catch (Exception ex)
+            {
+                ModelState.Clear();
+                ModelState.AddModelError("", ex.Message);
+                _log.Error(ex);
+                return View("_Error");
+            }
+        }
+
+
+
+
+        public ActionResult ListadetalleentidadActividad(long id, long entidaId, UsuarioInfo user)
+        {
+            try
+            {
+
+                ViewBag.Usuario = user;
+
+                ViewBag.UsuarioID = id;
+
+
+                Entidad model = _entidadService.GetOne(entidaId);
+
+                string viewName = string.Empty;
+
+
+
+                List<MetaDato> listaGobierno = _metaDatoService.GetByParent(43);
+                listaGobierno = listaGobierno.OrderBy(x => x.Nombre).ToList();
+                listaGobierno.Insert(0, new MetaDato() { MetaDatoId = 0, Nombre = " - TODOS - " });
+
+                ViewBag.ListaGobierno = listaGobierno.Select(x => new SelectListItem()
+                {
+                    Value = x.MetaDatoId.ToString(),
+                    Text = x.Nombre
+                })
+               .ToList();
+
+
+                List<MetaDato> listaSector = _metaDatoService.GetByParent(47);
+                listaSector = listaSector.OrderBy(x => x.Nombre).ToList();
+                listaSector.Insert(0, new MetaDato() { MetaDatoId = 0, Nombre = " - TODOS - " });
+
+                ViewBag.ListaSector = listaSector.Select(x => new SelectListItem()
+                {
+                    Value = x.MetaDatoId.ToString(),
+                    Text = x.Nombre
+                })
+               .ToList();
+
+
+                List<Departamento> listaDepartamento = _departamentoService.GetAll();
+                listaDepartamento = listaDepartamento.OrderBy(x => x.Nombre).ToList();
+                listaDepartamento.Insert(0, new Departamento() { DepartamentoId = 0, Nombre = " - TODOS - " });
+
+                ViewBag.ListaDepartamento = listaDepartamento.Select(x => new SelectListItem()
+                {
+                    Value = x.DepartamentoId.ToString(),
+                    Text = x.Nombre
+                })
+               .ToList();
+
+
+
+                List<Provincia> listaProvincia = new List<Provincia>();
+                listaProvincia = listaProvincia.OrderBy(x => x.Nombre).ToList();
+                listaProvincia.Insert(0, new Provincia() { ProvinciaId = 0, Nombre = " - TODOS - " });
+
+                ViewBag.ListaProvincia = listaProvincia.Select(x => new SelectListItem()
+                {
+                    Value = x.ProvinciaId.ToString(),
+                    Text = x.Nombre
+                })
+               .ToList();
+
+
+                viewName = "ListaAccesoEntidadActividad";
+
+
+                return View(viewName, model);
+            }
+            catch (Exception ex)
+            {
+                ModelState.Clear();
+                ModelState.AddModelError("", ex.Message);
+                _log.Error(ex);
+                return View("_Error");
+            }
+        }
+
+
+
+        public string GetAllLikePagin(Entidad filtro, int pageIndex, int pageSize)
+        {
+
+            int totalRows = 0;
+            List<Entidad> lista = _entidadService.GetAllLikePagin(filtro, pageIndex, pageSize, ref totalRows);
+
+            return JsonConvert.SerializeObject(new
+            {
+                data = lista.Select(x => new
+                {
+                    EntidadId = x.EntidadId,
+                    Nombre = x.Nombre,
+                    Codigo = x.Codigo,
+                    Acronimo = x.Acronimo,
+                    NivelGobierno = x.NivelGobierno.Nombre,
+                    Sector = x.Sector.Nombre,
+                    Provincia = x.Provincia == null ? "" : x.Provincia.Nombre,
+                    Departamento = x.Provincia == null ? "" : x.Provincia.Departamento.Nombre,
+                    Estado = x.Estado == Respuesta.Si ? "Activo" : "Inactivo",
+                }),
+                total = totalRows,
+            });
+        }
+
+        public string GetAllLikePaginDetalle(Entidad filtro, int pageIndex, int pageSize, long usuarioId, UsuarioInfo user)
+        {
+            int totalRows = 0;
+            List<Entidad> lista = _entidadService.GetAllLikePaginDetalle(filtro, pageIndex, pageSize, ref totalRows, usuarioId);
+
+            return JsonConvert.SerializeObject(new
+            {
+                lista = lista.Select(x => new
+                {
+                    EntidadId = x.EntidadId,
+                    Nombre = x.Nombre,
+                    Codigo = x.Codigo,
+                    Acronimo = x.Acronimo,
+                    //NivelGobierno = x.NivelGobierno.Nombre,
+                    //Sector = x.Sector.Nombre,
+                    //Provincia = x.Provincia == null ? "" : x.Provincia.Nombre,
+                    //Departamento = x.Provincia == null ? "" : x.Provincia.Departamento.Nombre,  
+                    NivelGobierno = x.NivelGobiernodes,
+                    Sector = x.Sectordes,
+                    Provincia = x.Provinciades == null ? "" : x.Provinciades,
+                    Departamento = x.Departamentodes == null ? "" : x.Departamentodes,
+                    Estado = x.Estado == Respuesta.Si ? "Activo" : "Inactivo",
+                }),
+                totalRows = totalRows,
+            });
+
+        }
+
+
+        public string GetAllLikePaginDetalleActividad(Entidad filtro, int pageIndex, int pageSize, long usuarioId, UsuarioInfo user)
+        {
+            int totalRows = 0;
+            List<Entidad> lista = _entidadService.GetAllLikePaginDetalleActividad(filtro, pageIndex, pageSize, ref totalRows, usuarioId);
+
+            return JsonConvert.SerializeObject(new
+            {
+                lista = lista.Select(x => new
+                {
+                    EntidadId = x.EntidadId,
+                    Nombre = x.Nombre,
+                    Codigo = x.Codigo,
+                    Acronimo = x.Acronimo,
+                    //NivelGobierno = x.NivelGobierno.Nombre,
+                    //Sector = x.Sector.Nombre,
+                    //Provincia = x.Provincia == null ? "" : x.Provincia.Nombre,
+                    //Departamento = x.Provincia == null ? "" : x.Provincia.Departamento.Nombre,  
+                    NivelGobierno = x.NivelGobiernodes,
+                    Sector = x.Sectordes,
+                    Provincia = x.Provinciades == null ? "" : x.Provinciades,
+                    Departamento = x.Departamentodes == null ? "" : x.Departamentodes,
+                    Estado = x.Estado == Respuesta.Si ? "Activo" : "Inactivo",
+                }),
+                totalRows = totalRows,
+            });
+
+        }
+        public string GetAllLikePaginDetalleAsignado(Entidad filtro, int pageIndex, int pageSize, long usuarioId, UsuarioInfo user)
+        {
+            int totalRows = 0;
+            List<Entidad> lista = _entidadService.GetAllLikePaginDetalleAsignado(filtro, pageIndex, pageSize, ref totalRows, usuarioId);
+
+            return JsonConvert.SerializeObject(new
+            {
+                lista = lista.Select(x => new
+                {
+                    EntidadId = x.EntidadId,
+                    Nombre = x.Nombre,
+                    Codigo = x.Codigo,
+                    Acronimo = x.Acronimo,
+                    //NivelGobierno = x.NivelGobierno.Nombre,
+                    //Sector = x.Sector.Nombre,
+                    //Provincia = x.Provincia == null ? "" : x.Provincia.Nombre,
+                    //Departamento = x.Provincia == null ? "" : x.Provincia.Departamento.Nombre,  
+                    NivelGobierno = x.NivelGobiernodes,
+                    Sector = x.Sectordes,
+                    Provincia = x.Provinciades == null ? "" : x.Provinciades,
+                    Departamento = x.Departamentodes == null ? "" : x.Departamentodes,
+                    Estado = x.Estado == Respuesta.Si ? "Activo" : "Inactivo",
+                }),
+                totalRows = totalRows,
+            });
+
+        }
+        public string GetAllLikePaginDetalleAsignadoActividad(Entidad filtro, int pageIndex, int pageSize, long pCalendarioActividadesId, UsuarioInfo user)
+        {
+            int totalRows = 0;
+            List<Entidad> lista = _entidadService.GetAllLikePaginDetalleAsignadoActividad(filtro, pageIndex, pageSize, ref totalRows, pCalendarioActividadesId);
+
+            return JsonConvert.SerializeObject(new
+            {
+                lista = lista.Select(x => new
+                {
+                    EntidadId = x.EntidadId,
+                    Nombre = x.Nombre,
+                    Codigo = x.Codigo,
+                    Acronimo = x.Acronimo,
+                    //NivelGobierno = x.NivelGobierno.Nombre,
+                    //Sector = x.Sector.Nombre,
+                    //Provincia = x.Provincia == null ? "" : x.Provincia.Nombre,
+                    //Departamento = x.Provincia == null ? "" : x.Provincia.Departamento.Nombre,  
+                    NivelGobierno = x.NivelGobiernodes,
+                    Sector = x.Sectordes,
+                    Provincia = x.Provinciades == null ? "" : x.Provinciades,
+                    Departamento = x.Departamentodes == null ? "" : x.Departamentodes,
+                    Estado = x.Estado == Respuesta.Si ? "Activo" : "Inactivo",
+                }),
+                totalRows = totalRows,
+            });
+
+        }
+
+
+
+
+
+        //[AutorizacionRol(Roles = "Administrador")]
+        public ActionResult Editar(long id)
+        {
+            try
+            {
+                List<MetaDato> listaGobierno = _metaDatoService.GetByParent(43);
+                listaGobierno.Insert(0, new MetaDato() { MetaDatoId = 0, Nombre = " - SELECCIONAR - " });
+                ViewBag.ListaGobierno = listaGobierno.Select(x => new SelectListItem() { Value = x.MetaDatoId.ToString(), Text = x.Nombre }).ToList();
+
+                List<MetaDato> listaSector = _metaDatoService.GetByParent(47);
+                listaSector = listaSector.OrderBy(x => x.Nombre).ToList();
+                listaSector.Insert(0, new MetaDato() { MetaDatoId = 0, Nombre = " - SELECCIONAR - " });
+                ViewBag.ListaSector = listaSector.Select(x => new SelectListItem() { Value = x.MetaDatoId.ToString(), Text = x.Nombre }).ToList();
+
+                List<Departamento> listaDepartamento = _departamentoService.GetAll();
+                listaDepartamento = listaDepartamento.OrderBy(x => x.Nombre).ToList();
+                listaDepartamento.Insert(0, new Departamento() { DepartamentoId = 0, Nombre = " - SELECCIONAR - " });
+                ViewBag.ListaDepartamento = listaDepartamento.Select(x => new SelectListItem() { Value = x.DepartamentoId.ToString(), Text = x.Nombre }).ToList();
+
+
+                List<Provincia> listaProvincia = new List<Provincia>();
+
+                Entidad item;
+
+
+                if (id == 0)
+                {
+                    item = new Entidad();
+                    ViewBag.Title = "Nueva Entidad";
+                }
+                else
+                {
+                    item = _entidadService.GetOne(id);
+                    ViewBag.Title = "Editar Entidad";
+
+                    if (item.Provincia != null)
+                    {
+                        item.DepartamentoId = item.Provincia.DepartamentoId;
+
+                        listaProvincia = _provinciaService.GetByDepartamento(item.DepartamentoId);
+                        listaProvincia = listaProvincia.OrderBy(x => x.Nombre).ToList();
+                    }
+                }
+                ViewBag.publicar = new List<SelectListItem>()
+                {
+                    new SelectListItem() { Text = "Activo", Value = "1" , Selected = item.Estado == Respuesta.Si ? true:false},
+                    new SelectListItem() { Text = "Inactivo", Value = "0",  Selected = item.Estado == Respuesta.No ? true:false },
+                };
+
+                ViewBag.listapadre = new List<SelectListItem>()
+                {
+
+                    new SelectListItem() { Text = "Ninguno", Value = "0",},
+                    new SelectListItem() { Text = "Padre", Value = "1" },
+                    new SelectListItem() { Text = "Hijo", Value = "2",},
+                };
+
+
+                ViewBag.NuevoExpediente = new List<SelectListItem>()
+                {
+                    new SelectListItem() { Text = "Si", Value = "1" , Selected = item.Estado == Respuesta.Si ? true:false},
+                    new SelectListItem() { Text = "No", Value = "0",  Selected = item.Estado == Respuesta.No ? true:false },
+                };
+
+                ViewBag.MultiUsuario = new List<SelectListItem>()
+                {
+                    new SelectListItem() { Text = "Si", Value = "1" , Selected = item.Estado == Respuesta.Si ? true:false},
+                    new SelectListItem() { Text = "No", Value = "0",  Selected = item.Estado == Respuesta.No ? true:false },
+                };
+
+                ViewBag.lstBandeja = new List<SelectListItem>()
+                {
+                    new SelectListItem() { Text = "No", Value = "0",},
+                    new SelectListItem() { Text = "Si", Value = "1" },
+                };
+
+
+                listaProvincia.Insert(0, new Provincia() { ProvinciaId = 0, Nombre = " - SELECCIONAR - " });
+                ViewBag.ListaProvincia = listaProvincia.Select(x => new SelectListItem() { Value = x.ProvinciaId.ToString(), Text = x.Nombre }).ToList();
+
+                return PartialView("_Editar", item);
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                ModelState.AddModelError("", ex.Message);
+                _log.Error(ex);
+                return PartialView("_Error");
+            }
+        }
+
+        public ActionResult GetProvincias(long id)
+        {
+            try
+            {
+                List<Provincia> listaProvincia = new List<Provincia>();
+                listaProvincia = _provinciaService.GetByDepartamento(id);
+                listaProvincia = listaProvincia.OrderBy(x => x.Nombre).ToList();
+                listaProvincia.Insert(0, new Provincia() { ProvinciaId = 0, Nombre = " - SELECCIONAR - " });
+
+                return Json(new { data = listaProvincia.Select(x => new { ProvinciaId = x.ProvinciaId, Nombre = x.Nombre }).ToList() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                ModelState.AddModelError("", ex.Message);
+                _log.Error(ex);
+                return PartialView("_Error");
+            }
+        }
+
+        public ActionResult GetProvinciasGrid(long id)
+        {
+            try
+            {
+                List<Provincia> listaProvincia = new List<Provincia>();
+                listaProvincia = _provinciaService.GetByDepartamento(id);
+                listaProvincia = listaProvincia.OrderBy(x => x.Nombre).ToList();
+                listaProvincia.Insert(0, new Provincia() { ProvinciaId = 0, Nombre = " - TODOS - " });
+
+                return Json(new { data = listaProvincia.Select(x => new { ProvinciaId = x.ProvinciaId, Nombre = x.Nombre }).ToList() }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                ModelState.AddModelError("", ex.Message);
+                _log.Error(ex);
+                return PartialView("_Error");
+            }
+        }
+
+
+
+        [HttpPost]
+        public ActionResult GuardarAsignacion(List<UsuarioAsignacion> listaEnt, int usuarioid, UsuarioInfo user)
+        {
+            try
+            {
+
+                /*auditoria agregar*/
+                objauditoria.EntidadId = user.EntidadId;
+                objauditoria.SectorId = user.Sector;
+                objauditoria.ProvinciaId = user.Provincia;
+                objauditoria.Usuario = user.NombreCompleto;
+                objauditoria.Actividad = "Asignar entidad";
+                objauditoria.Pantalla = "Asignacion Usuario";
+                objauditoria.UserCreacion = user.NroDocumento;
+                objauditoria.FecCreacion = DateTime.Now;
+                /*auditoria*/
+
+
+
+                //if (model != null)
+                //{
+                List<UsuarioAsignacion> objUsuarioAsignacion = new List<UsuarioAsignacion>();
+
+                foreach (var mode in listaEnt)
+                {
+                    mode.UsuarioId = usuarioid;
+                    mode.UserCreacion = user.NroDocumento;
+                    mode.FecCreacion = DateTime.Now;
+
+                    _AuditoriaService.InsertarusuarioAsig(mode);
+                }
+
+
+                //}
+
+                //_entidadService.Save(model);
+
+
+
+                /*auditoria Grabar*/
+                _AuditoriaService.Save(objauditoria);
+                /*auditoria Grabar*/
+                return Json(new
+                {
+                    valid = true,
+                    mensaje = ""
+                });
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                ModelState.Clear();
+                ModelState.AddModelError("", ex.Message);
+
+                _log.Error(ex);
+                return PartialView("_Error");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult GuardarAsignacionActividad(List<GrupoEntidad> listaEnt, int usuarioid, UsuarioInfo user)
+        {
+            try
+            {
+
+                /*auditoria agregar*/
+                objauditoria.EntidadId = user.EntidadId;
+                objauditoria.SectorId = user.Sector;
+                objauditoria.ProvinciaId = user.Provincia;
+                objauditoria.Usuario = user.NombreCompleto;
+                objauditoria.Actividad = "Asignar entidad actividad";
+                objauditoria.Pantalla = "Asignar actividad";
+                objauditoria.UserCreacion = user.NroDocumento;
+                objauditoria.FecCreacion = DateTime.Now;
+                /*auditoria*/
+
+
+
+                //if (model != null)
+                //{
+                List<GrupoEntidad> objUsuarioAsignacion = new List<GrupoEntidad>();
+
+                foreach (var mode in listaEnt)
+                {
+                    mode.CalendarioActividadesId = usuarioid;
+                    mode.UserCreacion = user.NroDocumento;
+                    mode.FecCreacion = DateTime.Now;
+
+                    _AuditoriaService.InsertarusuarioAsigActividad(mode);
+                }
+
+
+
+                //}
+
+                //_entidadService.Save(model);
+
+
+
+                /*auditoria Grabar*/
+                _AuditoriaService.Save(objauditoria);
+                /*auditoria Grabar*/
+                return Json(new
+                {
+                    valid = true,
+                    mensaje = ""
+                });
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                ModelState.Clear();
+                ModelState.AddModelError("", ex.Message);
+
+                _log.Error(ex);
+                return PartialView("_Error");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult quitarAsignacion(List<UsuarioAsignacion> listaEnt, int usuarioid, UsuarioInfo user)
+        {
+            try
+            {
+
+                /*auditoria agregar*/
+                objauditoria.EntidadId = user.EntidadId;
+                objauditoria.SectorId = user.Sector;
+                objauditoria.ProvinciaId = user.Provincia;
+                objauditoria.Usuario = user.NombreCompleto;
+                objauditoria.Actividad = "Asignar entidad";
+                objauditoria.Pantalla = "Asignacion Usuario";
+                objauditoria.UserCreacion = user.NroDocumento;
+                objauditoria.FecCreacion = DateTime.Now;
+                /*auditoria*/
+
+
+
+                //if (model != null)
+                //{
+                List<UsuarioAsignacion> objUsuarioAsignacion = new List<UsuarioAsignacion>();
+
+                foreach (var mode in listaEnt)
+                {
+                    mode.UsuarioId = usuarioid;
+                    mode.UserCreacion = user.NroDocumento;
+                    mode.FecCreacion = DateTime.Now;
+
+                    _AuditoriaService.QuitarusuarioAsig(mode);
+                }
+
+
+                //}
+
+                //_entidadService.Save(model);
+
+
+
+                /*auditoria Grabar*/
+                _AuditoriaService.Save(objauditoria);
+                /*auditoria Grabar*/
+                return Json(new
+                {
+                    valid = true,
+                    mensaje = ""
+                });
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                ModelState.Clear();
+                ModelState.AddModelError("", ex.Message);
+
+                _log.Error(ex);
+                return PartialView("_Error");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult quitarAsignacionActividad(List<GrupoEntidad> listaEnt, int usuarioid, UsuarioInfo user)
+        {
+            try
+            {
+
+                /*auditoria agregar*/
+                objauditoria.EntidadId = user.EntidadId;
+                objauditoria.SectorId = user.Sector;
+                objauditoria.ProvinciaId = user.Provincia;
+                objauditoria.Usuario = user.NombreCompleto;
+                objauditoria.Actividad = "Asignar entidad";
+                objauditoria.Pantalla = "Asignacion Usuario";
+                objauditoria.UserCreacion = user.NroDocumento;
+                objauditoria.FecCreacion = DateTime.Now;
+                /*auditoria*/
+
+
+
+                //if (model != null)
+                //{
+                List<GrupoEntidad> objUsuarioAsignacion = new List<GrupoEntidad>();
+
+                foreach (var mode in listaEnt)
+                {
+                    mode.CalendarioActividadesId = usuarioid;
+                    mode.UserCreacion = user.NroDocumento;
+                    mode.FecCreacion = DateTime.Now;
+
+                    _AuditoriaService.QuitarusuarioAsigActividad(mode);
+                }
+
+
+                //}
+
+                //_entidadService.Save(model);
+
+
+
+                /*auditoria Grabar*/
+                _AuditoriaService.Save(objauditoria);
+                /*auditoria Grabar*/
+                return Json(new
+                {
+                    valid = true,
+                    mensaje = ""
+                });
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                ModelState.Clear();
+                ModelState.AddModelError("", ex.Message);
+
+                _log.Error(ex);
+                return PartialView("_Error");
+            }
+        }
+
+
+        [HttpPost]
+        //[AutorizacionRol(Roles = "Administrador")]
+        public ActionResult Guardar(Entidad model, UsuarioInfo user)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    string mensaje = model.EntidadId == 0 ? "La Entidad fue registrada satisfactoriamente."
+                                                : "La Entidad fue modificada satisfactoriamente.";
+
+                    Entidad obj;
+
+                    if (model.EntidadId == 0)
+                    {
+                        obj = new Entidad();
+                        obj.TipoTupa = TipoTupa.Normal;
+                        obj.UserCreacion = user.NroDocumento;
+                        obj.FecCreacion = DateTime.Now;
+                        obj.DJ = 0;
+
+                        /*auditoria agregar*/
+                        objauditoria.EntidadId = user.EntidadId;
+                        objauditoria.SectorId = user.Sector;
+                        objauditoria.ProvinciaId = user.Provincia;
+                        objauditoria.Usuario = user.NombreCompleto;
+                        objauditoria.Actividad = "Agregar Entidad";
+                        objauditoria.Pantalla = "Entidad";
+                        objauditoria.UserCreacion = user.NroDocumento;
+                        objauditoria.FecCreacion = DateTime.Now;
+                        /*auditoria*/
+                    }
+                    else
+                    {
+                        obj = _entidadService.GetOne(model.EntidadId);
+
+                        /*auditoria actualizar*/
+                        objauditoria.EntidadId = user.EntidadId;
+                        objauditoria.SectorId = user.Sector;
+                        objauditoria.ProvinciaId = user.Provincia;
+                        objauditoria.Usuario = user.NombreCompleto;
+                        objauditoria.Actividad = "Modificar Entidad";
+                        objauditoria.Pantalla = "Entidad";
+                        objauditoria.UserCreacion = user.NroDocumento;
+                        objauditoria.FecCreacion = DateTime.Now;
+                        /*auditoria*/
+                    }
+
+                    obj.NivelGobiernoId = model.NivelGobiernoId;
+                    obj.NivelGobierno = null;
+                    obj.SectorId = model.SectorId;
+                    obj.Sector = null;
+                    obj.Estado = model.Estado;
+                    obj.CodPadre = model.CodPadre;
+                    obj.ActivarExpediente = model.ActivarExpediente;
+                    obj.ActivarMultiUsuario = model.ActivarMultiUsuario;
+                    obj.Bandeja = model.Bandeja;
+                    if (model.ProvinciaId != null)
+                    {
+                        if (model.ProvinciaId.Value > 0)
+                            obj.ProvinciaId = model.ProvinciaId;
+                        else
+                        {
+                            obj.ProvinciaId = null;
+                            obj.Provincia = null;
+                        }
+                    }
+                    else
+                    {
+                        obj.ProvinciaId = null;
+                        obj.Provincia = null;
+                    }
+
+                    obj.Acronimo = model.Acronimo;
+                    obj.Nombre = model.Nombre;
+
+                    obj.UserModificacion = user.NroDocumento;
+                    obj.FecModificacion = DateTime.Now;
+                    _entidadService.Save(obj);
+
+                    /*auditoria Grabar*/
+                    _AuditoriaService.Save(objauditoria);
+                    /*auditoria Grabar*/
+
+                    return Json(new
+                    {
+                        mensaje = mensaje
+                    });
+                }
+                else
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return PartialView("_Error");
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                ModelState.AddModelError("", ex.Message);
+
+                _log.Error(ex);
+                return PartialView("_Error");
+            }
+        }
+    }
+
+    public class ListaEntidad
+    {
+        public string EntidadId { get; set; }
+    }
+}

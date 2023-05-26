@@ -1,0 +1,401 @@
+﻿@model Sut.Web.Areas.Simplificacion.Models.CopiaProcedimientoViewModel
+@using Sut.Entities
+ 
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">Copiar Procedimiento Administrativo</h4>
+        </div>
+
+        @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-editar" }))
+        {
+            @Html.HiddenFor(model => model.ProcedimientoOrigenId)
+            @Html.HiddenFor(model => model.ProcedimientoDestinoId)
+            @Html.HiddenFor(model => model.TipoExpediente)
+            <div class="modal-body form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 col-xs-12 control-label">Procedimiento Origen :</label>
+                    <div class="col-sm-10 col-xs-12">
+                        <input type="text" class="form-control" value="@ViewBag.NomProcOrigen" readonly />
+                    </div>
+                </div>
+                <h5>Selecciones a copiar</h5>
+                <table class="table table-condensed table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th colspan="2"> <label>@Html.CheckBoxFor(model => model.Todo) Copiar Todo</label> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <label>
+                                    @Html.CheckBoxFor(model => model.InfoAlCiudadano, new { @notodo = true })
+                                    Información al ciudadano
+                                </label>
+                            </td>
+                            <td>
+                                <label>
+                                    @Html.CheckBoxFor(model => model.InfoBasica, new { @notodo = true })
+                                    Información básica
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>
+                                    @Html.CheckBoxFor(model => model.TipoAtencion, new { @notodo = true })
+                                    Tipos de Atención
+                                </label>
+                            </td>
+                            @if (Model.TipoExpediente == TipoExpediente.ExpedienteRegular)
+                            {
+                                <td>
+                                    <label>
+                                        @Html.CheckBoxFor(model => model.TablaASME, new { @notodo = true })
+                                        Tabla ASME-VM
+                                    </label>
+                                </td>
+                            } 
+                        </tr>
+                        <tr>
+                            @if (Model.TipoExpediente == TipoExpediente.ExpedienteRegular)
+                            {
+                                <td>
+                                    <label>
+                                        @Html.CheckBoxFor(model => model.SustentoRequisito, new { @notodo = true })
+                                        Sustento Requisitos
+                                    </label>
+                                </td>
+                            }
+                            <td>
+                                <label>
+                                    @Html.CheckBoxFor(model => model.Requisito, new { @notodo = true })
+                                    Requisitos
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>
+                                    @Html.CheckBoxFor(model => model.BaseLegal, new { @notodo = true })
+                                    Base Legal
+                                </label>
+                            </td>
+                            <td></td>
+                        </tr>
+                        @*<tr>
+                            <td colspan="2">
+                                @Html.CheckBoxFor(model => model.Nuevo, new { @onclick = "javascript:sut.Copia.setIncluirProcedimiento();" })
+                                ¿Desea copiar la información seleccionada a un procedimiento ya creado?
+                                <div class="form-group">
+
+                                    <label class="col-sm-2 col-xs-12 control-label">Procedimiento Destino :</label>
+                                    <div class="col-sm-10 col-xs-12">
+                                        <div class="input-group">
+                                            <input id="txtNomProcDestino" type="text" class="form-control" name="" readonly />
+                                            <div class="input-group-btn">
+                                                <a id="btnAddProcedimientoDestino" href="javascript:sut.Copia.openSelectProc()" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>*@
+                    </tbody>
+                </table>
+
+
+            </div>
+            <div id="msgEditar"></div>
+            <div class="modal-footer">
+                <button type="button" name="guardar" class="btn btn-success btn-sm" onclick="sut.Copia.guardar()"><i class="fa fa-copy"></i> Copiar</button>
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+            </div>
+
+        }
+    </div>
+    </div>
+
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+
+<script>
+    sut.Copia = {
+        guardar: () => {
+            if ($("#form-editar").valid()) {
+
+                //alert(data);
+                $('#TablaASME').prop("checked");
+                $('#SustentoRequisito').prop("checked");
+                $.ajax({
+                    type: "POST",
+                    //url: "/Simplificacion/Procedimiento/CopiarProcedimiento",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/CopiarProcedimiento")',
+                    data: $('#form-editar').serialize(),
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-editar button').eq(0).removeAttr("disabled");
+                        $('#form-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, function () {
+                            sut.Procedimiento.listar(1);
+                        });
+                    },
+                    error: function (result) {
+
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-editar button').eq(0).removeAttr("disabled");
+                        $('#form-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            }
+        },
+        openSelectProc: () => {
+            $.ajax({
+                type: "GET",
+                //url: '/Simplificacion/Procedimiento/SelectByExpediente',
+                url: '@Url.Content("~/Simplificacion/Procedimiento/SelectByExpediente")',
+                data: { ExpedienteId: @Model.ExpedienteId,ProcedimientoOrigenId : @Model.ProcedimientoOrigenId, multi: false, fnAdd: 'sut.Copia.setProcDestino' },
+                cache: false,
+                beforeSend: function () {
+                    sut.wait.modal('ventana-container-editar');
+                    $('#modal-ventana-editar').modal('show');
+                },
+                success: function (data) {
+                    $('#ventana-container-editar').html(data);
+                },
+                error: function (result) {
+                    $('#modal-ventana-editar').modal('hide');
+                    sut.error.show('mensajes', result.responseText);
+                }
+            });
+        },
+        setProcDestino: (data) => {
+            $('#modal-ventana-editar').modal('hide');
+            $('input[name$="ProcedimientoDestinoId"]').val(data.ProcedimientoId);
+            //$('input#txtNomProcDestino').val(data.CodigoCorto + ' - ' + data.Denominacion);
+            $('input#txtNomProcDestino').val(data.Denominacion);
+        },
+        setIncluirProcedimiento: ()=> {
+            if ($("#Nuevo").is(':checked')) {
+                $("#btnAddProcedimientoDestino").attr("href", "javascript:sut.Copia.openSelectProc()");
+                $("#btnAddProcedimientoDestino").removeAttr("disabled");
+            } else {
+
+                $("#btnAddProcedimientoDestino").attr("disabled", "disabled");
+
+                $("#btnAddProcedimientoDestino").attr("href", "#");
+            }
+        }
+    };
+
+    $(function () {
+
+        $("#Nuevo").prop("checked", false);
+        $("#btnAddProcedimientoDestino").attr("disabled", "disabled");
+        $("#btnAddProcedimientoDestino").attr("href", "#");
+
+        $("#Todo").click(function(){
+
+            if($(this).prop("checked")){
+                $.each($("table tbody tr td input[notodo]"),function(){
+
+                    $(this).prop("checked",true);
+                    $(this).attr("checked",true);
+                });
+                $("button[name='guardar']").prop("disabled", false);
+            }else{
+                $.each($("table tbody tr td input[notodo]"),function(){
+
+                    $(this).prop("checked",false);
+                    $(this).attr("checked",false);
+                });
+                $("button[name='guardar']").prop("disabled", true);
+            }
+        });
+
+
+        $("#InfoAlCiudadano,#DatosGeneralesYSTL,#InfoBasica,#SustentoCalificacion,#BaseLegal").click(function(){
+            debugger;
+            var click = false;
+
+            if($('#InfoAlCiudadano').prop("checked")){
+                click = true;
+            }
+
+            if($('#DatosGeneralesYSTL').prop("checked")){
+                click = true;
+            }
+
+            if($('#InfoBasica').prop("checked")){
+                click = true;
+            }
+
+            if($('#SustentoCalificacion').prop("checked")){
+                click = true;
+            }
+
+
+            if($('#BaseLegal').prop("checked")){
+                click = true;
+            }
+
+            if(click)
+                $("button[name='guardar']").prop("disabled", false);
+            else
+                $("button[name='guardar']").prop("disabled", true);
+
+
+
+        });
+
+        var verificarClick = function(){
+            var click = false;
+
+            if($('#InfoAlCiudadano').prop("checked")){
+                click = true;
+            }
+
+            if($('#DatosGeneralesYSTL').prop("checked")){
+                click = true;
+            }
+
+            if($('#InfoBasica').prop("checked")){
+                click = true;
+            }
+
+            if($('#SustentoCalificacion').prop("checked")){
+                click = true;
+            }
+
+
+            if($('#BaseLegal').prop("checked")){
+                click = true;
+            }
+
+            return click;
+        }
+
+
+        $("#Todo").click();
+
+
+        $("#TablaASME").click(function(){
+            if($(this).prop("checked")){
+                $("#TipoAtencion").prop("checked",true);
+                $("#TipoAtencion").attr("checked",true);
+                $("button[name='guardar']").prop("disabled", false);
+            }else{
+                $("#TipoAtencion").prop("checked",false);
+                $("#TipoAtencion").attr("checked",false);
+
+
+                if(verificarClick() || $("#SustentoRequisito").prop("checked") ||  $("#Requisito").prop("checked"))
+                    $("button[name='guardar']").prop("disabled", false);
+                else
+                    $("button[name='guardar']").prop("disabled", true);
+            }
+
+
+        });
+
+
+        $("#TipoAtencion").click(function(){
+            if($(this).prop("checked")){
+                $("#TablaASME").prop("checked",true);
+                $("#TablaASME").attr("checked",true);
+                $("button[name='guardar']").prop("disabled", false);
+            }else{
+                $("#TablaASME").prop("checked",false);
+                $("#TablaASME").attr("checked",false);
+                if(verificarClick() || $("#SustentoRequisito").prop("checked") ||  $("#Requisito").prop("checked"))
+                    $("button[name='guardar']").prop("disabled", false);
+                else
+                    $("button[name='guardar']").prop("disabled", true);
+            }
+        });
+
+
+        $("#SustentoRequisito").click(function(){
+            if($(this).prop("checked")){
+                $("#Requisito").prop("checked",true);
+                $("#Requisito").attr("checked",true);
+                $("button[name='guardar']").prop("disabled", false);
+            }else{
+                $("#Requisito").prop("checked",false);
+                $("#Requisito").attr("checked",false);
+
+                if(verificarClick() || $("#TipoAtencion").prop("checked") ||  $("#TablaASME").prop("checked"))
+                    $("button[name='guardar']").prop("disabled", false);
+                else
+                    $("button[name='guardar']").prop("disabled", true);
+            }
+
+
+        });
+
+        $("#Requisito").click(function(){
+            if($(this).prop("checked")){
+                $("#SustentoRequisito").prop("checked",true);
+                $("#SustentoRequisito").attr("checked",true);
+                $("button[name='guardar']").prop("disabled", false);
+            }else{
+                $("#SustentoRequisito").prop("checked",false);
+                $("#SustentoRequisito").attr("checked",false);
+
+                if(verificarClick() || $("#TipoAtencion").prop("checked") ||  $("#TablaASME").prop("checked"))
+                    $("button[name='guardar']").prop("disabled", false);
+                else
+                    $("button[name='guardar']").prop("disabled", true);
+            }
+        });
+
+        $.each($("table tbody tr td input[notodo]"),function(){
+            $(this).click(function(e){
+
+                if(!$(this).prop("checked")){
+                    $("#Todo").prop("checked",false);
+                    $("#Todo").attr("checked",false);
+                }
+
+            });
+        });
+
+
+
+
+        $('#form-editar').validate({
+            errorPlacement: function (error, element) {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+
+            },
+            messages: {
+
+            }
+        });
+    });
+
+</script>

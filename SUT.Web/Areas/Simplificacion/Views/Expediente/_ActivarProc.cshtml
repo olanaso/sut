@@ -1,0 +1,80 @@
+﻿@using Sut.Entities;
+@model Sut.Entities.Procedimiento
+<div id="buscarSede" class="modal-dialog">
+    <div class="modal-content" >
+        <div class="modal-header">
+            <h4 class="modal-title">Estado Procedimiento</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-buscar-sede", @class = "form-horizontal" }))
+            {
+
+                <div class="form-group">
+                    
+                        <label class="col-sm-4 col-xs-12 control-label">Seleccionar el Estado :</label>
+                    <div class="col-sm-4 col-xs-12">
+
+                        @Html.DropDownListFor(model => model.Activar, ViewBag.Activar as List<SelectListItem>, new { @class = "form-control "})
+
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="modal-footer">
+            <a class="btn btn-success btn-sm" href="javascript:sut.Masivo.aceptar();"><i class="fa fa-check"></i> Aceptar</a>
+            <button type="button" class="btn btn-danger btn-sm" onclick="$(this).parent().parent().parent().parent().parent().modal('hide');"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+</style>
+
+<script>
+
+    var multi = @Html.Raw(ViewBag.multi ? "true" : "false");
+    var ProcedimientoId = @Html.Raw(ViewBag.ProcedimientoId);
+
+    sut.Masivo = {
+     
+        aceptar: function (tr) {
+            debugger;
+
+
+            var Estado=  $("#Activar").val();
+            var ProcedimientoId = @Html.Raw(ViewBag.ProcedimientoId);
+            sut.msg.confirm('Está seguro de otorgar permiso para agregar mas plazos de atención', function () {
+
+                debugger;
+                $.ajax({
+                    type: "POST",
+                     url:'@Url.Content("~/Simplificacion/Expediente/Guardaractivarproce")',
+                    data: { procedimientoId:ProcedimientoId, Estado:Estado},
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        //$('#modal-ventana').modal('hide');
+                        showNotification('top', 'right', 'Se activo correctamente', 1);
+                        location.reload();
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        debugger;
+                        showNotification('top', 'right', 'Ya Existe Información en la tabla Asme, favor de eliminar las actividades para poder copiar', 2);
+                        //sut.error.show('mensajes', "Ya Existe Información en la tabla Asme favor de eliminar las actividades para poder copiar");
+                    }
+                });
+
+
+            });
+        }
+    };
+
+    $(function () {
+      
+    });
+
+</script>

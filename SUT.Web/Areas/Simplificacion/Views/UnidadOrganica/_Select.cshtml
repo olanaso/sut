@@ -1,0 +1,179 @@
+﻿<div id="buscarUnidadOrganica" class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Seleccionar Unidad Orgánica</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-buscar-unidadorganica", @class = "form-horizontal" }))
+            {
+
+                <h5 style="font-weight: bold">Usted tuvo seleccionadas las siguientes Unidades, debe volver a seleccionarlas si desea mantenerlas   </h5>
+                <textarea rows="3" class="form-control" id="txtunidaddetalle" disabled="disabled"> @ViewBag.Texto  </textarea>
+                <div class="table-responsive">
+                    <table id="tblBuscarUndOrganica" class="table table-bordered table-striped table-hover"
+                           data-pagesize="1000"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.UnidadOrganica.listar"
+                           data-paginator="paginator">
+                        <thead> 
+                            <tr>
+                                <th class="colCheck">
+                                    @if (ViewBag.Multi)
+                                    {
+                                        <input type="checkbox" id="buscarUndOrgTodo"  class="icheck" /> 
+                                    }
+                                </th>
+                                <th>Nombre</th>
+                            </tr>
+                            <tr>
+                                <th><button type="button" class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                <th><input name="Nombre" type="text" class="form-control input-sm" /></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        @*<tfoot>
+                            <tr><td colspan="2"><div id="paginator"></div></td></tr>
+                        </tfoot>*@
+                    </table>
+                </div>
+            }
+        </div>
+        <div class="modal-footer">
+            @if (ViewBag.Multi)
+            {
+                <a class="btn btn-success btn-sm" href="javascript:sut.UnidadOrganica.aceptar();"><i class="fa fa-check"></i> Aceptar</a>
+            }
+            <button type="button" class="btn btn-danger btn-sm" onclick="sut.UnidadOrganica.cerrar(this);"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    
+</style>
+
+<script>
+
+
+
+    var multi = @Html.Raw(ViewBag.Multi ? "true" : "false");
+    var fnAdd = @Html.Raw(ViewBag.FnAdd);
+
+    var SedeId =  @ViewBag.SedeId;
+
+    var tipo = @ViewBag.tipo;
+    var num =  @ViewBag.num;
+
+    sut.UnidadOrganica = {
+
+        listar: function (page) {
+            debugger;
+            table = $('#tblBuscarUndOrganica');
+            var model = {
+                'filtro.Nombre': $('#form-buscar-unidadorganica input[name="Nombre"]').val(),
+                'filtro.SedeId' : SedeId,
+                'pageIndex': page,
+                'pageSize': table.data('pagesize')
+            };
+
+            $.ajax({
+                //url: '/Simplificacion/UnidadOrganica/GetAllLikePagin',
+                url: '@Url.Content("~/Simplificacion/UnidadOrganica/GetAllLikePagin")',
+                type: 'GET',
+                data: model,
+                dataType: 'json',
+                beforeSend: function () {
+                    sut.wait.appendProgress('#buscarUnidadOrganica .modal-footer');
+                },
+                success: function (data) {
+                    sut.wait.removeProgress('#buscarUnidadOrganica .modal-footer');
+                    table.data('page', page);
+                    table.data('totalrows', data.totalRows);
+                    sut.UnidadOrganica.generar(table, data.lista);
+                    if (data.totalRows == 0)
+                        $('#tblBuscarUndOrganica tbody').append('<tr><td colspan="2" class="text-center text-bold">NO EXISTEN REGISTROS</td></td>');
+                },
+                error: function (data) {
+                    sut.error.show('mensajes', data.responseText);
+                }
+            });
+        },
+        generar: function (table, lista) {
+            debugger;
+            var tabla = table.children('tbody');
+            tabla.children('tr').remove();
+            var rows = '';
+            var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+            $.each(lista, function (i, r) {
+                debugger;
+                if (multi)
+                {
+                    rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarUndOrg{1}" class="icheck"  type="checkbox" value="{1}|{0}" /></td><td>{0}</td></tr>',
+                        r.Nombre, r.UnidadOrganicaId);
+                } else {
+                    rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarUndOrg{1}" type="hidden" value="{1}|{0}" /></td><td>{0}</td></tr>',
+                        r.Nombre, r.UnidadOrganicaId);
+                }
+            });
+            sut.pagination.update(table);
+            tabla.append(rows);
+
+            //if (multi) {
+            //    $('.icheck').iCheck({
+            //        checkboxClass: 'icheckbox_square-red',
+            //        radioClass: 'iradio_square-red',
+            //        increaseArea: '20%' // optional
+            //    });
+            //}
+        },
+        aceptar: function () {
+            debugger;
+            var inputs = $('#tblBuscarUndOrganica tbody tr td  input:checked');
+            if (inputs.length > 0) {
+                var data = [];
+                $.each(inputs, function (i, r) {
+                    var v = $(r).val().split('|');
+                    data.push({ id: Number(v[0]), nombre: v[1] });
+                });
+                fnAdd(data);
+            }
+        },
+        aceptarSingle: function (tr) {
+            debugger;
+            var input = $(tr).find('input[id^="chkbuscarUndOrg"]');
+            var v = input.val().split('|');
+            fnAdd({id: Number(v[0]), nombre: v[1], tipo: tipo, num: num });
+        },
+        cerrar(x){
+            debugger;
+            $(x).parent().parent().parent().parent().parent().modal('hide');
+            $("#modal-ventana").css({"overflow": "auto"})
+        }
+    };
+
+    $(function () {
+        debugger;
+        sut.UnidadOrganica.listar(1);
+
+        $('#buscarUndOrgTodo').on('ifToggled', function (e) {
+            $('input[id^="chkbuscarUndOrg"]').iCheck($('#buscarUndOrgTodo').is(':checked') ? 'check' : 'uncheck');
+        });
+
+        $('#form-buscar-unidadorganica input[name="Nombre"]').keypress(function (e) {
+            var key = e.keyCode || event.keyCode
+            if (key == 13) {
+                sut.UnidadOrganica.listar(1);
+                e.preventDefault();
+            }
+        });
+
+        $('#tblBuscarUndOrganica button').eq(0).click(function (e) {
+            $('#form-buscar-unidadorganica input[name="Nombre"]').val('');
+            sut.UnidadOrganica.listar(1);
+        });
+
+        sut.table.selectRow('#tblBuscarUndOrganica', multi, sut.UnidadOrganica.aceptarSingle);
+    });
+
+</script>

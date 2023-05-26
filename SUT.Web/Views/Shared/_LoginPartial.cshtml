@@ -1,0 +1,75 @@
+﻿@using Sut.Entities
+@model Sut.Security.UsuarioInfo
+
+
+@if (Model != null)
+{
+    <!-- User Account Menu -->
+    <li class="dropdown user user-menu">
+        <!-- Menu Toggle Button -->
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <!-- The user image in the navbar--> 
+            @if (@Model.Sexo == 1)
+            {
+
+                <img src="~/dist/img/avatar5.png" class="user-image" alt="User Image">
+            }
+            else if (@Model.Sexo == 2)
+            {
+                <img src="~/dist/img/avatar3.png" class="user-image" alt="User Image">
+            }
+            else
+            {
+                <img src="~/dist/img/avatar5.png" class="user-image" alt="User Image">
+            }
+            <!-- hidden-xs hides the username on small devices so only the image appears. -->
+            <span class="hidden-xs">@*@Model.Nombres*@</span> 
+        </a>
+        <ul class="dropdown-menu">
+            <!-- The user image in the menu -->
+            <li class="user-header">
+                @if (@Model.Sexo == 1)
+                {
+
+                    <img src="~/dist/img/avatar5.png" class="img-circle" alt="User Image">
+                }
+                else if (@Model.Sexo == 2)
+                {
+                    <img src="~/dist/img/avatar3.png" class="img-circle" alt="User Image">
+                }
+                else
+                {
+                    <img src="~/dist/img/avatar5.png" class="img-circle" alt="User Image">
+                }
+            <p>
+                <small>@Model.NombreCompleto</small>
+                <small>@Model.NomEntidad</small>
+                <i class="fa fa-fw fa-language"></i>@Resources.Content.lbl_idioma
+            </p>
+</li>
+            <li class="user-footer">
+                <div class="pull-left">
+                    @Html.ActionLink("Configuración", "Configuracion", "Usuario", new { @area = "Seguridad" }, new { @class = "btn btn-default btn-flat" })
+                </div>
+                <div class="pull-right">
+
+                    @*<a class="btn btn-default btn-flat" href="/Account/LogOff">Salir</a>*@
+
+                    @*@Html.ActionLink("Cambiar ROL", "roles", "Account", new { @area = "Account" }, new { @class = "btn btn-default btn-flat" })*@
+
+                    <a class="btn btn-default btn-flat" href="/Account/roles">Cambiar ROL</a>
+
+
+                    @*@Html.ActionLink("Salir", "LogOff", "Account", new { }, new { @class = "btn btn-default btn-flat" })*@
+                </div>
+                <div class="pull-right">
+                    @*<a class="btn btn-default btn-flat" href="/Account/LogOff">Salir</a>*@
+
+                    @Html.ActionLink("Ayuda", "Lista", "Ayuda", new { @area = "Seguridad" }, new { @class = "btn btn-default btn-flat" })
+
+                    @*@Html.ActionLink("Salir", "LogOff", "Account", new { }, new { @class = "btn btn-default btn-flat" })*@
+                </div>
+            </li>
+        </ul>
+    </li>
+}

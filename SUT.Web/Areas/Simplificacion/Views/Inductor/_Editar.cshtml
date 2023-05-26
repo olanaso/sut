@@ -1,0 +1,238 @@
+﻿@using Sut.Entities
+@model Sut.Entities.Inductor
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">@ViewBag.Title</h4>
+        </div>
+        @using (Html.BeginForm("Guardar", "Simplificacion/Inductor", FormMethod.Post, new { @id = "form-modal-editar" }))
+        {
+            @Html.HiddenFor(model => model.InductorId)
+            @Html.HiddenFor(model => model.EntidadId)
+
+            <div class="modal-body form-horizontal"> 
+
+                <div class="form-group">
+                    @if (@ViewBag.Id == 0)
+                    {
+                        <a id="add_field" class="btn btn-success" style="padding: 1px 9px;"><i class="fa fa-plus"></i></a>
+                    }
+                    <label class="control-label col-sm-2 col-xs-12">Nombre</label>
+                    <div class="col-sm-9 col-xs-12" id="listasInductor">
+                        @if (@ViewBag.Id != 0)
+                        {
+                            @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control input-sm", onkeydown = "enterToTab(event);" })
+                        }
+                        else
+                        {
+                            <div><input type="text" class="form-control input-sm" style="width:93%; display:-webkit-inline-box" id="NombreLista" name="listaNombre[]" onkeydown="enterToTab(event);"> </div>
+                        }
+                        @*<div class="callout callout-warning" style="width:93%;visibility:hidden;padding: 3px 8px 5px 15px; margin: inherit;" id="titulorecurso1">
+                    <input type="checkbox" id="buscarUndOrgTodo" /> Ejemplos:
+                </div>*@
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2 col-xs-12"></label>
+                    <div class="col-sm-9 col-xs-12" id="listasInductor2">
+                        <div class="callout callout-warning" style="width:93%;visibility:hidden;padding: 3px 8px 5px 15px; margin: inherit;" id="titulorecurso1">
+                            <input type="checkbox" id="buscarUndOrgTodo" /> Ejemplos:
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="msgEditar"></div>
+            <div class="modal-footer">
+                @if (ViewBag.User.rolmenu[0].Guardar == true)
+                {
+                    <button type="button" class="btn btn-primary btn-sm" onclick="sut.EditarInductor.guardar()"><i class="fa fa-save"></i> Guardar</button>
+                }
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+            </div>
+        }
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+    </div>
+</div>
+<script>
+
+
+    var campos_max = 15;   //max de 10 campos
+
+    var x = 0;
+    $('#add_field').click(function (e) {
+        e.preventDefault();     //prevenir novos clicks
+        if (x < campos_max) {
+            $('#listasInductor').append('<div>\
+                                <input type="text" class="form-control input-sm"  style="width:93%; display:-webkit-inline-box" name="listaNombre[]">\
+                                <a href="#" class="remover_campo"><i class="fa fa-minus-circle fa-2x" style="color:#dd4b39" aria-hidden="true"></i></a>\
+                                </div>'
+                                );
+            x++;
+            //document.getElementById("titulorecurso1").style.visibility = "visible";
+        }
+    });
+    // Remover o div anterior
+    $('#listasInductor').on("click", ".remover_campo", function (e) {
+        e.preventDefault();
+        $(this).parent('div').remove();
+        x--;
+        var nombre= document.getElementsByName("listaNombre[]");
+        if(nombre.length == 1){
+            //document.getElementById("titulorecurso1").style.visibility = "hidden";
+        }
+    });
+
+    sut.EditarInductor = {
+        guardar: function () {
+
+            debugger;
+        
+            var checked = $(".icheck:checked").length;
+             
+
+            var nombre= document.getElementsByName("listaNombre[]");   
+            //if(nombre.length == 1 && nombre[0].value==""){ 
+            ////if(nombre[0].value==""){ 
+
+            //    showNotification('top', 'right', 'Favor de Ingresar la Información', 2);
+            //    NombreLista.focus();     return;
+            //} 
+
+            
+            if(checked == 0 && nombre.length == 1 && nombre[0].value=="" ){
+                //if(nombre[0].value==""){
+                showNotification('top', 'right', 'Favor de Seleccionar un Ejemplo o Ingresar la Información', 2);
+                NombreLista.focus();     return;
+            }
+ 
+            if ($("#form-modal-editar").valid()) {
+                var model = $('#form-modal-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Simplificacion/Inductor/Guardar",
+                    url: '@Url.Content("~/Simplificacion/Inductor/Guardar")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: function (result) { 
+                        debugger;
+
+                        if (result.Estado == 2) {
+                            sut.msg.alerta(result.mensaje, function () {
+
+                            });
+                        }
+                        else {
+                            $('#modal-ventana').modal('hide');
+                            sut.msg.success(result.mensaje, () => {
+                                sut.Inductor.listar(1);
+                            });
+                        } 
+                    },
+                    error: function (result) {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            }
+        }
+    };
+
+    function enterToTab(e) {
+        var intKey = window.Event ? e.which : e.KeyCode;
+
+
+        if (intKey == 13)
+            e.returnValue = false;
+
+
+    }
+    $(function () {
+        $('.icheck').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' // optional
+        });
+
+        $('#buscarUndOrgTodo').on('change', function (e) {
+            $('input[id^="chkbuscarUndOrg"]').prop({checked : $('#buscarUndOrgTodo').is(':checked')});
+        });
+
+        //generar imput
+        debugger;
+
+        if (@ViewBag.Id == 0)
+        { 
+            var count2=0;
+            @foreach (var item1 in (@ViewBag.DetalleMaestro as List<SelectListItem>))
+            { 
+                 
+                <text>
+            document.getElementById("titulorecurso1").style.visibility = "visible";
+            var text1 = "@(Html.Raw(item1.Text))";
+            var value2 = "@(item1.Value)";
+
+
+            if( text1 == 'Número de personas'){
+                $('#listasInductor2').append('<div>\
+                                                <input  name="chkbuscarUndOrg[]" id="chkbuscarUndOrg'+ value2 +'"  class="icheck"  type="checkbox"  checked="checked"  disabled="disabled"  value="'+count2+'">\
+                                                <input type="text"   class="form-control input-sm"  style="width:90%; display:-webkit-inline-box" readonly  name="listaNombreCargado[]" value="'+text1+'">\
+                                                </div>'
+                               );
+                count2 = count2 + 1;
+            }
+            else
+            {
+                 $('#listasInductor2').append('<div>\
+                                                <input name="chkbuscarUndOrg[]" id="chkbuscarUndOrg'+ value2 +'"  class="icheck"  type="checkbox"  value="'+count2+'">\
+                                                <input type="text" class="form-control input-sm"  style="width:90%; display:-webkit-inline-box" name="listaNombreCargado[]" value="'+text1+'">\
+                                                </div>'
+                           );
+            count2 = count2 + 1;
+            }
+
+          
+                </text> 
+            }
+        }
+
+        // fin
+     
+
+        $('#form-modal-editar').validate({
+            errorPlacement: function (error, element) {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                Nombre: 'required'
+            },
+            messages: {
+
+            }
+        });
+    });
+
+</script>
+

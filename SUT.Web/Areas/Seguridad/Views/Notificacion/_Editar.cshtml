@@ -1,0 +1,155 @@
+﻿@model Sut.Entities.Notificacion
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">@ViewBag.Title</h4>
+        </div>
+        <div class="modal-body form-horizontal">
+            @using (Html.BeginForm("Guardar", "Seguridad/Notificacion", FormMethod.Post, new { @id = "form-modal-editar" }))
+            {
+                @Html.HiddenFor(model => model.NotificacionId) 
+
+                <div class="callout callout-warning" style="display: inherit;height: inherit; padding: inherit;">
+                    Para efectos de comunicados y notificaciones formales: Los datos registrados en este apartado deben responder a la verdad y mantenerse actualizados, bajo responsabilidad de la Entidad y el Administrador del SUT
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2 col-xs-12">Tipo: </label>
+                    <div class="col-sm-10 col-xs-12">
+                        @*@Html.DropDownListFor(model => model.IdTipoNotificacion, ViewBag.TipoNotificacion as List<SelectListItem>, new { @class = "form-control input-sm", @readonly = true })*@
+                        @Html.HiddenFor(model => model.IdTipoNotificacion)
+                        @{
+                            string calificacion = string.Empty;
+                            List<SelectListItem> lstCalificacion = ViewBag.TipoNotificacion as List<SelectListItem>;
+                            calificacion = lstCalificacion.First(x => x.Value == ((short)Model.IdTipoNotificacion).ToString()).Text;
+                        }
+                        @Html.TextBox("NombreCalificacion", calificacion, new { @class = "form-control", @readonly = true })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2 col-xs-12">BCC:</label>
+                    <div class="col-sm-10 col-xs-12">
+                        @Html.TextBoxFor(model => model.CCO, new { @style = "scroll-behavior: smooth;resize:vertical;", @class = "form-control" }) 
+                         (Ingresar correos si requiere una copia del envio, si es necesario, el campo no es obligatorio)
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2 col-xs-12">Asunto:</label>
+                    <div class="col-sm-10 col-xs-12">
+
+                        @Html.TextBoxFor(model => model.Asunto, new { @style = "scroll-behavior: smooth;resize:vertical;", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-12 col-xs-12" style="text-align:center">Leyenda de escritura dentro del Mensaje </label> 
+                    <label class="control-label col-sm-2 col-xs-12" style="text-align:center"> </label> 
+                    <div class="col-sm-10 col-xs-12"> 
+                        <label class="control-label col-sm-10 col-xs-12" style="text-align:left">[NombreEntidadDestinatario] - Nombre de la entidad al que se envie el mensaje </label> 
+                        <label class="control-label col-sm-10 col-xs-12" style="text-align:left">[NombreEntidad]- Nombre de la entidad que sale el mensaje</label> 
+                        <label class="control-label col-sm-10 col-xs-12" style="text-align:left">[Expediente]- Número del expediente</label>   
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2 col-xs-12">Mensaje:</label>
+                    <div class="col-sm-10 col-xs-12"> 
+                        @Html.TextAreaFor(model => model.Descripcion, new { @style = "scroll-behavior: smooth;resize:vertical;height: 400px;", @class = "form-control"  })
+                    </div>
+                </div>
+            
+            }
+        </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarNotificacion.guardar()"><i class="fa fa-save"></i> Guardar</button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+    </div>
+</div>
+<script>
+
+    sut.editarNotificacion = {
+        guardar: () => {
+            debugger;
+
+            if ($("#form-modal-editar").valid()) {
+                var model = $('#form-modal-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/Miembro/Guardar",
+                    url:'@Url.Content("~/Seguridad/Notificacion/Guardar")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: () => {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: () => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, () => {
+                            sut.Notificacion.listar(1);
+                        });
+                    },
+                    error: (result) => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            }
+        }
+    };
+
+    $(() => {
+
+
+        $.validator.addMethod("selTipoNotificacion", $.validator.methods.min,
+         $.validator.format("Debe seleccionar un Tipo"));
+
+        $('#form-modal-editar').validate({
+
+            errorPlacement: (error, element) => {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {     
+                IdTipoNotificacion: {
+                    selTipoNotificacion: 1
+                },
+                Asunto: 'required',
+                Descripcion: 'required',  
+            },
+            messages: {
+
+            }
+        });
+    });
+   
+
+</script>
+

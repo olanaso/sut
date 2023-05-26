@@ -1,0 +1,205 @@
+﻿@model Sut.Entities.Usuario
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">@ViewBag.Title</h4>
+        </div>
+
+        @using (Html.BeginForm("Guardar", "Seguridad/Usuario", FormMethod.Post, new { @id = "form-modal-editar" }))
+        {
+            @Html.HiddenFor(model => model.UsuarioId)
+            @Html.HiddenFor(model => model.EntidadId)
+            @Html.HiddenFor(model => model.Rol)
+
+    <div class="modal-body form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Miembro:</label>
+            <div class="col-sm-9 col-xs-12">
+                <select name="MiembroEquipoId" class="form-control" style="width: 100%">
+                    @foreach (var md in (ViewBag.ListaMiembros as List<Sut.Entities.MetaDato>))
+                    {
+                        <option value="@md.MetaDatoId.ToString()" data-doc="@md.Valor01">
+                            @md.Nombre
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Nro. Documento:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.TextBoxFor(model => model.NroDocumento, new { @class = "form-control input-sm", @readonly = true })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Rol:</label>
+            <div class="col-sm-9 col-xs-12">
+                <span>@Model.Rol.ToString()</span>
+            </div>
+        </div>
+        <div class="form-group" id="idclave">
+            <label class="control-label col-sm-3 col-xs-12">Contraseña:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.PasswordFor(model => model.Clave, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        @*<div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Fecha de Solicitud</label>
+            <div class="col-sm-9 col-xs-12">
+                @if (Model.UsuarioId == 0)
+                {
+                    <input type="text" name="FechaSolicitud" class="form-control input-sm" value="" />
+
+                }
+                else
+                {
+                    <input type="text" name="FechaSolicitud" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FechaSolicitud == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FechaSolicitud.Value.Day, Model.FechaSolicitud.Value.Month, Model.FechaSolicitud.Value.Year))" />
+
+                }
+
+            </div>
+        </div>*@
+
+    </div>
+            <div id="msgEditar"></div>
+            <div class="modal-footer">
+                @if (ViewBag.User.rolmenu[0].Guardar == true)
+                {
+                    <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarUsuario.guardar()"><i class="fa fa-save"></i> Guardar</button>
+                }
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+
+<script>
+   /* $('input[name="FechaSolicitud"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es' });*/
+    sut.editarUsuario = {
+        guardar: () => {
+            debugger;
+            if ($("#form-modal-editar").valid()) {
+                var model = $('#form-modal-editar').serialize();
+                console.log(model);
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/Usuario/Guardar",
+                    url: '@Url.Content("~/Seguridad/Usuario/GuardarInformacionmultirol")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: () => {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: () => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, () => {
+                            window.location.reload();
+                        });
+                    },
+                    error: (result) => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            }
+        }
+    };
+
+    $(() => {
+        //$('select[name="MiembroEquipoId"]').select2();
+        
+        if (Number($('input[name="UsuarioId"]').val()) > 0) {
+            $('select[name="MiembroEquipoId"]').attr('disabled', 'disabled');
+        }
+        
+        $('select[name$="MiembroEquipoId"]').on('change', (e) => {
+            debugger;
+            $('input[name="NroDocumento"]').val($('select[name$="MiembroEquipoId"] option:selected').data('doc'));
+
+            $.ajax({
+                type: "POST", 
+                url: '@Url.Content("~/Seguridad/Usuario/ValidarDocumento")',
+                data: { NroDocumento: $('input[name="NroDocumento"]').val(), UsuarioId: $('input[name="UsuarioId"]').val() },
+                dataType: 'json',
+                beforeSend: function () {
+                },
+                complete: function () {
+                },
+                success: function (result) {
+              
+                        $('#idclave').hide();
+                   
+                },
+                error: function (result) {
+                    
+                    $('#idclave').show();
+                    $('input[name="Clave"]').val("");
+
+                }
+            });
+
+        });
+        
+        $.validator.addMethod("selMiembro", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un Miembro"));
+
+        $.validator.addMethod('formClave', function (value, element) {
+            return this.optional(element) || value.length >= 8 && /\d/.test(value) && /[A-Z]/i.test(value) && /[^A-Za-z0-9]/.test(value) && /[A-Z]/.test(value);
+        }, 'La contraseña debe contener al menos 8 caracteres, al menos un número y letras mayúsculas y minúsculas y caracteres especiales')
+
+
+
+
+        $('#form-modal-editar').validate({
+            errorPlacement: (error, element) => {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                NroDocumento: {
+                    required: true
+                },
+                MiembroEquipoId: {
+                    selMiembro: 1
+                },
+                Clave: {
+                    required: true, formClave: true
+
+                },
+            },
+            messages: {
+
+            }
+        });
+    });
+
+</script>
+
+
+

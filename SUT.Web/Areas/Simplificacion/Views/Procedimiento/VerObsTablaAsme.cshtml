@@ -1,0 +1,250 @@
+﻿@using Sut.Entities;
+@model Sut.Entities.Procedimiento
+
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Sustento Técnico " + Model.CodigoCorto;
+    ViewBag.Descripcion = "";
+}
+
+@using (Html.BeginForm("SustentoTecnico", "Procedimiento", new { @area = "Simplificacion" }, FormMethod.Post, new { @id = "form-editar" }))
+{
+    @Html.HiddenFor(model => model.ProcedimientoId)
+    @Html.HiddenFor(model => model.Operacion)
+
+   
+
+    if (Model.Operacion != OperacionExpediente.Eliminacion)
+    { 
+
+        <div class="box box-default">
+            <div class="box-header with-border">
+                <h3 class="box-title"> Tablas ASME del Procedimiento/Servicio</h3>
+            </div>
+            <div class="box-body">
+                <div class="table-responsive">
+                    <table id="tblModalidad" class="table table-condensed table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width:40px;">
+
+                                </th>
+                                <th style="width:120px;">Código</th>
+                                <th>Descripción</th>
+                                <th style="width:50px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TablaAsme.Count > 0)
+                            {
+                                for (int i = 0; i < Model.TablaAsme.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            @MvcHtmlString.Create((i + 1).ToString())
+                                        </td>
+                                        <td>@Model.TablaAsme[i].Codigo</td>
+                                        <td>@Model.TablaAsme[i].Descripcion</td>
+                                        <td> 
+                                            <a class="btn btn-primary btn-xs" href="javascript:window.location='@Url.Content("~/Simplificacion/TablaAsme/VerObs/")?id=@Model.TablaAsme[i].TablaAsmeId&&entidadid=@ViewBag.entidadver'"><i class="fa fa-table"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="4" style="font-weight:bold; text-align:center;">NO EXISTEN REGISTROS</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="box box-default">
+            <div class="box-header with-border">
+                <h3 class="box-title"> Sustento Técnico de los Requisitos</h3>
+            </div>
+            <div class="box-body">
+                @Html.TextAreaFor(model => model.SustentoEliminacion, new { @class = "form-control", @readonly = true })
+            </div>
+        </div>
+    }  
+}
+
+        <div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;">
+            <a href="@Url.Content("~/Simplificacion/Expediente/VerObservacion/")?id=@Model.ExpedienteId&&entidadid=@ViewBag.entidadver" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+        </div>
+
+<div class="modal fade" id="modal-ventana">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+@section Script {
+    <script>
+
+        sut.editProcedimiento = {
+            guardar: function () {
+                if ($('#form-editar').valid()) {
+                    var model = $('#form-editar').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/SustentoTecnico',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                @*window.location = '/Simplificacion/Procedimiento/SustentoTecnico/@Model.ProcedimientoId';*@
+                                window.location = '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId';
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }
+            },
+            terminar: function () {
+                sut.msg.confirm('Si finaliza el registro no podrá modificarlo nuevamente.', () => {
+                    if ($('#form-editar').valid()) {
+                        var model = $('#form-editar').serialize();
+                        $.ajax({
+                            type: 'POST',
+                            //url: '/Simplificacion/Procedimiento/SustentoTecnico',
+                            url: '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico")',
+                            data: model,
+                            dataType: 'json',
+                            beforeSend: function () {
+                                $("#mensajes").hide();
+                            },
+                            complete: function () {
+
+                            },
+                            success: function (result) {
+
+                                $.ajax({
+                                    type: 'POST',
+                                    //url: '/Simplificacion/Procedimiento/TerminarSustento',
+                                    url: '@Url.Content("~/Simplificacion/Procedimiento/TerminarSustento")',
+                                    data: {tipo: 2, ProcedimientoId: @Model.ProcedimientoId},
+                                    dataType: 'json',
+                                    beforeSend: function () {
+                                        $("#mensajes").hide();
+                                    },
+                                    complete: function () {
+
+                                    },
+                                    success: function (result) {
+                                        sut.msg.success(result.mensaje, function () {
+                                            @*window.location = '/Simplificacion/Procedimiento/SustentoTecnico/@Model.ProcedimientoId';*@
+                                            window.location = '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId';
+                                        });
+                                    },
+                                    error: function (result) {
+                                        sut.error.show('mensajes', result.responseText);
+                                    }
+                                });
+                            },
+                            error: function (result) {
+                                sut.error.show('mensajes', result.responseText);
+                            }
+                        });
+                    }
+                });},
+                activar : function(){
+
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/ActivarSustento',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/ActivarSustento")',
+                        data: {tipo: 2, ProcedimientoId: @Model.ProcedimientoId},
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                //window.location = '/Simplificacion/Procedimiento/DatosGenerales/@Model.ProcedimientoId';
+                                window.location = '@Url.Action("SustentoTecnico", "Procedimiento", new { @area = "Simplificacion", @id = Model.ProcedimientoId })';
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                },
+                activarasme: function () { 
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/TerminarSustento',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/ActivarSustento")',
+                        data: {tipo: 6, ProcedimientoId: @Model.ProcedimientoId},
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            if(result.valid) {
+                                sut.msg.success(result.mensaje, function () {
+                                    @*window.location = '/Simplificacion/Procedimiento/SustentoTecnico/@Model.ProcedimientoId';*@
+                                    window.location = '@Url.Content("~/Simplificacion/Procedimiento/TablaAsme/")@Model.ProcedimientoId';
+                                });
+
+                                //showNotification('top', 'right', 'El Registro se Termino Satisfactoriamente', 1);
+                                //setTimeout("reFresh()", 800);
+
+                            } else {
+
+                                sut.error.clientErrorShow('mensajes', result.mensaje);
+                            }
+                        },
+                        error: function (result) {
+                            debugger;
+                            //alert('verde');
+                            sut.error.show('mensajes', result.responseText);
+                            //showNotification('top', 'right', result.mensaje + 'Debe terminar el registro de Sustento Tecnico.', 2);
+                        }
+                    }); 
+                },  
+
+
+        };
+
+        $(function () {
+            $('#form-editar').validate({
+                errorPlacement: function (error, element) {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+
+                },
+                messages: {
+
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,179 @@
+﻿@model List<Sut.Entities.Observacion>
+@{
+    ViewBag.Title = "Historial de Observaciones";
+    ViewBag.Descripcion = "Consulta de Observaciones de la entidad";
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+}
+
+<div id="mensajes"></div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body">
+                @*<a class="btn btn-success" href="javascript:sut.Observacion.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>*@
+                @*<br />*@
+                <div class="table-responsive">
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="100000"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.Observacion.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th class="colAction">Nro.</th>
+                                <th rowspan="2" style="vertical-align: middle !important;width: 200px;">Fecha Envio</th> 
+                                <th rowspan="2" style="vertical-align: middle !important;width: 200px;">Tipo</th> 
+                                <th>Expediente</th>  
+                                <th rowspan="2" style="vertical-align: middle !important">Entidad Evaluado</th> 
+                                @*<th rowspan="2" style="vertical-align: middle !important;width: 200px;">Ultima Revisión</th> 
+                                <th rowspan="2" style="vertical-align: middle !important;width: 200px;">Dias Transcurridos</th>*@  
+                                <th>Evaluador</th> 
+                                <th class="colAction"></th>
+                            </tr>
+                            <tr>
+                                <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th> 
+                                <th><input id="txtFilterexpediente" type="text" class="form-control input-sm" /></th>  
+                                <th><input id="txtFilterentidad" type="text" class="form-control input-sm" /></th> 
+                                <th></th> 
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        @*<tfoot>
+                            <tr><td colspan="15"><div id="paginator"></div></td></tr>
+                        </tfoot>*@
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="3"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 30px;
+        }
+
+        #tblLista .colCodigo {
+            width: 120px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        }
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.Observacion = {
+            tipoExpColor: ['', 'label-warning', 'label-primary'],
+            tipoExpediente: ['', 'CARGA INICIAL', 'EXPEDIENTE REGULAR'],
+            listar: function (page) {
+                table = $('#tblLista');
+                var model = {
+                    'filtro.Expediente.Codigo': $('#txtFilterexpediente').val(),
+                    'filtro.Entidad.Nombre': $('#txtFilterentidad').val(),
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+                $.ajax({
+                    //url: "/Simplificacion/Observacion/GetAllLikePagin",
+                    url: '@Url.Content("~/Simplificacion/Observacion/GetAllLikePagin")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.Observacion.generar(data.lista);
+                        if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='6' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            },
+            generar: function (lista) {
+                debugger;
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecCreacion);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Observacion.tipoExpColor[r.TipoExpediente], sut.Observacion.tipoExpediente[r.TipoExpediente]);
+                    rows += sut.string.format('<td>{0}</td>', r.Descripcion);
+                    rows += sut.string.format('<td>{0}</td>', r.EntidadExpediente);
+                    //rows += sut.string.format('<td>{0}</td>', r.UltimaRevision);
+                    //rows += sut.string.format('<td>{0}</td>', r.DiasExpediente);
+                    rows += sut.string.format('<td>{0}</td>', r.Nombre);
+                    rows += '<td style="text-align: center; background:#dd4b392e">';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-info"  data-placement="left" title="Ver Observación" href="javascript:sut.Observacion.editarobservacion({0},{1})" ><i class="fa fa-eye"></i></a>', r.ExpedienteId, r.EntidadId);
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            },
+            editarobservacion: function (id,EntidadId) {
+                debugger; 
+                window.location = '@Url.Content("~/Simplificacion/Expediente/VerObservacion/")' + id + '?entidadid=' + EntidadId;
+            },
+        };
+
+        $(function () {
+            sut.Observacion.listar(1);
+
+
+
+            $('#txtFilterexpediente').keypress(function (e) {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.Observacion.listar(1);
+            });
+
+            $('#txtFilterentidad').keypress(function (e) {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.Observacion.listar(1);
+            });
+
+            $('#tblLista thead button').click(function (e) {
+                $('#txtFilterNombre').val('');
+                $('#txtFilterentidad').val('');
+                sut.Observacion.listar(1);
+            });
+        });
+    </script>
+}

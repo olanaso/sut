@@ -1,0 +1,2434 @@
+﻿@model List<Sut.Entities.Comunicado>
+@using Sut.Entities
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    List<Bandeja> bandejausu = ViewBag.lstbandeja as List<Bandeja>;
+}
+
+
+
+
+
+@if (@user.Rol != 1 && @user.Rol != 6 && @user.Rol != 7 && @user.Rol != 12 && @user.Rol != 14)
+{
+    <div id="myCarousel" class="carousel slide" data-ride="carousel" style="position: relative;height:410px; top: -30px;display: flex;justify-content: center;align-items: center;background: url('../../dist/img/fondo1.jpg');-webkit-background-size: cover;">
+
+
+    </div>
+}
+@if (@user.Rol == 1)
+{
+    <div id="mensajes"></div>
+    <div style="position: absolute;right: 15px;top: 65px; /* padding-top: 15px; */ margin-bottom: 0;">
+
+        <a class="btn btn-success" href="javascript:sut.portada.editar(0)"><i class="fa fa-newspaper-o"></i> Agregar Noticia</a>
+
+    </div>
+}
+
+@*@if (@user.Rol == 3 || @user.Rol == 4 || @user.Rol == 5)
+    {
+         recorerr = 4;
+    }*@
+@if (@user.Rol == 14)
+{
+
+    <div class="main">
+     <div class="space">
+         <a href="#" id="previous">Previous</a>
+         |
+         <a href="#" id="today">Today</a>
+         @*  *@|
+         @*<a href="#" id="next">Next</a>*@
+     </div>
+
+        <div id="dp"></div>
+    </div>
+}
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+
+            @if (@user.Rol != 14)
+            {
+
+                <div class="table-responsive">
+
+                    @if (@user.Rol == 1)
+                    {
+
+                        <table id="tblListaComunicado" class="table table-bordered table-striped table-hover"
+                               data-pagesize="20"
+                               data-page="1"
+                               data-totalrows="0"
+                               data-function="sut.portada.listarcomunicado"
+                               data-paginator="paginator">
+                            <thead>
+                                <tr>
+                                    <th>Nro.</th>
+                                    <th>Descripción</th>
+                                    <th>Fecha Publicación</th>
+                                    <th>Publicar</th>
+                                    <th class="colAction"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr><td colspan="5"><div id="paginator"></div></td></tr>
+                            </tfoot>
+                        </table>
+                    }
+
+                    @*@if (@user.Rol == 7)
+                        {*@
+                    @if (@user.EntidadId == 18497)
+                    {
+                        <h4>Autorización Mef</h4>
+                        <div id="boxLista" class="box box-danger">
+                            <table id="tblListaMef" class="table table-bordered table-striped table-hover"
+                                   data-pagesize="1000"
+                                   data-page="1"
+                                   data-totalrows="0"
+                                   data-function="sut.portada.listarmef"
+                                   data-paginator="paginator">
+                                <thead>
+                                    <tr>
+                                        <th>Nro.</th>
+                                        <th>Expediente</th>
+                                        <th>Monto</th>
+                                        <th>UIT</th>
+                                        <th>Sustento</th>
+                                        <th>Fecha</th>
+                                        <th>Sustento</th>
+                                        <th>Estado</th>
+                                        <th class="colAction"></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot>
+                                    <tr><td colspan="4"><div id="paginator"></div></td></tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    }
+                    @*}*@
+
+                    @if (@user.Rol == 6 || @user.Rol == 7)
+                    {
+                        if (user.Bandeja != "1")
+                        {
+                            <div class="col-xs-12">
+                                <h4>Lista de Entidades para su Evaluación</h4>
+                                <div id="boxLista" class="box box-danger">
+                                    <table id="tblListaentidadevaluacion" class="table table-bordered table-striped table-hover"
+                                           data-pagesize="1000"
+                                           data-page="1"
+                                           data-totalrows="0"
+                                           data-function="sut.portada.listarentidadevaluacion"
+                                           data-paginator="paginator">
+                                        <thead>
+                                            <tr>
+                                                <th>Nro.</th>
+                                                <th style="text-align: center;">Entidad</th>
+                                                <th style="text-align: center;">Expediente</th>
+                                                <th style="text-align: center;">Estado Expediente</th>
+                                                <th style="text-align: center;">Fecha Envio</th>
+                                                <th style="text-align: center;">Dias Transcurrido</th>
+                                                <th style="text-align: center;">Fecha Ultima Revisión</th>
+                                                <th style="text-align: center;">Acción</th>
+                                                <th style="text-align: center;">Rev. Estado</th>
+                                                <th style="text-align: center;">Rev. Inf. Cdno</th>
+                                                <th style="text-align: center;">Rev. Datos Generales</th>
+                                                <th style="text-align: center;">Rev. Sutento Tecnico</th>
+                                                <th style="text-align: center;">Rev. Tabla Asme</th>
+                                                <th style="text-align: center;">Rev. Sustento de Costo</th>
+                                                <th style="text-align: center;">Ver</th>
+                                                <th class="colAction"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                        @*<tfoot>
+                                                <tr><td colspan="15"><div id="paginator"></div></td></tr>
+                                            </tfoot>*@
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            if (@bandejausu.Count != 0)
+                            {
+                                <div class="col-xs-12">
+                                    <h4>Lista de Entidades para su Evaluación</h4>
+                                    <div id="boxLista" class="box box-danger">
+                                        <table id="tblListaentidadevaluacionUsuario" class="table table-bordered table-striped table-hover"
+                                               data-pagesize="1000"
+                                               data-page="1"
+                                               data-totalrows="0"
+                                               data-function="sut.portada.listarentidadevaluacionUsuario"
+                                               data-paginator="paginator">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nro.</th>
+                                                    <th style="text-align: center;">Entidad</th>
+                                                    <th style="text-align: center;">Expediente</th>
+                                                    <th style="text-align: center;">Estado Expediente</th>
+                                                    <th style="text-align: center;">Fecha Envio</th>
+                                                    <th style="text-align: center;">Dias Transcurrido</th>
+                                                    <th style="text-align: center;">Fecha Ultima Revisión</th>
+                                                    <th style="text-align: center;">Acción</th>
+                                                    <th style="text-align: center;">Rev. Estado</th>
+                                                    <th style="text-align: center;">Rev. Inf. Cdno</th>
+                                                    <th style="text-align: center;">Rev. Datos Generales</th>
+                                                    <th style="text-align: center;">Rev. Sutento Tecnico</th>
+                                                    <th style="text-align: center;">Rev. Tabla Asme</th>
+                                                    <th style="text-align: center;">Rev. Sustento de Costo</th>
+                                                    <th style="text-align: center;">Ver</th>
+                                                    <th class="colAction"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                            @*<tfoot>
+                                                    <tr><td colspan="15"><div id="paginator"></div></td></tr>
+                                                </tfoot>*@
+                                        </table>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-xs-12">
+                                    <h4>Lista de Entidades para su Evaluación</h4>
+                                    <div id="boxLista" class="box box-danger">
+                                        <h4>No Existe Expediente Asignado a su Nombre!! </h4>
+                                    </div>
+                                </div>
+                            }
+
+
+                        }
+                    }
+
+                    @if (@user.Rol == 12)
+                    {
+                        if (user.Bandeja == "1")
+                        {
+                            <div class="col-xs-12">
+                                <h4>Bandeja de Entidades para su Evaluación</h4>
+                                <div id="boxLista" class="box box-danger">
+                                    <table id="tblListaentidadevaluacion" class="table table-bordered table-striped table-hover"
+                                           data-pagesize="1000"
+                                           data-page="1"
+                                           data-totalrows="0"
+                                           data-function="sut.portada.listarentidadevaluacionBandeja"
+                                           data-paginator="paginator">
+                                        <thead>
+                                            <tr>
+                                                <th>Nro.</th>
+                                                <th style="text-align: center;">Entidad</th>
+                                                <th style="text-align: center;">Expediente</th>
+                                                <th style="text-align: center;">Estado Expediente</th>
+                                                <th style="text-align: center;">Fecha Envio</th>
+                                                <th style="text-align: center;">Dias Transcurrido</th>
+                                                <th style="text-align: center;">Fecha Ultima Revisión</th>
+                                                <th style="text-align: center;">Acción</th>
+                                                <th style="text-align: center;">Rev. Estado</th>
+                                                <th style="text-align: center;">Ver</th>
+                                                <th style="text-align: center;">Asignar</th>
+                                                <th class="colAction"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                        @*<tfoot>
+                                                <tr><td colspan="15"><div id="paginator"></div></td></tr>
+                                            </tfoot>*@
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-xs-12">
+                                <h4>Lista de Entidades para su Evaluación</h4>
+                                <div id="boxLista" class="box box-danger">
+                                    <h4> No se encuentra activo la bandeja de expedientes </h4>
+                                </div>
+                            </div>
+
+                        }
+                    }
+
+                    <div style="position:inherit;left: 290px;top: 150px; /* padding-top: 15px; */ margin-bottom: 0;">
+                        @if (@user.Rol == 1)
+                        {
+                            <a class="btn btn-success" href="javascript:sut.portada.editarnorma(0)"><i class="fa fa-newspaper-o"></i> Agregar Documentos</a>
+                        }
+                    </div>
+                    <br />
+                    <div class="col-xs-5">
+
+
+
+                        <h4>Marco Normativo y Documentos SUT</h4>
+                        <div id="boxLista" class="box box-danger" style=" height: 450px; overflow-y: scroll;">
+
+                            <table id="tblListaNormas" class="table table-bordered table-striped table-hover"
+                                   data-pagesize="200"
+                                   data-page="1"
+                                   data-totalrows="0"
+                                   data-function="sut.portada.listarnorma"
+                                   data-paginator="paginator">
+                                <thead>
+                                    <tr>
+                                        <th>Nro.</th>
+                                        <th style="text-align: center;">Documento</th>
+                                        <th style="text-align: center;">Fecha Publicación</th>
+                                        <th style="text-align: center;" colspan="2">Acciones</th>
+                                        <th class="colAction"></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                @*<tfoot>
+                                    <tr><td colspan="4"><div id="paginator"></div></td></tr>
+                                    </tfoot>*@
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-xs-7">
+                        <h4>Actividades de la Entidad</h4>
+                        <div id="boxLista" class="box box-danger">
+                            <table id="tblListaActividades" class="table table-bordered table-striped table-hover"
+                                   data-pagesize="20"
+                                   data-page="1"
+                                   data-totalrows="0"
+                                   data-function="sut.portada.listaractividades"
+                                   data-paginator="paginator">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center;">Nro.</th>
+                                        <th style="text-align: center;">Ventana</th>
+                                        <th style="text-align: center;">Actividades</th>
+                                        <th style="text-align: center;">Usuario</th>
+                                        <th style="text-align: center;">Fecha</th>
+                                        <th class="colAction"></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                @*<tfoot>
+                                    <tr><td colspan="4"><div id="paginator"></div></td></tr>
+                                    </tfoot>*@
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            }
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+    </div>
+</div>
+@*//modal de roles por usuario*@
+<div class="modal fade" id="asignarrol" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Roles a su Cargo</h5>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <div class="form-group">
+
+                        <div class="col-sm-12 col-xs-12">
+                            <label class="control-label col-sm-3 col-xs-12">Seleccionar Rol :</label>
+                            <select id="listarol" class="form-control ">
+                                @if (@user.MultipleRol > 1)
+                                {
+                                    foreach (var md in (ViewBag.rolmultiples as List<SelectListItem>))
+                                    {
+                                        <option value="@md.Value.ToString()">
+                                            @md.Text
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="javascript:sut.portada.ejecutarlogin()" class="btn btn-primary pull-right"> Activar</a>
+            </div>
+        </div>
+    </div>
+</div>
+@*///fin del modal por roles*@
+
+
+@if (@user.Rol != 14)
+{
+    <div class="modal fade" id="Aviso" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <div class="form-group">
+
+                            <div class="col-sm-12 col-xs-12">
+
+                                <p style="text-align: center; font-family: Calibri (Cuerpo); font-size: 16px; color: red ">ATENCIÓN</p>
+
+                                <h4 style="text-align: justify; font-family: Calibri (Cuerpo); font-size: 14px; ">
+                                    Con fecha 05 de noviembre de 2022 se publicó en el Diario Oficial “El Peruano” la Ley No. 31603, mediante la cual se modifica el artículo 207 de la Ley No. 27444, Ley de Procedimiento Administrativo General, a fin de reducir el plazo legal para resolver el recurso de reconsideración. Así, la nueva redacción del artículo 207 de la Ley N° 27444 precisa que el recurso de reconsideración, a excepción de los demás recursos, deberá resolverse en un plazo de 15 días.
+                                </h4>
+                                <h4 style="text-align: justify; font-family: Calibri (Cuerpo); font-size: 14px; ">
+                                    Para mayor información y conocer el proceso de actualización del TUPA con dicha disposición a través del SUT puede comunicarse a la siguiente dirección electrónica:
+                                </h4>
+                                <h4 style="color: cornflowerblue; font-family: Calibri (Cuerpo); font-size: 14px; ">sut@pcm.gob.pe</h4>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+<div class="modal fade mymodal" id="modalAyudaAvatar1">
+    <div class="modal-dialog modal-lg" style="width:90%">
+        <div class="modal-content" style="border-radius: 40px 40px 0 0;">
+
+            <div class="modal-body" id="contenido" style="padding:0px">
+                <div class="bar-title">
+                    @*<a class="close"  data-dismiss="modal" style="padding: 80px; top: -80px; background: transparent"> <i class='fa fa-times fa-2x'></i> </a>*@
+                    <a class="close modalMinimize" style="padding:100px; right: 20px;  top: -100px; background: transparent"> <i class='fa fa-minus fa-2x'></i> </a>
+                    @*<button class="close modalMinimize"> <i class='fa fa-minus'></i> </button>*@
+                    <span>
+                        <h5 id="ihtitulo1" style="font-size: xx-large;text-align: center;font-family: initial;">Hola @user.Nombres, bienvenido al Sistema Único de Trámites </h5>
+                        <h5 id="ihtitulo2" style="font-size: x-large;text-align: center;font-family: initial;"> </h5>
+                    </span>
+                </div>
+                <div class="col-sm-12 col-xs-12">
+
+
+                    <div class="col-sm-12 col-xs-12" id="idtitulo1" style="text-align:center">
+                        <div class=" col-sm-2 col-xs-12">
+                            <img src="~/dist/img/hola.png" style="width: 160px;" />
+                        </div>
+                        <h5 style="font-size: xx-large;text-align: center;font-family: initial;"> ¡Hola! Soy Tito, te asistiré paso a paso en el uso en el aplicativo.<br /> ¡Vamos!</h5>
+                        <br /><br /><br /><br />
+                        <a class="btn btn-success pulsesut-button" href="javascript:sut.portada.titulo1()" style="font-size: xx-large;"><i class="fa fa-arrow-right"></i> Siguiente</a>
+                    </div>
+
+                    <div class="col-sm-12 col-xs-12" id="idtitulo2" style="text-align:center">
+
+                        <h5 style="font-size: xx-large;text-align: center;font-family: initial;">Aquí te muestro los pasos que vamos seguir</h5>
+
+
+
+
+                        <nav id="colorNavPrincipal" style="text-align:left;">
+                            <ul>
+
+                                <li class="pulse3-button green" style="width: 130px;height: 130px; text-align:center;">
+                                    <button class="pulse4-button" style="font-size:20px">1</button><br>
+                                    <span style="font-size: 15px;color: white;"> Equipo de Trabajo </span> <br>
+                                    <a href="#" class="fa fa-users"></a>
+
+                                </li>
+                                <li class="pulse3-button red" style="width: 130px;height: 130px; text-align:center;">
+                                    <button class="pulse4-button" style="font-size:20px">2</button><br>
+                                    <span style="font-size: 15px;color: white;"> Usuarios  </span> <br>
+                                    <a href="#" class="fa fa-user"></a>
+
+                                </li>
+                                <li class="pulse3-button blue" style="width: 130px;height: 130px; text-align:center;">
+                                    <button class="pulse4-button" style="font-size:20px">3</button><br>
+                                    <span style="font-size: 15px;color: white;">Doc. Equipo </span> <br>
+                                    <a href="#" class="fa fa-file-text-o"></a>
+
+                                </li>
+                                <li class="pulse3-button yellow" style="width: 130px;height: 130px; text-align:center;">
+                                    <button class="pulse4-button" style="font-size:20px">4</button><br>
+                                    <span style="font-size: 15px;color: white;">Plan de Trabajo </span> <br>
+                                    <a href="#" class="fa fa-file-text-o"></a>
+
+                                </li>
+                                <li class="pulse3-button purple" style="width: 130px;height: 130px; text-align:center;">
+                                    <button class="pulse4-button" style="font-size:20px">5</button><br>
+                                    <span style="font-size: 15px;color: white;">Orgánicas </span> <br>
+                                    <a href="#" class="fa fa-male"></a>
+
+                                </li>
+                                <li class="pulse3-button green" style="width: 130px;height: 130px; text-align:center;">
+                                    <button class="pulse4-button" style="font-size:20px">6</button><br>
+                                    <span style="font-size: 15px;color: white;"> Sedes  </span> <br>
+                                    <a href="#" class="fa fa-home"></a>
+
+                                </li>
+                                <li class="pulse3-button red" style="width: 130px;height: 130px; text-align:center;border-radius: 0px 0px 80px 80px;">
+                                    <button class="pulse4-button" style="font-size:20px">7</button><br>
+                                    <span style="font-size: 15px;color: white;"> Recursos </span> <br>
+                                    <a href="#" class="fa fa-cog"></a>
+                                    <ul style="z-index:10">
+                                        <li> <a href="#">Personal </a></li>
+                                        <li> <a href="#">Materiales Fungibles</a></li>
+                                        <li> <a href="#">Servicios Identificables </a></li>
+                                        <li> <a href="#">Materiales No Fungibles </a></li>
+                                        <li> <a href="#">Servicios no Identificables</a></li>
+                                        <li> <a href="#">Depreciación y Amortización </a></li>
+                                        <li> <a href="#">Costos Fijos</a></li>
+                                    </ul>
+
+                                </li>
+                                <li class="pulse3-button blue" style="width: 130px;height: 130px; text-align:center;">
+                                    <button class="pulse4-button" style="font-size:20px">8</button><br>
+                                    <span style="font-size: 15px;color: white;"> Inductores  </span> <br>
+                                    <a href="#" class="fa fa-cogs"></a>
+
+                                </li>
+                                <li class="pulse3-button yellow" style="width: 130px;height: 130px; text-align:center;">
+                                    <button class="pulse4-button" style="font-size:20px">9</button><br>
+                                    <span style="font-size: 15px;color: white;"> Predeterminada </span> <br>
+                                    <a href="#" class="fa fa-info-circle"></a>
+
+                                </li>
+                                <li class="pulse3-button purple" style="width: 130px;height: 130px; text-align:center">
+                                    <button class="pulse4-button" style="font-size:20px">10</button><br>
+                                    <span style="font-size: 15px;color: white;">Expedientes  </span> <br>
+                                    <a href="#" class="fa fa-sitemap"></a>
+                                    @*<ul style="z-index:10">
+                                            <li>
+                                            </li>
+                                            <li> <a href="#">Expediente Carga Inicial</a></li>
+                                            <li> <a href="#">Expediente Regular</a></li>
+                                        </ul>*@
+
+                                </li>
+                                @if (user.Sector == 80 || user.Sector == 79)
+                                {
+                                    <li class="pulse3-button red" style="width: 130px;height: 130px; text-align:center;">
+                                        <button class="pulse4-button" style="font-size:20px">11</button><br>
+                                        <span style="font-size: 15px;color: white;"> Ratificador </span> <br>
+                                        <a href="#" class="fa fa-th-large"></a>
+                                        @*<ul style="z-index:10">
+                                                <li>
+                                                </li>
+                                                <li> <a href="#">Subsanar</a></li>
+                                            </ul>*@
+
+                                    </li>
+                                }
+                                else if (user.CodPadre == "1")
+                                {
+                                    <li class="pulse3-button red" style="width: 130px;height: 130px; text-align:center;">
+                                        <button class="pulse4-button" style="font-size:20px">11</button><br>
+                                        <span style="font-size: 15px;color: white;"> Evaluación </span> <br>
+                                        <a href="#" class="fa fa-th-large"></a>
+                                        @*<ul style="z-index:10">
+                                                <li>
+                                                </li>
+                                                <li> <a href="#">Subsanar</a></li>
+                                            </ul>*@
+
+                                    </li>
+                                }
+
+                                <li class="pulse3-button green" style="width: 130px;height: 130px; text-align:center;">
+                                    <button class="pulse4-button" style="font-size:20px">12</button><br>
+                                    <span style="font-size: 15px;color: white;"> Publicación </span> <br>
+                                    <a href="#" class="fa fa-book"></a>
+
+                                </li>
+
+
+
+                            </ul>
+                        </nav>
+
+
+
+
+
+
+                        <div class="col-sm-12 col-xs-12">
+                            <img src="~/dist/img/hola.png" style="width: 160px;" />
+
+                        </div>
+                        <div class="col-sm-12 col-xs-12">
+                            <div class="col-sm-6 col-xs-12" style="text-align: left;">
+                                <a class="btn btn-success" href="javascript:sut.portada.volver1()" style="font-size: x-large;"><i class="fa fa-arrow-left"></i> Retroceder</a>
+
+                            </div>
+                            <div class="col-sm-6 col-xs-12" style="text-align: right;">
+                                <a class="btn btn-success" href="javascript:sut.portada.titulo2()" style="font-size: x-large;"><i class="fa fa-arrow-right"></i> Siguiente</a>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-12 col-xs-12" id="idtitulo3" style="text-align:center">
+                        <br /><br />
+
+                        <div id="colorNavContenido">
+
+
+                        </div>
+
+
+
+                        <div class="col-sm-12 col-xs-12">
+                            <img src="~/dist/img/hola.png" style="width: 160px;" />
+                            <div class="caja">
+                                <h5 style="font-size: 20px;text-align: center;font-family: initial;">
+                                    Clic en el boton  <label id="nombremenu"></label>  para comenzar!
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-xs-12">
+                            <div class="col-sm-6 col-xs-12" style="text-align: left;">
+                                <a class="btn btn-success" href="javascript:sut.portada.volver2()" style="font-size: x-large;"><i class="fa fa-arrow-left"></i> Retroceder</a>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="col-sm-8 col-xs-12" id="idtitulo4" style="text-align:center">
+
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+<div class="minmaxCon" style="border-radius: 40px 40px 0 0;"></div>
+
+@section Style {
+
+    <style type="text/css">
+
+
+        .highlight_date a {
+            background-color: #ffffff !important;
+            color: blue !important;
+            font-weight: bold !important;
+        }
+
+
+        .carousel-inner > .item > img,
+        .carousel-inner > .item > a > img {
+            width: 70%;
+            margin: auto;
+        }
+
+        table#tblListaComunicado thead tr th {
+            text-align: center;
+        }
+
+        table#tblListaComunicado tbody tr td[colspan="6"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblListaComunicado .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblListaComunicado .colAction {
+            width: 30px;
+        }
+
+        #tblListaComunicado tfoot .pagination {
+            margin: 0px 0px;
+        }
+
+
+        .container {
+            width: 800px;
+            height: auto;
+            margin: auto;
+        }
+
+        .notice {
+            position: relative;
+            top: 50%;
+            width: 90%;
+            height: 200px;
+            border-radius: 15px;
+            background: #fff;
+            margin: auto;
+            z-index: 1;
+        }
+
+            .notice p {
+                padding: 15px 40px;
+            }
+
+        .close {
+            width: 25px;
+            height: 25px;
+            background: #fff;
+            position: absolute;
+            text-align: center;
+            right: -7px;
+            top: -7px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+            .close img {
+                margin-top: 6px;
+                margin-left: 1px;
+                width: 12px;
+            }
+
+        .modal {
+            position: fixed;
+            background: rgba(0,0,0,0.7);
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+        }
+
+        .modal,
+        .notice {
+            display: none;
+        }
+
+
+        .bar-title {
+            width: 100%;
+            background: #ec4b4b;
+            border-radius: 40px 40px 0 0;
+            /*padding: 15px 0*/
+        }
+
+            .bar-title span {
+                color: #fff;
+                margin-left: 30px;
+                font-weight: 700;
+            }
+
+
+        .boton_1 {
+            text-decoration: none;
+            padding: 3px;
+            padding-left: 10px;
+            padding-right: 10px;
+            font-family: helvetica;
+            font-weight: 300;
+            font-size: 25px;
+            font-style: italic;
+            color: white;
+            background-color: #ec4b4bcc;
+            border-radius: 15px;
+            border: 1px double #ec4b4b57;
+        }
+
+        /**/ /*******/
+
+
+        /*----------- CAJA ----------- */
+        .caja {
+            font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 400;
+            text-align: center;
+            background: #889ccf;
+            /*margin: 0 0 25px;
+                    overflow: hidden;
+                    padding: 20px;*/
+            border-radius: 50px 1px 60px 0px;
+            -moz-border-radius: 50px 1px 60px 0px;
+            -webkit-border-radius: 50px 1px 60px 0px;
+            /*border: 2px solid #5878ca;*/
+        }
+
+        /*minimizar un modal */
+        .modal-header .btnGrp {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+        }
+
+
+        .min {
+            width: 250px;
+            height: 65px;
+            overflow: hidden !important;
+            padding: 0px !important;
+            margin: 0px;
+            float: left;
+            position: static !important;
+        }
+
+            .min .modal-dialog, .min .modal-content {
+                height: 100%;
+                width: 100%;
+                margin: 0px !important;
+                padding: 0px !important;
+            }
+
+            .min .modal-header {
+                height: 100%;
+                width: 100%;
+                margin: 0px !important;
+                padding: 3px 5px !important;
+            }
+
+        .display-none {
+            display: none;
+        }
+
+        button .fa {
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .min .fa {
+            font-size: 14px;
+        }
+
+        .min .menuTab {
+            display: none;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .minmaxCon {
+            height: 65px;
+            bottom: 1px;
+            /*left: 1px;*/
+            position: fixed;
+            right: 1px;
+            z-index: 9999;
+        }
+
+        .modal-open {
+            overflow-y: initial !important;
+            height: 250px;
+            overflow-y: auto;
+        }
+
+        /*----------------------------
+                The Navigation Menu Principal
+            -----------------------------*/
+
+
+        #colorNavPrincipal > ul {
+            width: 100%; /* Increase when adding more menu items */
+            margin: 0 auto;
+        }
+
+            #colorNavPrincipal > ul > li { /* will style only the top level li */
+                list-style: none;
+                box-shadow: 0 0 10px rgba(100, 100, 100, 0.2) inset,1px 1px 1px #CCC;
+                display: inline-block;
+                line-height: 1;
+                margin: 1px;
+                border-radius: 3px;
+                position: relative;
+            }
+
+                #colorNavPrincipal > ul > li > a {
+                    color: inherit;
+                    text-decoration: none !important;
+                    font-size: 50px;
+                    /*font-size:60px;*/
+                    padding: 25px;
+                }
+
+        #colorNavPrincipal li ul {
+            position: absolute;
+            list-style: none;
+            text-align: left;
+            width: 230px;
+            left: 20%;
+            margin-left: -90px;
+            /*top:70px; modificado*/
+            font: bold 12px 'Open Sans Condensed', sans-serif;
+            /* This is important for the show/hide CSS animation */
+            max-height: 0px;
+            overflow: hidden;
+            -webkit-transition: max-height 0.4s linear;
+            -moz-transition: max-height 0.4s linear;
+            transition: max-height 0.4s linear;
+        }
+
+            #colorNavPrincipal li ul li {
+                background-color: #313131;
+            }
+
+                #colorNavPrincipal li ul li a {
+                    padding: 12px;
+                    color: #fff !important;
+                    text-decoration: none !important;
+                    display: block;
+                }
+
+                #colorNavPrincipal li ul li:nth-child(odd) { /* zebra stripes */
+                    /*background-color:#363636;*/
+                }
+
+                #colorNavPrincipal li ul li:hover {
+                    /*background-color:#444;*/
+                }
+
+                #colorNavPrincipal li ul li:first-child {
+                    border-radius: 3px 3px 0 0;
+                    margin-top: 5px;
+                    position: relative;
+                }
+
+                    #colorNavPrincipal li ul li:first-child:before { /* the pointer tip */
+                        content: '';
+                        position: absolute;
+                        width: 1px;
+                        height: 1px;
+                        border: 5px solid transparent;
+                        border-bottom-color: #313131;
+                        left: 50%;
+                        top: -10px;
+                        margin-left: -5px;
+                    }
+
+                #colorNavPrincipal li ul li:last-child {
+                    border-bottom-left-radius: 3px;
+                    border-bottom-right-radius: 3px;
+                }
+
+        /* This will trigger the CSS */
+        /* transition animation on hover */
+
+        #colorNavPrincipal li:hover ul {
+            max-height: 500px; /* Increase when adding more dropdown items */
+        }
+
+
+        /*----------------------------
+                Color Themes
+            -----------------------------*/
+
+
+        #colorNavPrincipal li.green {
+            /* This is the color of the menu item */
+            background-color: #00c08b;
+            /* This is the color of the icon */
+            color: #127a5d;
+        }
+
+        #colorNavPrincipal li.red {
+            background-color: #ea5080;
+            color: #aa2a52;
+        }
+
+        #colorNavPrincipal li.blue {
+            background-color: #53bfe2;
+            color: #2884a2;
+        }
+
+        #colorNavPrincipal li.yellow {
+            background-color: #f8c54d;
+            color: #ab8426;
+        }
+
+        #colorNavPrincipal li.purple {
+            background-color: #df6dc2;
+            color: #9f3c85;
+        }
+
+
+        /*----------------------------
+                The Navigation Menu
+            -----------------------------*/
+
+
+        #colorNav > ul {
+            width: 100%; /* Increase when adding more menu items */
+            margin: 0 auto;
+        }
+
+            #colorNav > ul > li { /* will style only the top level li */
+                list-style: none;
+                box-shadow: 0 0 10px rgba(100, 100, 100, 0.2) inset,1px 1px 1px #CCC;
+                display: inline-block;
+                line-height: 1;
+                margin: 1px;
+                border-radius: 3px;
+                position: relative;
+            }
+
+                #colorNav > ul > li > a {
+                    color: inherit;
+                    text-decoration: none !important;
+                    font-size: 50px;
+                    /*font-size:60px;*/
+                    padding: 25px;
+                }
+
+        #colorNav li ul {
+            position: absolute;
+            list-style: none;
+            text-align: left;
+            width: 230px;
+            left: 20%;
+            margin-left: -90px;
+            /*top:70px; modificado*/
+            font: bold 12px 'Open Sans Condensed', sans-serif;
+            /* This is important for the show/hide CSS animation */
+            max-height: 0px;
+            overflow: hidden;
+            -webkit-transition: max-height 0.4s linear;
+            -moz-transition: max-height 0.4s linear;
+            transition: max-height 0.4s linear;
+        }
+
+            #colorNav li ul li {
+                background-color: #313131;
+            }
+
+                #colorNav li ul li a {
+                    padding: 12px;
+                    color: #fff !important;
+                    text-decoration: none !important;
+                    display: block;
+                }
+
+                #colorNav li ul li:nth-child(odd) { /* zebra stripes */
+                    /*background-color:#363636;*/
+                }
+
+                #colorNav li ul li:hover {
+                    /*background-color:#444;*/
+                }
+
+                #colorNav li ul li:first-child {
+                    border-radius: 3px 3px 0 0;
+                    margin-top: 5px;
+                    position: relative;
+                }
+
+                    #colorNav li ul li:first-child:before { /* the pointer tip */
+                        content: '';
+                        position: absolute;
+                        width: 1px;
+                        height: 1px;
+                        border: 5px solid transparent;
+                        border-bottom-color: #313131;
+                        left: 50%;
+                        top: -10px;
+                        margin-left: -5px;
+                    }
+
+                #colorNav li ul li:last-child {
+                    border-bottom-left-radius: 3px;
+                    border-bottom-right-radius: 3px;
+                }
+
+        /* This will trigger the CSS */
+        /* transition animation on hover */
+
+        #colorNav li:hover ul {
+            max-height: 500px; /* Increase when adding more dropdown items */
+        }
+
+
+        /*----------------------------
+                Color Themes
+            -----------------------------*/
+
+
+        #colorNav li.green {
+            /* This is the color of the menu item */
+            background-color: #00c08b;
+            /* This is the color of the icon */
+            color: #127a5d;
+        }
+
+        #colorNav li.red {
+            background-color: #ea5080;
+            color: #aa2a52;
+        }
+
+        #colorNav li.blue {
+            background-color: #53bfe2;
+            color: #2884a2;
+        }
+
+        #colorNav li.yellow {
+            background-color: #f8c54d;
+            color: #ab8426;
+        }
+
+        #colorNav li.purple {
+            background-color: #df6dc2;
+            color: #9f3c85;
+        }
+    </style>
+}
+@section Script {
+
+    <script>
+            const dp = new DayPilot.Calendar("dp", {
+                viewType: "Week",
+                //cellHeight: 30,
+                //timeRangeSelectedHandling: "Enabled",
+                //durationBarVisible: false,
+                onTimeRangeSelected: async (args) => {
+
+                },
+            });
+
+            function getData() {
+                return new Promise((resolve, reject) => {
+
+
+                     @*$.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/CalendarioActividades/Editar',
+                        url: '@Url.Content("~/Simplificacion/Dashboard/ObtenerDatosJson")',
+                         data: { iopsp: 15 },
+                        cache: false,
+                        beforeSend: function () {
+                        },
+                        success: function (data) {
+                            debugger;
+
+                            resolve(JSON.parse(data.result));
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });*@
+
+                });
+            }
+
+        getData().then(data => {
+            console.log(data)
+            dp.events.list = data;
+              
+                dp.onEventClick = function (args) {
+                    //alert("Hiciste clic en un evento con ID: " + args.e.id()); 
+
+                            $.ajax({
+                                type: "GET",
+                                //url: '/Simplificacion/CalendarioActividades/Editar',
+                                url: '@Url.Content("~/Simplificacion/CalendarioActividades/EditarDetalle")',
+                                data: { id: 10 },
+                                cache: false,
+                                beforeSend: function () {
+                                    sut.wait.modal('ventana-container');
+                                    $('#modal-ventana').modal('show');
+                                },
+                                success: function (data) {
+                                    $('#ventana-container').html(data);
+                                },
+                                error: function (result) {
+                                    $('#modal-ventana').modal('hide');
+                                    sut.error.show('mensajes', result.responseText);
+                                }
+                            });
+                },
+                //eventDeleteHandling: "Disabled",
+              /*  eventMoveHandling: "Update",*/
+                //onEventMoved: (args) => {
+                //    args.control.message("Event moved: " + args.e.text());
+                //},
+                //eventResizeHandling: "Update",
+                //onEventResized: (args) => {
+                //    args.control.message("Event resized: " + args.e.text());
+                //},
+                //eventClickHandling: "Disabled",
+                //eventHoverHandling: "Disabled",
+                //zoomLevels: [
+                //    {
+                //        name: "100%",
+                //        properties: {
+                //            cellHeight: 20,
+                //            headerHeight: 30,
+                //            cssClass: "zoom100"
+                //        },
+
+                //    },
+                //    {
+                //        name: "115%",
+                //        properties:
+                //        {
+                //            cellHeight: 23,
+                //            headerHeight: 35,
+                //            cssClass: "zoom115"
+                //        }
+                //    },
+                //    {
+                //        name: "130%",
+                //        properties: {
+                //            cellHeight: 26,
+                //            headerHeight: 40,
+                //            cssClass: "zoom130"
+                //        }
+                //    },
+                //]
+            });
+            dp.events.list = [
+                {
+                    id: "1",
+                    start: DayPilot.Date.today().addHours(10),
+                    end: DayPilot.Date.today().addHours(12),
+                    text: "SSCS: 	Fortalecimiento de capacidades"
+                }, {
+                    id: "2",
+                    start: DayPilot.Date.today().addHours(10),
+                    end: DayPilot.Date.today().addHours(12),
+                    text: "SSCS: Acompañamiento (implementación de los instrumentos)"
+                }, {
+                    id: "3",
+                    start: "2023-04-26T11:30:00",
+                    end: "2023-04-26T16:30:00",
+                    text: "SSAP: Acompañamiento (implementación de los instrumentos)	"
+                }, {
+                    id: "4",
+                    start: "2023-04-28T11:30:00",
+                    end: "2023-04-28T16:30:00",
+                    text: "SSAR: Fortalecimiento de capacidades"
+                }, {
+                    id: "5",
+                    start: "2023-04-24T11:30:00",
+                    end: "2023-04-24T16:30:00",
+                    text: "SSAP: Fortalecimiento de capacidades	"
+                }, {
+                    id: "6",
+                    start: "2023-04-23T10:30:00",
+                    end: "2023-04-23T17:30:00",
+                    text: "SSAP: Sensibilización (despliegues para lograr compromiso)"
+                }
+
+
+
+                };
+            dp.headerDateFormat = "dd/MM/yyyy";
+            dp.init();
+            var elements = {
+                previous: document.getElementById("previous"),
+                today: document.getElementById("today"),
+                next: document.getElementById("next")
+            };
+
+            function changeDate(date) {
+                dp.startDate = date.firstDayOfMonth();
+                dp.days = dp.startDate.daysInMonth();
+                dp.events.list = [/* ... */]; // provide event data for the new date range
+                dp.update();  
+            } 
+
+            elements.previous.addEventListener("click", function (e) {
+                debugger;
+                e.preventDefault();
+                changeDate(dp.startDate.addDays(-7)); // Cambia a la semana anterior
+
+            });
+            elements.today.addEventListener("click", function (e) {
+                //debugger;
+                //e.preventDefault();
+                //changeDate(DayPilot.Date.today(7)); // Cambia al día actual
+                window.location.reload();
+            });
+            elements.next.addEventListener("click", function (e) {
+                debugger;
+                e.preventDefault();
+                changeDate(dp.startDate.addDays(7)); // Cambia a la próxima semana
+            });
+
+            }).catch(error => {
+                console.error('Error obteniendo los datos: ', error);
+            });
+
+            //const app = {
+            //    elements: {
+            //        zoomLevel: document.querySelector("#zoomLevel"),
+            //        buttonMinus: document.querySelector("#minus"),
+            //        buttonPlus: document.querySelector("#plus"),
+            //        label: document.querySelector("#label")
+            //    },
+            //    init() {
+            //        app.elements.zoomLevel.addEventListener("input", function (ev) {
+            //            var level = parseInt(this.value);
+            //            app.applyLevel(level);
+            //        });
+
+            //        app.elements.buttonMinus.addEventListener("click", function () {
+            //            //const currentValue = parseInt(app.elements.zoomLevel.value);
+            //            //if (currentValue > 0) {
+            //            //    const newValue = currentValue - 1;
+            //            //    app.elements.zoomLevel.value = newValue;
+            //            //    dp.zoom.setActive(newValue);
+            //            //}
+
+            //            alert("VERDE2");
+
+
+            //        });
+
+            //        app.elements.buttonPlus.addEventListener("click", function () {
+            //            //const currentValue = parseInt(app.elements.zoomLevel.value);
+            //            //if (currentValue < dp.zoomLevels.length - 1) {
+            //            //    const newValue = currentValue + 1;
+            //            //    app.elements.zoomLevel.value = newValue;
+            //            //    dp.zoom.setActive(newValue);
+            //            //}
+
+            //            alert("VERDE");
+            //        });
+
+            //        this.applyLevel(0);
+            //    },
+            //    applyLevel(level) {
+            //        app.elements.label.innerText = dp.zoomLevels[level].name;
+            //        dp.zoom.setActive(level);
+            //    }
+            //};
+            //app.init();
+
+    </script>
+
+    <script>
+
+
+
+
+
+            sut.portada = {
+                estadoExpColor: ['label-danger', 'label-primary'],
+                estado: ['INACTIVO', 'ACTIVO'],
+                estadoExpColormef: ['label-danger','label-primary', 'label-success'],
+                estadomef: ['NO AUTORIZADO','ESPERA', 'AUTORIZADO'],
+                estadoExpColor: ['', 'label-primary', 'label-warning', 'label-success', 'label-danger', 'bg-gray-active', 'label-info', 'label-public'],
+                estadoExpediente: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+
+                estadoRevColor: ['bg-gray-active', 'label-primary', 'label-success', 'label-danger'],
+                estadoRevision: ['SIN ACCIÓN', 'EN PROCESO', 'TERMINADO', 'DETENIDO'],
+
+                editar: function (id) {
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Seguridad/Portada/Editar',
+                        url: '@Url.Content("~/Seguridad/Portada/Editar")',
+                        data: { id: id },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+
+                editarnorma: function (id) {
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Seguridad/Portada/EditarNorma',
+                        url: '@Url.Content("~/Seguridad/Portada/EditarNorma")',
+                        data: { id: id },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                editarmef: function (id) {
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Seguridad/Portada/EditarMef',
+                        url: '@Url.Content("~/Seguridad/Portada/EditarMef")',
+                        data: { id: id },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                editarAsignar: function (expedienteId) {
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Seguridad/Portada/EditarMef',
+                        url: '@Url.Content("~/Seguridad/Portada/EditarAsignar")',
+                        data: { id: expedienteId },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                listarcomunicado: function (page) {
+
+                    table = $('#tblListaComunicado');
+                    var model = {
+                        pageIndex: page,
+                        pageSize: table.data('pagesize')
+                    };
+                    $.ajax({
+                        //url: "/Seguridad/Portada/GetAllLikePagincomunicado",
+                        url: '@Url.Content("~/Seguridad/Portada/GetAllLikePagincomunicado")',
+                        type: "GET",
+                        data: model,
+                        dataType: "json",
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            table.data('page', page);
+                            table.data('totalrows', data.totalRows);
+                            sut.portada.generarcomunicado(data.lista);
+                            if (data.totalRows == 0) $('#tblListaComunicado tbody').append("<tr><td colspan='5' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        },
+                        error: function (data) {
+                            sut.error.show('mensajes', data.responseText);
+                        }
+                    });
+                },
+
+                generarcomunicado: function (lista) {
+                    var table = $('#tblListaComunicado');
+                    var tabla = table.children('tbody');
+                    tabla.children('tr').remove();
+                    var rows = '';
+                    var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                    $.each(lista, function (i, r) {
+                        rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                        rows += sut.string.format('<td>{0}</td>', r.descripcion);
+                        rows += sut.string.format('<td style="text-align: center;width:100px">{0}</td>', r.fecCreacion);
+                        rows += sut.string.format('<td style="width:5px" class="text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoExpColor[r.estado], sut.portada.estado[r.estado]);
+                        rows += '<td>';
+                        rows += '<div class="btn-group">';
+                        rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.portada.editar({0})" ><i class="fa fa-pencil"></i></a>', r.comunicadoID);
+                        rows += '</div>';
+                        rows += '</td>';
+                        rows += '</tr>';
+                    });
+                    sut.pagination.update(table);
+                    tabla.append(rows);
+                },
+
+                listarnorma: function (page) {
+
+                    table = $('#tblListaNormas');
+                    var model = {
+                        pageIndex: page,
+                        pageSize: table.data('pagesize')
+                    };
+                    $.ajax({
+                        //url: "/Seguridad/Portada/GetAllLikePaginnorma",
+                        url: '@Url.Content("~/Seguridad/Portada/GetAllLikePaginnorma")',
+                        type: "GET",
+                        data: model,
+                        dataType: "json",
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            table.data('page', page);
+                            table.data('totalrows', data.totalRows);
+                            sut.portada.generarnorma(data.lista);
+                            if (data.totalRows == 0) $('#tblListaNormas tbody').append("<tr><td colspan='4' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        },
+                        error: function (data) {
+                            sut.error.show('mensajes', data.responseText);
+                        }
+                    });
+                },
+
+                generarnorma: function (lista) {
+                    var table = $('#tblListaNormas');
+                    var tabla = table.children('tbody');
+                    tabla.children('tr').remove();
+                    var rows = '';
+                    var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                    $.each(lista, function (i, r) {
+                        rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                        rows += sut.string.format('<td>{0}</td>', r.descripcion);
+                        rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.fechaPublicacion);
+                        rows += '<td>';
+                        rows += '<div class="btn-group">';
+                        if (r.ArchivoAdjuntoId != null) {
+                            //rows += sut.string.format('<a class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="left" title="Archivo" href="/General/Adjunto/Descargar/{0}" ><i class="fa fa-download"></i></a>', r.ArchivoAdjuntoId);
+                            rows += sut.string.format('<a class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="left" title="Descargar" href="@Url.Content("~/General/Adjunto/Descargar/{0}")" ><i class="fa fa-download"></i></a>', r.ArchivoAdjuntoId);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';
+                        rows += '<td>';
+                        rows += '<div class="btn-group">';
+                        if(@user.Rol==1){
+                            rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.portada.editarnorma({0})" ><i class="fa fa-pencil"></i></a>', r.documentosNormaID);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';
+                        rows += '</tr>';
+                    });
+                    sut.pagination.update(table);
+                    tabla.append(rows);
+                },
+                listarcomunicadobaner: function (page) {
+
+                    table = $('#tblListaComunicado');
+                    var model = {
+                        pageIndex: page,
+                        pageSize: 20
+                    };
+                    $.ajax({
+                        //url: "/Seguridad/Portada/GetAllLikePagincomunicadobaner",
+                        url: '@Url.Content("~/Seguridad/Portada/GetAllLikePagincomunicadobaner")',
+                        data: model,
+                        dataType: "json",
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            sut.portada.generarcomunicadobaner(data.lista);
+                        },
+                        error: function (data) {
+                            sut.error.show('mensajes', data.responseText);
+                        }
+                    });
+                },
+
+                generarcomunicadobaner: function (lista) {
+
+                    var numero = 1;
+                    var numero2 = 1;
+                    var numero3 = 1;
+                    var rows = '';
+                    rows += ('<div class="carousel-inner" role="listbox" style="text-align:center;">');
+                    $.each(lista, function (i, r) {
+                        if(numero2==1){
+                            ++numero2
+                            rows +=  ('<div class="item active"> ' );
+                        }else{
+
+                            rows +=  ('<div class="item "> ');
+                        }
+                        rows += ('<h21 style="font-weight: bold;font-size:50px">');
+                        rows += (r.descripcion);
+                        if (r.documentosNorma != null) {
+                            //rows += ('<a class="btn-xs" data-toggle="tooltip" data-placement="left" title="" href="/General/Adjunto/Descargar/' + r.documentosNorma.ArchivoAdjuntoId + '">  Descargar aqui <i class="fa fa-download"></i></a>');
+                            if(r.documentosNorma.ArchivoAdjuntoId!=null){
+                                rows += ('<a class="btn-xs" data-toggle="tooltip" data-placement="left" title="" href="@Url.Content("~/General/Adjunto/Descargar/")'+ r.documentosNorma.ArchivoAdjuntoId + '">  Descargar aqui <i class="fa fa-download"></i></a>');
+                            }
+                        }
+                        rows += ('</h21> ');
+                        rows += ('</div> ');
+                    });
+
+                    rows += ('</div> ');
+                    rows += ('<a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">');
+                    rows += ('<span class="glyphicon glyphicon-chevron-left" aria-hidden="true" style="margin-left: -90px;"></span>');
+                    rows += ('<span class="sr-only">Previous</span>');
+                    rows += ('</a>');
+                    rows += ('<a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">');
+                    rows += ('<span class="glyphicon glyphicon-chevron-right" aria-hidden="true" style="margin-right: -90px;"></span>');
+                    rows += ('<span class="sr-only">Next</span>');
+                    rows += ('</a>');
+                    $('#myCarousel').append(rows);
+
+                },
+                listaractividades: function (page) {
+
+                    table = $('#tblListaActividades');
+                    var model = {
+                        pageIndex: page,
+                        pageSize: table.data('pagesize')
+                    };
+                    $.ajax({
+                        //url: "/Seguridad/Portada/GetAllLikePaginactividades",
+                        url: '@Url.Content("~/Seguridad/Portada/GetAllLikePaginactividades")',
+                        type: "GET",
+                        data: model,
+                        dataType: "json",
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            table.data('page', page);
+                            //table.data('totalrows', data.totalRows);
+                            sut.portada.generaractividades(data.lista);
+                            //if (data.totalRows == 0) $('#tblListaActividades tbody').append("<tr><td colspan='4' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        },
+                        error: function (data) {
+                            sut.error.show('mensajes', data.responseText);
+                        }
+                    });
+                },
+
+                generaractividades: function (lista) {
+                    var table = $('#tblListaActividades');
+                    var tabla = table.children('tbody');
+                    tabla.children('tr').remove();
+                    var rows = '';
+                    var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                    $.each(lista, function (i, r) {
+                        rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                        rows += sut.string.format('<td>{0}</td>', r.pantalla);
+                        rows += sut.string.format('<td>{0}</td>', r.actividad);
+                        rows += sut.string.format('<td>{0}</td>', r.usuario);
+                        rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.fecCreacion);
+                        rows += '</tr>';
+                    });
+                    sut.pagination.update(table);
+                    tabla.append(rows);
+                },
+
+                listarmef: function (page) {
+
+                    table = $('#tblListaMef');
+                    var model = {
+                        pageIndex: page,
+                        pageSize: table.data('pagesize')
+                    };
+                    $.ajax({
+                        //url: "/Seguridad/Portada/GetAllLikePaginMef",
+                        url: '@Url.Content("~/Seguridad/Portada/GetAllLikePaginMef")',
+                        type: "GET",
+                        data: model,
+                        dataType: "json",
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            table.data('page', page);
+                            table.data('totalrows', data.totalRows);
+                            sut.portada.generarmef(data.lista);
+                            if (data.totalRows == 0) $('#tblListaMef tbody').append("<tr><td colspan='4' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        },
+                        error: function (data) {
+                            sut.error.show('mensajes', data.responseText);
+                        }
+                    });
+                },
+
+
+                generarmef: function (lista) {
+                    var table = $('#tblListaMef');
+                    var tabla = table.children('tbody');
+                    tabla.children('tr').remove();
+                    var rows = '';
+                    var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                    $.each(lista, function (i, r) {
+                        rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                        rows += sut.string.format('<td>{0}</td>', r.expediente);
+                        rows += sut.string.format('<td>{0}</td>', r.derechoTramitacion);
+                        rows += sut.string.format('<td>{0}</td>', r.UIT);
+                        rows += sut.string.format('<td>{0}</td>', r.descripcionSusustento);
+                        rows += sut.string.format('<td>{0}</td>', r.fecEnvioMef);
+                        rows += '<td>';
+                        rows += '<div class="btn-group">';
+                        if (r.ArMotivoAdjuntoId != null) {
+                            //rows += sut.string.format('<a class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="left" title="Archivo" href="/General/Adjunto/Descargar/{0}" ><i class="fa fa-download"></i></a>', r.ArchivoAdjuntoId);
+                            rows += sut.string.format('<a class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="left" title="Descargar" href="@Url.Content("~/General/MotivoAdjunto/Descargar/{0}")" ><i class="fa fa-download"></i></a>', r.ArMotivoAdjuntoId);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';
+                        @*rows += '<td>';
+                        rows += '<div class="btn-group">';
+                        if (r.ArchivoAdjuntoId != null) {
+                             rows += sut.string.format('<a class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="left" title="Descargar" href="@Url.Content("~/General/Adjunto/Descargar/{0}")" ><i class="fa fa-download"></i></a>', r.ArchivoAdjuntoId);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';*@
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoExpColormef[r.autorizacionMEF], sut.portada.estadomef[r.autorizacionMEF]);
+                        rows += '<td>';
+                        rows += '<div class="btn-group">';
+                        rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.portada.editarmef({0})" ><i class="fa fa-pencil"></i></a>', r.tablaAsmeId);
+                        rows += '</div>';
+                        rows += '</td>';
+                        rows += '</tr>';
+                    });
+                    sut.pagination.update(table);
+                    tabla.append(rows);
+                },
+
+
+                enviarautorizacion: () => {
+                    $('#form-editar-autorizacion input[name="ArchivoAdjuntoId"]').val($('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val());
+
+
+                    var valorarchivo = $('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val();
+                    debugger;
+                    if (valorarchivo == 0) {
+                        showNotification('top', 'right', 'Adjuntar Respuesta', 2);
+                        return;
+                    }
+                    var model = $('#form-editar-autorizacion').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Seguridad/Portada/EnviarAutorizacionMef',
+                        url: '@Url.Content("~/Seguridad/Portada/EnviarAutorizacionMef")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                            sut.wait.appendProgress('.modal-footer');
+                        },
+                        complete: function () {
+                            sut.wait.removeProgress('.modal-footer');
+                        },
+                        success: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.msg.success(result.mensaje, function () {
+                                sut.portada.listarmef(1);
+                                sut.portada.listaractividades(1);
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+
+                 enviarBandeja: (id) => {
+                    $('#form-editar-autorizacion input[name="ArchivoAdjuntoId"]').val($('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val());
+
+                     debugger;
+                     var data = [];
+                     $('input[type=checkbox]:checked').each(function () {
+                         console.log("Checkbox " + $(this).prop("id") + " (" + $(this).val() + ") Seleccionado");
+                         var n = $(this).prop("id").replace("Checked", "MetaDatoId");
+                         var n = $('#' + n).val();
+
+                         data.push({ SedeId: n });
+                     });
+
+
+                    var valorarchivo = $('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val();
+                    debugger;
+                    if (valorarchivo == 0) {
+                        showNotification('top', 'right', 'Adjuntar Respuesta', 2);
+                        return;
+                    }
+                    var model = $('#form-editar-autorizacion').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Seguridad/Portada/EnviarAutorizacionMef',
+                        url: '@Url.Content("~/Seguridad/Portada/EnviarAutorizacionMef")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                            sut.wait.appendProgress('.modal-footer');
+                        },
+                        complete: function () {
+                            sut.wait.removeProgress('.modal-footer');
+                        },
+                        success: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.msg.success(result.mensaje, function () {
+                                sut.portada.listarmef(1);
+                                sut.portada.listaractividades(1);
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                } ,
+
+
+                listarentidadevaluacionUsuario: function (page) {
+
+                    table = $('#tblListaentidadevaluacionUsuario');
+                    var model = {
+                        pageIndex: page,
+                        pageSize: table.data('pagesize')
+                    };
+                    $.ajax({
+                        //url: "/Seguridad/Portada/GetAllLikePaginnorma",
+                        url: '@Url.Content("~/Seguridad/Portada/GetAllLikePaginentidadevaluacionUsuario")',
+                        type: "GET",
+                        data: model,
+                        dataType: "json",
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            table.data('page', page);
+                            table.data('totalrows', data.totalRows);
+                            sut.portada.generarentidadevaluacionUsuario(data.lista);
+                            //if (data.totalRows == 0) $('#tblListaentidadevaluacion tbody').append("<tr><td colspan='4' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        },
+                        error: function (data) {
+                            sut.error.show('mensajes', data.responseText);
+                        }
+                    });
+                },
+
+                generarentidadevaluacionUsuario: function (lista) {
+                    var table = $('#tblListaentidadevaluacionUsuario');
+                    var tabla = table.children('tbody');
+                    tabla.children('tr').remove();
+                    var rows = '';
+                    var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+
+                    $.each(lista, function (i, r) {
+                        rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                        rows += sut.string.format('<td>{0}</td>', r.NomEntidad);
+                        rows += sut.string.format('<td>{0}</td>', r.Codigo);
+                        //rows += sut.string.format('<td>{0}</td>', r.EstadoExpediente);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoExpColor[r.EstadoExpediente], sut.portada.estadoExpediente[r.EstadoExpediente]);
+                        rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecEnvio);
+                        rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.DiasTranscurrido);
+                        rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecUltimaRevision);
+                        rows += '<td style="text-align: center;">';
+                        rows += '<div class="btn-group">';
+                        if(r.Tomar==0)
+                        {
+                            rows += sut.string.format('<a class="btn btn-primary btn-xs"  data-placement="left" title="Revisar" href="javascript:sut.portada.guardaraccion({0},1,1,{1})" ><i class="fa fa-registered"></i> </a>', r.NotificacionExpedientesId,r.ExpedienteId);
+                        }
+                        else  if(r.Tomar==1)
+                        {
+                            rows += sut.string.format('<a class="btn btn-danger btn-xs"  data-placement="left" title="Detener" href="javascript:sut.portada.guardaraccion({0},0,3,{1})" ><i class="fa fa-stop"></i> </a>', r.NotificacionExpedientesId,r.ExpedienteId);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';
+
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevEstado], sut.portada.estadoRevision[r.RevEstado]);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevInfCdno], sut.portada.estadoRevision[r.RevInfCdno]);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevDatosGenerales], sut.portada.estadoRevision[r.RevDatosGenerales]);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevSutentoTecnico], sut.portada.estadoRevision[r.RevSutentoTecnico]);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevTablaAsme], sut.portada.estadoRevision[r.RevTablaAsme]);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevSustentoCosto], sut.portada.estadoRevision[r.RevSustentoCosto]);
+                        rows += '<td style="text-align: center;">';
+                        rows += '<div class="btn-group">';
+                        if(r.Tomar==1 || r.Tomar==2 )
+                        {
+                            ////rows += sut.string.format('<a class="btn btn-success btn-xs"  data-placement="left" title="Editar" href="@Url.Content("~/Simplificacion/Expediente/EditarObservacion/{0}")" ><i class="fa fa-pencil"></i></a>', r.ExpedienteId);
+                            rows += sut.string.format('<a class="btn btn-success btn-xs"  data-placement="left" title="Editar" href="javascript:sut.portada.ActualizarRevision({0},{1})" ><i class="fa fa-pencil"></i></a>', r.NotificacionExpedientesId, r.ExpedienteId);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';
+                        rows += '</tr>';
+                    });
+                    sut.pagination.update(table);
+                    tabla.append(rows);
+                },
+
+                   listarentidadevaluacion: function (page) {
+
+                    table = $('#tblListaentidadevaluacion');
+                    var model = {
+                        pageIndex: page,
+                        pageSize: table.data('pagesize')
+                    };
+                    $.ajax({
+                        //url: "/Seguridad/Portada/GetAllLikePaginnorma",
+                        url: '@Url.Content("~/Seguridad/Portada/GetAllLikePaginentidadevaluacion")',
+                        type: "GET",
+                        data: model,
+                        dataType: "json",
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            table.data('page', page);
+                            table.data('totalrows', data.totalRows);
+                            sut.portada.generarentidadevaluacion(data.lista);
+                            //if (data.totalRows == 0) $('#tblListaentidadevaluacion tbody').append("<tr><td colspan='4' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        },
+                        error: function (data) {
+                            sut.error.show('mensajes', data.responseText);
+                        }
+                    });
+                },
+                generarentidadevaluacion: function (lista) {
+                    var table = $('#tblListaentidadevaluacion');
+                    var tabla = table.children('tbody');
+                    tabla.children('tr').remove();
+                    var rows = '';
+                    var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+
+                    $.each(lista, function (i, r) {
+                        rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                        rows += sut.string.format('<td>{0}</td>', r.NomEntidad);
+                        rows += sut.string.format('<td>{0}</td>', r.Codigo);
+                        //rows += sut.string.format('<td>{0}</td>', r.EstadoExpediente);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoExpColor[r.EstadoExpediente], sut.portada.estadoExpediente[r.EstadoExpediente]);
+                        rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecEnvio);
+                        rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.DiasTranscurrido);
+                        rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecUltimaRevision);
+                        rows += '<td style="text-align: center;">';
+                        rows += '<div class="btn-group">';
+                        if(r.Tomar==0)
+                        {
+                            rows += sut.string.format('<a class="btn btn-primary btn-xs"  data-placement="left" title="Revisar" href="javascript:sut.portada.guardaraccion({0},1,1,{1})" ><i class="fa fa-registered"></i> </a>', r.NotificacionExpedientesId,r.ExpedienteId);
+                        }
+                        else  if(r.Tomar==1)
+                        {
+                            rows += sut.string.format('<a class="btn btn-danger btn-xs"  data-placement="left" title="Detener" href="javascript:sut.portada.guardaraccion({0},0,3,{1})" ><i class="fa fa-stop"></i> </a>', r.NotificacionExpedientesId,r.ExpedienteId);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';
+
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevEstado], sut.portada.estadoRevision[r.RevEstado]);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevInfCdno], sut.portada.estadoRevision[r.RevInfCdno]);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevDatosGenerales], sut.portada.estadoRevision[r.RevDatosGenerales]);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevSutentoTecnico], sut.portada.estadoRevision[r.RevSutentoTecnico]);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevTablaAsme], sut.portada.estadoRevision[r.RevTablaAsme]);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevSustentoCosto], sut.portada.estadoRevision[r.RevSustentoCosto]);
+                        rows += '<td style="text-align: center;">';
+                        rows += '<div class="btn-group">';
+                        if(r.Tomar==1 || r.Tomar==2 )
+                        {
+                            rows += sut.string.format('<a class="btn btn-success btn-xs"  data-placement="left" title="Editar" href="javascript:sut.portada.ActualizarRevision({0},{1})" ><i class="fa fa-pencil"></i></a>', r.NotificacionExpedientesId, r.ExpedienteId);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';
+                        rows += '</tr>';
+                    });
+                    sut.pagination.update(table);
+                    tabla.append(rows);
+                },
+
+                ActualizarRevision: function (id, expediente) {
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Seguridad/Portada/Editar',
+                        url: '@Url.Content("~/Seguridad/Portada/ActualizarRevision")',
+                        data: { Id: id,Expediente: expediente},
+                        cache: false,
+                        beforeSend: function () {
+                            $('#modal-ventana').modal('hide');
+                        },
+                        success: function (data) {
+
+                                window.location = '@Url.Content("~/Simplificacion/Expediente/EditarObservacion/")'+ expediente;
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+
+
+
+
+
+
+
+
+
+                listarentidadevaluacionBandeja: function (page) {
+
+                    table = $('#tblListaentidadevaluacion');
+                    var model = {
+                        pageIndex: page,
+                        pageSize: table.data('pagesize')
+                    };
+                    $.ajax({
+                        //url: "/Seguridad/Portada/GetAllLikePaginnorma",
+                        url: '@Url.Content("~/Seguridad/Portada/GetAllLikePaginentidadevaluacion")',
+                        type: "GET",
+                        data: model,
+                        dataType: "json",
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            table.data('page', page);
+                            table.data('totalrows', data.totalRows);
+                            sut.portada.generarentidadevaluacionBandeja(data.lista);
+                            //if (data.totalRows == 0) $('#tblListaentidadevaluacion tbody').append("<tr><td colspan='4' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        },
+                        error: function (data) {
+                            sut.error.show('mensajes', data.responseText);
+                        }
+                    });
+                },
+
+
+                generarentidadevaluacionBandeja: function (lista) {
+                    var table = $('#tblListaentidadevaluacion');
+                    var tabla = table.children('tbody');
+                    tabla.children('tr').remove();
+                    var rows = '';
+                    var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+
+                    $.each(lista, function (i, r) {
+                        rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                        rows += sut.string.format('<td>{0}</td>', r.NomEntidad);
+                        rows += sut.string.format('<td>{0}</td>', r.Codigo);
+                        //rows += sut.string.format('<td>{0}</td>', r.EstadoExpediente);
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoExpColor[r.EstadoExpediente], sut.portada.estadoExpediente[r.EstadoExpediente]);
+                        rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecEnvio);
+                        rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.DiasTranscurrido);
+                        rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecUltimaRevision);
+                        rows += '<td style="text-align: center;">';
+                        rows += '<div class="btn-group">';
+                        if(r.Tomar==0)
+                        {
+                            rows += sut.string.format('<a class="btn btn-primary btn-xs"  data-placement="left" title="Revisar" href="javascript:sut.portada.guardaraccion2({0},1,1,{1})" ><i class="fa fa-registered"></i> </a>', r.NotificacionExpedientesId,r.ExpedienteId);
+                        }
+                        else  if(r.Tomar==1)
+                        {
+                            rows += sut.string.format('<a class="btn btn-danger btn-xs"  data-placement="left" title="Detener" href="javascript:sut.portada.guardaraccion2({0},0,3,{1})" ><i class="fa fa-stop"></i> </a>', r.NotificacionExpedientesId,r.ExpedienteId);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';
+
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.portada.estadoRevColor[r.RevEstado], sut.portada.estadoRevision[r.RevEstado]);
+                        rows += '<td style="text-align: center;">';
+                        rows += '<div class="btn-group">';
+                        if(r.Tomar==1 || r.Tomar==2 )
+                        {
+                            ////rows += sut.string.format('<a class="btn btn-success btn-xs"  data-placement="left" title="Editar" href="@Url.Content("~/Simplificacion/Expediente/EditarObservacion/{0}")" ><i class="fa fa-pencil"></i></a>', r.ExpedienteId);
+                            rows += sut.string.format('<a class="btn btn-success btn-xs"  data-placement="left" title="Editar" href="javascript:sut.portada.ActualizarRevision({0},{1})" ><i class="fa fa-pencil"></i></a>', r.NotificacionExpedientesId, r.ExpedienteId);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';
+                        rows += '<td style="text-align: center;">';
+                        rows += '<div class="btn-group">';
+                        rows += sut.string.format('<a class="btn btn-dropbox btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.portada.editarAsignar({0})" ><i class="fa fa-users"></i></a>', r.ExpedienteId);
+                        rows += '</div>';
+                        rows += '</td>';
+                        rows += '</tr>';
+                    });
+                    sut.pagination.update(table);
+                    tabla.append(rows);
+                },
+                guardaraccion: function (id,accion, estado,expediente) {
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Seguridad/Portada/Editar',
+                        url: '@Url.Content("~/Seguridad/Portada/guardaraccion")',
+                        data: { Id: id, Accion: accion, Estado: estado ,Expediente: expediente},
+                        cache: false,
+                        beforeSend: function () {
+                            $('#modal-ventana').modal('hide');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                            sut.portada.listarentidadevaluacion(1);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+
+                  guardaraccion2: function (id,accion, estado,expediente) {
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Seguridad/Portada/Editar',
+                        url: '@Url.Content("~/Seguridad/Portada/guardaraccion")',
+                        data: { Id: id, Accion: accion, Estado: estado ,Expediente: expediente},
+                        cache: false,
+                        beforeSend: function () {
+                            $('#modal-ventana').modal('hide');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                            sut.portada.listarentidadevaluacionBandeja(1);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+
+
+
+                ejecutarlogin: function () {
+
+
+                    debugger;
+                    $.ajax({
+                        //url: "/Seguridad/Portada/GetAllLikePaginnorma",
+                        url: '@Url.Content("~/Account/Loginvalidado")',
+                        type: "GET",
+                        data: {roles:$('#listarol').val()},
+                        dataType: "json",
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            window.location.reload();
+                        },
+                        error: function (data) {
+                            window.location.reload();
+                        }
+                    });
+                },
+
+                titulo1: function () {
+
+                    $('#idtitulo1').hide();
+                    $('#idtitulo2').show();
+                    $('#idtitulo3').hide();
+                    $('#idtitulo4').hide();
+                },
+                titulo2: function () {
+
+                    $('#idtitulo1').hide();
+                    $('#idtitulo2').hide();
+                    $('#idtitulo3').show();
+                    $('#idtitulo4').hide();
+                },
+                titulo3: function () {
+
+                    $('#idtitulo1').hide();
+                    $('#idtitulo2').hide();
+                    $('#idtitulo3').hide();
+                    $('#idtitulo4').show();
+                },
+                volver2: function () {
+                    $('#idtitulo1').hide();
+                    $('#idtitulo2').show();
+                    $('#idtitulo3').hide();
+                },
+                volver1: function () {
+                    $('#idtitulo1').show();
+                    $('#idtitulo2').hide();
+                    $('#idtitulo3').hide();
+                },
+                comenzar: function () {
+                    window.location = '@Url.Content("~/Seguridad/Miembro/Lista")';
+                },
+                listarayuda: function () {
+
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Seguridad/Portada/EnviarAutorizacionMef',
+                        url: '@Url.Content("~/Seguridad/Portada/GenerarListamenulista")',
+                        data: {},
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                            sut.wait.appendProgress('.modal-footer');
+                        },
+                        complete: function () {
+                            sut.wait.removeProgress('.modal-footer');
+                        },
+                        success: function (result) {
+                            $('#modal-ventana').modal('hide');
+
+                            var count = 1;
+                            var countejecutar = 1;
+                            var i=0;
+                            var recorerr = 0;
+
+                            debugger;
+                            var rows = '';
+                            var asdas= result.cantidad;
+
+
+                            $('#colorNav').remove();
+
+                            rows += '<nav id="colorNav" style="text-align:left;">'
+                            rows += '<ul>'
+                            for (i = recorerr; i < result.cantidad; i++)
+                            {
+
+                                if (result.menu[i].MenuId == 20)
+                                {
+                                    if (@user.Sector == 80 || @user.Sector == 79)
+                                    {
+                                        rows += '<li class="'+result.menu[i].Estilo+'" style="'+result.menu[i].Dimension+'">'
+                                        rows += '<button class="pulse4-button" style="font-size:20px">'+countejecutar+'</button><br />'
+                                        rows += '<span style="font-size: 15px;color: white;"> '+result.menu[i].Descripcion +'</span> <br />'
+                                        rows += '<a href="'+ result.menu[i].url+'" class="'+result.menu[i].Gragico+'"></a>'
+
+                                        rows += '<ul style="z-index:10">'
+
+                                        for (var sub = i; sub < result.cantidad; sub++)
+                                          {
+                                                        if (result.menu[sub].IdPadreMenu != result.menu[i].IdPadreMenu)
+                                                        {
+                                                            i = sub - 1;
+                                                            break;
+
+                                                        }
+                                            rows += '<li style="'+result.menu[sub].Estilo+'"> <a href="'+result.menu[sub].url+'">'+result.menu[sub].Descripcion+'</a></li>'
+
+                                         }
+                                        rows += '</ul>'
+                                        rows += '</li>'
+                                    }
+                                    else
+                                    {
+                                        i = i + 1;
+                                    }
+                                }
+                                else if (result.menu[i].MenuId == 22)
+                                {
+                                    if (@user.CodPadre == "1")
+                                    {
+                                        rows += '<li class="'+result.menu[i].Estilo+'" style="'+result.menu[i].Dimension+'">'
+                                        rows += '	<button class="pulse4-button" style="font-size:20px">'+countejecutar+'</button><br />'
+                                        rows += '	<span style="font-size: 15px;color: white;"> '+result.menu[i].Descripcion+' </span> <br />'
+                                        rows += '	<a href="'+result.menu[i].url+'" class="'+result.menu[i].Gragico+'"></a>'
+                                            if (result.menu[i].IdPadreMenu != 0)
+                                            {
+                                                i = i + 1;
+                                                rows += '<ul style="z-index:10">'
+
+                                                for (var sub = i; sub < result.cantidad; sub++)
+                                                {
+                                                            if (result.menu[sub].IdPadreMenu != result.menu[i].IdPadreMenu)
+                                                            {
+                                                                i = sub - 1;
+                                                                break;
+
+                                                            }
+                                                            rows += '<li style="'+result.menu[sub].Estilo+'" > <a href="'+result.menu[sub].url+'" > '+result.menu[sub].Descripcion+'</a></li>'
+
+                                                        }
+                                                rows += '</ul>'
+                                            }
+
+                                        rows += '</li>'
+                                    }
+                                    else
+                                    {
+                                        i = i + 1;
+                                    }
+                                }
+                                else
+                                {
+                                    rows += '<li class="'+result.menu[i].Estilo+'" style="'+result.menu[i].Dimension+'">'
+                                    rows += ' <button class="pulse4-button" style="font-size:20px">'+countejecutar+'</button><br />'
+                                    rows += ' <span style="font-size: 15px;color: white;"> '+result.menu[i].Descripcion+' </span> <br />'
+                                    rows += ' <a href="'+result.menu[i].url+'" class="'+result.menu[i].Gragico+'"></a>'
+
+                                        if (result.menu[i].IdPadreMenu != 0)
+                                                            {
+                                                                i = i + 1;
+                                                                rows += '<ul style="z-index:10">'
+
+                                             for (var sub = i; sub < result.cantidad; sub++)
+                                            {
+                                                    if (result.menu[sub].IdPadreMenu != result.menu[i].IdPadreMenu)
+                                                    {
+                                                        i = sub - 1;
+                                                        break;
+
+                                                    }
+                                                    rows += '<li style="'+result.menu[sub].Estilo+'"> <a href="'+result.menu[sub].url+'">'+result.menu[sub].Descripcion+'</a></li>'
+
+                                            }
+                                            rows += '</ul>'
+                                        }
+
+                                    rows += '</li>'
+                                }
+                                countejecutar = countejecutar + 1;
+                            }
+                            rows += '</ul>'
+                            rows += '</nav>'
+
+                            $("#colorNavContenido").append(rows);
+                            document.querySelector('#nombremenu').innerText = result.nombremenu;
+
+                        },
+                        error: function (result) {
+                          sut.error.show('mensajes', result.responseText);
+                       }
+                    });
+
+                },
+
+            };
+
+            $(function () {
+
+
+                 //if(@user.MultipleRol>1){
+                    $('#Aviso').modal({backdrop: 'static', keyboard: true})
+                //}
+
+                $(".carousel").carousel({ interval: 3000 });
+                if(@user.Rol==1){
+
+                    sut.portada.listarcomunicado(1);
+                    if (@user.EntidadId== 18497){
+
+                        sut.portada.listarmef(1);
+                    }
+                } else if (@user.Rol== 6 || @user.Rol== 7 || @user.Rol== 8) {
+
+                    debugger;
+                    if (@user.Bandeja != "1") {
+
+                        sut.portada.listarentidadevaluacion(1);
+                    } else
+                    {
+                        sut.portada.listarentidadevaluacionUsuario(1);
+                    }
+                    if (@user.EntidadId== 18497){
+
+                        sut.portada.listarmef(1);
+                    }
+
+
+
+                }else if (  @user.Rol==12){
+                    sut.portada.listarentidadevaluacionBandeja(1);
+                    if (@user.EntidadId== 18497){
+
+                        sut.portada.listarmef(1);
+                    }
+                }
+                else
+                {
+                    sut.portada.listarcomunicadobaner(1);
+                }
+                sut.portada.listarayuda();
+                sut.portada.listarnorma(1);
+                sut.portada.listaractividades(1);
+
+                $('#ihtitulo2').hide();
+
+                if(@user.MultipleRol>1){
+                    $('#asignarrol').modal({backdrop: 'static', keyboard: true})
+                }else
+                {
+                    if(@user.Ayuda==1){
+
+                        //$('#ihtitulo1').text('Hola @user.NombreCompleto.ToString()  bienvenido al Sistema Único de Trámites ');
+                        $('#idtitulo2').hide();
+                        $('#idtitulo3').hide();
+                        $('#idtitulo4').hide();
+                        $('#edit-fase-preparatoria').addClass('active');
+                        $('a[href="#edit-fase-preparatoria"]').parent().addClass('active');
+                        $('#modalAyudaAvatar1').modal({backdrop: 'static', keyboard: false})
+                    }
+                }
+
+
+
+
+                /*minimizar un modal*/
+
+                var $content, $modal, $apnData, $modalCon;
+
+                $content = $(".min");
+
+
+                //To fire modal
+                $(".mdlFire").click(function(e){
+
+                    e.preventDefault();
+
+                    var $id = $(this).attr("data-target");
+
+                    $($id).modal({backdrop: false, keyboard: false});
+
+                });
+
+
+                $(".modalMinimize").on("click", function(){
+
+                    $modalCon = $(this).closest(".mymodal").attr("id");
+                    $apnData = $(this).closest(".mymodal");
+                    $modal = "#" + $modalCon;
+                    $(".modal-backdrop").addClass("display-none");
+
+
+
+                    $($modal).toggleClass("min");
+                    if ( $($modal).hasClass("min") ){
+                        $(".minmaxCon").append($apnData);
+                        $(this).find("i").toggleClass( 'fa-minus fa-2x').toggleClass( 'fa-clone fa-2x');
+                        $(".modal").css({
+                            backgroundColor: "transparent"
+                        });
+                        $('#ihtitulo2').show();
+                        $('#ihtitulo2').text('Hola @user.Nombres');
+                        $('#ihtitulo1').hide();
+
+                    }
+                    else {
+                        $(".container").append($apnData);
+                        $(this).find("i").toggleClass( 'fa-clone fa-2x').toggleClass( 'fa-minus fa-2x');
+                        $(".modal").css({
+                            backgroundColor: "rgba(0,0,0,0.7)"
+                        });
+                        $('#ihtitulo1').show();
+                        $('#ihtitulo2').hide();
+                        @*$('#ihtitulo1').text('Hola @user.NombreCompleto  bienvenido al Sistema Unico de Tramite ');*@
+                    };
+                });
+
+
+
+            });
+    </script>
+}

@@ -1,0 +1,1435 @@
+﻿@*@model List<Sut.Entities.Expediente>*@
+@using Sut.Security
+@model UsuarioInfo 
+
+@{
+    ViewBag.Title = "Expedientes";
+    var expestado = 0;
+    var is_refresh = 0;
+} 
+@if (Model.Rol == 6)
+{
+    ViewBag.Descripcion = "Ractificar expedientes de la entidad";
+}
+else
+{
+    ViewBag.Descripcion = "Registro de expedientes de la entidad";
+}
+<div style="position: absolute;right: 15px;top: 65px; /* padding-top: 15px; */ margin-bottom: 0;">
+
+
+    
+    @if (Model.Rol != 6 && Model.Rol != 7 && Model.Rol != 8 && Model.Rol != 1 && Model.Rol != 10)
+    {
+        if (Model.Ayuda == 1)
+        {
+
+            <a class="btn btn-success pulsesut-button" href="javascript:sut.Expediente.nuevo()"><i class="fa fa-plus"></i> Nuevo</a>
+        }
+        else
+        {
+            if (Model.rolmenu[0].Nuevo == true)
+            {
+                <a class="btn btn-success" href="javascript:sut.Expediente.nuevo()"><i class="fa fa-plus"></i> Nuevo</a>
+            }
+        }
+
+    }
+    else if (Model.TipoTupa == 2)
+    {
+        <a class="btn btn-success" href="javascript:sut.Expediente.nuevo()"><i class="fa fa-plus"></i> Nuevo</a>
+    }
+    @if (Model.Rol == 1)
+    {
+        <a class="btn btn-primary " id="descargar" href="javascript:sut.Expediente.Descargar()"><i class="fa fa-download"></i>Descargar</a>
+
+    }
+
+
+    @*<a class="btn btn-facebook" href="javascript:sut.Expediente.alerta()"><i class="fa fa-filter"></i> Filtros</a>*@
+    @*<a class="btn btn-dropbox" href="javascript:sut.Expediente.alerta()"><i class="fa fa-arrow-circle-down"></i> Descargar</a>*@
+</div>
+<div id="mensajes"></div>
+
+ 
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body">
+                
+                <div class="table-responsive">
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="999999"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.Expediente.listar"
+                           data-paginator="paginator">
+
+                        @if (Model.Sector == 80 || Model.Sector == 79)
+                        {
+                            if (Model.Rol == 6)
+                            {
+                                <thead>
+                                    <tr>
+                                        <th class="colNro">Nro.</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;"></th>
+                                        <th>Expediente</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Tipo</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Entidad</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Departamento</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Provincia</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
+                                        <th>Ratificador</th>
+                                        <th colspan="3">Entidad Fiscalizadora</th>
+                                        @*<th class="colAction"></th>*@
+                                    </tr>
+                                    <tr>
+                                        <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                        <th><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></th>
+                                        <th style="vertical-align: middle !important;">Municipalidad Provincial</th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">INDECOPI</th>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                            }
+                            else if (Model.Sector == 79 && Model.Rol != 6)
+                            {
+                                <thead>
+                                    <tr>
+                                        <th class="colNro">Nro.</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;"></th>
+                                        <th>Expediente</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Tipo</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
+                                        <th colspan="3">Entidad Fiscalizadora</th>
+                                        @*<th class="colAction"></th>*@
+                                    </tr>
+                                    <tr>
+                                        <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                        <th><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">INDECOPI</th>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                            }
+                            else
+                            {
+                                <thead>
+                                    <tr>
+                                        <th class="colNro">Nro.</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;"></th>
+                                        <th>Expediente</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Tipo</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
+                                        <th>Ratificador</th>
+                                        <th colspan="3">Entidad Fiscalizadora</th>
+                                        @*<th class="colAction"></th>*@
+                                    </tr>
+                                    <tr>
+                                        <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                        <th><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></th>
+                                        <th style="vertical-align: middle !important;">Municipalidad Provincial</th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">INDECOPI</th>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                            }
+                        }
+                        else if ((Model.CodPadre == "1" || Model.CodPadre == "2" && Model.Rol != 8) || (Model.EntidadId == 4105 && Model.Rol == 7) || (Model.EntidadId == 18497 && Model.Rol == 7))
+                        {
+
+                            if (Model.Rol == 7)
+                            {
+                                <thead>
+                                    <tr>
+                                        <th class="colNro">Nro.</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;"></th>
+                                        <th>Expediente</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Tipo</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Entidad</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Departamento</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Provincia</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
+                                        <th colspan="3">Evaluador</th>
+                                        <th colspan="3">Entidad Fiscalizadora</th>
+                                        @*<th class="colAction"></th>*@
+                                    </tr>
+                                    <tr>
+                                        <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                        <th><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></th>
+                                        <th style="vertical-align: middle !important;">Ministerio</th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">INDECOPI</th>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                            }
+                            else
+                            {
+                                <thead>
+                                    <tr>
+                                        <th class="colNro">Nro.</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;"></th>
+                                        <th>Expediente</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Tipo</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
+                                        <th colspan="3">Evaluador</th>
+                                        <th colspan="3">Entidad Fiscalizadora</th>
+                                        @*<th class="colAction"></th>*@
+                                    </tr>
+                                    <tr>
+                                        <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                        <th><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></th>
+                                        <th style="vertical-align: middle !important;">Ministerio</th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">INDECOPI</th>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                            }
+                        }
+                        else
+                        {
+
+                            if (Model.Rol == 8)
+                            {
+                                <thead>
+                                    <tr>
+                                        <th class="colNro">Nro.</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;"></th>
+                                        <th>Expediente</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Tipo</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Entidad</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Departamento</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Provincia</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
+                                        <th colspan="3">Entidad Fiscalizadora</th>
+                                        @*<th class="colAction"></th>*@
+                                    </tr>
+                                    <tr>
+                                        <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                        <th><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">INDECOPI</th>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+
+                            }
+                            else if (Model.Rol == 1 && Model.EntidadId == 4105)
+                            {
+                                <thead>
+                                    <tr>
+                                        <th class="colNro">Nro.</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;"></th>
+                                        <th>Expediente</th>
+                                        <th style="vertical-align: middle !important;">Tipo</th>
+                                        <th style="vertical-align: middle !important;">Entidad</th>
+                                        <th style="vertical-align: middle !important;">Departamento</th>
+                                        <th style="vertical-align: middle !important;">Provincia</th>
+                                        <th style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th style="vertical-align: middle !important;">PublicarCIU</th>
+                                        <th style="vertical-align: middle !important;">Estado</th>
+                                        <th colspan="2" rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
+                                        <th>Ratificador</th>
+                                        <th colspan="3">Entidad Evaluadora</th>
+                                        <th colspan="3">Entidad Fiscalizadora</th>
+                                        <th style="vertical-align: middle !important;">PublicarExp</th>
+                                        <th style="vertical-align: middle !important;">Importar</th>
+                                        <th style="vertical-align: middle !important;">Reportes</th>
+                                        @*<th class="colAction"></th>*@
+                                    </tr>
+                                    <tr>
+                                        <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                        <th><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></th>
+                                        <th>@Html.DropDownList("filtroEstadoTipo", ViewBag.publicarEstadoTipo as List<SelectListItem>, new { @id = "cbFilterEstadoTipo", @class = "form-control" })</th>
+                                        <th><input id="txtFilterEntidad" type="text" class="form-control input-sm" /></th>
+                                        <th>@Html.DropDownList("filterDepartamento", ViewBag.ListaDepartamento as List<SelectListItem>, new { @id = "cbFilterDepartamento", @class = "form-control input-sm" })</th>
+                                        <th>@Html.DropDownList("filterProvincia", ViewBag.ListaProvincia as List<SelectListItem>, new { @id = "cbFilterProvincia", @class = "form-control input-sm" })</th>
+                                        <th><input id="txtFilterCreacion" type="text" class="form-control input-sm" /></th>
+                                        <th>@Html.DropDownList("filtropublicar", ViewBag.publicarCIU as List<SelectListItem>, new { @id = "cbFilterpublicar", @class = "form-control" })</th>
+                                        <th>@Html.DropDownList("filtroEstado", ViewBag.publicarEstado as List<SelectListItem>, new { @id = "cbFilterEstado", @class = "form-control" })</th>
+                                        <th style="vertical-align: middle !important;">Municipalidad<br />Provincial</th>
+                                        <th style="vertical-align: middle !important;">Ministerio</th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">INDECOPI</th>
+                                        <th>@Html.DropDownList("filtropublicarExp", ViewBag.publicarEstandar as List<SelectListItem>, new { @id = "cbFilterpublicarexp", @class = "form-control" })</th>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+
+                            }
+
+
+                            else if (Model.Rol == 10 && Model.EntidadId == 4105)
+                            {
+                                <thead>
+                                    <tr>
+                                        <th class="colNro">Nro.</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;"></th>
+                                        <th>Expediente</th>
+                                        <th style="vertical-align: middle !important;">Tipo</th>
+                                        <th style="vertical-align: middle !important;">Entidad</th>
+                                        <th style="vertical-align: middle !important;">Departamento</th>
+                                        <th style="vertical-align: middle !important;">Provincia</th>
+                                        <th style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th style="vertical-align: middle !important;">PublicarCIU</th>
+                                        <th style="vertical-align: middle !important;">Estado</th>
+                                        <th colspan="2" rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
+                                        <th>Ratificador</th>
+                                        <th colspan="3">Entidad Evaluadora</th>
+                                        <th colspan="3">Entidad Fiscalizadora</th>
+                                        <th style="vertical-align: middle !important;">PublicarExp</th>
+                                        <th style="vertical-align: middle !important;">Importar</th>
+                                        @*<th class="colAction"></th>*@
+                                    </tr>
+                                    <tr>
+                                        <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                        <th><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></th>
+                                        <th>@Html.DropDownList("filtroEstadoTipo", ViewBag.publicarEstadoTipo as List<SelectListItem>, new { @id = "cbFilterEstadoTipo", @class = "form-control" })</th>
+                                        <th><input id="txtFilterEntidad" type="text" class="form-control input-sm" /></th>
+                                        <th>@Html.DropDownList("filterDepartamento", ViewBag.ListaDepartamento as List<SelectListItem>, new { @id = "cbFilterDepartamento", @class = "form-control input-sm" })</th>
+                                        <th>@Html.DropDownList("filterProvincia", ViewBag.ListaProvincia as List<SelectListItem>, new { @id = "cbFilterProvincia", @class = "form-control input-sm" })</th>
+                                        <th><input id="txtFilterCreacion" type="text" class="form-control input-sm" /></th>
+                                        <th>@Html.DropDownList("filtropublicar", ViewBag.publicarCIU as List<SelectListItem>, new { @id = "cbFilterpublicar", @class = "form-control" })</th>
+                                        <th>@Html.DropDownList("filtroEstado", ViewBag.publicarEstado as List<SelectListItem>, new { @id = "cbFilterEstado", @class = "form-control" })</th>
+                                        <th style="vertical-align: middle !important;">Municipalidad<br />Provincial</th>
+                                        <th style="vertical-align: middle !important;">Ministerio</th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">INDECOPI</th>
+                                        <th>@Html.DropDownList("filtropublicarExp", ViewBag.publicarEstandar as List<SelectListItem>, new { @id = "cbFilterpublicarexp", @class = "form-control" })</th>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+
+                            }
+
+                            else
+                            {
+                                <thead>
+                                    <tr>
+                                        <th class="colNro">Nro.</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;"></th>
+                                        <th>Expediente</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Tipo</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Modificación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
+                                        <th colspan="3">Entidad Fiscalizadora</th>
+                                        @*<th class="colAction"></th>*@
+                                    </tr>
+                                    <tr>
+                                        <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                        <th><input id="txtFilterCodigo" type="text" class="form-control input-sm" /></th>
+                                        <th style="vertical-align: middle !important;">PCM</th>
+                                        <th style="vertical-align: middle !important;">MEF</th>
+                                        <th style="vertical-align: middle !important;">INDECOPI</th>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+
+
+                            }
+                        }
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr><td colspan="16"><div id="paginator"></div></td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div> 
+
+<div class="minmaxConayuda">
+    <div class="modal fade mymodal" id="modalAyudaAvatar1">
+        <div class="modal-dialog  ">
+            <div class="modal-content">
+                <div class="modal-body" id="contenido" style="padding:0px">
+                    <div class="bar-title" id="tituloocultar">
+                        <a class="close modalMinimize" style="padding:110px; right: 20px;  top: -100px; background: transparent"> <i class='fa fa-clone '></i> </a>
+                        <span>
+                            <h3 id="ihtitulo1" style="font-size: x-large;text-align: center;font-family: initial;"> Hola @Model.Nombres </h3>
+                        </span>
+                    </div>
+
+                    <div>                         
+                        <div id="idtitulo1" style="text-align:left">
+                            <div class="col-sm-3 col-xs-2">
+                                <a class="modalMinimize" title="Minimizar" style="color:black"> <i class='fa fa-minus fa-2x'></i> </a>
+                                <img src="~/dist/img/hola.png" class="img-rounded" alt="Cinque Terre" />
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje1" style="display: none; width:409px;height:100%;top:137px">
+                                <sp style="text-align: left;font-family: initial;"> Clic en </sp>
+                                <a class="btn btn-success btn-xs" href="#"><i class="fa fa-plus"></i> Nuevo</a>
+                                <l style="text-align: left;font-family: initial;">para agregar un Expediente ¡Suerte!</l>
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje2" style="display: none; width:440px;height:100%;top:103px">
+                                <j2 style="text-align: left;font-family: initial;"> ¡Felicidades! Termina de Completar tu expediente y podrás Publicar Clic en </j2>
+                                <a id="clic" style="display: none;" class="btn btn-success btn-xs" href="#"><i class="fa fa-pencil"></i></a>
+                                <l1 style="text-align: left;font-family: initial;"> para continuar. ¡Tú puedes! </l1>
+                            </div> 
+                            <div class="caja col-sm-5" id="mensaje3" style="display: none; width:440px;height:100%;top:103px">
+                                <j2 style="text-align: left;font-family: initial;"> ¡Felicidades! Tienes tu primer TUPA Vigente. Cuando necesites modificar, debes crear un nuevo epediente dando clic en </j2>
+                                <a id="clic"   class="btn btn-success btn-xs" href="#"><i class="fa fa-plus"></i> Nuevo</a>
+                                <l1 style="text-align: left;font-family: initial;"> para crear otro Epediente. ¡Tú puedes! </l1>
+                            </div> 
+                        </div>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="minmaxCon"></div>
+
+
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="6"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 60px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        }
+         
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.Expediente = {
+            tipoExpColor: ['', 'label-warning', 'label-primary'],
+            tipoExpediente: ['', 'CARGA INICIAL', 'EXPEDIENTE REGULAR'],
+
+            estadoExpColor: ['', 'label-primary', 'label-warning', 'label-success', 'label-danger', 'bg-gray-active', 'label-info', 'label-public'],
+            estadoExpediente: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+
+            estadoRactificador: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+            estadoEvaluadorMinisterio: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+            estadoEvaluadorPCM: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+            estadoEvaluadorMEF: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+            estadoFiscalizadorPCM: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+            estadoFiscalizadorMEF: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+            estadoFiscalizadorINDECOPI: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+
+            alerta:function () {
+                showNotification('top', 'right', 'Implementando en la operación', 3);
+            },
+            nuevo: function () {
+
+
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/Expediente/Nuevo',
+                    url:'@Url.Content("~/Simplificacion/Expediente/Nuevo")',
+                    data: {},
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.appendProgress('boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeProgress('boxLista');
+
+                        debugger;
+                        if (data.cargainicial) {
+
+
+                            $.ajax({
+                                type: "GET",
+                                //url: '/Simplificacion/Expediente/DeclaracionJurada',
+                                url:'@Url.Content("~/Simplificacion/Expediente/DeclaracionJurada")',
+                                data: { },
+                                cache: false,
+                                beforeSend: function () {
+                                    sut.wait.modal('ventana-container');
+                                    $('#modal-ventana').modal('show');
+                                },
+                                success: function (data) {
+                                    $('#ventana-container').html(data);
+                                },
+                                error: function (result) {
+                                    $('#modal-ventana').modal('hide');
+                                    sut.error.show('mensajes', result.responseText);
+                                }
+                            });
+
+
+
+                        } else {
+
+                            $.ajax({
+                                type: "GET",
+                                //url: '/Simplificacion/Expediente/ValidarNuevoExpediente',
+                                url:'@Url.Content("~/Simplificacion/Expediente/ValidarNuevoExpediente")',
+                                data: { tipo: 2 },
+                                cache: false,
+                                beforeSend: function () {
+                                    sut.wait.appendProgress('boxLista');
+                                },
+                                success: function (data) {
+
+                                    debugger;
+                                    if (data.resultado == "") {
+                                        sut.msg.confirm('Se generará un nuevo expediente', function () {
+                                            $.ajax({
+                                                type: "GET",
+                                                //url: '/Simplificacion/Expediente/GeneraNuevo',
+                                                url:'@Url.Content("~/Simplificacion/Expediente/GeneraNuevo")',
+                                                data: { tipo: 2 },
+                                                cache: false,
+                                                beforeSend: function () {
+                                                    sut.wait.modal('ventana-container');
+                                                    $('#modal-ventana').modal('show');
+                                                },
+                                                success: function (data) {
+                                                    sut.wait.removeProgress('boxLista');
+                                                    if (data.exito) {
+                                                        //window.location = '/Simplificacion/Expediente/Editar/' + data.ExpedienteId;
+                                                        window.location = '@Url.Content("~/Simplificacion/Expediente/Editar/")'+data.ExpedienteId;
+                                                    }
+                                                },
+                                                error: function (result) {
+                                                    sut.wait.removeProgress('boxLista');
+                                                    sut.error.show('mensajes', result.responseText);
+                                                }
+                                            });
+                                        });
+                                    } else {
+                                        sut.wait.removeProgress('boxLista');
+                                        showNotification('top', 'right', data.resultado, 2);
+                                    }
+
+                                },
+                                error: function (result) {
+                                    sut.wait.removeProgress('boxLista');
+                                    sut.error.show('mensajes', result.responseText);
+                                }
+                            });
+
+
+                        }
+                    },
+                    error: function (result) {
+                        sut.wait.removeProgress('boxLista');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+
+              Descargar: function () {
+
+                document.location.target='_blank';
+                window.location.href = "@Url.Content("~/General/Reporte/rptExpediente")";
+
+
+            },
+            detalleDes: function (id) {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/Expediente/InformacionAdicional',
+                    url:'@Url.Content("~/Simplificacion/Expediente/InformacionAdicional")',
+                    data: { id: id},
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            editar: function (id) {
+                //window.location = '/Simplificacion/Expediente/Editar/' + id;
+                window.location = '@Url.Content("~/Simplificacion/Expediente/Editar/")'+id;
+            },
+            editarobservacion: function (id) {
+
+                //window.location = '/Simplificacion/Expediente/EditarObservacion/' + id;
+                window.location = '@Url.Content("~/Simplificacion/Expediente/EditarObservacion/")'+id;
+            },
+            listar: function (page) {
+
+                table = $('#tblLista');
+                var model = {
+                    'filtro.Codigo': $('#txtFilterCodigo').val(),
+                    'filtro.EstadoId': $('#cbFilterEstado').val(),
+                    'filtro.Entidad.Provincia.Departamento.DepartamentoId': $('#cbFilterDepartamento').val(),
+                    'filtro.ProvinciaId': $('#cbFilterProvincia').val(),
+                    'filtro.publicarCIU': $('#cbFilterpublicar').val(),
+                    'filtro.PublicEstandar': $('#cbFilterpublicarexp').val(),
+                    'filtro.EstadoTipo': $('#cbFilterEstadoTipo').val(),
+                    'filtro.FecCreaciontexto': $('#txtFilterCreacion').val(),
+                    'filtro.Entidadtexto': $('#txtFilterEntidad').val(),
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+
+                $.ajax({
+
+                    //url: '/Simplificacion/Expediente/GetAllLikePagin',
+                    url:'@Url.Content("~/Simplificacion/Expediente/GetAllLikePagin")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        debugger;
+                        if (data.rol == 6) {
+                            sut.Expediente.generarratificadorpro(data.lista);
+                            if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='13' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        } else if (data.rol == 7) {
+                            sut.Expediente.generarevaluador(data.lista);
+                            if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='14' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        } else if (data.rol == 8) {
+                            sut.Expediente.generarfiscalizadora(data.lista);
+                            if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='14' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        }
+                        else if (data.rol == 1) {
+                            sut.Expediente.generarfiscalizadoratodo(data.lista);
+                            if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='14' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        }else {
+                            sut.Expediente.generar(data.lista);
+                            if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='11' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        }
+
+
+
+                        if (data.totalRows < 1) {
+                            $('#mensaje1').show();
+                            $('#mensaje2').hide();
+                            $('#mensaje3').hide();
+
+                        } else {
+                            if (expestado==7){
+
+                                $('#mensaje3').show();
+                                $('#mensaje2').hide();
+                                $('#mensaje1').hide();
+                                sut.control.Actualizartexto();
+                            }else
+                            {
+                                $('#mensaje2').show();
+                                $('#mensaje1').hide();
+                                $('#mensaje3').hide();
+                                sut.control.Actualizartexto();
+                            }
+                        }
+                        //debugger;
+                        //$("#tblLista").offset({ top: 800, left: 200 });
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            generarratificadorpro: function (lista) {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += '<td>';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-facebook btn-xs" data-toggle="tooltip" data-placement="right" title="Más Información" href="javascript:sut.Expediente.detalleDes({0})" ><i class="fa fa-bars"></i></a>', r.ExpedienteId);
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.Codigo);
+                    rows += sut.string.format('<td style="text-align: center;" ><small class="label {0}">{1}</small></td>', sut.Expediente.tipoExpColor[r.TipoExpediente], sut.Expediente.tipoExpediente[r.TipoExpediente]);
+                    rows += sut.string.format('<td style="text-align: left ;">{0}</td>', r.NomEntidad);
+                    rows += sut.string.format('<td style="text-align: left ;">{0}</td>', r.Departamento);
+                    rows += sut.string.format('<td style="text-align: left ;">{0}</td>', r.Provincia);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecModificacion);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoExpediente], sut.Expediente.estadoExpediente[r.EstadoExpediente]);
+                    rows += '<td style="text-align: center; background:#dd4b392e">';
+                    rows += '<div class="btn-group" >';
+                    rows += sut.string.format('<a class="btn btn-success btn-xs " data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.Expediente.editarobservacion({0})" ><i class="fa fa-pencil"></i></a>', r.ExpedienteId);
+                    //if (r.EstadoExpediente == 7) {
+                    //    rows += sut.string.format('<a class="btn btn-success btn-xs" href="javascript:sut.Expediente.publicacionarchivo({0})"  ><i class="fa fa-search"></i></a>', r.ExpedienteId);
+                    //}
+                    expestado=r.EstadoExpediente;
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoRactificador], sut.Expediente.estadoRactificador[r.EstadoRactificador]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorPCM], sut.Expediente.estadoFiscalizadorPCM[r.EstadoFiscalizadorPCM]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorMEF], sut.Expediente.estadoFiscalizadorMEF[r.EstadoFiscalizadorMEF]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorINDECOPI], sut.Expediente.estadoFiscalizadorINDECOPI[r.EstadoFiscalizadorINDECOPI]);
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+
+            },
+            generarevaluador: function (lista) {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += '<td>';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-facebook btn-xs" data-toggle="tooltip" data-placement="right" title="Más Información" href="javascript:sut.Expediente.detalleDes({0})" ><i class="fa fa-bars"></i></a>', r.ExpedienteId);
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.Codigo);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.tipoExpColor[r.TipoExpediente], sut.Expediente.tipoExpediente[r.TipoExpediente]);
+                    rows += sut.string.format('<td style="text-align: left ;">{0}</td>', r.NomEntidad);
+                    rows += sut.string.format('<td style="text-align: left ;">{0}</td>', r.Departamento);
+                    rows += sut.string.format('<td style="text-align: left ;">{0}</td>', r.Provincia);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecModificacion);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoExpediente], sut.Expediente.estadoExpediente[r.EstadoExpediente]);
+                    rows += '<td style="text-align: center;background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.Expediente.editarobservacion({0})" ><i class="fa fa-pencil"></i></a>', r.ExpedienteId);
+                    //if (r.EstadoExpediente == 7) {
+                    //    rows += sut.string.format('<a class="btn btn-success btn-xs" href="javascript:sut.Expediente.publicacionarchivo({0})"  ><i class="fa fa-search"></i></a>', r.ExpedienteId);
+                    //}
+                    expestado=r.EstadoExpediente;
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoEvaluadorMinisterio], sut.Expediente.estadoRactificador[r.EstadoEvaluadorMinisterio]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoEvaluadorPCM], sut.Expediente.estadoRactificador[r.EstadoEvaluadorPCM]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoEvaluadorMEF], sut.Expediente.estadoRactificador[r.EstadoEvaluadorMEF]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorPCM], sut.Expediente.estadoFiscalizadorPCM[r.EstadoFiscalizadorPCM]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorMEF], sut.Expediente.estadoFiscalizadorMEF[r.EstadoFiscalizadorMEF]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorINDECOPI], sut.Expediente.estadoFiscalizadorINDECOPI[r.EstadoFiscalizadorINDECOPI]);
+                    rows += sut.string.format('<td style="display:none;">{0}</td>', r.DepartamentoId);
+                    rows += sut.string.format('<td style="display:none;">{0}</td>', r.ProvinciaId);
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+
+            },
+            generarfiscalizadora: function (lista) {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += '<td>';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-facebook btn-xs" data-toggle="tooltip" data-placement="right" title="Más Información" href="javascript:sut.Expediente.detalleDes({0})" ><i class="fa fa-bars"></i></a>', r.ExpedienteId);
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.Codigo);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.tipoExpColor[r.TipoExpediente], sut.Expediente.tipoExpediente[r.TipoExpediente]);
+                    rows += sut.string.format('<td style="text-align: left ;">{0}</td>', r.NomEntidad);
+                    rows += sut.string.format('<td style="text-align: left ;">{0}</td>', r.Departamento);
+                    rows += sut.string.format('<td style="text-align: left ;">{0}</td>', r.Provincia);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecModificacion);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoExpediente], sut.Expediente.estadoExpediente[r.EstadoExpediente]);
+                    rows += '<td style="text-align: center;background:#dd4b392e ">';
+                    rows += '<div class="btn-group"">';
+                    rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.Expediente.editarobservacion({0})" ><i class="fa fa-pencil"></i></a>', r.ExpedienteId);
+                    //if (r.EstadoExpediente == 7) {
+                    //    rows += sut.string.format('<a class="btn btn-success btn-xs" href="javascript:sut.Expediente.publicacionarchivo({0})"  ><i class="fa fa-search"></i></a>', r.ExpedienteId);
+                    //}
+                    expestado=r.EstadoExpediente;
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorPCM], sut.Expediente.estadoFiscalizadorPCM[r.EstadoFiscalizadorPCM]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorMEF], sut.Expediente.estadoFiscalizadorMEF[r.EstadoFiscalizadorMEF]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorINDECOPI], sut.Expediente.estadoFiscalizadorINDECOPI[r.EstadoFiscalizadorINDECOPI]);
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+
+            },
+            Activarpublicado: function (ExpedienteId, Estado) {
+
+
+                sut.msg.confirm('Está seguro de publicar al ciudadano ', function () {
+
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Content("~/Simplificacion/Expediente/activarpublicado")',
+                        data: { expedienteId: ExpedienteId, estado: Estado },
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            //$('#modal-ventana').modal('hide');
+                            if(Estado==1){
+                                showNotification('top', 'right', 'Se activo correctamente', 1);
+                            }else
+                            {
+                                showNotification('top', 'right', 'Se inactivo correctamente', 1);
+                            }
+
+                            //location.reload();
+                            sut.Expediente.listar(1);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+
+                            showNotification('top', 'right', 'error en la publicación', 2);
+                            //sut.error.show('mensajes', "Ya Existe Información en la tabla Asme favor de eliminar las actividades para poder copiar");
+                        }
+                    });
+
+                });
+            },
+            ActivarpublicadoExp: function (ExpedienteId, Estado) {
+
+                sut.msg.confirm('Está seguro de habilitar la publicación directa ', function () {
+
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Content("~/Simplificacion/Expediente/activarpublicadoexp")',
+                        data: { expedienteId: ExpedienteId, estado: Estado },
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            //$('#modal-ventana').modal('hide');
+                            if(Estado==1){
+                                showNotification('top', 'right', 'Se activo correctamente', 1);
+                            }else
+                            {
+                                showNotification('top', 'right', 'Se inactivo correctamente', 1);
+                            }
+
+                            //location.reload();
+                            sut.Expediente.listar(1);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+
+                            showNotification('top', 'right', 'error en la publicación', 2);
+                            //sut.error.show('mensajes', "Ya Existe Información en la tabla Asme favor de eliminar las actividades para poder copiar");
+                        }
+                    });
+
+                });
+            },
+            generarfiscalizadoratodo: function (lista) {
+
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var entidad = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+                    var nombre='@Model.NomRol';
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += '<td>';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-facebook btn-xs" data-toggle="tooltip" data-placement="right" title="Más Información" href="javascript:sut.Expediente.detalleDes({0})" ><i class="fa fa-bars"></i></a>', r.ExpedienteId);
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.Codigo);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.tipoExpColor[r.TipoExpediente], sut.Expediente.tipoExpediente[r.TipoExpediente]);
+                    rows += sut.string.format('<td style="text-align: left ;">{0}</td>', r.NomEntidad);
+                    rows += sut.string.format('<td style="text-align: left ;">{0}</td>', r.Departamento);
+                    rows += sut.string.format('<td style="text-align: left ;">{0}</td>', r.Provincia);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecModificacion);
+                    rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    if (r.EstadoExpediente == 7  && nombre !="usuariolocador" ) {
+                        if (r.publicarCIU == 1 ) {
+                            rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Plazos Atención" href="javascript:sut.Expediente.Activarpublicado({0},{1})" >SI</a>', r.ExpedienteId, 2);
+                        } else
+                        {
+                            rows += sut.string.format('<a class="btn btn-primary btn-xs"   data-placement="left" title="Plazos Atención" href="javascript:sut.Expediente.Activarpublicado({0},{1})" >NO</i></a>', r.ExpedienteId, 1);
+                        }
+                    }
+                    else
+                    {
+                        //rows += sut.string.format('<td style="text-align: center;"></td>');
+                    }
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoExpediente], sut.Expediente.estadoExpediente[r.EstadoExpediente]);
+                    @*rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.Expediente.editarobservacion({0})" ><i class="fa fa-pencil"></i></a>', r.ExpedienteId);
+                    if ('@Model.Rol'== 1 && '@Model.EntidadId'==4105 && r.TipoExpediente==1  && r.EstadoExpediente == 7){
+                        rows += sut.string.format('<a class="btn btn-dropbox btn-xs" href="javascript:sut.Expediente.despublicarcargainicial({0})" title="Despublicar Expediente" ><i class="fa fa-retweet"></i></a>', r.ExpedienteId);
+                    }*@
+
+
+
+
+                    if( entidad!=r.NomEntidad){
+                        if ('@Model.Rol'== 1 && '@Model.EntidadId'==4105  && (r.EstadoExpediente == 7 || r.EstadoExpediente == 5|| r.EstadoExpediente == 2)  )
+                        {
+
+                            rows += '<td style="text-align: center; background:#dd4b392e ">';
+                            rows += '<div class="btn-group" >';
+                            rows += sut.string.format('<a class="btn btn-success btn-xs"  data-placement="left" title="Editar" href="javascript:sut.Expediente.editarobservacion({0})" ><i class="fa fa-pencil"></i></a>', r.ExpedienteId);
+                            rows += '</div>';
+                            rows += '</td>';
+
+                            rows += '<td style="text-align: center; background:#dd4b392e ">';
+                            rows += '<div class="btn-group" >';
+                            if( nombre !="usuariolocador")
+                            {
+                                rows += sut.string.format('<a class="btn btn-dropbox btn-xs" data-placement="left" title="Volver a Proceso" href="javascript:sut.Expediente.despublicarcargainicial({0})" title="Despublicar Expediente" ><i class="fa fa-history"></i></a>', r.ExpedienteId);
+                            }
+
+                            if(r.GenerarPDF==0 && r.EstadoExpediente == 7 && nombre !="usuariolocador")
+                            {
+                                rows += sut.string.format('<a class="btn btn-danger btn-xs" data-placement="left" title="Generar Tupa individual" href="javascript:sut.Expediente.generartupaindividual({0})" title="Generar Tupa" ><i class="fa fa-book"></i></a>', r.ExpedienteId);
+                            }
+                            rows += '</div>';
+                            rows += '</td>';
+
+                        }
+                        else
+                        {
+                            rows += '<td colspan="2" style="text-align: center; background:#dd4b392e ">';
+                            rows += '<div class="btn-group" >';
+                            rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Editar" href="javascript:sut.Expediente.editarobservacion({0})" ><i class="fa fa-pencil"></i></a>', r.ExpedienteId);
+                            if(r.GenerarPDF==0 && r.EstadoExpediente == 7 && nombre !="usuariolocador")
+                            {
+                                rows += sut.string.format('<a class="btn btn-danger btn-xs" data-placement="left" title="Generar Tupa individual" href="javascript:sut.Expediente.generartupaindividual({0})" title="Generar Tupa" ><i class="fa fa-book"></i></a>', r.ExpedienteId);
+                            }
+                            rows += '</div>';
+                            rows += '</td>';
+
+                        }
+                    }
+                    else
+                    {
+                        rows += '<td colspan="2" style="text-align: center; background:#dd4b392e ">';
+                        rows += '<div class="btn-group" >';
+                        rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Editar" href="javascript:sut.Expediente.editarobservacion({0})" ><i class="fa fa-pencil"></i></a>', r.ExpedienteId);
+                        if(r.GenerarPDF==0 && r.EstadoExpediente == 7 && nombre !="usuariolocador")
+                        {
+                            rows += sut.string.format('<a class="btn btn-danger btn-xs" data-placement="left" title="Generar Tupa individual" href="javascript:sut.Expediente.generartupaindividual({0})" title="Generar Tupa" ><i class="fa fa-book"></i></a>', r.ExpedienteId);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';
+
+                    }
+                    entidad=r.NomEntidad;
+                    //if (r.EstadoExpediente == 7) {
+                    //    rows += sut.string.format('<a class="btn btn-success btn-xs" href="javascript:sut.Expediente.publicacionarchivo({0})"  ><i class="fa fa-search"></i></a>', r.ExpedienteId);
+                    //}
+                    expestado=r.EstadoExpediente;
+                    //rows += '</div>';
+                    //rows += '</td>';
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoRactificador], sut.Expediente.estadoRactificador[r.EstadoRactificador]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoEvaluadorMinisterio], sut.Expediente.estadoRactificador[r.EstadoEvaluadorMinisterio]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoEvaluadorPCM], sut.Expediente.estadoRactificador[r.EstadoEvaluadorPCM]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoEvaluadorMEF], sut.Expediente.estadoRactificador[r.EstadoEvaluadorMEF]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorPCM], sut.Expediente.estadoFiscalizadorPCM[r.EstadoFiscalizadorPCM]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorMEF], sut.Expediente.estadoFiscalizadorMEF[r.EstadoFiscalizadorMEF]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorINDECOPI], sut.Expediente.estadoFiscalizadorINDECOPI[r.EstadoFiscalizadorINDECOPI]);
+                    rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+
+
+
+                    if (r.EstadoExpediente == 1  && nombre !="usuariolocador") {
+                        if (r.PublicEstandar == 0 ) {
+
+                            rows += sut.string.format('<a  class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="left" title="Editar Publicación" href="javascript:sut.Expediente.editarpublicestandar({0})" ></i>Sin Acción</a>', r.ExpedienteId);
+                        }
+                        else if (r.PublicEstandar == 1 )
+                        {
+                            rows += sut.string.format('<a  class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar Publicación " href="javascript:sut.Expediente.editarpublicestandar({0})" ></i>Publicación</a>', r.ExpedienteId);
+                        }
+                        else if (r.PublicEstandar == 2 )
+                        {
+                            rows += sut.string.format('<a  class="btn btn-dropbox  btn-xs" data-toggle="tooltip" data-placement="left" title="Editar Publicación " href="javascript:sut.Expediente.editarpublicestandar({0})" ></i>Presentación</a>', r.ExpedienteId);
+                        }
+                    }
+                    else
+                    {
+                        //rows += sut.string.format('<td style="text-align: center;"></td>');
+                    }
+                    rows += '</div>';
+                    rows += '</td>';
+
+                    rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+
+                    if (r.EstadoExpediente == 1 || r.EstadoExpediente == 4 || r.EstadoExpediente == 6  && nombre != "usuariolocador") {
+                        if (r.Importar == 0) {
+
+                            rows += sut.string.format('<a  class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="left" title="No Importar" href="javascript:sut.Expediente.ImportarPAEliminados({0})" ></i>No Importar</a>', r.ExpedienteId);
+                        }
+                        else if (r.Importar == 1) {
+                            rows += sut.string.format('<a  class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Importar " href="javascript:sut.Expediente.ImportarPAEliminados({0})" ></i>Importar</a>', r.ExpedienteId);
+                        }
+                    }
+                    else {
+                        //rows += sut.string.format('<td style="text-align: center;"></td>');
+                    }
+                    rows += '</div>'; 
+                    rows += '</td>';
+
+
+                    rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    rows += sut.string.format('<a  class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Reporte " href="javascript:sut.Expediente.detallereporte({0})" ></i>Descargar</a>', r.ExpedienteId);
+                    rows += '</div>';
+                    rows += '</td>';
+
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+
+            },
+
+             detallereporte: function (Id) {
+
+                debugger;
+                 window.location = "@Url.Content("~/Simplificacion/Expediente/ListadetalleReporte")?id=" + Id;
+
+            },
+            editarpublicestandar: (id) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Expediente/Editarpublicestandar")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            ImportarPAEliminados: (id) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Expediente/ImportarPAEliminados")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            publicacionarchivo: (id) => {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/Expediente/EditarPublicadoGrilla',
+                    url: '@Url.Content("~/Simplificacion/Expediente/EditarPublicadoGrilla")',
+                    data: { ExpedienteId: id },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+
+            despublicarcargainicial: (id) => {
+
+                sut.msg.confirm('Si des publica el expediente, este pasará a ser un expediente en proceso y por lo tanto ya no sera un TUPA Vigente.', () => {
+                    $.ajax({
+                        @*url: "/Simplificacion/Expediente/Publicar/@Model.ExpedienteId",*@
+                        url: '@Url.Content("~/Simplificacion/Expediente/DesPublicarCargaInicial")',
+                        type: "GET",
+                        data: { ExpedienteId: id },
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+
+
+
+                            sut.wait.removeOverlay('#boxLista');
+                            if (data.valid) {
+                                //window.location = '/Simplificacion/Expediente/Lista';
+                                @*window.location = '@Url.Content("~/Simplificacion/Expediente/Lista")';*@
+                                showNotification('top', 'right', 'Se volvio al estado Procesado.', 1);
+                                sut.Expediente.listar(1);
+                            }
+                            else
+                            {
+                                showNotification('top', 'right', 'No se podra despublicar ya que cuenta con un expediente regular o el expediente no es el último creado.', 2);
+                            }
+                        },
+                        error: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            sut.error.show('mensajes', data.responseText);
+                            console.log(data.responseText);
+                        }
+                    });
+                });
+            },
+
+
+            generartupaindividual: (id) => {
+
+                $.ajax({
+                    @*url: "/Simplificacion/Expediente/Publicar/@Model.ExpedienteId",*@
+                    url: '@Url.Content("~/General/Reporte/Generartupaindividual")',
+                    type: "GET",
+                    data: { ExpedienteId: id },
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+
+
+
+                        sut.wait.removeOverlay('#boxLista');
+                        if (data.valid) {
+                            showNotification('top', 'right', 'Se Genero el Procesado.', 1);
+                            sut.Expediente.listar(1);
+                        }
+                        else
+                        {
+                            showNotification('top', 'right', 'Erro al generar los tupa.', 2);
+                        }
+                    },
+                    error: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        //sut.error.show('mensajes', data.responseText);
+                        //console.log(data.responseText);
+                        showNotification('top', 'right', 'Erro al generar los tupa.', 3);
+                    }
+                });
+            },
+
+            generar: function (lista) {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += '<td>';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-facebook btn-xs" data-toggle="tooltip" data-placement="right" title="Más Información" href="javascript:sut.Expediente.detalleDes({0})" ><i class="fa fa-bars"></i></a>', r.ExpedienteId);
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += sut.string.format('<td>{0}</td>', r.Codigo);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.tipoExpColor[r.TipoExpediente], sut.Expediente.tipoExpediente[r.TipoExpediente]);
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', r.FecModificacion);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoExpediente], sut.Expediente.estadoExpediente[r.EstadoExpediente]);
+                    rows += '<td style="text-align: center; background:#dd4b392e ">';
+                    rows += '<div class="btn-group" >';
+                    if(r.EstadoExpediente== "1" && @Model.Ayuda==1)
+                    {
+                        rows += sut.string.format('<a class="btn btn-success btn-xs pulsesut-button" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.Expediente.editar({0})" ><i class="fa fa-pencil"></i></a>', r.ExpedienteId);
+                    }
+                    else
+                    {
+                        rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.Expediente.editar({0})" ><i class="fa fa-pencil"></i></a>', r.ExpedienteId);
+                    }
+                    expestado=r.EstadoExpediente;
+
+                    //if (r.EstadoExpediente == 7) {
+                    //    rows += sut.string.format('<a class="btn btn-success btn-xs" href="javascript:sut.Expediente.publicacionarchivo({0})"  ><i class="fa fa-search"></i></a>', r.ExpedienteId);
+                    //}
+                    rows += '</div>';
+                    rows += '</td>';
+                    if (@Model.Sector == 80){
+                        rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoRactificador], sut.Expediente.estadoRactificador[r.EstadoRactificador]);
+                    }
+                    if (@Model.CodPadre == 1 || @Model.EstadoMinistrio==1 ){
+                        rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoEvaluadorMinisterio], sut.Expediente.estadoRactificador[r.EstadoEvaluadorMinisterio]);
+                        rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoEvaluadorPCM], sut.Expediente.estadoRactificador[r.EstadoEvaluadorPCM]);
+                        rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoEvaluadorMEF], sut.Expediente.estadoRactificador[r.EstadoEvaluadorMEF]);
+                    }
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorPCM], sut.Expediente.estadoFiscalizadorPCM[r.EstadoFiscalizadorPCM]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorMEF], sut.Expediente.estadoFiscalizadorMEF[r.EstadoFiscalizadorMEF]);
+                    rows += sut.string.format('<td style="text-align: center;"><small class="label {0}">{1}</small></td>', sut.Expediente.estadoExpColor[r.EstadoFiscalizadorINDECOPI], sut.Expediente.estadoFiscalizadorINDECOPI[r.EstadoFiscalizadorINDECOPI]);
+                    rows += '</tr>';
+
+
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+
+            },
+            Avanzar: (estado) => {
+
+                if (estado == 1) {
+                    $('#modalAyudaAvatar1').modal('hide');
+                    $('#modalSeguimiento').modal('show');
+                } else {
+                    $('#modalSeguimiento').modal('hide');
+                    $('#modalAyudaAvatar1').modal({ backdrop: 'static', keyboard: false })
+                    $(".modal-backdrop").addClass("display-none");
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                    //$('#modalAyudaAvatar1').modal('show');
+                }
+            },
+            comenzar: function () {
+                @*window.location = '@Url.Content("~/Simplificacion/MaestroFijo/Editar")';*@
+                $('#modalSeguimiento').modal('hide');
+            },
+        };
+
+        $(function () {
+            sut.Expediente.listar(1);
+
+            $('#txtFilterCodigo, #txtFilterEntidad,#txtFilterCreacion').keypress(function (e) {
+                var key = e.keyCode || event.keyCode;
+                if (key == 13) sut.Expediente.listar(1);
+            });
+            $('#tblLista thead button').click(function (e) {
+                $('#txtFilterCodigo').val('');
+                $('#txtFilterEntidad').val('');
+                $('#txtFilterCreacion').val('');
+                $('#cbFilterDepartamento').val(0);
+                $('#cbFilterProvincia').val(0);
+
+                $('#cbFilterEstado').val(0);
+                $('#cbFilterEstadoTipo').val(0);
+                $('#cbFilterpublicar').val(0);
+                $('#cbFilterpublicarexp').val(0);
+
+
+                sut.Expediente.listar(1);
+            });
+
+            $('#cbFilterEstado').change((e) => {
+                sut.Expediente.listar(1);
+            });
+
+            $('#cbFilterpublicar').change((e) => {
+                sut.Expediente.listar(1);
+            });
+
+            $('#cbFilterpublicarexp').change((e) => {
+                sut.Expediente.listar(1);
+            });
+
+
+
+            $('#cbFilterEstadoTipo').change((e) => {
+                sut.Expediente.listar(1);
+            });
+			$('#cbFilterDepartamento').change((e) => {
+                sut.Expediente.listar(1);
+            });
+            $('#cbFilterProvincia').change((e) => {
+                sut.Expediente.listar(1);
+            });
+
+            $('#cbFilterDepartamento').on('change', (e) => {
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Content("~/Simplificacion/Expediente/GetProvinciasGrid")',
+                    data: { id: $('#cbFilterDepartamento').val() },
+                    dataType: 'json',
+                    beforeSend: function () {
+                    },
+                    complete: function () {
+                    },
+                    success: function (result) {
+                        var sel = $('#cbFilterProvincia');
+                        sel.find('option').remove();
+                        $.each(result.data, (i, r) => {
+                            sel.append($('<option></option>').attr('value', r.ProvinciaId).html(r.Nombre));
+                        });
+                    },
+                    error: function (result) {
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            });
+
+
+            /*desarrollo de la ayuda*/
+            /*minimizar un modal*/
+
+            var $content, $modal, $apnData, $modalCon;
+
+            $content = $(".min");
+
+
+            //To fire modal
+            $(".mdlFire").click(function (e) {
+
+                e.preventDefault();
+
+                var $id = $(this).attr("data-target");
+
+                $($id).modal({ backdrop: false, keyboard: false });
+
+            });
+
+
+
+            if(@Model.Ayuda==1){
+                $('#edit-fase-preparatoria').addClass('active');
+                $('a[href="#edit-fase-preparatoria"]').parent().addClass('active');
+
+
+                $('#tituloocultar').hide();
+
+
+                $('#modalAyudaAvatar1').modal({backdrop: 'static', keyboard: false})
+                $modal = "#modalAyudaAvatar1"
+                $($modal).toggleClass("min");
+                $modal = "#modalAyudaAvatar1";
+                $(".modal-backdrop").addClass("display-none");
+                $(".minmaxConayuda").append($apnData);
+                $(".modal").css({
+                    backgroundColor: "transparent"
+                });
+
+            }
+
+
+
+            /*fin*/
+
+            $(".modalMinimize").on("click", function(){
+
+                $modalCon = $(this).closest(".mymodal").attr("id");
+                $apnData = $(this).closest(".mymodal");
+                $modal = "#" + $modalCon;
+                $(".modal-backdrop").addClass("display-none");
+
+                $($modal).toggleClass("min2");
+                if ( $($modal).hasClass("min2") ){
+                    $('#tituloocultar').show();
+                    $(".minmaxCon").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-minus fa-2x').toggleClass( 'fa-clone fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                }
+                else {
+                    $('#tituloocultar').hide();
+                    $(".minmaxConayuda").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-clone fa-2x').toggleClass( 'fa-minus fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                };
+            });
+
+
+
+        });
+
+    </script>
+}

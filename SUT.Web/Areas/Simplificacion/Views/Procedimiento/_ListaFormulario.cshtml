@@ -1,0 +1,185 @@
+﻿
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "frmFormulario" }))
+        {
+            <div class="modal-header">
+                @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>*@
+                <h4 class="modal-title">Formularios</h4>
+            </div>
+            <div class="modal-body">
+                <a class="btn btn-success" href="javascript:sut.editFormulario.edit()"><i class="fa fa-plus"></i> Agregar</a>
+                <br /><br />
+                <div class="table-responsive">
+                    @Html.Hidden("RequisitoId", (long)ViewBag.RequisitoId)
+                    <table id="tblEditFormulario" class="table table-condensed table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th style="width:30px;">Nro.</th>
+                                <th>Nombre</th>
+                                <th style="width:60px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="msgEditar"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success btn-sm" onclick="sut.editFormulario.guardar()"><i class="fa fa-save"></i> Guardar</button>
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana-editar" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+
+<script>
+    sut.editFormulario = {
+        data: @Html.Raw(ViewBag.ListaFormularios != null ? ViewBag.ListaFormularios : "[]") ,
+        init: () => {
+            sut.editFormulario.generar();
+        },
+        edit: (index) => {
+            var model = {};
+            if (index != null) {
+                var r = sut.editFormulario.data[index];
+                model['model.FormularioId'] = r.FormularioId;
+                model['model.Nombre'] = r.Nombre;
+                model['model.Url'] = r.Url == 'null' ? '' : r.Url;
+                model['model.ArchivoAdjuntoId'] = r.ArchivoAdjuntoId;
+            }
+
+            model['nuevo'] = index == null ? 1 : 0;
+            model['index'] = index == null ? 0 : index;
+            model['fnAdd'] = 'sut.editFormulario.add';
+
+            $.ajax({
+                type: "GET",
+                //url: '/Simplificacion/Procedimiento/EditarFormulario',
+                url: '@Url.Content("~/Simplificacion/Procedimiento/EditarFormulario")',
+                data: model,
+                cache: false,
+                beforeSend: function () {
+                    sut.wait.modal('ventana-container-editar');
+                    $('#modal-ventana-editar').modal('show');
+                },
+                success: function (data) {
+                    $('#ventana-container-editar').html(data);
+                },
+                error: function (result) {
+                    $('#modal-ventana-editar').modal('hide');
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+        },
+        generar: () => {
+            var tabla = $('#tblEditFormulario tbody');
+            $('#tblEditFormulario tbody tr').remove();
+            if (sut.editFormulario.data.length > 0) {
+                $.each(sut.editFormulario.data, (i, r) => {
+                    var tr = $('<tr />')
+                        .data('index', i)
+                        .append($('<td />')
+                            .append($('<span />').html(i + 1))
+                            .append($('<input />')
+                                .attr('type', 'hidden')
+                                .attr('name', sut.string.format('[{0}].FormularioId', i))
+                                .val(r.FormularioId))
+                            .append($('<input />')
+                                .attr('type', 'hidden')
+                                .attr('name', sut.string.format('[{0}].Nombre', i))
+                                .val(r.Nombre))
+                            .append($('<input />')
+                                .attr('type', 'hidden')
+                                .attr('name', sut.string.format('[{0}].Url', i))
+                                .val(r.Url))
+                            .append($('<input />')
+                                .attr('type', 'hidden')
+                                .attr('name', sut.string.format('[{0}].ArchivoAdjuntoId', i))
+                                .val(r.ArchivoAdjuntoId))
+                        )
+                        .append($('<td />').html(r.Nombre));
+                    tr.append($('<td />')
+                        .append($('<div />')
+                            .addClass('btn-group')
+                            .append($('<a />')
+                                .addClass('btn btn-success btn-xs')
+                                .attr('href', sut.string.format('javascript:sut.editFormulario.edit({0})', i))
+                                .append($('<i />').addClass('fa fa-pencil')))
+                            .append($('<a />')
+                                .addClass('btn btn-danger btn-xs')
+                                .attr('href', sut.string.format('javascript:sut.editFormulario.delete({0})', i))
+                                .append($('<i />').addClass('fa fa-close')))
+                        )
+                    );
+                    tabla.append(tr);
+                });
+            }
+        },
+        add: (r) => {
+            $('#modal-ventana-editar').modal('hide');
+            if (r.Nuevo == 1) {
+                sut.editBaseLegal.data.push(r);
+            } else {
+                var arr = [];
+                $.each(sut.editBaseLegal.data, function (i, d) {
+                    if (i != r.Index) arr.push(d);
+                    else arr.push(r);
+                });
+                sut.editBaseLegal.data = arr;
+            }
+            sut.editBaseLegal.generar();
+        },
+        delete: (index) => {
+            //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                var arr = [];
+                $.each(sut.editBaseLegal.data, function (i, d) {
+                    if (i != index) arr.push(d);
+                });
+                sut.editBaseLegal.data = arr;
+                sut.editBaseLegal.generar();
+            //});
+        },
+        guardar: () => {
+            var model = $('#frmBaseLegal').serialize();
+            $.ajax({
+                type: 'POST',
+                //url: '/General/BaseLegal/Guardar',
+                url: '@Url.Content("~/General/BaseLegal/Guardar")',
+                data: model,
+                dataType: 'json',
+                beforeSend: function () {
+                    $("#msgEditar").hide();
+                },
+                complete: function () {
+
+                },
+                success: function (result) {
+                    sut.msg.success(result.mensaje, function () {
+                        $('#modal-ventana').modal('hide');
+                    });
+                },
+                error: function (result) {
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+        }
+    };
+
+    $(() => {
+        sut.editFormulario.init();
+    });
+
+</script>
+
+
+
+

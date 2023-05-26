@@ -1,0 +1,368 @@
+﻿@using Sut.Entities
+@model Sut.Security.UsuarioInfo 
+
+@{
+    string actionActive = ViewBag.ActionActive;
+        string controllerActive = ViewBag.ControllerActive;
+}
+
+<!-- Collect the nav links, forms, and other content for toggling -->
+<div class="collapse navbar-collapse pull-left" id="navbar-collapse">
+    <ul id="topMenu" class="nav navbar-nav">
+        @*<li><a href="/Seguridad/Portada/Lista">Inicio</a></li>*@
+        @*<li><a href='@Url.Content("~/Seguridad/Portada/Lista")'>Inicio</a></li>*@
+        @if (Model != null)
+        {
+            if (Model.NomRol == "usuariolocador")
+            {
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Expedientes<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu" style="font-size: 15px;border-radius: 10px;border-color: #ccc;">
+                        @Html.MenuItem("Lista Expedientes", "Lista", "Simplificacion/Expediente", actionActive, controllerActive)
+                    </ul>
+                </li>
+            }
+            else if (Model.Rol == (short)Rol.CalendarioActividades)
+            {
+
+
+                <li><a href="/../Simplificacion/CalendarioActividades/Lista" style="font-size: 36px; "> <span>Asistencia Técnica Articulada</span></a></li> 
+
+
+                <li><a href="/../Seguridad/Metadato/Lista" style="font-size: 28px; "> <span>Mantenimiento</span></a></li> 
+            }
+            else if (Model.NomRol == "AccesoEstandar")
+            {
+
+                @Html.MenuItem("Tupa Estandar", "Lista", "Estandar/Tupa", actionActive, controllerActive)
+            }
+            else if (Model.Rol == (short)Rol.Administrador)
+            {
+                if (Model.TipoTupa == (short)TipoTupa.Estandar)
+                {
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">@Resources.Content.lbl_menu_top_maestros <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu" style="font-size: 15px;border-radius: 10px;border-color: #ccc;">
+                            @Html.MenuItem("Unidades de Organización", "Lista", "Simplificacion/UnidadOrganica", actionActive, controllerActive)
+                            <li class="divider"></li>
+                            @Html.MenuItem("Maestros Recursos", "ListaPersonal", "Simplificacion/Recurso", actionActive, controllerActive)
+                            <li class="divider"></li>
+                            @Html.MenuItem("Inductores", "Lista", "Simplificacion/Inductor", actionActive, controllerActive)
+                        </ul>
+                    </li>
+                    @Html.MenuItem("Expedientes", "Lista", "Simplificacion/Expediente", actionActive, controllerActive)
+                    @Html.MenuItem("TUPA Vigente", "TupaVigente", "Simplificacion/Expediente", actionActive, controllerActive)
+                }
+                else
+                {
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"> @Resources.Content.lbl_menu_top_seguridad <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu" style="font-size: 15px;border-radius: 10px;border-color: #ccc;">
+                            @Html.MenuItem("Entidades", "Lista", "Seguridad/Entidad", actionActive, controllerActive)
+                            @Html.MenuItem("Equipo de Trabajo", "Lista", "Seguridad/Miembro", actionActive, controllerActive)
+                            @Html.MenuItem("Usuarios", "Lista", "Seguridad/Usuario", actionActive, controllerActive)
+                            @Html.MenuItem("Roles", "Lista", "Seguridad/Roles", actionActive, controllerActive)
+                            @Html.MenuItem("Mantenimiento", "Lista", "Seguridad/Mantenimiento", actionActive, controllerActive)
+                            @Html.MenuItem("Distrito", "Lista", "Seguridad/Distrito", actionActive, controllerActive)
+                        </ul>
+                    </li>
+
+                    @Html.MenuItem("Maestros", "Lista", "Simplificacion/UnidadMedida", actionActive, controllerActive)
+                    @Html.MenuItem("Tupa Estandar", "Lista", "Estandar/Tupa", actionActive, controllerActive)
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"> @Resources.Content.lbl_menu_top_exp  <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu" style="font-size: 15px;border-radius: 10px;border-color: #ccc;">
+                            @Html.MenuItem("Lista Expedientes", "Lista", "Simplificacion/Expediente", actionActive, controllerActive)
+                            @Html.MenuItem("Historial de Observacion", "ListaObservacion", "Simplificacion/Observacion", actionActive, controllerActive)
+                        </ul>
+                    </li>
+
+
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">ACR<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu" style="font-size: 15px;border-radius: 10px;border-color: #ccc;">
+                            @Html.MenuItem("Stock", "Lista", "Simplificacion/ACR", actionActive, controllerActive)
+                            @Html.MenuItem("Exantes", "Lista", "Simplificacion/ACRExante", actionActive, controllerActive)
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Control<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu" style="font-size: 15px;border-radius: 10px;border-color: #ccc;">
+                            @Html.MenuItem("Permisos ACR ", "ListaConfigurar", "Simplificacion/Expediente", actionActive, controllerActive)
+                            @Html.MenuItem("Activar Procedimientos ", "ListaConfigurarProcedimientos", "Simplificacion/Expediente", actionActive, controllerActive)
+                            @Html.MenuItem("Notificación", "Lista", "Seguridad/Notificacion", actionActive, controllerActive)
+                            @Html.MenuItem("Auditoria", "Lista", "Seguridad/Auditoria", actionActive, controllerActive)
+                            @Html.MenuItem("Entidad Gratuito", "Lista", "Simplificacion/EntidadGratuito", actionActive, controllerActive)
+                            @Html.MenuItem("Dashboard", "Lista", "Simplificacion/Dashboard", actionActive, controllerActive)
+                            @*@Html.MenuItem("Solicitud Reporte", "Lista", "Simplificacion/SolicitudReporte", actionActive, controllerActive)*@
+
+                        </ul>
+
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Licencia de Funcionamiento<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu" style="font-size: 15px;border-radius: 10px;border-color: #ccc;">
+
+                            @Html.MenuItem("Completo", "Lista", "Seguridad/Incentivos", actionActive, controllerActive)
+                            @Html.MenuItem("Corte", "Lista", "Seguridad/IncentivosCorte", actionActive, controllerActive)
+
+                        </ul>
+
+                    </li>
+
+
+
+
+                }
+            }
+
+            else
+            {
+
+                for (var i = 0; i < Model.menu.Count; i++)
+                {
+                    <li class= "dropdown">
+                    @if (Model.menu[i].Nivel == 1)
+                    {
+                        if (Model.menu[i].url != "#")
+                        {
+                            <a href = "@Model.menu[i].url" > @Model.menu[i].Descripcion </a>
+                        }
+                        else
+                        {
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"> @Model.menu[i].Descripcion <span class="caret"></span></a>
+
+                        }
+
+                        <ul class= "dropdown-menu" role="menu" style="font-size: 15px;border-radius: 10px;border-color: #ccc;">
+                        @for (var s = 0; s < Model.menu.Count; s++)
+                        {
+
+                            if (Model.menu[s].Nivel == 2 && Model.menu[s].IdPadreMenu == Model.menu[i].MenuId)
+                            {
+
+                                <li><a href = "@Model.menu[s].url" > @Model.menu[s].Descripcion </a></li>
+                            }
+
+
+                        }
+                        </ul>
+                    }
+                    </li>
+                }
+
+            }
+
+
+
+       
+            @*if (Model.Rol == (short)Rol.Coordinador)
+            {
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Fase Preparatoria <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @Html.MenuItem("Equipo de Trabajo", "Lista", "Seguridad/Miembro", actionActive, controllerActive)
+                        @Html.MenuItem("Usuarios", "Lista", "Seguridad/Usuario", actionActive, controllerActive)
+                        <li class="divider"></li>
+                        @Html.MenuItem("Documento de Equipo", "Lista", "Seguridad/ResolucionEquipo", actionActive, controllerActive)
+                        @Html.MenuItem("Plan de Trabajo", "Lista", "Seguridad/PlanTrabajo", actionActive, controllerActive)
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Maestros <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @Html.MenuItem("Unidades de Organización", "Lista", "Simplificacion/UnidadOrganica", actionActive, controllerActive)
+                        @Html.MenuItem("Sedes de la Entidad", "Lista", "Simplificacion/Sede", actionActive, controllerActive)
+                        <li class="divider"></li>
+                        @Html.MenuItem("Maestros Recursos", "ListaPersonal", "Simplificacion/Recurso", actionActive, controllerActive)
+                        <li class="divider"></li>
+                        @Html.MenuItem("Inductores", "Lista", "Simplificacion/Inductor", actionActive, controllerActive)
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Expedientes <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @Html.MenuItem("Información Predeterminada", "Editar", "Simplificacion/MaestroFijo", actionActive, controllerActive)
+                        @Html.MenuItem("Gestión de Expedientes", "Lista", "Simplificacion/Expediente", actionActive, controllerActive)
+
+                        @Html.MenuItem("Observacion", "Lista", "Simplificacion/Observacion", actionActive, controllerActive)
+                    </ul>
+
+                    @Html.MenuItem("TUPA Vigente", "TupaVigente", "Simplificacion/Expediente", actionActive, controllerActive)
+                </li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">ACR <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @Html.MenuItem("Stock", "Lista", "Simplificacion/ACR", actionActive, controllerActive)
+                        @Html.MenuItem("Exantes", "Lista", "Simplificacion/ACRExante", actionActive, controllerActive)
+                    </ul>
+                </li>
+            }
+
+            if (Model.Rol == (short)Rol.RegistradorProcesos)
+            {
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Maestros <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+
+                        @Html.MenuItem("Unidades de Organización", "Lista", "Simplificacion/UnidadOrganica", actionActive, controllerActive)
+                        @Html.MenuItem("Sedes de la Entidad", "Lista", "Simplificacion/Sede", actionActive, controllerActive)
+
+                        <li class="divider"></li>
+                        @Html.MenuItem("Maestros Recursos", "ListaPersonal", "Simplificacion/Recurso", actionActive, controllerActive)
+                        <li class="divider"></li>
+                        @Html.MenuItem("Inductores", "Lista", "Simplificacion/Inductor", actionActive, controllerActive)
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Expedientes <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @Html.MenuItem("Información Predeterminada", "Editar", "Simplificacion/MaestroFijo", actionActive, controllerActive)
+                        @Html.MenuItem("Gestión de Expedientes", "Lista", "Simplificacion/Expediente", actionActive, controllerActive)
+
+
+                        @Html.MenuItem("Observacion", "Lista", "Simplificacion/Observacion", actionActive, controllerActive)
+                    </ul>
+                    @Html.MenuItem("TUPA Vigente", "TupaVigente", "Simplificacion/Expediente", actionActive, controllerActive)
+                </li>
+
+            }
+
+            if (Model.Rol == (short)Rol.RegistradorLegal)
+            {
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Maestros <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @Html.MenuItem("Unidades de Organización", "Lista", "Simplificacion/UnidadOrganica", actionActive, controllerActive)
+                        @Html.MenuItem("Sedes de la Entidad", "Lista", "Simplificacion/Sede", actionActive, controllerActive)
+                        <li class="divider"></li>
+                        @Html.MenuItem("Maestros Recursos", "ListaPersonal", "Simplificacion/Recurso", actionActive, controllerActive)
+                        <li class="divider"></li>
+                        @Html.MenuItem("Inductores", "Lista", "Simplificacion/Inductor", actionActive, controllerActive)
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Expedientes <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @Html.MenuItem("Información Predeterminada", "Editar", "Simplificacion/MaestroFijo", actionActive, controllerActive)
+                        @Html.MenuItem("Gestión de Expedientes", "Lista", "Simplificacion/Expediente", actionActive, controllerActive)
+
+                        @Html.MenuItem("Observacion", "Lista", "Simplificacion/Observacion", actionActive, controllerActive)
+                    </ul>
+
+                    @Html.MenuItem("TUPA Vigente", "TupaVigente", "Simplificacion/Expediente", actionActive, controllerActive)
+                </li>
+
+            }
+
+            if (Model.Rol == (short)Rol.RegistradorCostos)
+            {
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Maestros <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @Html.MenuItem("Unidades de Organización", "Lista", "Simplificacion/UnidadOrganica", actionActive, controllerActive)
+                        @Html.MenuItem("Sedes de la Entidad", "Lista", "Simplificacion/Sede", actionActive, controllerActive)
+                        <li class="divider"></li>
+                        @Html.MenuItem("Maestros Recursos", "ListaPersonal", "Simplificacion/Recurso", actionActive, controllerActive)
+                        <li class="divider"></li>
+                        @Html.MenuItem("Inductores", "Lista", "Simplificacion/Inductor", actionActive, controllerActive)
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Expedientes <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @Html.MenuItem("Información Predeterminada", "Editar", "Simplificacion/MaestroFijo", actionActive, controllerActive)
+                        @Html.MenuItem("Gestión de Expedientes", "Lista", "Simplificacion/Expediente", actionActive, controllerActive)
+
+                        @Html.MenuItem("Observacion", "Lista", "Simplificacion/Observacion", actionActive, controllerActive)
+                    </ul>
+
+                    @Html.MenuItem("TUPA Vigente", "TupaVigente", "Simplificacion/Expediente", actionActive, controllerActive)
+                </li>
+
+            }
+
+            if (Model.Rol == (short)Rol.Ratificador)
+            {
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Expedientes Ratificador <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @Html.MenuItem("Gestión de Expedientes", "Lista", "Simplificacion/Expediente", actionActive, controllerActive)
+                    </ul>
+                </li>
+            }
+
+            if (Model.Rol == (short)Rol.EntidadFiscalizadora)
+            {
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Expedientes Fiscalizadora <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @Html.MenuItem("Gestión de Expedientes", "Lista", "Simplificacion/Expediente", actionActive, controllerActive)
+                    </ul>
+                </li>
+            }
+
+            if (Model.Rol == (short)Rol.Evaluador)
+            {
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Expedientes Evaluador <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        @Html.MenuItem("Gestión de Expedientes", "Lista", "Simplificacion/Expediente", actionActive, controllerActive)
+                    </ul>
+                </li>
+            }*@
+
+
+        }
+
+
+
+    </ul> 
+</div>
+<!-- /.navbar-collapse -->
+<!-- Navbar Right Menu -->
+<div class="navbar-custom-menu">
+    <ul class="nav navbar-nav">
+
+
+        @*@if (Model.Rol != 1 && Model.Rol != 6 && Model.Rol != 7 && Model.Rol != 8)
+        {
+        if (Model.Ayuda == 1)
+        {
+        <li>
+            <a class="btn " href="javascript:sut.TopMenu.activar(0)"><i class="fa fa-question-circle"></i> Desactivar Asistente</a>
+        </li>
+        }
+        else
+        {
+        <li>
+            <a class="btn " href="javascript:sut.TopMenu.activar(1)"><i class="fa fa-question-circle"></i> Activar Asistente</a>
+        </li>
+        }
+        }*@
+        @if (Model.TipoTupa == (short)TipoTupa.Estandar)
+        {
+            @Html.MenuItem("Volver a Administración", "Administrar", "Revision/Expediente", actionActive, controllerActive)
+        }
+        @*@Html.MenuItem("Ayuda", "Lista", "Seguridad/Ayuda", actionActive, controllerActive)*@
+        @Html.Partial("_LoginPartial")
+
+
+        <li>
+            @if (Model.TipoEnlace == 1)
+            {<a href="javascript:sut.TopMenu.Salir();"><i class="fa fa-sign-out"></i> Salir</a>
+
+            }
+            else
+            {
+                <a href="javascript:sut.TopMenu.SalirPMR();"><i class="fa fa-sign-out"></i> Salir</a>
+        
+            }
+         </li>
+
+        </ul>
+</div>

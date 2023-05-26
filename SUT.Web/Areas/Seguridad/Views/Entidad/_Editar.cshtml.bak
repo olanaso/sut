@@ -1,0 +1,283 @@
+﻿@model Sut.Entities.Entidad
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">@ViewBag.Title</h4>
+        </div>
+
+        @using (Html.BeginForm("Guardar", "Seguridad/Entidad", FormMethod.Post, new { @id = "form-modal-editar" }))
+        {
+            @Html.HiddenFor(model => model.EntidadId)
+            
+    <div class="modal-body form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Nivel de Gobierno:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.ListaGobierno as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Sector:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.SectorId, ViewBag.ListaSector as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Departamento:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.DepartamentoId, ViewBag.ListaDepartamento as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Provincia:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.ProvinciaId, ViewBag.ListaProvincia as List<SelectListItem>, new { @class = "form-control", @style = "width: 100%" })
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Código:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.TextBoxFor(model => model.Codigo, new { @class = "form-control input-sm", @readonly = true })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Acrónimo:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.TextBoxFor(model => model.Acronimo, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Nombre:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Estado </label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.Estado, ViewBag.publicar as List<SelectListItem>, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12"> Nivel </label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.CodPadre, ViewBag.listapadre as List<SelectListItem>, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Activar Expediente </label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.ActivarExpediente, ViewBag.NuevoExpediente as List<SelectListItem>, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Activar MultiUsuario </label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.ActivarMultiUsuario, ViewBag.MultiUsuario as List<SelectListItem>, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Bandejas </label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.Bandeja, ViewBag.lstBandeja as List<SelectListItem>, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        @*JJJMSP2 INI*@
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Logo Entidad:</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.TextBoxFor(model => model.Logoentidad, new { @class = "form-control input-sm", @readonly = "readonly", id = "Logoentidad" })
+                <input type="file" id="fileInput" class="form-control input-sm" accept="image/*" onchange="sut.editarEntidad.subirelogo()">
+                <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarEntidad.subirlogo()"><i class="fa fa-save"></i> Subir Imagen</button>
+            </div>
+        </div>
+        @*JJJMSP2 FIN*@
+
+    </div>
+            <div id="msgEditar"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarEntidad.guardar()"><i class="fa fa-save"></i> Guardar</button>
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+
+<script>
+
+    sut.editarEntidad = {
+
+        /*JJJMSP2 INI*/
+        subirelogo: () => {
+            var fileInput = document.getElementById("fileInput");
+            var logoEntidadInput = document.getElementById("Logoentidad");
+
+            // Obtener el archivo seleccionado
+            var file = fileInput.files[0];
+            // Obtener la ruta o el nombre del archivo
+            var filePath = file ? file.name : "";
+            // Establecer el valor en el campo Logoentidad
+            logoEntidadInput.value = ""; //filePath;
+        },
+
+        subirlogo: () => {
+            var fileInput = document.getElementById("fileInput");
+            var logoEntidadInput = document.getElementById("Logoentidad");
+            var file = fileInput.files[0]; // Obtener el archivo seleccionado
+
+            if (file) {
+                var formData = new FormData();
+                formData.append("logoFile", file);
+                formData.append("entidadid", @Model.EntidadId);
+                $.ajax({
+                    url: "@Url.Content("~/Seguridad/Entidad/SubirLogoEntidad")",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        //console.log("Se guardo archivo.");
+                        if (data.success) {
+                            var rutaLogo = data.message;
+                            logoEntidadInput.value = rutaLogo;
+                            //console.log("Se guardo logoentidad.");
+                        } else {
+                            console.log("No cargo archivo.");
+                        }
+                    },
+                    error: function (data) {
+                        sut.wait.removeProgress('.modal-footer');
+                        sut.error.show('msgsubir', result.responseText);
+                    }
+                });
+            } else {
+                // No se seleccionó ningún archivo
+                console.log("No se seleccionó ningún archivo.");
+            }
+        },
+        /*JJJMSP2 FIN*/
+
+        guardar: () => {
+            if ($("#form-modal-editar").valid()) {
+                var model = $('#form-modal-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/Entidad/Guardar",
+                    url: '@Url.Content("~/Seguridad/Entidad/Guardar")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: () => {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: () => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, () => {
+                            //sut.Entidad.listar(1);
+                            App.stLista.reload();
+                        });
+                    },
+                    error: (result) => {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            }
+        }
+    };
+
+    $(function () {
+
+        $('select[name="NivelGobiernoId"]').select2();
+        $('select[name="SectorId"]').select2();
+
+        //$('select[name="CodPadre"]').select2();
+        //$('select[name="ActivarExpediente"]').select2();
+        //$('select[name="ActivarMultiUsuario"]').select2();
+
+        $('select[name$="DepartamentoId"]').on('change', (e) => {
+            $.ajax({
+                type: "POST",
+                //url: "/Seguridad/Entidad/GetProvincias",
+                url: '@Url.Content("~/Seguridad/Entidad/GetProvincias")',
+                data: { id: $('select[name$="DepartamentoId"]').val() },
+                dataType: 'json',
+                beforeSend: function () {
+                },
+                complete: function () {
+                },
+                success: function (result) {
+                    var sel = $('select[name$="ProvinciaId"]');
+                    sel.find('option').remove();
+                    $.each(result.data, (i, r) => {
+                        sel.append($('<option></option>').attr('value', r.ProvinciaId).html(r.Nombre));
+                    });
+                },
+                error: function (result) {
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+        });
+
+
+        $.validator.addMethod("selNivelGobierno", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un Nivel de Gobierno"));
+        $.validator.addMethod("selSector", $.validator.methods.min,
+            $.validator.format("Debe seleccionar un Sector"));
+
+        $('#form-modal-editar').validate({
+            errorPlacement: function (error, element) {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                Nombre: 'required',
+                Acronimo: 'required',
+                NivelGobiernoId: {
+                    selNivelGobierno: 1
+                },
+                SectorId: {
+                    selSector: 1
+                }
+            },
+            messages: {
+
+            }
+        });
+    });
+
+</script>
+
+

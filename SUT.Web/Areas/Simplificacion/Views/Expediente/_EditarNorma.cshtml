@@ -1,0 +1,319 @@
+﻿@model Sut.Entities.ExpedienteNorma 
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">Norma de Aprobación del Tupa</h4>
+        </div>
+        <div class="modal-body form-horizontal">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-editar" }))
+            {
+                @Html.HiddenFor(model => model.NormaId)
+                @Html.HiddenFor(model => model.ExpedienteId)
+                @Html.HiddenFor(model => model.ArchivoAdjuntoId)
+                @Html.HiddenFor(model => model.ArMotivoAdjuntoId)
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12" for="ENUM_TIPO_NORMA_APROBACION">Tipo norma aprobación</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => model.ENUM_TIPO_NORMA_APROBACION, ViewBag.TipoNormaAprobacion as List<SelectListItem>, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12" for="TipoNormaId">Tipo</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => model.TipoNormaId, ViewBag.TipoNormaLista as List<SelectListItem>, new { @class = "form-control" })
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Número</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.Descripcion, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+              
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Fecha de Publicación</label>
+                    <div class="col-sm-9 col-xs-12">
+
+                        @if (Model.NormaId == 0)
+                        {
+                            <input type="text" name="Fecha" class="form-control input-sm" value="" /> 
+
+                        }
+                        else
+                        {
+                            <input type="text" name="Fecha" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fecha == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fecha.Value.Day, Model.Fecha.Value.Month, Model.Fecha.Value.Year))" />
+
+                        }
+
+                        @*@if (Model.NormaId == 0)
+                        {
+                            <input type="text" name="Fecha" class="form-control input-sm" value="" />
+
+                        }
+                        else
+                        {
+                            <input type="text" name="Fecha" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fecha == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fecha.Day, Model.Fecha.Month, Model.Fecha.Year))" />
+
+                        }*@
+
+                    </div>
+                </div>
+
+            }
+            @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto", @enctype = "multipart/form-data" }))
+            {
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Archivo</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.HiddenFor(model => model.ArchivoAdjuntoId)
+                        <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto != null ? "" : "file-empty")">
+                            <ul>
+                                <li>
+                                    <span class="text">
+                                        <i class="fa fa-file"></i>
+                                        @*<a href="@MvcHtmlString.Create(Model.ArchivoAdjunto != null ? string.Format("/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto.ArchivoAdjuntoId) : "")" target="_blank">
+                        @MvcHtmlString.Create(Model.ArchivoAdjunto != null ? Model.ArchivoAdjunto.NombreArchivo : "")
+                    </a>*@
+                                        <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto.ArchivoAdjuntoId)) : "")" target="_blank">
+                                            @MvcHtmlString.Create(Model.ArchivoAdjunto != null ? Model.ArchivoAdjunto.NombreArchivo : "")
+                                        </a> 
+                                    </span>
+                                    @if (@ViewBag.expetado == 1 || @ViewBag.expetado == 4 || @ViewBag.expetado == 3 && (@ViewBag.estadoUSER == 1))
+                                    {
+                                        <div class="tools">
+                                            <i class="fa fa-remove"></i>
+                                        </div>
+                                    }
+                                </li>
+                            </ul>
+                            @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+   
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-armotivo-adjunto", @enctype = "multipart/form-data" }))
+            {
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Exposición Motivos y Documentos Adicionales</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @*@Html.HiddenFor(model => model.ArMotivoAdjuntoId)*@
+                        <input type="hidden" value="@Model.ExpedienteId" name="ExpedienteId" />
+                        <input type="hidden" value="@Model.NormaId" name="NormaId" />
+                        <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArMotivoAdjunto != null ? "" : "file-empty")">
+                            @*<ul>
+            <li>
+                <span class="text">
+                    <i class="fa fa-file"></i>
+                    <a href="@MvcHtmlString.Create(Model.ArMotivoAdjunto != null ? @Url.Content(string.Format("~/General/MotivoAdjunto/Descargar/{0}", Model.ArMotivoAdjunto.ArMotivoAdjuntoId)) : "")" target="_blank">
+                        @MvcHtmlString.Create(Model.ArMotivoAdjunto != null ? Model.ArMotivoAdjunto.NombreArchivo : "")
+                    </a>
+                </span>
+                <div class="tools">
+                    <i class="fa fa-remove"></i>
+                </div>
+            </li>
+        </ul>*@
+                            @*@Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control"  })*@
+                            <input class="form-control" id="PostedFile" name="PostedFile" type="file" value="" style="width:138px">
+                            Solo se podra cargar pdf, un maximo de peso de 10 MB.
+                        </div>
+                    </div>
+                </div>  
+            }  
+            <br />
+            <div class="table-responsive">
+                <table id="tblListaArchivos" class="table table-bordered table-striped table-hover"
+                       data-pagesize="20"
+                       data-page="1"
+                       data-totalrows="0"
+                       data-function="sut.ArchivoMod.listar"
+                       data-paginator="paginator">
+                    <thead>
+                        <tr>
+                            <th class="colAction">Nro.</th>
+                            <th>Nombre</th>
+                            <th class="colAction"></th>
+                            <th class="colAction"></th>
+                        </tr>
+                        <tr>
+                            <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                            <th><input id="txtFilterNombre" type="text" class="form-control input-sm" /></th>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr><td colspan="4"><div id="paginator"></div></td></tr>
+                    </tfoot>
+                </table>
+            </div>
+
+
+        </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer">
+            @if (ViewBag.User.rolmenu[0].Guardar == true)
+            {
+               <button type="button" class="btn btn-success btn-sm" onclick="sut.editPlanTrabajo.guardar()"><i class="fa fa-save"></i> Guardar</button>
+            }
+            <button type="button" class="btn btn-danger btn-sm" onclick="sut.ArchivoMod.cancelar()"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+    </div>
+</div>
+<script>
+
+
+    sut.ArchivoMod = {
+        listar: function (page) {
+            table = $('#tblListaArchivos');
+            var model = {
+                'filtro.NombreArchivo': $('#txtFilterNombre').val(),
+                'filtro.ExpedienteId': @Model.ExpedienteId,
+                'filtro.NormaId': @Model.NormaId,
+                pageIndex: page,
+                pageSize: table.data('pagesize')
+            };
+
+
+                $.ajax({
+                    //url: "/Simplificacion/Inductor/GetAllLikePagin",
+                    url: '@Url.Content("~/Simplificacion/Expediente/GetAllLikePaginArchivos")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.ArchivoMod.generar(data.lista);
+                        if (data.totalRows == 0) $('#tblListaArchivos tbody').append("<tr><td colspan='3' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+
+
+        },
+
+         generar: function (lista) {
+            var table = $('#tblListaArchivos');
+            var tabla = table.children('tbody');
+            tabla.children('tr').remove();
+            var rows = '';
+            var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+            $.each(lista, function (i, r) {
+                rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                rows += sut.string.format('<td>{0}</td>', r.NombreArchivo);
+                rows += '<td>';
+                rows += '<div class="btn-group">';
+                rows += sut.string.format('<a class="btn btn-primary btn-xs" data-placement="left" title="Archivo" href="@Url.Content("~/General/MotivoAdjunto/Descargar/"){0}" ><i class="fa fa-download"></i></a>', r.ArMotivoAdjuntoId);
+                rows += '</div>';
+                rows += '</td>';
+                rows += '<td>';
+                rows += '<div class="btn-group">';
+                debugger;
+                if (@ViewBag.expetado == 1 || @ViewBag.expetado == 4 || @ViewBag.expetado == 3 && (r.UserCreacion == r.NroDocumento)) {
+
+                    rows += sut.string.format('<a class="btn btn-danger btn-xs"  data-placement="left" title="Borrar" href="javascript:sut.ArchivoMod.eliminar({0})" ><i class="fa fa-close"></i></a>', r.ArMotivoAdjuntoId);
+                }
+                rows += '</div>';
+                rows += '</td>';
+                rows += '</tr>';
+            });
+            sut.pagination.update(table);
+            tabla.append(rows);
+        },
+        eliminar: function (id) {
+
+            var model = {
+                ArMotivoAdjuntoId: id
+            }
+            sut.msg.confirm("Desea Eliminar", function () {
+
+                $.ajax({
+                    //url: "/Simplificacion/UnidadOrganica/Eliminar",
+                    url: '@Url.Content("~/Simplificacion/Expediente/Eliminar")',
+                    type: "POST",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        sut.ArchivoMod.listar(1);
+                    },
+                    error: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            });
+
+        },
+        eliminarmasivo: function () {
+            var model = {
+                ExpedienteId:  @Model.ExpedienteId,
+            }
+            $.ajax({
+                //url: "/Simplificacion/UnidadOrganica/Eliminar",
+                url: '@Url.Content("~/Simplificacion/Expediente/EliminarMasivo")',
+                type: "POST",
+                data: model,
+                dataType: "json",
+                beforeSend: function () {
+                    sut.wait.appendOverlay('#boxLista');
+                },
+                success: function (data) {
+                    sut.wait.removeOverlay('#boxLista');
+                    sut.ArchivoMod.listar(1);
+                },
+                error: function (data) {
+                    sut.wait.removeOverlay('#boxLista');
+                    sut.error.show('mensajes', data.responseText);
+                }
+            });
+        },
+        cancelar: () => {
+            sut.msg.confirm('Esta seguro de cancelar', () => {
+                $('#modal-ventana').modal('hide');
+            });
+        },
+    };
+
+    $(function () {
+        sut.ArchivoMod.eliminarmasivo();
+        //sut.ArchivoMod.listar(1);
+        debugger;
+        var url1= '@Url.Content("~/General/Adjunto/Uploadword")';
+        sut.control.uploadfileword('form-archivo-adjunto',url1);
+
+        var url2= '@Url.Content("~/General/MotivoAdjunto/Uploadword")';
+        sut.control.uploadfilemotivoword('form-armotivo-adjunto',url2);
+        debugger;
+        $(document).ready(function () {
+            document.getElementById("PostedFile").setAttribute('accept', 'application/pdf');
+        })
+
+
+        $('input[name="Fecha"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es' });
+
+        debugger;
+        var model = $('#form-editar').serialize();
+        debugger;
+    });
+</script>

@@ -1,0 +1,1824 @@
+﻿@using Sut.Entities;
+@model Sut.Entities.TablaAsme
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    List<Sut.Entities.Observacion> obs = ViewBag.Observacion as List<Sut.Entities.Observacion>;
+
+    Sut.Security.Filtros fil = ViewBag.filtro as Sut.Security.Filtros;
+
+    Sut.Entities.Observacion obsgeneral = ViewBag.Observaciongeneral as Sut.Entities.Observacion;
+    ViewBag.Icon = "fa fa-file-text-o";
+    //ViewBag.Title = "Tabla ASME-VM " + Model.Codigo;
+    ViewBag.Title = "Tabla ASME-VM - " + Model.Procedimiento.CodigoCorto;
+    ViewBag.Descripcion = "";
+}
+
+
+@if (Model.Procedimiento.Expediente.EstadoExpediente == EstadoExpediente.Observado || Model.Procedimiento.Expediente.EstadoExpediente == EstadoExpediente.Subsanado ||
+    Model.Procedimiento.Expediente.EstadoExpediente == EstadoExpediente.Presentado)
+{
+    <div class="box box-danger">
+        <div class="box-body">
+            <div class="col-sm-12 col-xs-12" style="border-color:red">
+
+                <div class="pull-left col-sm-12 col-xs-12">
+
+                    <fieldset class="scheduler-border">
+                        <legend>
+                            Información Complementaria a la Observación
+                            <a class="btn btn-danger btn-xs" id="aEditarObservarExp" href="javascript:sut.Asme.Observarexp.editarObservarExp();" data-toggle="tooltip" data-placement="right" title="Editar"><i class="fa fa-pencil"></i></a>
+                            <a class="btn btn-primary btn-xs" id="aGuardarObservarExp" href="javascript:sut.Asme.Observarexp.guardarObservarExp(@Model.Procedimiento.Expediente.ExpedienteId,@Model.ProcedimientoId,@Model.TablaAsmeId);"><i class="fa fa-floppy-o"></i></a>
+                            <a class="btn btn-danger btn-xs" id="aCancelarObservarExp" href="javascript:sut.Asme.Observarexp.CancelarObservarExp();"><i class="fa fa-power-off"></i></a>
+                                           <label id="mensajedatos" style="font-size: 100%;font-weight: normal;" class="label-primary label"></label>
+                        </legend>
+                        <br />
+                        <div class="form-group">
+                            @if (obsgeneral != null)
+                            {
+                                <textarea rows="7" class="form-control" id="txtaObservarExp" style="border-color:red;background:#ff00002e;"> @obsgeneral.Descripcion</textarea>
+                                <script>
+                                                            window.addEventListener("load", function () {
+
+
+                                                                //$('#aValidarObservarExpDenominacion').css("display","none");
+                                                                if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                                {
+                                                                    document.querySelector('#mensajedatos').innerText = 'Se valido con éxito';
+                                                                }
+                                                                else
+                                                                {
+                                                                    document.querySelector('#mensajedatos').innerText = '';
+                                                                }
+
+                                                            });
+                                </script>
+                            }
+                            else
+                            {<textarea rows="7" class="form-control" id="txtaObservarExp" style="border-color:red;background:#ff00002e;"> </textarea>}
+                        </div>
+
+                    </fieldset>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+<div id="mensajes">
+    @{Html.RenderPartial("_Error");}
+</div>
+<div class="box box-danger">
+    <div class="box-body form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label" for="Denominacion">Denominación :</label>
+            <div class="col-sm-10 col-xs-12">
+                @Html.TextBoxFor(model => model.Procedimiento.Denominacion, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Tipo :</label>
+            <div class="col-sm-10 col-xs-12">
+                @Html.TipoProcedimiento(Model.Procedimiento.TipoProcedimiento)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Tabla Asme :</label>
+            <div class="col-sm-10 col-xs-12">
+                @Html.TextBoxFor(model => model.Descripcion, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Dependencia a Cargo :</label>
+            <div class="col-sm-10 col-xs-12">
+                @Html.TextBoxFor(model => model.Procedimiento.UndOrgResponsable.Nombre, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Prestaciones Anuales :</label>
+            <div class="col-sm-10 col-xs-12">
+                @Html.TextBoxFor(model => model.Prestaciones, new { @class = "form-control", @readonly = "readonly", @style = " width :15%;border: 2px solid blue; " })
+            </div>
+        </div>
+        @if (@Model.Procedimiento.CargoPordependencia != "")
+        {
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Otras Dependecias a Cargo :</label>
+                <div class="col-sm-10 col-xs-12">
+                    <div>
+                        @Html.TextAreaFor(model => model.Procedimiento.CargoPordependencia, new { @style = "scroll-behavior: smooth;resize:vertical;", @class = "form-control", @readonly = "readonly", Required = true })
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<input type="hidden" id="hidVerRec" value="0" />
+@using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-asme" }))
+{
+    @Html.HiddenFor(model => model.TablaAsmeId)
+<div id="boxListaAsme" class="box box-default">
+    <div class="box-header">
+        @*<a id="btnVerRec" class="btn btn-primary" href="#"><i class="fa fa-laptop"></i> Editar Recursos</a>
+        <a id="btnVerAct" class="btn btn-warning hidden" href="#"><i class="fa fa-gear"></i> Editar Actividades</a>*@
+        @*<a id="btnPlantillaAct" href="javascript:sut.Asme.Recurso.openAddRecursoplantilla()"><i class="fa fa-download"></i> Descargar Plantilla</a>*@
+        @*<li class="divider"></li>
+        <li><a id="btnImportAct" href="javascript:sut.Asme.importAct()"><i class="fa fa-file-excel-o"></i> Importar Plantilla</a></li>*@
+        @*<a href="General/Reporte/TablaAsme?TablaAsmeId=@Model.TablaAsmeId" target="_blank" class="btn btn-default"><i class="fa fa-download"></i> Descargar Tabla ASME</a>*@
+        <a href="@Url.Content("~/General/Reporte/TablaAsme")?TablaAsmeId=@Model.TablaAsmeId" target="_blank" class="btn btn-default"><i class="fa fa-download"></i> Descargar Tabla ASME</a>
+
+
+            <a class="btn btn-facebook" id="filtro" href="javascript:sut.Asme.filtro()"><i class="fa fa-filter"></i> Filtros</a>
+        <a class="btn btn-facebook" id="quitarfiltro" href="javascript:sut.Asme.quitarfiltro()"><i class="fa fa-filter"></i> Quitar Filtro</a>
+      
+    <div class="col-sm-12 col-xs-12" id="idFiltros">
+        <br />
+        <label class="col-sm-1 col-xs-1 control-label">Tipo Actividad :</label>
+        <div class="col-sm-2 col-xs-2">
+            @Html.DropDownListFor(model => @fil.actividad, ViewBag.actividad as List<SelectListItem>, new { @class = "form-control " })
+        </div>
+
+        <label class="col-sm-1 col-xs-1 control-label">
+            Tipo Valor  :
+        </label>
+        <div class="col-sm-2 col-xs-2">
+            @Html.DropDownListFor(model => @fil.valor, ViewBag.valor as List<SelectListItem>, new { @class = "form-control " })
+        </div>
+        <label class="col-sm-1 col-xs-1 control-label">
+            Actividad  :
+        </label>
+        <div class="col-sm-2 col-xs-2">
+            <input id="txtFilterDes" type="text" class="form-control input-sm" />
+        </div>
+        <a class="btn btn-facebook" id="aplicarfiltro" href="javascript:sut.Asme.aplicarfiltro()"><i class="fa fa-filter"></i> Aplicar</a>
+        <br />
+    </div>
+        @if (@fil != null)
+        {
+            if (@fil.estado != "1")
+            {
+                <script>
+                    window.addEventListener("load", function () {
+                        $("#idFiltros").hide();
+                        $("#quitarfiltro").hide();
+                        $("#filtro").show();
+                    });
+                </script>
+            }
+            else
+            {
+                <script>
+
+                    window.addEventListener("load", function () {
+                        $("#idFiltros").show();
+                        $("#quitarfiltro").show();
+                        $("#filtro").hide();
+                    });
+                </script>
+            }
+        }
+        else
+        {
+            <script>
+
+                window.addEventListener("load", function () {
+                    $("#idFiltros").hide();
+                    $("#quitarfiltro").hide();
+                    $("#filtro").show();
+                });
+            </script>
+        }
+    </div>
+
+
+    
+    <div class="box-body no-padding">
+        <div class="table-responsive">
+            <table id="tblAsme" class="table table-condensed table-bordered">
+                <thead>
+                    <tr class="danger">
+                        @*<th rowspan="2" style="width:20px"></th>*@
+                        <th rowspan="2" colspan="2" style="width:20px">Nro.</th>
+                        <th rowspan="2">Actividad</th>
+                        <th rowspan="2" style="width: 300px">Unidad Orgánica</th>
+                        <th rowspan="2" style="width:30px;">Duración</th>
+                        <th colspan="5">Tipo Actividad</th>
+                        <th colspan="3">Tipo Valor</th>
+                    </tr>
+                    <tr class="danger">
+                        <th><i class="fa fa-circle" data-toggle="tooltip" data-placement="bottom" title="Operación"></i></th>
+                        <th><i class="fa fa-stop" data-toggle="tooltip" data-placement="bottom" title="Revisión"></i></th>
+                        <th><i class="glyphicon glyphicon-arrow-right" data-toggle="tooltip" data-placement="bottom" title="Traslado"></i></th>
+                        <th><div class="semi-circulo-2" data-toggle="tooltip" data-placement="bottom" title="Espera"></div></th>
+                        <th><i class="glyphicon glyphicon-triangle-bottom" data-toggle="tooltip" data-placement="bottom" title="Archivo"></i></th>
+                        <th>VA</th>
+                        <th>Con.</th>
+                        <th>SVA</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr class="danger">
+                        <td colspan="4"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+</div>
+}
+<div id="divOculto" class="hidden">
+    <table id="tableOculto">
+        <tbody>
+            <tr id="trDetalle">
+                <td colspan="13">
+                    @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-detalle" }))
+                    {
+                        <div class="col-sm-12 col-xs-12">
+                            <div class="col-sm-12 col-xs-12">
+                                <input id="hidActividadId" name="ActividadId" type="hidden" value="0" />
+                            </div>
+                            <div class="col-sm-6 col-xs-12">
+                                <div id="boxListaRecIdent" class="box box-danger">
+                                    <div class="box-body no-padding">
+                                        <table id="tblAsmeRecIdent" class="table table-condensed table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:20px"></th>
+                                                    <th>Recursos Identificables</th>
+                                                    <th style="width:140px">Tipo</th>
+                                                    <th style="width:50px">Cantidad</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-xs-12">
+                                <div id="boxListaRecNoIdent" class="box box-danger">
+                                    <div class="box-body no-padding">
+                                        <table id="tblAsmeRecNoIdent" class="table table-condensed table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:20px"></th>
+                                                    <th>Recursos No Identificables</th>
+                                                    <th style="width:140px">Tipo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;">
+    @*<a class="btn btn-default" href="#"><i class="fa fa-download"></i> Tabla ASME Actual</a>*@
+    <div class="btn-group pull-right">
+        @*<a href="javascript:window.history.go(-1)" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+        @*<a href="javascript:sut.Asme.salir('Simplificacion/Procedimiento/TablaAsme/@Model.ProcedimientoId')" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+        <a href="javascript:sut.Asme.salir('@Url.Content("~/Simplificacion/Procedimiento/TablaAsme/")@Model.ProcedimientoId')" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana">
+    <div id="ventana-container">
+    </div>
+</div>
+@section Style{
+    <style type="text/css">
+
+        #tblAsme thead tr th {
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
+
+        #tblAsme tfoot tr td {
+            text-align: center !important;
+            vertical-align: middle !important;
+            font-weight: bold !important;
+        }
+
+        #tblAsme tbody tr td.colNro {
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
+
+        #tblAsme tbody tr td.colRadio {
+            text-align: center !important;
+            vertical-align: middle !important;
+            width: 15px;
+        }
+
+        .semi-circulo-2 {
+            width: 15px;
+            height: 15px;
+            background: #000;
+            -moz-border-radius: 0 15px 15px 0;
+            -webkit-border-radius: 0 15px 15px 0;
+            border-radius: 0 15px 15px 0;
+        }
+
+        .dragged {
+            position: absolute;
+            opacity: 0.5;
+            z-index: 2000;
+        }
+
+        #tblAsme tbody tr.placeholder {
+            display: block;
+            background: red;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+            #tblAsme tbody tr.placeholder:before {
+                content: "";
+                position: absolute;
+                width: 0;
+                height: 0;
+                border: 5px solid transparent;
+                border-left-color: red;
+                margin-top: -5px;
+                left: 0px;
+                border-right: none;
+            }
+
+        #tblAsmeRecIdent tbody tr td {
+            vertical-align: middle !important;
+        }
+
+        fieldset.scheduler-border {
+            border: 1px groove #ddd !important;
+            padding: 0 1.4em 0 1.4em !important;
+            margin: 0 0 1.5em 0 !important;
+            -webkit-box-shadow: 0px 0px 0px 0px #000;
+            box-shadow: 0px 0px 0px 0px #000;
+        }
+
+        .scheduler-border legend {
+            font-size: 1.2em !important;
+            font-weight: bold !important;
+            text-align: left !important;
+            width: auto !important;
+            margin-bottom: 0px !important;
+            padding: 0px !important;
+            border-bottom: none;
+        }
+    </style>
+}
+@section Script {
+    <script>
+        sut.Asme = {
+            salir: function (expediente) {
+                $(location).attr('href', expediente);
+            },
+
+
+            filtro: function () {
+
+                $("#idFiltros").show();
+                $("#quitarfiltro").show();
+                $("#filtro").hide();
+
+            },
+            init2: function () {
+                $("#idFiltros").hide();
+                $("#quitarfiltro").hide();
+                $("#filtro").show();
+            },
+            quitarfiltro:function () {
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/QuitarFiltro',
+                    url: '@Url.Content("~/Simplificacion/TablaAsme/QuitarFiltro")',
+                    data: {  },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.appendProgress('.modal-footer');
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                    },
+                    success: function (data) {
+                        window.location.reload();
+                        $('#modal-ventana').modal('hide');
+                        $("#idFiltros").hide();
+                        $("#quitarfiltro").hide();
+                        $("#filtro").show();
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+
+            },
+            aplicarfiltro : function(){
+                sut.Asme.init();
+            },
+
+            visualizarSustentoasme: function (evt, input) {
+                debugger;
+                var key = window.Event ? evt.which : evt.keyCode;
+                var chark = String.fromCharCode(key);
+                var tempValue = input.value + chark;
+                var id = input.id;
+                var txt = $(evt.target);
+                var valor = id.substring(10);
+                $('#mensajeTablaAsme' + valor).hide();
+                document.querySelector('#mensajeTablaAsme' + valor).innerText = '';
+            },
+            UnidadesOrganicas: @Html.Raw(ViewBag.ListaUndOrg != null ? ViewBag.ListaUndOrg : "[]"),
+            comboUndOrg: function (index, id) {
+                var cb = sut.string.format('<select class="form-control"  id="UnidadOrganicaId_{0}" name="Actividad[{0}].UnidadOrganicaId" required disabled >', index);
+                $.each(sut.Asme.UnidadesOrganicas, function (i, r) {
+                    cb += sut.string.format('<option value="{0}" {2}>{1}</option>', r.UnidadOrganicaId, r.Nombre, r.UnidadOrganicaId == id ? 'selected' : '');
+                });
+                cb += '</select>';
+                return cb;
+            },
+            Observarexp: {
+                comentario: "",
+                editarObservarExp: function () {
+                    $("#aEditarObservarExp").css({ "display": "none" });
+                    $("#aGuardarObservarExp").css({ "display": "" });
+                    $("#aCancelarObservarExp").css({ "display": "" });
+                    $("#txtaObservarExp").prop("disabled", false);
+                    comentario = $("#txtaObservarExp").val();
+                    document.querySelector('#mensajedatos').innerText = '';
+                },
+                guardarObservarExp: function (idExpediente, procedimientoId,id) {
+
+
+                    if ($('#txtaObservarExp').val().trim() == "") {
+
+                        showNotification('top', 'right', 'No puedes Guardar una obseracion en blanco', 2);
+                        return;
+                    }
+
+
+                    var model = {
+                        'filtro.ExpedienteId': idExpediente,
+                        'filtro.ProcedimientoId': procedimientoId,
+                        'filtro.Descripcion': $('#txtaObservarExp').val(),
+                        'filtro.CodValidacion': '1',
+                        'filtro.TipoEstado': '1',
+                        'filtro.Pantalla': 'Tabla Asme',
+                        'filtro.NombreCampo': 'Nota de Ayuda Tabla Asme',
+                        'filtro.Estado': id,
+                    };
+                    $.ajax({
+                        type: "POST",
+                        //url: '/Simplificacion/Expediente/AgregarObservacion',
+                        url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container');
+                            //$('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+
+                            $('#modal-ventana').modal('hide');
+                            $("#aCancelarObservarExp").css({ "display": "none" });
+                            $("#aGuardarObservarExp").css({ "display": "none" });
+                            $("#aEditarObservarExp").css({ "display": "" });
+                            $("#txtaObservarExp").prop("disabled", true);
+                            document.querySelector('#mensajedatos').innerText = 'Se valido con éxito';
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    comentario = "";
+                },
+                CancelarObservarExp: function () {
+                    $("#aCancelarObservarExp").css({ "display": "none" });
+                    $("#aGuardarObservarExp").css({ "display": "none" });
+                    $("#aEditarObservarExp").css({ "display": "" });
+                    $("#txtaObservarExp").prop("disabled", true);
+                    $("#txtaObservarExp").val(comentario);
+                    if ($('#txtaObservarExp').val().trim() == "") {
+                        document.querySelector('#mensajedatos').innerText = '';
+                    } else {
+                        document.querySelector('#mensajedatos').innerText = 'Se valido con éxito';
+                    }
+                }
+            },
+            addNew: function () {
+                if (Number($('#hidVerRec').val()) == 0) {
+                    sut.Asme.add({
+                        ActividadId: 0,
+                        Orden: $('#tblAsme tbody tr').size() + 1,
+                        Descripcion: '',
+                        Duracion: 0,
+                        TipoActividad: 1,
+                        TipoValor: 1
+                    });
+
+                    //$('.icheck').iCheck({
+                    //    checkboxClass: 'icheckbox_square-red',
+                    //    radioClass: 'iradio_square-red',
+                    //    increaseArea: '20%' // optional
+                    //});
+
+                    sut.Asme.sum();
+                } else {
+
+                }
+            },
+            add: function (act) {
+                var tbody = $('#tblAsme tbody');
+
+
+                if (act.Orden == "0") {
+                    var i = act.Orden;
+                } else {
+
+                    var i = act.Orden - 1;
+                }
+                var row = '';
+                var num=i;
+
+                //generar la tabla
+                if ((@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7) && '@Model.Procedimiento.Expediente.EstadoExpediente' != '@EstadoExpediente.EnProceso') {
+                    row  += sut.string.format('<tr data-index="1{0}" class="filaActividad">', num);
+                    row  += '<td colspan="13">';
+                    row  += '<div class="form-group">';
+                    row  += '<div class="col-sm-10 col-xs-12">';
+                    @*/*botones unicos*/*@
+                    row += sut.string.format('<a class="btn btn-success btn-xs" style="display:none" id="aValidarObservarExpTablaAsme' + num + '" data-placement="right" title="Validar"  href="javascript:sut.Asme.validarObservarExpTablaAsme({0},{1},{2},{3});"><i class="fa fa-thumbs-o-up"></i></a>',@Model.Procedimiento.ExpedienteId,@Model.ProcedimientoId,num,act.ActividadId);
+
+                    row  += sut.string.format('<a class="btn btn-info btn-xs" id="aObservarEditarExpTablaAsme' + num + '" data-placement="right" title="Observar" title="Observar" href="javascript:sut.Asme.observareditarExpTablaAsme({0});"><i class="fa fa-eye"></i></a>',num);
+
+                    row  += sut.string.format('<a class="btn btn-danger btn-xs" style="display:none" id="aCancelarGeneralExpTablaAsme' + num + '" data-placement="right" title="Quitar Validación" href="javascript:sut.Asme.CancelarGeneralExpTablaAsme({0},{1},{2},{3});"><i class="fa fa-power-off"></i></a>',@Model.Procedimiento.ExpedienteId,@Model.ProcedimientoId,num,act.ActividadId);
+
+                    row  += sut.string.format('<a class="btn btn-primary btn-xs" style="display:none" id="aAsignarGuardarObservarExpTablaAsme' + num + '"  data-placement="right" title="Guardar" href="javascript:sut.Asme.asignarguardarObservarExpTablaAsme({0},{1},{2},{3});"><i class="fa fa-floppy-o"></i></a>',@Model.Procedimiento.ExpedienteId,@Model.ProcedimientoId,num,act.ActividadId);
+                    row  += sut.string.format('<a class="btn btn-danger btn-xs" style="display:none" id="aAsignarCancelarObservarExpTablaAsme' + num + '" data-placement="right" title="Cancelar" href="javascript:sut.Asme.asignarCancelarObservarExpTablaAsme({0},{1},{2},{3});"><i class="fa fa-power-off"></i></a>',@Model.Procedimiento.ExpedienteId,@Model.ProcedimientoId,num,act.ActividadId);
+                    @*/*botones Generados*/*@
+
+                    row += '<label id="mensajeTablaAsme' + num + '" style="font-size: 100%;font-weight: normal;" class="label-primary label"></label>';
+
+                    row += '</div>';
+                    row += '</div>';
+                    row += '</td>';
+                    row += '</tr>';
+
+
+                    row  += sut.string.format('<tr data-index="1{0}" id="divTablaAsme0' + num + '"  class="filaActividad">', num);
+                    row += '</tr>';
+                    row  += sut.string.format('<tr data-index="1{0}" id="divTablaAsme1' + num + '"  class="filaActividad">', num);
+                    row += '</tr>';
+                    row += '</tr>';
+                    row  += sut.string.format('<tr data-index="1{0}" id="divTablaAsme2' + num + '"  class="filaActividad">', num);
+                    row += '</tr>';
+                }
+                else
+                {
+                    row  += sut.string.format('<tr data-index="1{0}" class="filaActividad">', num);
+                    row  += '<td colspan="13">';
+                    row += '<label id="mensajeTablaAsme' + num + '" style="font-size: 100%;font-weight: normal;" class="label-primary label"></label>';
+                    row += '</td>';
+                    row += '</tr>';
+
+                    row  += sut.string.format('<tr data-index="1{0}" id="divTablaAsme0' + num + '"  class="filaActividad">', num);
+                    row += '</tr>';
+                    row  += sut.string.format('<tr data-index="1{0}" id="divTablaAsme1' + num + '"  class="filaActividad">', num);
+                    row += '</tr>';
+                    row += '</tr>';
+                    row  += sut.string.format('<tr data-index="1{0}" id="divTablaAsme2' + num + '"  class="filaActividad">', num);
+                    row += '</tr>';
+                }
+
+                row +=sut.string.format('<tr data-index="{0}" id="{1}" class="filaActividad" >', i,'trTablaAsme' + num + '');
+                row += '<td class="colNro" style="width: 50px;">';
+                //row += sut.string.format('<input id="chkAct_{0}" type="checkbox" class="icheck" disabled="disabled" />', i);
+                row += sut.string.format('<a class="btn  btn-lg" data-placement="right" title="Detalle Actividades" href="javascript:sut.Asme.Recurso.abrirDetalle({0},{1})" >Recurso</i></a>', i,act.ActividadId);
+                row += '</td>';
+                row += '<td class="colNro" style="width: 50px;">';
+                row += sut.string.format('<div class="tdOrden">{0}</div>', act.Orden);
+                row += sut.string.format('<input type="hidden" id="Orden_{0}" name="Actividad[{0}].Orden" value="{1}" />', i, act.Orden);
+                row += sut.string.format('<input type="hidden" id="ActividadId_{0}" name="Actividad[{0}].ActividadId" value="{1}" />', i, act.ActividadId);
+                row += '</td>';
+                //row += sut.string.format('<td><input type="text" class="form-control"  id="Descripcion_{0}" name="Actividad[{0}].Descripcion" value="{1}" readonly /></td>', i, act.Descripcion);
+                row += sut.string.format('<td><label class="form-control" style="border-color:#ddd;background: #eeeeee;font-weight: 600;height: 100%;" id="Descripcion_{0}" name="Actividad[{0}].Descripcion"> {1}</label></td>', i, act.Descripcion);
+
+                debugger;
+
+                var Unidad ;
+                $.each(sut.Asme.UnidadesOrganicas, function (u, r) {
+                    if(act.UnidadOrganicaId==r.UnidadOrganicaId){
+                        row += sut.string.format('<td><label  class="form-control" style="border-color:#ddd;background: #eeeeee;font-weight: 600;height: 100%;"  id="UnidadOrganicaId_{0}" name="Actividad[{0}].UnidadOrganicaId" >{1}</label></td>', i, r.Nombre);
+                    }
+                    //cb += sut.string.format('<option value="{0}" {2}>{1}</option>', r.UnidadOrganicaId, r.Nombre, r.UnidadOrganicaId == id ? 'selected' : '');
+                });
+                //row += sut.string.format('<td>{0}</td>', sut.Asme.comboUndOrg(i, act.UnidadOrganicaId));
+                //row += sut.string.format('<td><input type="text" class="form-control"  id="Duracion_{0}" name="Actividad[{0}].Duracion" value="{1}" min="0" readonly /></td>', i, act.Duracion);
+                //row += sut.string.format('<td><label  class="form-control" style="border-color:#ddd;background: #eeeeee;font-weight: 600;height: 100%;"  id="Duracion_{0}" name="Actividad[{0}].Duracion" >{1}</label></td>', i, act.Duracion);
+                //row += sut.string.format('<td><input type="text" id="Duracion_{0}"  class="form-control" name="Actividad[{0}].Duracion" value="{1}" min="0" readonly /></td>', i, act.Duracion);
+                //row += sut.string.format('<td><label  class="form-control" style="border-color:#ddd;background: #eeeeee;font-weight: 600;height: 100%;"  id="Duracion_{0}" name="Actividad[{0}].Duracion" >{1}</label></td>', i, act.Duracion);
+                row += sut.string.format('<td><input type="text" class="form-control" id="Duracion_{0}" name="Actividad[{0}].Duracion" value="{1}" min="0" disabled /></td>', i, act.Duracion);
+                for (var k = 1; k <= 5; k++) {
+                    row += sut.string.format('<td class="colRadio info"><input type="radio"    id="TipoActividad_{0}{1}" name="Actividad[{0}].TipoActividad" value="{1}" {2} disabled /></td>', i, k, act.TipoActividad == k ? 'checked' : '');
+                }
+                for (var k = 1; k <= 3; k++) {
+                    row += sut.string.format('<td class="colRadio warning"><input type="radio"   id="TipoValor_{0}{1}" name="Actividad[{0}].TipoValor" value="{1}" {2} disabled /></td>', i, k, act.TipoValor == k ? 'checked' : '');
+                }
+                row += '</tr>';
+
+                tbody.append(row);
+            },
+            sum: function () {
+
+                debugger;
+                var sum = 0;
+                //$.each($('#tblAsme tbody tr td input[name$="Duracion"]'), function (i, r) {
+                //    sum += Number($(r).val());
+                //});
+                //$('#tblAsme tfoot tr td').eq(1).html(sum);
+
+
+                $.each($('#tblAsme tbody tr td input[name$="Duracion"]'), function (i, r) {
+                    sum += Number($(r).val());
+                });
+                $('#tblAsme tfoot tr td').eq(0).find('span').html(Math.ceil(sum / 480));
+                $('#tblAsme tfoot tr td').eq(1).html(sum);
+
+
+                var sum = 0;
+                //$.each($('#tblAsme tbody tr td label[name$="Duracion"]'), function (i, r) {
+                //    sum += Number($(r).val());
+                //});
+                //$('#tblAsme tfoot tr td').eq(1).html(sum);
+                  //alert(sum);
+
+                // Tipo Actividad
+                sum = 0;
+                $.each($('#tblAsme tbody tr td:nth-child(6) input:checked'), function (i, r) {
+                    sum += 1;
+                });
+                $('#tblAsme tfoot tr td').eq(2).html(sum);
+                sum = 0;
+                $.each($('#tblAsme tbody tr td:nth-child(7) input:checked'), function (i, r) {
+                    sum += 1;
+                });
+                $('#tblAsme tfoot tr td').eq(3).html(sum);
+                sum = 0;
+                $.each($('#tblAsme tbody tr td:nth-child(8) input:checked'), function (i, r) {
+                    sum += 1;
+                });
+                $('#tblAsme tfoot tr td').eq(4).html(sum);
+                sum = 0;
+                $.each($('#tblAsme tbody tr td:nth-child(9) input:checked'), function (i, r) {
+                    sum += 1;
+                });
+                $('#tblAsme tfoot tr td').eq(5).html(sum);
+                sum = 0;
+                $.each($('#tblAsme tbody tr td:nth-child(10) input:checked'), function (i, r) {
+                    sum += 1;
+                });
+                $('#tblAsme tfoot tr td').eq(6).html(sum);
+
+                // Tipo Valor
+                sum = 0;
+                $.each($('#tblAsme tbody tr td:nth-child(11) input:checked'), function (i, r) {
+                    sum += 1;
+                });
+                $('#tblAsme tfoot tr td').eq(7).html(sum);
+                sum = 0;
+                $.each($('#tblAsme tbody tr td:nth-child(12) input:checked'), function (i, r) {
+                    sum += 1;
+                });
+                $('#tblAsme tfoot tr td').eq(8).html(sum);
+                sum = 0;
+                $.each($('#tblAsme tbody tr td:nth-child(13) input:checked'), function (i, r) {
+                    sum += 1;
+                });
+                $('#tblAsme tfoot tr td').eq(9).html(sum);
+
+
+            },
+            actIndex: function () {
+                var rows = $('#tblAsme tbody tr');
+                $.each(rows, function (i, tr) {
+                    $(tr).data('index', i);
+                    //$(tr).find('td input[id^="chkAct_"]').attr('id', 'chkAct_' + i);
+                    $(tr).find('td input[name$="Orden"]').attr('name', sut.string.format('Actividad[{0}].Orden', i)).val(i + 1);
+                    $(tr).find('div.tdOrden').html(i + 1);
+                    $(tr).find('td input[name$="ActividadId"]').attr('name', sut.string.format('Actividad[{0}].ActividadId', i));
+                    $(tr).find('td input[name$="Descripcion"]').attr('name', sut.string.format('Actividad[{0}].Descripcion', i));
+                    $(tr).find('td select[name$="UnidadOrganicaId"]').attr('name', sut.string.format('Actividad[{0}].UnidadOrganicaId', i));
+                    $(tr).find('td input[name$="Duracion"]').attr('name', sut.string.format('Actividad[{0}].Duracion', i));
+                    $(tr).find('td input[name$="TipoActividad"]').attr('name', sut.string.format('Actividad[{0}].TipoActividad', i));
+                    $(tr).find('td input[name$="TipoValor"]').attr('name', sut.string.format('Actividad[{0}].TipoValor', i));
+                });
+            },
+            delete: function() {
+                if (Number($('#hidVerRec').val()) == 0) {
+                    var inputs = $('#tblAsme tbody tr td:nth-child(1) div input:checked');
+                    if (inputs.length > 0) {
+                        sut.msg.confirm('Se eliminarán lo registros seleccionados.', function () {
+                            $.each(inputs, function (i, r) {
+                                var tr = $(r).parent().parent().parent();
+                                tr.remove();
+                            });
+                            sut.Asme.actIndex();
+                            sut.Asme.sum();
+                        });
+                    }
+                } else {
+
+                }
+            },
+            guardar: function () {
+                if (Number($('#hidVerRec').val()) == 0) {
+                    if ($('#form-asme').valid()) {
+                        var model = $('#form-asme').serialize();
+                        $.ajax({
+                            type: 'POST',
+                            //url: '/Simplificacion/TablaAsme/GuardarTablaAsme',
+                            url: '@Url.Content("~/Simplificacion/TablaAsme/GuardarTablaAsme")',
+                            data: model,
+                            dataType: 'json',
+                            beforeSend: function () {
+                                $("#mensajes").hide();
+                            },
+                            complete: function () {
+
+                            },
+                            success: function (result) {
+                                sut.msg.success(result.mensaje, function () {
+                                    sut.Asme.init();
+                                });
+                            },
+                            error: function (result) {
+                                sut.error.show('mensajes', result.responseText);
+                            }
+                        });
+                    }
+                }
+            },
+            init: function () {
+
+                debugger; 
+                var model = {
+                  
+                    'filtros.actividad': $('#fil_actividad').val(),
+                    'filtros.valor': $('#fil_valor').val(),  
+                     des: $('#txtFilterDes').val(),
+                        id: @Model.TablaAsmeId,
+                };
+
+                $.ajax({
+                    @*url: '/Simplificacion/TablaAsme/GetActividades/@Model.TablaAsmeId',*@
+                    type: 'GET',
+
+                    //url: '@Url.Content("~/Simplificacion/TablaAsme/GetActividades/")@Model.TablaAsmeId',
+                   url: '@Url.Content("~/Simplificacion/TablaAsme/GetActividades")',
+              /*      data: { tipo: 2, multi: true, fnAdd: 'sut.Procedimiento.Estandar.add' },*/
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxListaAsme');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxListaAsme');
+                        $('#tblAsme tbody tr').remove();
+
+                        var listaObservacionAsme = @Html.Raw(ViewBag.ListaObservacionAsme != null ? ViewBag.ListaObservacionAsme : "[]");
+                        for (var i = 0; i < data.length; i++) {
+
+
+                            sut.Asme.add(data[i]);
+
+
+                            @*if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7) {*@
+                                if (@obs.Count != 0) {
+                                    var cont1 = 0;
+                                    var texto1 = "";
+                                    for (var Mi = 0; Mi < listaObservacionAsme.length; Mi += 1) {
+
+
+                                        if (listaObservacionAsme[Mi].Pantalla == "Tabla Asme" && listaObservacionAsme[Mi].NombreCampo == "NombredelosTablaAsme" + i) {
+
+                                            if (listaObservacionAsme[Mi].CodValidacion == "1") {
+                                                texto1 = listaObservacionAsme[Mi].Descripcion;
+                                            }
+                                            else if (listaObservacionAsme[Mi].CodValidacion == "4") {
+
+
+                                                valiarbotonesModalidad('TablaAsme', i);
+                                                $("#mensajeTablaAsme" + i).show();
+                                                $('#aValidarObservarExpTablaAsme' +  i + '').css("display", "none");
+                                                if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                {
+                                                    document.querySelector("#mensajeTablaAsme" + i).innerText = 'Se valido con éxito';
+                                                }
+                                                else
+                                                {
+                                                    $("#mensajeTablaAsme" + i).hide();
+                                                }
+
+
+                                            }
+                                            else if (listaObservacionAsme[Mi].CodValidacion == "2") {
+                                                //window.addEventListener("load", function() {
+                                                observarbotonesModalidad('TablaAsme', i);
+                                                $("#mensajeTablaAsme" + i).show();
+                                                if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                {
+                                                    document.querySelector("#mensajeTablaAsme" + i).innerText = 'Se observo con éxito';
+                                                }
+                                                else
+                                                {
+                                                    $("#mensajeTablaAsme" + i).hide();
+                                                }
+
+                                                debugger;
+                                                sut.Asme.textoobservacionTablaAsme("" + texto1 + "", "" + listaObservacionAsme[Mi].Descripcion + "", 4, "" + listaObservacionAsme[Mi].EstadoExpediente + "", i);
+                                                //});
+                                            }
+
+                                            else if (listaObservacionAsme[Mi].CodValidacion == "5") {
+
+                                                canceladobotonesModalidad('TablaAsme', i);
+
+                                            }
+                                            else if (listaObservacionAsme[Mi].CodValidacion == "3") {
+
+                                                if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                                                { }
+                                                else{   $("#mensajeTablaAsme" + i).hide(); }
+
+                                                //$("#mensajeTablaAsme" + i).show();
+                                                //sustentobotones('TablaAsme', i);
+                                                //document.querySelector("#mensajeTablaAsme" + i).innerText  = 'Sustento';
+                                                sut.Asme.textosustentoTablaAsme("" + listaObservacionAsme[Mi].Descripcion + "", 4, "" + listaObservacionAsme[Mi].EstadoExpediente + "", i);
+
+
+                                            }
+                                        }
+                                    }
+
+                                }
+
+
+                        }
+
+                        //$('.icheck').iCheck({
+                        //    checkboxClass: 'icheckbox_square-red',
+                        //    radioClass: 'iradio_square-red',
+                        //    increaseArea: '20%' // optional
+                        //});
+                        sut.Asme.sum();
+                    },
+                    error: function (data) {
+                        sut.wait.removeOverlay('#boxListaAsme');
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            },
+            Recurso: {
+                cerrarDetalle: function () {
+                    if ($('#tableOculto tbody tr').size() == 0) {
+                        $('#tableOculto tbody').append($('tr#trDetalle'));
+                    }
+                },
+                //abrirDetalle: function (index) {
+                //    debugger;
+                //    if ($('#tableOculto tbody tr').size() == 0) {
+                //        $('#tableOculto tbody').append($('tr#trDetalle'));
+                //    }
+
+                //    $('#tblAsme tbody tr.success').removeClass('success');
+
+                //    var tr = $('#tblAsme tbody tr').eq(index);
+                //    var id = Number(tr.find('input[name$="ActividadId"]').val());
+
+                //    if (id > 0) {
+                //        tr.addClass('success');
+                //        $('tr#trDetalle').insertAfter(tr);
+                //        sut.Asme.Recurso.load(id);
+                //    }
+                //},
+                abrirDetalle: function (index, actividad) {
+                    debugger;
+                    if ($('#tableOculto tbody tr').size() == 0) {
+                        $('#tableOculto tbody').append($('tr#trTablaAsme'+index+'#trDetalle'));
+                    }
+
+                    $('#tblAsme tbody tr#trTablaAsme'+index+'.success').removeClass('success');
+
+
+
+                    var tr = $('#tblAsme tbody tr#trTablaAsme'+index).eq(0);
+
+                    //var id = Number(tr.find('input[name$="ActividadId"]').val());
+
+                    var id = Number(actividad);
+                    var rbEspera = tr.find('input[name$="TipoActividad"]').eq(3);
+
+                    var Nro = tr.find('input[name$="Orden"]').val();
+                    var Actividad = tr.find('input[name$="Descripcion"]').val();
+                    var UnidadOrganizacion = $(tr).find('select[name$="UnidadOrganicaId"] option:selected').text();
+                    var Duracion =$(tr).find('input[name$="Duracion"]').val();
+
+
+                    if(id==0){
+                        showNotification('top', 'right', 'Debe guardar la información para poder reconocer la fila.', 2);
+                    }
+                    else if (id > 0 && !rbEspera.is(':checked')) {
+                        tr.addClass('success');
+                        $('tr#trDetalle').insertAfter(tr);
+                        sut.Asme.Recurso.load(id,Nro,Actividad,UnidadOrganizacion,Duracion);
+                    }else{
+                        showNotification('top', 'right', 'Marco la Opción espera.', 2);
+                    }
+                },
+                load: function (id) {
+
+                    $('#hidActividadId').val(id);
+                    $('#tblAsmeRecIdent tbody tr').remove();
+                    $('#tblAsmeRecNoIdent tbody tr').remove();
+
+                    if (id > 0) {
+                        $.ajax({
+                            //url: '/Simplificacion/TablaAsme/GetRecursos/' + id,
+                            url: '@Url.Content("~/Simplificacion/TablaAsme/GetRecursos/")' + id,
+                            type: 'GET',
+                            beforeSend: function () {
+                                sut.wait.appendOverlay('#boxListaRecIdent');
+                                sut.wait.appendOverlay('#boxListaRecNoIdent');
+                            },
+                            success: function (data) {
+                                sut.wait.removeOverlay('#boxListaRecIdent');
+                                sut.wait.removeOverlay('#boxListaRecNoIdent');
+
+                                sut.Asme.Recurso.add(data);
+                            },
+                            error: function (data) {
+                                sut.wait.removeOverlay('#boxListaRecIdent');
+                                sut.wait.removeOverlay('#boxListaRecNoIdent');
+                                sut.error.show('mensajes', data.responseText);
+                            }
+                        });
+                    } else {
+
+                    }
+                },
+                tipos: ['', 'Personal Directo', 'Material Fungible', 'Servicio Identificable',
+                            'Material No Fungible', 'Servicio de Tercero', 'Depreciación', 'Costo Fijo'],
+                add: function (data) {
+
+
+                    var nro = $('#tblAsmeRecIdent tbody tr').size() + $('#tblAsmeRecNoIdent tbody tr').size();
+
+                    for (var i = 0; i < data.length; i++) {
+                        var tbody = data[i].TipoId < 4 ? $('#tblAsmeRecIdent tbody') : $('#tblAsmeRecNoIdent tbody');
+
+                        var row = '<tr>';
+                        row += '<td class="colNro">';
+                        //row += sut.string.format('<input id="chkRec_{0}" type="checkbox" class="icheck" disabled />', nro);
+                        row += sut.string.format('<input id="chkRec_{0}" type="checkbox"   disabled />', nro);
+                        row += sut.string.format('<input name="ActividadRecurso[{0}].RecursoId" type="hidden" value="{1}" />', nro, data[i].RecursoId);
+                        row += '</td>';
+                        row += sut.string.format('<td>{0}</td>', data[i].Nombre);
+                        row += sut.string.format('<td>{0}</td>', sut.Asme.Recurso.tipos[data[i].TipoId]);
+                        if (data[i].TipoId < 4)
+                            row += sut.string.format('<td><input type="text" name="ActividadRecurso[{0}].Cantidad" class="form-control input-sm" value="{1}" disabled /></td>', nro, data[i].Cantidad);
+                        row += '</tr>';
+
+                        tbody.append(row);
+                        nro++;
+                    }
+
+                    //$('.icheck').iCheck({
+                    //    checkboxClass: 'icheckbox_square-red',
+                    //    radioClass: 'iradio_square-red',
+                    //    increaseArea: '20%' // optional
+                    //});
+                },
+                openAddRecurso: function () {
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/Recurso/Select',
+                        url: '@Url.Content("~/Simplificacion/Recurso/Select")',
+                        data: { multi: true, fnAdd: 'sut.Asme.Recurso.setAddRecurso' },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                setAddRecurso: function (data) {
+                    debugger;
+                    if (data.length > 0) {
+                        var inputs = $('#tblAsmeRecIdent tbody tr td:nth-child(1) input[name$="RecursoId"], #tblAsmeRecNoIdent tbody tr td:nth-child(1) input[name$="RecursoId"]');
+                        var lista = [];
+                        for (var i = 0; i < data.length; i++) {
+                            data[i].Cantidad = 1;
+                            var exists = inputs.filter(function (index) { return $(this).val() == data[i].RecursoId; });
+
+                            if (exists.size() == 0) lista.push(data[i]);
+                        }
+                        sut.Asme.Recurso.add(lista);
+                    }
+                    $('#modal-ventana').modal('hide');
+                },
+                delete: function() {
+                    var inputs = $('#tblAsmeRecIdent tbody tr td:nth-child(1) div input:checked, #tblAsmeRecNoIdent tbody tr td:nth-child(1) div input:checked');
+                    if (inputs.length > 0) {
+                        sut.msg.confirm('Se eliminarán lo registros seleccionados.', function () {
+                            $.each(inputs, function (i, r) {
+                                var tr = $(r).parent().parent().parent();
+                                tr.remove();
+                            });
+                            sut.Asme.Recurso.actIndex();
+                        });
+                    }
+                },
+                actIndex: function () {
+                    var rows = $('#tblAsmeRecIdent tbody tr, #tblAsmeRecNoIdent tbody tr');
+                    $.each(rows, function (i, tr) {
+                        $(tr).find('td input[id^="chkRec_"]').attr('id', 'chkRec_' + i);
+                        $(tr).find('td input[name$="RecursoId"]').attr('name', sut.string.format('ActividadRecurso[{0}].RecursoId', i));
+                        if ($(tr).find('td input[name$="Cantidad"]')) {
+                            $(tr).find('td input[name$="Cantidad"]').attr('name', sut.string.format('ActividadRecurso[{0}].Cantidad', i));
+                        }
+                    });
+                },
+                guardar: function () {
+                    var nro = $('#tblAsmeRecIdent tbody tr').size() + $('#tblAsmeRecNoIdent tbody tr').size();
+                    if ($('#form-detalle').valid() && nro > 0) {
+                        var model = $('#form-detalle').serialize();
+                        $.ajax({
+                            type: 'POST',
+                            //url: '/Simplificacion/TablaAsme/GuardarRecurso',
+                            url: '@Url.Content("~/Simplificacion/TablaAsme/GuardarRecurso")',
+                            data: model,
+                            dataType: 'json',
+                            beforeSend: function () {
+                                $("#mensajes").hide();
+                                sut.wait.appendOverlay('#boxListaRecIdent');
+                                sut.wait.appendOverlay('#boxListaRecNoIdent');
+                            },
+                            complete: function () {
+                                sut.wait.removeOverlay('#boxListaRecIdent');
+                                sut.wait.removeOverlay('#boxListaRecNoIdent');
+                            },
+                            success: function (result) {
+                                sut.msg.success('Recursos guardados satisfactoriamente.', function () {
+
+                                });
+                            },
+                            error: function (result) {
+                                sut.wait.removeOverlay('#boxListaRecIdent');
+                                sut.wait.removeOverlay('#boxListaRecNoIdent');
+                                sut.error.show('mensajes', result.responseText);
+                            }
+                        });
+                    }
+                }
+            },
+            validarObservarExpTablaAsme: function (idExpediente, procedimientoId, numero,ActividadId) {
+                debugger;
+                //var Descripcion = $('#Descripcion_' + numero).val()+";:;"+  $('select[id="UnidadOrganicaId_' + numero +'"] option:selected').text() +";:;"+$('#Duracion_' + numero).val();
+                var Descripcion =  document.getElementById('Descripcion_'+numero+'').innerHTML +";:;"+ document.getElementById('UnidadOrganicaId_'+numero+'').innerHTML +";:;"+ document.getElementById('Duracion_'+numero+'').innerHTML;
+                for (var k = 1; k <= 5; k++) {
+                    Descripcion += ";:;"+$('#TipoActividad_' + numero + k).prop('checked');
+                }
+                for (var k = 1; k <= 3; k++) {
+                    Descripcion += ";:;"+$('#TipoValor_' + numero + k).prop('checked');
+                }
+
+
+                var NombreCampo = 'TablaAsme';
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '4',
+                    'filtro.TipoEstado': '4',
+                    'filtro.NombreCampo': 'NombredelosTablaAsme' + numero,
+                    'filtro.Pantalla': 'Tabla Asme',
+                    'filtro.TablaAsmeId': @Model.TablaAsmeId,
+                    'filtro.ActividadId': ActividadId,
+                    'filtro.Estado': '1',
+                };
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/AgregarObservacion',
+                    url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+
+                        $('#aValidarObservarExp' + NombreCampo + numero + '').css("display", "none");
+                        $('#aCancelarGeneralExp' + NombreCampo + numero + '').css("display", "");
+
+                        $('#aObservarEditarExp' + NombreCampo + numero + '').css({ "display": "none" });
+                        $('#aMasivoObservarExp' + NombreCampo + numero + '').css({ "display": "none" });
+                        $('#mensajeTablaAsme' + numero).show();
+                        document.querySelector('#mensajeTablaAsme' + numero).innerText = 'Se valido con éxito';
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            CancelarGeneralExpTablaAsme: function (idExpediente, procedimientoId, numero,ActividadId) {
+                debugger;
+                //var Descripcion = $('#Descripcion_' + numero).val()+";:;"+  $('select[id="UnidadOrganicaId_' + numero +'"] option:selected').text() +";:;"+$('#Duracion_' + numero).val();
+                var Descripcion =  document.getElementById('Descripcion_'+numero+'').innerHTML +";:;"+ document.getElementById('UnidadOrganicaId_'+numero+'').innerHTML +";:;"+ document.getElementById('Duracion_'+numero+'').innerHTML;
+                for (var k = 1; k <= 5; k++) {
+                    Descripcion += ";:;"+$('#TipoActividad_' + numero + k).prop('checked');
+                }
+                for (var k = 1; k <= 3; k++) {
+                    Descripcion += ";:;"+$('#TipoValor_' + numero + k).prop('checked');
+                }
+
+                var NombreCampo = 'TablaAsme';
+
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '4',
+                    'filtro.TipoEstado': '4',
+                    'filtro.NombreCampo': 'NombredelosTablaAsme' + numero,
+                    'filtro.Pantalla': 'Tabla Asme',
+                    'filtro.TablaAsmeId': @Model.TablaAsmeId,
+                    'filtro.Estado': '1',
+                    'filtro.ActividadId': ActividadId,
+                };
+
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarObservacion',
+                    url: '@Url.Content("~/Simplificacion/Expediente/CancelarObservacion")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+
+
+                        //$('#aValidarObservarExp' + NombreCampo + numero + '').css("display", "");
+                        $('#aObservarEditarExp' + NombreCampo + numero + '').css("display", "");
+                        //$("#aSustentarObservarExpObjetivo").css("display","");
+                        //$("#aMasivoObservarExpObjetivo").css("display","");
+
+                        $('#aCancelarGeneralExp' + NombreCampo + numero + '').css({ "display": "none" });
+
+                        $('#mensajeTablaAsme' + numero + '').hide();
+                        document.querySelector('#mensajeTablaAsme' + numero + '').innerText = '';
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            observareditarExpTablaAsme: function (num) {
+
+
+                debugger;
+                var NombreCampo = 'TablaAsme';
+                var rows = '';
+                var rows1 = '';
+            /*    var rowasdasdsas1 = document.getElementById('Duracion_' + num + '').value ;*/
+
+
+
+                //rows += sut.string.format('<tr data-index="{0}"  class="filaActividad"  id="trdivTablaAsme0' + num + '">', num);
+                //rows += '<td class="colNro">';
+                ////rows += sut.string.format('<input id="chkAct_{0}" type="checkbox" class="icheck" disabled="disabled" />', num);
+                //rows += '</td>';
+                rows += '<td colspan="2" class="colNro" >';
+                rows += sut.string.format('<div class="tdOrden" style="text-align: left;" >{0}</div>','Descripción:');
+                rows += sut.string.format('<input type="hidden" id="Orden_{0}" name="Actividad[{0}].Orden" value="{1}" />', num,num);
+                rows += sut.string.format('<input type="hidden" id="ActividadId_{0}"   value="{1}" />', num,num);
+                rows += '</td>';
+                rows += sut.string.format('<td style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;"><label class="form-control" style="border-color:TRANSPARENT;background: TRANSPARENT;font-weight: 600;height: 100%;" id="DDescripcion_{0}" name="Actividad[{0}].Descripcion"> {1}</label></td></td>', num,  document.getElementById('Descripcion_'+num+'').innerHTML);
+                //rows += sut.string.format('<td style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;">{0}</td>', $('select[id="UnidadOrganicaId_' + num +'"] option:selected').text());
+                rows += sut.string.format('<td style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;"><label  class="form-control" style="border-color:TRANSPARENT;background: TRANSPARENT;font-weight: 600;height: 100%;"  id="DUnidadOrganicaId_{0}" name="Actividad[{0}].UnidadOrganicaId" >{1}</label></td>',num,   document.getElementById('UnidadOrganicaId_'+num+'').innerHTML);
+                rows += sut.string.format('<td style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;"><label  class="form-control" style="border-color:TRANSPARENT;background: TRANSPARENT;font-weight: 600;height: 100%;"  id="DDuracion_{0}" name="Actividad[{0}].Duracion" >{1}</label></td></td>', num, document.getElementById('Duracion_' + num + '').value );
+                for (var k = 1; k <= 5; k++) {
+                    rows += sut.string.format('<td class="colRadio info"><input type="radio"   id="DTipoActividad_{0}{1}"  value="{1}" {2} disabled /></td>', num, k,$('#TipoActividad_' + num + k).prop('checked') == 1 ? 'checked' : '');
+                }
+                for (var k = 1; k <= 3; k++) {
+                    rows += sut.string.format('<td class="colRadio warning"><input type="radio"    id="DTipoValor_{0}{1}"  value="{1}" {2} disabled /></td>', num, k,$('#TipoValor_' + num + k).prop('checked') == 1 ? 'checked' : '');
+                }
+                //rows += '</tr>';
+
+                //rows += '<tr id="trdivTablaAsme0_' + num + '">'
+                rows1 += sut.string.format('<td colspan="2" style="width:100px;text-align: left;">Observar : </td>');
+                rows1 += sut.string.format('<td colspan="12" ><textarea name="TablaAsme2' + num + '" onkeypress="javascript:sut.Asme.visualizarSustentoasme(event,this);" id="TablaAsme2' + num + '" class="form-control" style="border-color:red;background:#ff00002e;"></textarea></td>', '');
+                //rows += '</tr>';
+
+                $('#divTablaAsme0' + num + '').append(rows);
+                $('#divTablaAsme1' + num + '').append(rows1);
+
+
+                $('#aAsignarGuardarObservarExp' + NombreCampo + num + '').css({ "display": "" });
+                $('#aAsignarCancelarObservarExp' + NombreCampo + num + '').css({ "display": "" });
+
+                $('#aValidarObservarExp' + NombreCampo + num + '').css("display", "none");
+                $('#aCancelarGeneralExp' + NombreCampo + num + '').css("display", "none");
+                $('#aObservarEditarExp' + NombreCampo + num + '').css({ "display": "none" });
+                $('#aMasivoObservarExp' + NombreCampo + num + '').css({ "display": "" });
+
+                $('#trTablaAsme' + num + '').hide();
+                //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                //visible
+                //$('#' + dato + 'label').hide();
+
+            },
+            ///*trabajar*/
+            asignarguardarObservarExpTablaAsme: function (idExpediente, procedimientoId, numero,ActividadId) {
+
+                if ($('#TablaAsme2' + numero).val().trim() == "") {
+
+                    showNotification('top', 'right', 'No puedes Guardar una obseracion en blanco', 2);
+                    return;
+                }
+                debugger;
+                sut.Asme.GuardarObservarExp1TablaAsme(idExpediente, procedimientoId, numero,ActividadId);
+            },
+
+            GuardarObservarExp1TablaAsme: function (idExpediente, procedimientoId, numero,ActividadId) {
+
+                debugger;
+                //var Descripcion = $('#DDescripcion_' + numero).val()+";:;"+  $('select[id="UnidadOrganicaId_' + numero +'"] option:selected').text() +";:;"+$('#DDuracion_' + numero).val();
+                var Descripcion =  document.getElementById('DDescripcion_'+numero+'').innerHTML +";:;"+ document.getElementById('DUnidadOrganicaId_'+numero+'').innerHTML +";:;"+ document.getElementById('DDuracion_'+numero+'').innerHTML;
+                for (var k = 1; k <= 5; k++) {
+                    Descripcion += ";:;"+$('#DTipoActividad_' + numero + k).prop('checked');
+                }
+                for (var k = 1; k <= 3; k++) {
+                    Descripcion += ";:;"+$('#DTipoValor_' + numero + k).prop('checked');
+                }
+
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '1',
+                    'filtro.TipoEstado': '1',
+                    'filtro.NombreCampo': 'NombredelosTablaAsme' + numero,
+                    'filtro.Pantalla': 'Tabla Asme',
+                    'filtro.TablaAsmeId': @Model.TablaAsmeId,
+                    'filtro.Estado': '1',
+                    'filtro.ActividadId': ActividadId,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/AgregarObservacion',
+                    url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                    data: model,
+                    cache: false,
+                    success: function (data) {
+                        sut.Asme.GuardarObservarExp2TablaAsme(idExpediente, procedimientoId, numero,ActividadId);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+
+            GuardarObservarExp2TablaAsme: function (idExpediente, procedimientoId, numero,ActividadId) {
+                var NombreCampo = 'TablaAsme';
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': $('#TablaAsme2' + numero).val(),
+                    'filtro.CodValidacion': '2',
+                    'filtro.TipoEstado': '2',
+                    'filtro.NombreCampo': 'NombredelosTablaAsme' + numero,
+                    'filtro.Pantalla': 'Tabla Asme',
+                    'filtro.TablaAsmeId': @Model.TablaAsmeId,
+                    'filtro.Estado': '1',
+                    'filtro.ActividadId': ActividadId,
+                };
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/AgregarObservacion',
+                    url: '@Url.Content("~/Simplificacion/Expediente/AgregarObservacion")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#modal-ventana').modal('hide');
+
+
+                        $('#aCancelarObservarExp' + NombreCampo + numero + '').css("display", "none");
+                        $('#aGuardarObservarExp' + NombreCampo + numero + '').css({ "display": "none" });
+                        $('#aEditarObservarExp' + NombreCampo + numero + '').css({ "display": "" });
+
+                        $('#mensajeTablaAsme' + numero).show();
+                        document.querySelector('#mensajeTablaAsme' + numero).innerText = 'Se observo con éxito';
+
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            asignarCancelarObservarExpTablaAsme: function (idExpediente, procedimientoId, numero,ActividadId) {
+
+                sut.Asme.CancelarObservacion1TablaAsme(idExpediente, procedimientoId, numero,ActividadId);
+
+            },
+            CancelarObservacion1TablaAsme: function (idExpediente, procedimientoId, numero,ActividadId) {
+                debugger;
+                //var Descripcion = $('#DDescripcion_' + numero).val()+";:;"+  $('select[id="UnidadOrganicaId_' + numero +'"] option:selected').text() +";:;"+$('#DDuracion_' + numero).val();
+                var Descripcion =  document.getElementById('DDescripcion_'+numero+'').innerHTML +";:;"+ document.getElementById('DUnidadOrganicaId_'+numero+'').innerHTML +";:;"+ document.getElementById('DDuracion_'+numero+'').innerHTML;
+                for (var k = 1; k <= 5; k++) {
+                    Descripcion += ";:;"+$('#DTipoActividad_' + numero + k).prop('checked');
+                }
+                for (var k = 1; k <= 3; k++) {
+                    Descripcion += ";:;"+$('#DTipoValor_' + numero + k).prop('checked');
+                }
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '1',
+                    'filtro.TipoEstado': '1',
+                    'filtro.NombreCampo': 'NombredelosTablaAsme' + numero,
+                    'filtro.Pantalla': 'Tabla Asme',
+                    'filtro.TablaAsmeId': @Model.TablaAsmeId,
+                    'filtro.Estado': '1',
+                    'filtro.ActividadId': ActividadId,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                    url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+
+                        sut.Asme.CancelarObservacion2TablaAsme(idExpediente, procedimientoId, numero,ActividadId);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            CancelarObservacion2TablaAsme: function (idExpediente, procedimientoId, numero,ActividadId) {
+                debugger;
+                //var Descripcion = $('#Descripcion_' + numero).val()+";:;"+  $('select[id="UnidadOrganicaId_' + numero +'"] option:selected').text() +";:;"+$('#Duracion_' + numero).val();
+                //for (var k = 1; k <= 5; k++) {
+                //    Descripcion += ";:;"+$('#TipoActividad_' + numero + k).prop('checked');
+                //}
+                //for (var k = 1; k <= 3; k++) {
+                //    Descripcion += ";:;"+$('#TipoValor_' + numero + k).prop('checked');
+                //}
+
+
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion':  $('#TablaAsme2' + numero).val(),
+                    'filtro.CodValidacion': '2',
+                    'filtro.TipoEstado': '2',
+                    'filtro.NombreCampo': 'NombredelosTablaAsme' + numero,
+                    'filtro.Pantalla': 'Tabla Asme',
+                    'filtro.TablaAsmeId': @Model.TablaAsmeId,
+                    'filtro.Estado': '1',
+                    'filtro.ActividadId': ActividadId,
+                };
+
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                    url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+
+                        sut.Asme.CancelarObservacion3TablaAsme(idExpediente, procedimientoId, numero,ActividadId);
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+                comentario = "";
+            },
+            CancelarObservacion3TablaAsme: function (idExpediente, procedimientoId, numero,ActividadId) {
+                debugger;
+                //var Descripcion = $('#Descripcion_' + numero).val()+";:;"+  $('select[id="UnidadOrganicaId_' + numero +'"] option:selected').text() +";:;"+$('#Duracion_' + numero).val();
+                var Descripcion =  document.getElementById('Descripcion_'+numero+'').innerHTML +";:;"+ document.getElementById('UnidadOrganicaId_'+numero+'').innerHTML +";:;"+ document.getElementById('Duracion_'+numero+'').innerHTML;
+                for (var k = 1; k <= 5; k++) {
+                    Descripcion += ";:;"+$('#TipoActividad_' + numero + k).prop('checked');
+                }
+                for (var k = 1; k <= 3; k++) {
+                    Descripcion += ";:;"+$('#TipoValor_' + numero + k).prop('checked');
+                }
+
+                var NombreCampo = 'TablaAsme';
+                var model = {
+                    'filtro.ExpedienteId': idExpediente,
+                    'filtro.ProcedimientoId': procedimientoId,
+                    'filtro.Descripcion': Descripcion,
+                    'filtro.CodValidacion': '3',
+                    'filtro.TipoEstado': '3',
+                    'filtro.NombreCampo': 'NombredelosTablaAsme' + numero,
+                    'filtro.Pantalla': 'Tabla Asme',
+                    'filtro.TablaAsmeId': @Model.TablaAsmeId,
+                    'filtro.Estado': '1',
+                    'filtro.ActividadId': ActividadId,
+                };
+
+                $.ajax({
+                    type: "POST",
+                    //url: '/Simplificacion/Expediente/CancelarDescripcion1',
+                    url: '@Url.Content("~/Simplificacion/Expediente/CancelarDescripcion1")',
+                    data: model,
+                    cache: false,
+                    beforeSend: function () {
+                        //sut.wait.modal('ventana-container');
+                        //$('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+
+                        //document.getElementById('#'+dato+'').style.visibility = "hidden";
+                        //visible
+                        $('#trTablaAsme' + numero + '').show();
+
+                        //$('#aValidarObservarExp' + NombreCampo + numero + '').css({ "display": "" });
+                        $('#aObservarEditarExp' + NombreCampo + numero + '').css({ "display": "" });
+
+                        $('#aMasivoObservarExp' + NombreCampo + numero + '').css({ "display": "none" });
+                        $('#aAsignarGuardarObservarExp' + NombreCampo + numero + '').css({ "display": "none" });
+                        $('#aAsignarCancelarObservarExp' + NombreCampo + numero + '').css({ "display": "none" });
+
+
+                        $('#divTablaAsme1' + numero + '').remove();
+                        $('#divTablaAsme0' + numero + '').remove();
+                        $('#mensajeTablaAsme' + numero).hide();
+                        document.querySelector('#mensajeTablaAsme' + numero).innerText = '';
+
+                        //location.reload();
+
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+
+
+                comentario = "";
+            },
+            textoobservacionTablaAsme: function (Descripcion, Descripcion2, estado, nomcampo, num) {
+
+
+                var Des = Descripcion.split(";:;");
+
+                debugger;
+                var NombreCampo = 'TablaAsme';
+                var rows = '';
+                var rows1 = '';
+                var che1=3;
+
+
+
+                //rows += sut.string.format('<tr data-index="{0}"  class="filaActividad"  id="trdivTablaAsme0' + num + '">', num);
+                //rows += '<td class="colNro">';
+                ////rows += sut.string.format('<input id="chkAct_{0}" type="checkbox" class="icheck" disabled="disabled" />', num);
+                //rows += '</td>';
+                rows += '<td colspan="2" class="colNro" >';
+                rows += sut.string.format('<div class="tdOrden" style="text-align: left;">{0}</div>','Descripción:');
+                rows += sut.string.format('<input type="hidden" id="Orden_{0}" name="Actividad[{0}].Orden" value="{1}" />', num,num);
+                rows += sut.string.format('<input type="hidden" id="ActividadId_{0}"   value="{1}" />', num,num);
+                rows += '</td>';
+                rows += sut.string.format('<td style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;"><label class="form-control" style="border-color:TRANSPARENT;background: TRANSPARENT;font-weight: 600;height: 100%;" id="DDescripcion_{0}" name="Actividad[{0}].Descripcion"> {1}</label></td>', num,  Des[0]);
+                rows += sut.string.format('<td style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;"><label  class="form-control" style="border-color:TRANSPARENT;background: TRANSPARENT;font-weight: 600;height: 100%;"  id="DUnidadOrganicaId_{0}" name="Actividad[{0}].UnidadOrganicaId" >{1}</label></td>', num, Des[1]);
+                rows += sut.string.format('<td style="border-color:#00a65a00;background:#00a65a36;border: 1px solid #f4f4f4;"><label  class="form-control" style="border-color:TRANSPARENT;background: TRANSPARENT;font-weight: 600;height: 100%;"  id="DDuracion_{0}" name="Actividad[{0}].Duracion" >{1}</label></td>', num, Des[2]);
+                for (var k = 1; k <= 5; k++) {
+                    var valcheck1=Des[che1];
+                    if(valcheck1=='false')
+                    {
+                        valcheck1=0;
+                    }else
+                    {
+                        valcheck1=1;
+                    }
+
+
+                    rows += sut.string.format('<td   class="colRadio info"><input type="radio"    id="DTipoActividad_{0}{1}"  value="{1}" {2} disabled /></td>', num, k,valcheck1 == 1 ? 'checked' : '');
+                    che1=che1+1;
+                }
+                for (var k = 1; k <= 3; k++) {
+
+                    var valcheck2=Des[che1];
+                    if(valcheck2=='false')
+                    {
+                        valcheck2=0;
+                    }else
+                    {
+                        valcheck2=1;
+                    }
+
+                    rows += sut.string.format('<td   class="colRadio warning"><input type="radio"    id="DTipoValor_{0}{1}"  value="{1}" {2} disabled /></td>', num, k,valcheck2 == 1 ? 'checked' : '');
+                    che1=che1+1;
+                }
+                //rows += '</tr>';
+
+                //rows += '<tr id="trdivTablaAsme0_' + num + '">'
+                rows1 += sut.string.format('<td colspan="2" style="width:100px;">Observar : </td>');
+                if (@user.Rol == 8 || @user.Rol == 6 || @user.Rol == 7)
+                {
+                    rows1 += sut.string.format('<td colspan="12" ><textarea name="TablaAsme2' + num + '" id="TablaAsme2' + num + '" onkeypress="javascript:sut.Asme.visualizarSustentoasme(event,this);" id="TablaAsme2" class="form-control" style="border-color:red;background:#ff00002e;">{0}</textarea></td>', Descripcion2);
+
+                }
+                else
+                {
+                    rows1 += sut.string.format('<td colspan="12" ><label class="form-control" name="TablaAsme2' + num + '" id="TablaAsme2' + num + '"  style="border-color:red;background:#ff00002e;font-weight: 600;height: 100%;" >{0}</label></td>', Descripcion2 );
+				}
+                //rows += '</tr>';
+
+                $('#divTablaAsme0' + num + '').append(rows);
+                $('#divTablaAsme1' + num + '').append(rows1);
+
+
+                $('#aAsignarGuardarObservarExp' + NombreCampo + num + '').css({ "display": "" });
+                $('#aAsignarCancelarObservarExp' + NombreCampo + num + '').css({ "display": "" });
+
+                $('#aValidarObservarExp' + NombreCampo + num + '').css("display", "none");
+                $('#aCancelarGeneralExp' + NombreCampo + num + '').css("display", "none");
+                $('#aObservarEditarExp' + NombreCampo + num + '').css({ "display": "none" });
+                $('#aMasivoObservarExp' + NombreCampo + num + '').css({ "display": "" });
+
+
+            },
+            textosustentoTablaAsme: function (Descripcion2, estado, nomcampo, num) {
+
+                var NombreCampo = 'TablaAsme';
+                var rows1 = '';
+                rows1 += sut.string.format('<td colspan="2" style="width:100px;"> Sustento Observación</td>');
+                //rows1 += sut.string.format('<td colspan="12" ><textarea name="TablaAsme3' + num + '" id="TablaAsme3' + num + '" class="form-control" style="border-color:#f39c12;background:#f39c1259;" readOnly>{0}</textarea></td>',Descripcion2);
+                rows1 += sut.string.format('<td colspan="12"><label class="form-control"  name="TablaAsme3' + num + '" id="TablaAsme3' + num + '"  style="border-color:#f39c12;background:#f39c1259;font-weight: 600;height: 100%;" >{0}</label></td>', Descripcion2 );
+
+                $('#divTablaAsme2' + num + '').append(rows1);
+                $('#aSustentarObservarExp'+NombreCampo+num+'').css({ "display": "none" });
+                $('#aGuardarSustentarExp'+NombreCampo+num+'').css({ "display": "" });
+                $('#aCancelarSustentarExp'+NombreCampo+num+'').css({ "display": "" });
+            },
+
+
+        };
+
+        $(function () {
+
+            sut.Asme.init2();
+            /*habilitar observación*/
+            $("#aCancelarObservarExp").css({ "display": "none" });
+            $("#aGuardarObservarExp").css({ "display": "none" });
+            $("#aEditarObservarExp").css({ "display": "" });
+            $("#txtaObservarExp").prop("disabled", true)
+            sut.Asme.init();
+
+               $('#txtFilterDes').keypress(function (e) {
+                    var key = e.keyCode || event.keyCode;
+                    if (key == 13)         sut.Asme.init();
+                });
+
+
+
+
+            $('#chkTodo').on('ifToggled', function (e) {
+                $('input[id^="chkAct"]').iCheck($('#chkTodo').is(':checked') ? 'check' : 'uncheck');
+            });
+            $('#tblAsme tbody').delegate('tr td input[name$="Duracion"]', 'change', function (e) {
+                sut.Asme.sum();
+            });
+            $('#tblAsme tbody').delegate('tr td:nth-child(11) div input').on('ifChecked', function (e) {
+                sut.Asme.sum();
+            });
+            $('#tblAsme tbody').delegate('tr.filaActividad', 'click', function (e) {
+                if (Number($('#hidVerRec').val()) > 0) {
+                    if ($(this).attr('id') != 'trDetalle') {
+                        sut.Asme.Recurso.abrirDetalle($(this).data('index'));
+                    }
+                }
+            });
+
+            $('#btnVerRec').click(function (e) {
+                $('#btnVerRec').addClass('hidden');
+                $('#btnVerAct').removeClass('hidden');
+                $('#hidVerRec').val(1);
+
+                $('#btnAddAct').attr('disabled', 'disabled');
+                $('#btnDelAct').attr('disabled', 'disabled');
+                $('#btnSaveAsme').attr('disabled', 'disabled');
+
+                var rows = $('#tblAsme tbody tr');
+                $.each(rows, function (i, tr) {
+                    //$(tr).find('td input[id^="chkAct_"]').attr('disabled', 'disabled');
+                    //$(tr).find('td input[name$="Descripcion"]').attr('disabled', 'disabled');
+                    //$(tr).find('td select[name$="UnidadOrganicaId"]').attr('disabled', 'disabled');
+                    //$(tr).find('td input[name$="Duracion"]').attr('disabled', 'disabled');
+                    //$(tr).find('td input[name$="TipoActividad"]').attr('disabled', 'disabled');
+                    //$(tr).find('td input[name$="TipoValor"]').attr('disabled', 'disabled');
+                });
+
+                //$('#tblAsme').sortable('disable');
+            });
+            $('#btnVerAct').click(function (e) {
+                $('#btnVerAct').addClass('hidden');
+                $('#btnVerRec').removeClass('hidden');
+                $('#hidVerRec').val(0);
+
+                $('#btnAddAct').removeAttr('disabled');
+                $('#btnDelAct').removeAttr('disabled');
+                $('#btnSaveAsme').removeAttr('disabled');
+
+                $('#tblAsme tbody tr.success').removeClass('success');
+
+                var rows = $('#tblAsme tbody tr');
+                $.each(rows, function (i, tr) {
+                    //$(tr).find('td input[id^="chkAct_"]').removeAttr('disabled');
+                    //$(tr).find('td input[name$="Descripcion"]').removeAttr('disabled');
+                    //$(tr).find('td select[name$="UnidadOrganicaId"]').removeAttr('disabled');
+                    //$(tr).find('td input[name$="Duracion"]').removeAttr('disabled');
+                    //$(tr).find('td input[name$="TipoActividad"]').removeAttr('disabled');
+                    //$(tr).find('td input[name$="TipoValor"]').removeAttr('disabled');
+                });
+
+                sut.Asme.Recurso.cerrarDetalle();
+
+                //$('.icheck').iCheck({
+                //    checkboxClass: 'icheckbox_square-red',
+                //    radioClass: 'iradio_square-red',
+                //    increaseArea: '20%' // optional
+                //});
+
+                //$('#tblAsme').sortable('enable');
+            });
+
+            //$('#tblAsme').sortable({
+            //    containerSelector: 'table',
+            //    itemPath: '> tbody',
+            //    itemSelector: 'tr',
+            //    placeholder: '<tr class="placeholder"/>',
+            //    onDrop: function ($item, container, _super) {
+            //        _super($item, container);
+            //        sut.Asme.actIndex();
+            //    }
+            //});
+
+
+            $('#form-asme').validate({
+                errorPlacement: function (error, element) {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+
+                },
+                messages: {
+
+                }
+            });
+            $('#form-detalle').validate({
+                errorPlacement: function (error, element) {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+
+                },
+                messages: {
+
+                }
+            });
+
+        });
+
+
+        function observarbotonesModalidad(NombreCampo,num) {
+            $('#aAsignarGuardarObservarExp' + NombreCampo + num + '').css({ "display": "" });
+            $('#aAsignarCancelarObservarExp' + NombreCampo + num +  '').css({ "display": "" });
+
+            $('#aValidarObservarExp' + NombreCampo + num + '').css("display", "none");
+            $('#aCancelarGeneralExp' + NombreCampo +  num +'').css("display", "none");
+            $('#aObservarEditarExp' + NombreCampo + num + '').css({ "display": "none" });
+            $('#aMasivoObservarExp' + NombreCampo + num + '').css({ "display": "" });
+        }
+        function valiarbotonesModalidad(NombreCampo, num) {
+            //$('#aValidarObservarExp' + NombreCampo + num +  '').css("display", "");
+            $('#aCancelarGeneralExp' + NombreCampo + num + '').css("display", "");
+            $('#aObservarEditarExp' + NombreCampo + num + '').css({ "display": "none" });
+            $('#aMasivoObservarExp' + NombreCampo + num + '').css({ "display": "none" });
+        }
+        function canceladobotonesModalidad(NombreCampo, num) {
+            $('#aAsignarGuardarObservarExp' + NombreCampo + num + '').css({ "display": "none" });
+            $('#aAsignarCancelarObservarExp' + NombreCampo + num + '').css({ "display": "none" });
+            //$('#aValidarObservarExp' + NombreCampo + num + '').css("display", "");
+            $('#aCancelarGeneralExp' + NombreCampo + num +  '').css("display", "none");
+            $('#aObservarEditarExp' + NombreCampo + num + '').css({ "display": "" });
+            $('#aMasivoObservarExp' + NombreCampo + num + '').css({ "display": "none" });
+        }
+        function sustentobotones(NombreCampo, num) {
+
+
+            $('#aSustentarObservarExp'+NombreCampo+  num + '').css({ "display": "none" });
+            $('#aGuardarSustentarExp'+NombreCampo+ num + '').css({ "display": "" });
+            $('#aCancelarSustentarExp'+NombreCampo+ num + '').css({ "display": "" });
+
+        }
+
+    </script>
+}

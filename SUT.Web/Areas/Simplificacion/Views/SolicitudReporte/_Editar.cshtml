@@ -1,0 +1,110 @@
+﻿@model Sut.Entities.Expediente
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">@ViewBag.Title</h4>
+        </div>
+        <div class="modal-body form-horizontal">
+            @using (Html.BeginForm("Guardar", "Simplificacion/SolicitudReporte", FormMethod.Post, new { @id = "form-modal-editar" }))
+            {
+                @Html.HiddenFor(model => model.ExpedienteId)
+                @Html.HiddenFor(model => model.ArchivoAdjuntoId) 
+            }
+            @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-adjunto", @enctype = "multipart/form-data" }))
+            {
+                <div class="form-group">
+                    <label class="control-label col-sm-4 col-xs-12">Adjuntar Archivo word</label>
+                    <div class="col-sm-8 col-xs-12">
+                        @Html.HiddenFor(model => model.ArchivoAdjuntoId)
+                        <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto != null ? "" : "file-empty")">
+                            <ul>
+                                <li>
+                                    <span class="text">
+                                        <i class="fa fa-file"></i>
+                                        <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto != null ? Model.ArchivoAdjunto.Ruta : "")" target="_blank">
+                                            @MvcHtmlString.Create(Model.ArchivoAdjunto != null ? Model.ArchivoAdjunto.NombreArchivo : "")
+                                        </a>
+                                    </span>
+                                    <div class="tools">
+                                        <i class="fa fa-remove"></i>
+                                    </div>
+                                </li>
+                            </ul>
+                            @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control", @accept = "application/msword" })
+                        </div>
+                    </div>
+                </div>
+            }
+            <div id="msgEditar"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-sm" onclick="sut.solicitarword.guardar()"><i class="fa fa-save"></i> Guardar</button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+
+<script>
+
+    sut.solicitarword = {
+        guardar: function () {
+            if ($("#form-modal-editar").valid()) {
+                $('#form-modal-editar input[name="ArchivoAdjuntoId"]').val($('#form-adjunto input[name="ArchivoAdjuntoId"]').val());
+
+                console.log($('#form-modal-editar').serialize());
+
+                var model = $('#form-modal-editar').serialize();
+                $.ajax({
+                    type: "POST",
+                    //url: "/Simplificacion/Norma/Guardar",
+                    url: '@Url.Content("~/Simplificacion/SolicitudReporte/Guardar")',
+                    data: model,
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $("#msgEditar").hide();
+                        sut.wait.appendProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).attr("disabled", "disabled");
+                        $('#form-modal-editar button').eq(1).attr("disabled", "disabled");
+                    },
+                    complete: function () {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                    },
+                    success: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.msg.success(result.mensaje, function () {
+                            sut.Expediente.listar(1);
+                        });
+                    },
+                    error: function (result) {
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal-editar button').eq(0).removeAttr("disabled");
+                        $('#form-modal-editar button').eq(1).removeAttr("disabled");
+                        sut.error.show('msgEditar', result.responseText);
+                    }
+                });
+            }
+        }
+    };
+
+    $(function () {
+
+        //$('input[name="FechaPublicacion"]').datepicker({ format: 'dd/mm/yyyy' });
+       
+        sut.control.uploadfileTodo('form-adjunto');
+         
+    });
+
+</script>
+

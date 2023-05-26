@@ -1,0 +1,202 @@
+﻿@model List<Sut.Entities.Notificacion>
+@{
+    ViewBag.Title = "Notificación";
+    ViewBag.Descripcion = "Registro Notificación"; 
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo; 
+}
+<div class="callout callout-warning" style="height: inherit;padding: inherit;display: block;">
+    Para efectos de comunicados y notificaciones formales: Los datos registrados en este apartado deben responder a la verdad y mantenerse actualizados, bajo responsabilidad del Administrador del SUT
+</div>
+<div id="mensajes"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger" >
+            <div class="box-body">
+                @*<a class="btn btn-success" style="" href="javascript:sut.Notificacion.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>
+                <br />*@
+
+                @*<input type="hidden" value="0" id="ContenidoValor" />*@
+                <div class="table-responsive">
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="20"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.Notificacion.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th class="colAction">Nro.</th>
+                                <th style="width:150px">Tipo</th>
+                                <th style="width:200px">CCO</th>
+                                <th style="width:300px">Asunto</th>
+                                <th >Contenido</th> 
+                                <th style="width:80px">Fecha Registro</th>
+                                <th style="width:80px">Estado</th>
+                                <th class="colAction"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr><td colspan="14"><div id="paginator"></div></td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+    </div>
+</div>
+ 
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="14"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 60px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        } 
+
+    </style>
+}
+@section Script {
+    <script> 
+         
+
+        sut.Notificacion = {
+           
+            editar: (id) => {
+
+                $.ajax({
+                    type: "GET", 
+                    url: '@Url.Content("~/Seguridad/Notificacion/Editar")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },  
+            listar: (page) => {
+                table = $('#tblLista');
+                var model = { 
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+                $.ajax({ 
+                    url: '@Url.Content("~/Seguridad/Notificacion/GetAllLikePagin")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: () => {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: (data) => {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.Notificacion.generar(data.lista);
+                        debugger;
+                        if (data.totalRows == 0)  $('#tblLista tbody').append("<tr><td colspan='14' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+
+                        debugger;
+
+                        if (data.totalRows < 2)
+                        {
+                            $('#mensaje2').hide();
+                            $('#mensaje1').show(); 
+                        }else
+                        {
+                            $('#mensaje2').show();
+                            $('#mensaje1').hide(); 
+                        }
+                    },
+                    error: (data) => {
+                        sut.error.show('mensajes', data.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            generar: (lista) => {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                var Notificacion;
+                $.each(lista, (i, r) => {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero); 
+                    if (r.IdTipoNotificacion == 1) { Notificacion = 'Presentar Envio'; }
+                    else if (r.IdTipoNotificacion == 2) { Notificacion = 'Presentar Recibido'; }
+                    else if (r.IdTipoNotificacion == 3) { Notificacion = 'Sustentar Envio'; }
+                    else if (r.IdTipoNotificacion == 4) { Notificacion = 'Sustentar Recibido'; }
+                    else if (r.IdTipoNotificacion == 5) { Notificacion = 'Observar Envio'; }
+                    else if (r.IdTipoNotificacion == 6) { Notificacion = 'Observar Recibido'; }
+                    else if (r.IdTipoNotificacion == 7) { Notificacion = 'Publicar Envio'; }
+                    else if (r.IdTipoNotificacion == 8) { Notificacion = 'Publicar Recibido'; }
+                    else if (r.IdTipoNotificacion == 9) { Notificacion = 'Aprobar Envio'; }
+                    else if (r.IdTipoNotificacion == 10) { Notificacion = 'Aprobar Recibido'; }
+
+                    rows += sut.string.format('<td>{0}</td>', Notificacion);
+                    rows += sut.string.format('<td>{0}</td>', r.CCO);
+                    rows += sut.string.format('<td>{0}</td>', r.Asunto);
+                    rows += sut.string.format('<td>{0}</td>', r.Descripcion);
+                    rows += sut.string.format('<td style="text-align: center;" >{0}</td>', r.FecCreacion);
+                    if (r.Estado == 1) {
+                        var estadotitulo = 'Activo';
+                    } else {
+                        var estadotitulo = 'Baja';
+                    }
+                    rows += sut.string.format('<td style="text-align: center;">{0}</td>', estadotitulo); 
+                    rows += '<td style="text-align: center;">';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a  class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar Notificacion" href="javascript:sut.Notificacion.editar({0})" ><i class="fa fa-pencil"></i></a>', r.NotificacionId);
+                    rows += '</div>';
+                    rows += '</td>';    
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            } 
+
+        };
+
+        $(() => { 
+            sut.Notificacion.listar(1); 
+  
+        }); 
+
+
+    </script>
+}

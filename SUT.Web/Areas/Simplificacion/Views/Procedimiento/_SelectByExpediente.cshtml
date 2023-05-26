@@ -1,0 +1,113 @@
+﻿@using Sut.Entities
+<div id="buscarProcedimiento" class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Seleccionar @MvcHtmlString.Create(ViewBag.TipoTupa == (short)TipoTupa.Estandar ? "Procedimiento Estándar" : "Procedimiento/Servicio")</h4>
+        </div>
+        <div class="modal-body">
+            <div id="divLista"></div>
+        </div>
+        <div class="modal-footer">
+            @if (ViewBag.Multi)
+            {
+                <a class="btn btn-success btn-sm" href="javascript:sut.buscarProcedimiento.aceptar();"><i class="fa fa-check"></i> Aceptar</a>
+            }
+            <button type="button" class="btn btn-danger btn-sm" onclick="$(this).parent().parent().parent().parent().parent().modal('hide');"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+</style>
+
+<script>
+
+    var multi = @Html.Raw(ViewBag.Multi ? "true" : "false");
+    var fnAdd = @Html.Raw(ViewBag.FnAdd);
+
+    App['gridListaBuscarProcedimiento'] = null;
+    App['stListaBuscarProcedimiento'] = null;
+    App['txtFilterCodigo'] = null;
+    App['txtFilterDenominacion'] = null;
+    App['pagListaBuscarProcedimiento'] = null;
+
+    sut.buscarProcedimiento = {
+        init: () => {
+            jcd.create('Grid', {
+                id: 'gridListaBuscarProcedimiento',
+                store: jcd.create('JsonStore', {
+                    id: 'stListaBuscarProcedimiento',
+                    recordId: 'ProcedimientoId',
+                    fields: [
+                        { name: 'ProcedimientoId' },
+                        { name: 'Codigo' },
+                        { name: 'Denominacion' },
+                    ],
+                    pageIndex: 1,
+                    pageSize: 20,
+                    ajax: {
+                        url: '@Url.Action("GetAllLikePaginByExpediente", "Procedimiento", new { area = "Simplificacion" })',
+                        data: {
+                            'filtro.ExpedienteId': () => @ViewBag.ExpedienteId,
+                            'filtro.Denominacion': () => App.txtFilterDenominacion.$().val(),
+                            'filtro.Codigo': () => App.txtFilterCodigo.$().val(),
+                            'filtro.ProcedimientoId' : ()=> @ViewBag.ProcedimientoOrigenId
+                        },
+                        autoLoad: false
+                    },
+                }),
+                header: [
+                    jcd.create('Button', {
+                        icon: 'fa fa-filter', aditionalClass: 'btn-xs', handler: {
+                            click: (e) => {
+                                App.txtFilterCodigo.$().val('');
+                                App.txtFilterDenominacion.$().val('');
+                                App.stLista.reload({ pageIndex: 1 });
+                            }
+                        }
+                    }),
+                    jcd.create('TextBox', {
+                        id: 'txtFilterCodigo',
+                        aditionalClass: 'input-sm',
+                        handler: {
+                            keypress: (e) => {
+                                if (e.which == 13)
+                                    App.stLista.reload({ pageIndex: 1 });
+                            }
+                        }
+                    }),
+                    jcd.create('TextBox', {
+                        id: 'txtFilterDenominacion',
+                        aditionalClass: 'input-sm',
+                        handler: {
+                            keypress: (e) => {
+                                if (e.which == 13)
+                                    App.stLista.reload({ pageIndex: 1 });
+                            }
+                        }
+                    }),
+                ],
+                columns: [
+                    jcd.create('RowNumberColumn', { width: 50 }),
+                    jcd.create('GridColumn', { name: 'Codigo'}),
+                    jcd.create('GridColumn', { name: 'Denominacion' }),
+                    jcd.create('ActionColumn', {
+                        commandwidth: 50,
+                        commands: [
+                            { icon: 'fa fa-check', color: 'btn-success', callback: (e) => { fnAdd(e.record); } }
+                        ]
+                    })
+                ],
+                footer: [jcd.create('Paginator', { id: 'pagListaBuscarProcedimiento', store: 'stListaBuscarProcedimiento' })]
+            });
+
+            App.gridListaBuscarProcedimiento.renderTo($('#divLista'));
+            App.stListaBuscarProcedimiento.reload();
+        }
+    };
+
+    $(function () {
+        sut.buscarProcedimiento.init();
+    });
+
+</script>

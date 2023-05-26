@@ -1,0 +1,2655 @@
+﻿@using Sut.Entities;
+@model Sut.Entities.Procedimiento
+
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Información al ciudadano - " + Model.CodigoCorto;
+    ViewBag.Descripcion = "";
+}
+
+<div id="mensajes">
+    @{Html.RenderPartial("_Error");}
+</div>
+
+@using (Html.BeginForm("DatosGenerales", "Procedimiento", new { @area = "Simplificacion" }, FormMethod.Post, new { @id = "form-editar" }))
+{
+    @Html.HiddenFor(model => model.ProcedimientoId)
+    @Html.HiddenFor(model => model.ExpedienteId)
+    @Html.HiddenFor(model => model.Codigo)
+    @Html.HiddenFor(model => model.Operacion)
+    @Html.HiddenFor(model => model.TipoProcedimiento)
+    @Html.HiddenFor(model => model.CategoriaProcedimientoId)
+    @Html.HiddenFor(model => model.TipoProcedimientoId)
+    @Html.HiddenFor(model => model.CodigoCorto)
+    @Html.HiddenFor(model => model.DatosGeneralesTerminado)
+    @Html.HiddenFor(model => model.SustTecnicoTerminado)
+    @Html.HiddenFor(model => model.TablaAsmeTerminado)
+    @Html.HiddenFor(model => model.SustentoEliminacion)
+    @Html.HiddenFor(model => model.SustTecCalificacion)
+ 
+
+    <div class="box box-danger">
+        <div class="box-body form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label" for="Denominacion">Denominación :</label>
+                <div class="col-sm-10 col-xs-12">
+
+
+                    @if (!ViewBag.EsTupaEstandar && Model.TipoProcedimiento != TipoProcedimiento.Estandar)
+                    {
+                        @Html.TextAreaFor(model => model.Denominacion, new { @class = "form-control", @readonly = "readonly", @style = "scroll-behavior: smooth;resize:vertical;" })
+                    }
+                    else if (ViewBag.EsTupaEstandar && Model.TipoProcedimiento == TipoProcedimiento.Estandar)
+                    {
+                        @Html.TextAreaFor(model => model.Denominacion, new { @class = "form-control", @style = "scroll-behavior: smooth;resize:vertical;" })
+                    }
+                    else
+                    {
+                        @Html.TextAreaFor(model => model.Denominacion, new { @class = "form-control", @style = "scroll-behavior: smooth;resize:vertical;", @readonly = true })
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Tipo :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.TipoProcedimiento(Model.TipoProcedimiento)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Dependencia a Cargo :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.HiddenFor(model => model.UndOrgResponsableId)
+                    <div class="input-group" style="width:100%!important">
+
+
+                        @if (!ViewBag.EsTupaEstandar && Model.TipoProcedimiento != TipoProcedimiento.Estandar)
+                        {
+                            @Html.TextAreaFor(model => model.UndOrgResponsable.Nombre, new { @class = "form-control", @readonly = "readonly", @style = "scroll-behavior: smooth;resize:vertical;" })
+                        }
+                        else if (ViewBag.EsTupaEstandar && Model.TipoProcedimiento == TipoProcedimiento.Estandar)
+                        {
+                            @Html.TextAreaFor(model => model.UndOrgResponsable.Nombre, new { @class = "form-control", @style = "scroll-behavior: smooth;resize:vertical;" })
+                        }
+                        else
+                        {
+                            @Html.TextAreaFor(model => model.UndOrgResponsable.Nombre, new { @class = "form-control", @readonly = true, @style = "scroll-behavior: smooth;resize:vertical;" })
+                        }
+
+                        <div class="input-group-btn">
+                            <a style="display:none;visibility:collapse;" href="javascript:sut.editProcedimiento.openSelectUndOrg('sut.editProcedimiento.setUndOrgResp')" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (@Model.CargoPordependencia != "")
+            {
+                <div class="form-group">
+                    <label class="col-sm-2 col-xs-12 control-label">Otras Dependecias a Cargo :</label>
+                    <div class="col-sm-10 col-xs-12">
+                        <div>
+
+
+                            @Html.TextAreaFor(model => model.CargoPordependencia, new { @style = "scroll-behavior: smooth;resize:vertical;", @class = "form-control", @readonly = "readonly", Required = true })
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+
+    <div class="box box-default" id="idgeneral">
+        <div class="box-body">
+            <div class="nav-tabs-custom">
+                <div class="tab-content ">
+                    <div id="edit-info-basica" class="tab-pane">
+
+                        @if (!ViewBag.EsTupaEstandar)
+                        {
+                            @*<hr />*@
+
+                            <div class="table-responsive">
+                                <table id="tblSede" class="table table-condensed table-bordered table-striped" data-cant="0">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:100px;">
+                                                @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                                {
+                                                    if (user.Ayuda == 1)
+                                                    {
+                                                        <a href="javascript:sut.editProcedimiento.Sede.openSelect()" class="btn btn-xs btn-success pulsesut-button"><i class="fa fa-plus"></i> Agregar</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        if (user.rolmenu[0].Agregar == true)
+                                                        {
+                                                            <a href="javascript:sut.editProcedimiento.Sede.openSelect()" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
+                                                        }
+
+                                                    }
+
+                                                }
+                                            </th>
+                                            <th>Sede de atención del trámite</th>
+                                            <th style="width:50px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-principal></tbody>
+                                </table>
+                            </div>
+                        }
+
+                        @*<hr />*@
+
+                        <div class="table-responsive">
+
+                            <table id="tblNota" class="table table-condensed table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width:100px;">
+                                            @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                            {
+                                                if (user.Ayuda == 1)
+                                                {
+                                                    <a href="javascript:sut.editProcedimiento.Nota.add()" class="btn btn-xs btn-success pulsesut-button"><i class="fa fa-plus"></i> Agregar</a>
+                                                }
+                                                else
+                                                {
+                                                    if (user.rolmenu[0].Agregar == true)
+                                                    {
+                                                        <a href="javascript:sut.editProcedimiento.Nota.add()" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
+                                                    }
+                                                }
+
+                                            }
+
+                                        </th>
+
+                                        <fieldset>
+                                            <h4>Importaci&oacute;n masiva</h4>
+                                            <div class="input-group">
+                                                <label for="fname">Plantilla:</label><br>
+                                                <a download="NotaCiudadano-Pasosa a seguir.xlsx" title="Para poder importar masivamente descarga y llene el formulario" target="_blank" href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,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">
+                                                    Descargar Plantilla <i class="fa fa-fw fa-file-excel-o"></i>
+                                                </a>
+                                            </div>
+                                            <div class="input-group">
+                                                <label for="lname">Archivo:</label><br>
+                                                <input type="file" id="fileNCPS" name="lname">
+                                            </div>
+                                            <div class="input-group">
+
+                                            </div>
+                                            <input id="btnimportarnotaciudadano" type="button" value="Importar" class="submit-button">
+                                        </fieldset>
+
+
+                                        <th colspan="2">Notas al Ciudadano</th>
+                                        <th style="width:50px;"></th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="4">
+                                            <div class="callout callout-warning" style="height: inherit;padding: inherit;display: block;">
+                                                Colocar las observaciones o información necesaria que facilite el entendimiento del procedimiento.
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        @*<hr />*@
+
+                        <div class="table-responsive">
+                            <table id="tblPasoSeguir" class="table table-condensed table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width:100px;">
+                                            @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                            {
+                                                if (user.Ayuda == 1)
+                                                {
+                                                    <a href="javascript:sut.editProcedimiento.PasoSeguir.add()" class="btn btn-xs btn-success  pulsesut-button"><i class="fa fa-plus"></i> Agregar</a>
+                                                }
+                                                else
+                                                {
+                                                    if (user.rolmenu[0].Agregar == true)
+                                                    {
+                                                        <a href="javascript:sut.editProcedimiento.PasoSeguir.add()" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
+                                                    }
+                                                }
+
+                                            }
+
+                                        </th>
+                                        <th colspan="1">Pasos a Seguir</th>
+                                        <th style="width:50px;"></th>
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="4">
+                                            <div class="callout callout-warning" style="height: inherit;padding: inherit;display: block;">
+                                                Colocar los pasos necesarios que debe seguir el usuario para el procedimiento.
+                                            </div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        @if (!ViewBag.EsTupaEstandar)
+                        {
+                            @*<hr />*@
+
+                            <div class="table-responsive">
+                                <table id="tblCanales" class="table table-condensed table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:50px;"></th>
+                                            <th>Canales de Atención</th>
+                                            <th>Comentarios</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int i = 0;
+                                        }
+
+                                        @if (Model.ProcedimientoDatoAdicional.Count(x => x.Tipo == 1) > 0)
+                                        {
+                                            for (i = 0; i < Model.ProcedimientoDatoAdicional.Count(x => x.Tipo == 1); i++)
+                                            {
+                                                if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].ProcedimientoId)
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].MetaDatoId)
+
+                                                            @*@Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar })*@
+                                                            @if ((Model.ProcedimientoDatoAdicional[i].MetaDatoId) == 3 && Model.ChkAtencionTlf == false)
+                                                            {
+                                                                @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled" })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar })
+                                                            }
+
+                                                        </td>
+
+                                                        @if ((Model.ProcedimientoDatoAdicional[i].MetaDatoId) == 3 && Model.ChkAtencionTlf == false)
+                                                        {
+                                                            <td> </td>
+                                                            <td>@Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true })</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>
+                                                            <td>@Html.TextAreaFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true })</td>
+                                                        }
+                                                       
+
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+
+                                                    <tr>
+                                                        <td>
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].ProcedimientoId)
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].MetaDatoId)
+                                                            @*@Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @disabled = "disabled " })*@
+
+                                                            @if ((Model.ProcedimientoDatoAdicional[i].MetaDatoId) == 3 && Model.ChkAtencionTlf == false)
+                                                            {
+                                                                @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled" })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @disabled = "disabled " })
+                                                            }
+                                                        </td>
+
+                                                        @if ((Model.ProcedimientoDatoAdicional[i].MetaDatoId) == 3 && Model.ChkAtencionTlf == false)
+                                                        {
+                                                            <td> </td>
+                                                            <td>@Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true, @readonly = "readonly" })</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>
+                                                            <td>@Html.TextAreaFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true, @readonly = "readonly" })</td>
+                                                        }
+                                                        @*<td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>*@
+                                                        <td></td>
+                                                        @*@if (!Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre.Equals("Oficinas de la Entidad"))
+                        {*@
+                                                        <!--<td>@Html.TextAreaFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true, @readonly = "readonly" })</td>-->
+                                                        @*}*@
+
+
+                                                    </tr>
+
+                                                }
+
+
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr><td colspan="3">NO SE TIENEN CANALES DE ATENCIÓN DISPONIBLES</td></tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            @*<hr />*@
+
+                            <div class="table-responsive">
+                                <table id="tblFormasPago" class="table table-condensed table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:50px;"></th>
+                                            <th>Formas de Pago</th>
+                                            <th>Comentarios</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.ProcedimientoDatoAdicional.Count(x => x.Tipo == 2) > 0)
+                                        {
+                                            for (; i < Model.ProcedimientoDatoAdicional.Count(); i++)
+                                            {
+
+                                                if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                                {
+
+                                                    if (Model.ProcedimientoDatoAdicional[i].MetaDato.Entero01 != Model.ProcedimientoDatoAdicional[i - 1].MetaDato.Entero01)
+                                                    {
+                                                        <tr>
+                                                            <td></td>
+                                                            <td><strong>@Model.ProcedimientoDatoAdicional[i].MetaDato.Padre.Nombre</strong></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    }
+                                                    <tr>
+                                                        <td>
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].ProcedimientoId)
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].MetaDatoId)
+                                                            @*@Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked)*@
+                                                            @if (Model.EsGratuito == false)
+                                                            {
+                                                                @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked)
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled " })
+                                                            }
+                                                        </td>
+                                                        <td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>
+                                                        <td>@Html.TextAreaFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @norequired = true })</td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    if (Model.ProcedimientoDatoAdicional[i].MetaDato.Entero01 != Model.ProcedimientoDatoAdicional[i - 1].MetaDato.Entero01)
+                                                    {
+                                                        <tr>
+                                                            <td></td>
+                                                            <td><strong>@Model.ProcedimientoDatoAdicional[i].MetaDato.Padre.Nombre</strong></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    }
+                                                    <tr>
+                                                        <td>
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].ProcedimientoId)
+                                                            @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].MetaDatoId)
+                                                            @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled " })
+
+                                                        </td>
+                                                        <td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>
+                                                        <td>@Html.TextAreaFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @norequired = true, @disabled = "disabled " })</td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr><td colspan="3">NO SE TIENEN FORMAS DE PAGO DISPONIBLES</td></tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            @*<hr />*@
+
+                            <div class="form-horizontal">
+                                @*<div class="form-group" style="display:none; visibility:collapse">
+                                        <label class="col-sm-4 col-xs-12 control-label">Unidad Orgánica donde se presenta la documentación :</label>
+                                        <div class="col-sm-8 col-xs-12">
+                                            @Html.HiddenFor(model => model.UndOrgPresentDocumentacionId)
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(model => model.UndOrgPresentDocumentacion.Nombre, new { @class = "form-control", @readonly = "readonly" })
+                                                <div class="input-group-btn">
+                                                    <a href="javascript:sut.editProcedimiento.openSelectUndOrg('sut.editProcedimiento.setUndOrgPres')" class="btn btn-danger"><i class="fa fa-ellipsis-h"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>*@
+
+                                @*<hr />*@
+                                <h3>Atención de Consultas sobre el Procedimiento:</h3>
+                                <div class="form-group">
+                                    <label class="col-sm-4 col-xs-12 control-label">Teléfono :</label>
+                                    <div class="col-sm-8 col-xs-12">
+                                        @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                        {
+                                            @Html.TextAreaFor(model => model.Telefono, new { @class = "form-control", @style = "scroll-behavior: smooth;resize:vertical;" })
+                                        }
+                                        else
+                                        { @Html.TextAreaFor(model => model.Telefono, new { @class = "form-control", @disabled = "disabled ", @style = "scroll-behavior: smooth;resize:vertical;" })}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 col-xs-12 control-label">Anexo :</label>
+                                    <div class="col-sm-8 col-xs-12">
+                                        @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                        {
+                                            @Html.TextAreaFor(model => model.Anexo, new { @class = "form-control", @style = "scroll-behavior: smooth;resize:vertical;" })
+                                        }
+                                        else
+                                        { @Html.TextAreaFor(model => model.Anexo, new { @class = "form-control", @disabled = "disabled ", @style = "scroll-behavior: smooth;resize:vertical;" })}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 col-xs-12 control-label">Correo Electrónico :</label>
+                                    <div class="col-sm-8 col-xs-12">
+                                        @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                                        {
+                                            @Html.TextAreaFor(model => model.Correo, new { @class = "form-control", @norequired = true, @style = "scroll-behavior: smooth;resize:vertical;" })
+                                        }
+                                        else
+                                        { @Html.TextAreaFor(model => model.Correo, new { @class = "form-control", @norequired = true, @disabled = "disabled ", @style = "scroll-behavior: smooth;resize:vertical;" })}
+                                    </div>
+                                </div>
+                            </div>
+
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+
+    </div>
+</div>
+<div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;z-index: 5;">
+
+    <a href="javascript:sut.editProcedimiento.AtrasPA(@Model.ExpedienteId,@Model.ExplorarNum)" class="btn btn-danger"><i class="fa fa-id-card-o"></i> ATRAS </a>
+    <a href="javascript:sut.editProcedimiento.SiguientePA(@Model.ExpedienteId,@Model.ExplorarNum)" class="btn btn-danger"><i class="fa fa-id-card-o"></i> SIGUIENTE </a>
+    @if (user.Rol == 8 || user.Rol == 6 || user.Rol == 7)
+    {
+        if (@Model.EstadoInfoEva == 0)
+        {
+            <a class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,1)">Sin Acción </a>
+        }
+        else if (@Model.EstadoInfoEva == 1)
+        {
+            <a class="btn btn-dropbox btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,1)">En Revisión</a>
+        }
+        else if (@Model.EstadoInfoEva == 4)
+        {
+            <a class="btn btn-danger  btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,1)">Observado</a>
+        }
+        else if (@Model.EstadoInfoEva == 5)
+        {
+            <a class="btn btn-warning  btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,1)">Subsanado</a>
+        }
+        else if (@Model.EstadoInfoEva == 6)
+        {
+            <a class="btn btn-success  btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,1)">Validado</a>
+        }
+
+
+
+
+        <a href="#" class="btn btn-success"><i class="fa fa-id-card-o"></i> Inf. Ciudadano </a>
+        <a href="@Url.Content("~/Simplificacion/Procedimiento/DatosGenerales/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Ir Datos Generales </a>
+
+        if (Model.Expediente.TipoExpediente == TipoExpediente.ExpedienteRegular)
+        {
+
+            <a href="@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-file-pdf-o"></i> Ir Sus. Tec. Legal</a>
+            <a href="@Url.Content("~/Simplificacion/Procedimiento/TablaAsme/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-table"></i> Ir Tabla Asme</a>
+        }
+        @*<a href="@Url.Content("~/Simplificacion/Expediente/EditarObservacion/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+        <a href="javascript:sut.editProcedimiento.CondicionVolver(@Model.ProcedimientoId,1)" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+    }
+    else
+    {
+        if (user.Ayuda == 1)
+        {
+            <a href="javascript:sut.editProcedimiento.volver('@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId')" class="btn btn-danger pulsesut-button"><i class="fa fa-arrow-left"></i> Volver</a>
+
+        }
+        else
+        {
+
+            <a href="#" class="btn btn-success"><i class="fa fa-id-card-o"></i> Inf. Ciudadano </a>
+            <a href="@Url.Content("~/Simplificacion/Procedimiento/DatosGenerales/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Ir Datos Generales </a>
+            if (Model.Expediente.TipoExpediente == TipoExpediente.ExpedienteRegular)
+            {
+
+                <a href="@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-file-pdf-o"></i> Ir Sus. Tec. Legal</a>
+                <a href="@Url.Content("~/Simplificacion/Procedimiento/TablaAsme/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-table"></i> Ir Tabla Asme</a>
+            }
+
+            if (user.Rol == (short)Rol.Administrador)
+            {
+                <a href="javascript:sut.editProcedimiento.volver('@Url.Content("~/Simplificacion/Expediente/EditarObservacion/")@Model.ExpedienteId')" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+            }
+            else
+            {
+                <a href="javascript:sut.editProcedimiento.volver('@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId')" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+            }
+        }
+
+
+        if (Model.Expediente.EstadoExpediente != EstadoExpediente.Publicado && Model.Expediente.EstadoExpediente != EstadoExpediente.Presentado && Model.Expediente.EstadoExpediente != EstadoExpediente.Aprobado && Model.Expediente.EstadoExpediente != EstadoExpediente.Anulado && Model.Operacion != OperacionExpediente.Ninguna)
+        {
+            if (user.Ayuda == 1)
+            {
+                <a href="javascript:sut.editProcedimiento.camposNoRequerido()" class="btn btn-primary pulsesut-button"><i class="fa fa-save"></i> Guardar</a>
+            }
+            @*else
+                {
+                    if (Model.InfCdnoTerminado == false)
+                    {
+                        if (user.rolmenu[0].Guardar == true)
+                        {
+                            <a href="javascript:sut.editProcedimiento.camposNoRequerido()" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</a>
+                        }
+
+                        if (user.rolmenu[0].Terminar == true)
+                        {
+                            <a href="javascript:sut.editProcedimiento.terminarInfCdno()" class="btn btn-success"><i class="fa fa-check"></i> Terminar</a>
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                }*@
+        }
+
+        if (Model.InfCdnoTerminado == true)
+        {
+            if (user.rolmenu[0].Activar == true && user.Rol == (short)Rol.Coordinador)
+            {
+                if (Model.EstadoInfo != 6)
+                {
+                    <a href="javascript:sut.editProcedimiento.activarInfCdno()" class="btn btn-warning"><i class="fa fa-check"></i> Activar</a>
+                }
+            }
+        }
+        else
+        {
+            if (user.rolmenu[0].Guardar == true)
+            {
+                <a href="javascript:sut.editProcedimiento.camposNoRequerido()" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</a>
+            }
+            if (user.rolmenu[0].Terminar == true && user.Rol == (short)Rol.Coordinador)
+            {
+                <a href="javascript:sut.editProcedimiento.terminarInfCdno()" class="btn btn-success"><i class="fa fa-check"></i> Terminar</a>
+            }
+        }
+
+    }
+
+</div>
+
+
+
+
+
+
+
+<div class="minmaxConayuda">
+    <div class="modal fade mymodal" id="modalAyudaAvatar1">
+        <div class="modal-dialog  ">
+            <div class="modal-content">
+                <div class="modal-body" id="contenido" style="padding:0px">
+                    <div class="bar-title" id="tituloocultar">
+                        <a class="close modalMinimize" style="padding:110px; right: 20px;  top: -100px; background: transparent"> <i class='fa fa-clone '></i> </a>
+                        <span>
+                            <h3 id="ihtitulo1" style="font-size: x-large;text-align: center;font-family: initial;"> Hola @user.Nombres </h3>
+                        </span>
+                    </div>
+                    <div>
+                        <div id="idtitulo1" style="text-align:left">
+                            <div class="col-sm-3 col-xs-2">
+                                <a class="modalMinimize" title="Minimizar" style="color:black"> <i class='fa fa-minus fa-2x'></i> </a>
+                                <img src="~/dist/img/hola.png" class="img-rounded" alt="Cinque Terre" />
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje1" style="display: none; width:409px;height:100%;top:137px">
+                                <sp style="text-align: left;font-family: initial;"> </sp>
+                                @*<a class="btn btn-success btn-xs" href="#"><i class="fa fa-plus"></i> Agregar</a>*@
+                                <l style="text-align: left;font-family: initial;">Registar y/o actualizar la información necesaria</l>
+                            </div>
+                            <div class="caja col-sm-5" id="mensaje2" style="display: none; width:440px;height:100%;top:103px">
+                                <j2 style="text-align: left;font-family: initial;">¡Felicidades! ¿Registraste y/o actualizaste la información necesaria? Si es así, avancemos al siguiente paso. Clic </j2>
+                                <a id="clic" style="display: none;" class="btn btn-warning" href="javascript:sut.editProcedimiento.volver('@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId')"><i class="fa fa-arrow-right"></i>Aqui</a>
+                                <l1 style="text-align: left;font-family: initial;"> para continuar. ¡Tú puedes! </l1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="minmaxCon"></div>
+
+
+
+
+@section Style{
+    <style>
+        #tblCanales thead tr th, #tblFormasPago thead tr th {
+            text-align: center;
+        }
+
+        #divBotones {
+            /*position: relative;
+            width: 100%;
+            display: block;*/
+        }
+            /*.menu-compensador {
+            position: relative;
+            width: 100%;
+            display: none;
+        }*/
+            #divBotones.fixed {
+                /*z-index: 1000;
+            position: fixed;*/
+                /*top: 0;
+            left: 0;
+            right: 0;*/
+            }
+        /*.menu-compensador.fixed {
+            display: block;
+        }*/
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.editProcedimiento = {
+
+            tab: '@Request.QueryString["tab"]',
+            esProcEstadar: @Html.Raw(Model.TipoProcedimiento == TipoProcedimiento.Estandar ? "true" : "false") ,
+            esCargaInicial: @MvcHtmlString.Create(ViewBag.EsCargaInicial ? "true" : "false") ,
+            esTupaEstandar: @MvcHtmlString.Create(ViewBag.EsTupaEstandar ? "true" : "false") ,
+
+
+            camposNoRequerido: function () {
+                debugger;
+                var lista = $("input[norequired=True]");
+
+                var countCamposVacias = 0;
+
+                $.each(lista, function () {
+                    if ($(this).val() === "") {
+                        $(this).css({ "border-color": "#e4e423", "border-width": "3px" });
+                        countCamposVacias += 1;
+                    }
+                });
+
+                if (countCamposVacias > 0) {
+                    sut.msg.CamposVacios("Hay campos en blanco, desea continuar con el registro", function () {
+                        sut.editProcedimiento.guardar(false)
+                    });
+                }
+                else {
+                    sut.editProcedimiento.guardar(false)
+                }
+            },
+            terminarInfCdno: function () {
+                var valid = true;
+                if (valid && !sut.editProcedimiento.esTupaEstandar) {
+                    valid = $('#tblSede tbody tr').size() > 0;
+                    //if(!valid) sut.error.clientErrorShow('mensajes', 'Debe agregar al menos una Sede donde se atiende el trámite. Ingresarlo en la casilla de "Información al ciudadano" del procedimiento.');
+                    if (!valid) showNotification('top', 'right', 'Debe agregar al menos una Sede donde se atiende el trámite. Ingresarlo en la casilla de "Información al ciudadano" del procedimiento.', 2);
+                }
+
+                if (valid) {
+                    valid = $('#tblPasoSeguir tbody tr').size() > 0;
+                    //if (!valid) sut.error.clientErrorShow('mensajes', 'Debe indicar los pasos a seguir para la realización del trámite. Ingresarlo en la casilla de "Información al ciudadano" del procedimiento.');
+
+                    if (!valid) showNotification('top', 'right', 'Debe indicar los pasos a seguir para la realización del trámite. Ingresarlo en la casilla de "Información al ciudadano" del procedimiento.', 2);
+                }
+
+                if (valid) {
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/ActivarSustento',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/TerminarSustento")',
+                        data: {tipo: 5, ProcedimientoId: @Model.ProcedimientoId , estadoExpediente: '@Model.Expediente.EstadoExpediente', ExpedienteId: @Model.ExpedienteId},
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+
+
+                            showNotification('top', 'right', 'El Registro se Termino Satisfactoriamente', 1);
+                            setTimeout("reFresh()", 800);
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }
+            },
+            activarInfCdno: function () {
+
+                sut.msg.confirm('Si activa el registro podrá modificarlo nuevamente.', () => {
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/ActivarSustento',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/ActivarSustento")',
+                        data: { tipo: 5, ProcedimientoId: @Model.ProcedimientoId , estadoExpediente: '@Model.Expediente.EstadoExpediente', ExpedienteId: @Model.ExpedienteId},
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+
+                            showNotification('top', 'right', 'El Registro se Activo Satisfactoriamente', 1);
+                            setTimeout("reFresh()", 800);
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                });
+
+            },
+
+            setUndOrgResp: function (data) {
+                $('#modal-ventana').modal('hide');
+                $('input[name="UndOrgResponsableId"]').val(data.id);
+                $('input[name="UndOrgResponsable.Nombre"]').val(data.nombre);
+            },
+            setUndOrgRecon: function (data) {
+                $('#modal-ventana').modal('hide');
+                $('input[name="UndOrgReconsideracionId"]').val(data.id);
+                $('input[name="UndOrgReconsideracion.Nombre"]').val(data.nombre);
+            },
+            setUndOrgApel: function (data) {
+                $('#modal-ventana').modal('hide');
+                $('input[name="UndOrgApelacionId"]').val(data.id);
+                $('input[name="UndOrgApelacion.Nombre"]').val(data.nombre);
+            },
+            setUndOrgPres: function (data) {
+                $('#modal-ventana').modal('hide');
+                $('input[name="UndOrgPresentDocumentacionId"]').val(data.id);
+                $('input[name="UndOrgPresentDocumentacion.Nombre"]').val(data.nombre);
+            },
+            salir: function (expediente) {
+                ;
+                sut.msg.salir('¿Desea guardar los cambios efectuados?'
+                    , function (d) {
+                        sut.editProcedimiento.guardar(true).then(function () {
+                            window.location = expediente;
+                        });
+                    }, function () {
+                        $(location).attr('href', expediente);
+
+                    });
+            },
+
+            volver: function (expediente) {
+                $(location).attr('href', expediente);
+            },
+
+            Sede: {
+                openSelect: function () {
+                    debugger;
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/Sede/Select',
+                        url: '@Url.Content("~/Simplificacion/Sede/Select")',
+                        data: { multi: true, fnAdd: 'sut.editProcedimiento.Sede.add' },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                            var sede1 = document.getElementsByName("ProcedimientoSede[0].SedeId");
+                            //alert(sede1.value);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                    //$.ajax({
+                    //    type: "GET",
+                    //    url: '/Simplificacion/UnidadOrganica/Select',
+                    //    data: { multi: true, fnAdd: 'sut.editProcedimiento.Sede.add' },
+                    //    cache: false,
+                    //    beforeSend: function () {
+                    //        sut.wait.modal('ventana-container-editar');
+                    //        $('#modal-ventana-editar').modal('show');
+                    //    },
+                    //    success: function (data) {
+                    //        $('#ventana-container-editar').html(data);
+                    //    },
+                    //    error: function (result) {
+                    //        $('#modal-ventana-editar').modal('hide');
+                    //        sut.error.show('mensajes', result.responseText);
+                    //    }
+                    //});
+                },
+                init: function () {
+                    debugger;
+                    var lista = @Html.Raw(ViewBag.ListaSede != null ? ViewBag.ListaSede : "[]");
+                    var tblSede = $('#tblSede tbody');
+
+
+                    if (lista.length <= 0) {
+                        $('#mensaje2').hide();
+                        $('#mensaje1').show();
+
+
+                    } else {
+                        $('#mensaje2').show();
+                        $('#mensaje1').hide();
+                        //sut.control.Actualizartexto();
+                    }
+
+                    if (lista.length > 0) {
+                        var rows = ""
+                        $.each(lista, function (i, r) {
+
+                            rows += sut.string.format('<tr data-rowPadre="{0}">',i);
+
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span><input type="hidden" name="ProcedimientoSede[{1}].SedeId" value="{2}" />', i + 1,i, r.SedeId);
+                            rows += sut.string.format('<input type="hidden" name="ProcedimientoId" value="{1}" />',i,r.ProcedimientoId);
+                            rows += '</td>';
+
+                            rows += sut.string.format('<td>{0}<br />{1}<br />{2}<br /></td>', r.Nombre || '', r.Direccion || '', r.Horario || '');
+                            rows += '<td><div class="btn-group">';
+                            if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7) {
+                                if ("@user.rolmenu[0].Eliminar" == "True")
+                                {
+                                    rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.Sede.delete({0})" ><i class="fa fa-close" ></i></a>', i);
+                                }
+                            }
+                            rows += '</div></td>';
+                            rows += '</tr>';
+
+                            rows += sut.string.format('<tr><td colspan="5"><table class="table table-condensed table-bordered" data-indexParent="{0}">',i);
+                            rows += '<thead><tr><th style="width:100px;"></th><th style="width:100px;">';
+                            var cadena = sut.editProcedimiento.UndOrgRecepcion.newFiladata(i, JSON.parse(r.UndOrgRecepcionDocumentos), r.ProcedimientoId, r.SedeId);
+                            if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7) {
+                                if ("@user.rolmenu[0].Agregar" == "True"){
+                                    rows += sut.string.format('<a href="javascript:sut.editProcedimiento.UndOrgRecepcion.openSelectUndOrg({0},{1},{2},{3})" data-UndOrg="1" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>', r.ProcedimientoId, r.SedeId, "'" + cadena.substr(1, cadena.length - 1) + "'", i);
+                                }
+                            }
+                            rows += '</th><th>Unidades donde se presenta la documentación:</th><th style="width:100px;"></th></tr></thead><tbody>';
+                            rows += sut.editProcedimiento.UndOrgRecepcion.newFila(i,JSON.parse(r.UndOrgRecepcionDocumentos),r.ProcedimientoId,r.SedeId);
+                            rows += '</tbody></table></td></tr>';
+                            rows += "</tr>";
+
+
+                            tblSede.append(rows);
+                            rows = "";
+                        });
+                    }
+                },
+                add: function (data) {
+                    debugger;
+                    $('#modal-ventana').modal('hide');
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/MaestroFijo/GetOneByEntidad',
+                        url: '@Url.Content("~/Simplificacion/MaestroFijo/GetOneByEntidad")',
+                        data: { EntidadId: @Model.Expediente.EntidadId },
+                        cache: false,
+                        beforeSend: function () {
+                            //sut.wait.modal('ventana-container-editar');
+                            //$('#modal-ventana-editar').modal('show');
+                        },
+                        success: function (LstUndOrg) {
+                            //$('#ventana-container-editar').html(data);
+                            debugger;
+                            var d = data;
+                            var x = JSON.parse(LstUndOrg);
+
+                            $.each(d,function(i,r){
+                                d[i].ListaUndOrganica = [];
+
+                                $.each(x,function(index,result){
+                                    if(r.SedeId === result.SedeId){
+                                        d[i].ListaUndOrganica.push(result);
+                                    }
+                                });
+                            });
+
+
+                            sut.editProcedimiento.Sede.generar(d);
+                            sut.editProcedimiento.guardar(false);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana-editar').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                delete: function (id) {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                    var num = 1;
+                    $.each($('#tblSede tbody tr[data-rowPadre]'), function (index, tr) {
+                        if (index == id){
+                            $(tr).remove();
+                            $('table[data-indexparent='+ id +']').remove();
+                        }
+                    });
+
+                    sut.editProcedimiento.Sede.update();
+                    //});
+                },
+                update: function () {
+
+                    var concatLstOrganica = "";
+                    var count = 0;
+                    $.each($('#tblSede tbody tr[data-rowPadre]'), function (i, tr) {
+
+                        oldParentId = $(this).attr("data-rowPadre");
+                        ProcedimientoId = $(tr).find('td input[name="ProcedimientoId"]').val();
+
+
+                        $(tr).attr("data-rowPadre",count);
+                        $(tr).find('td span').html(count + 1);
+                        $(tr).find('td input[name$="SedeId"]').attr('name', sut.string.format('ProcedimientoSede[{0}].SedeId', count));
+                        $(tr).find('td a').attr("href",sut.string.format('javascript:sut.editProcedimiento.Sede.delete({0})', count));
+
+                        $.each($('#tblSede tbody tr table'), function (idx, trc) {
+                            if($(trc).attr("data-indexParent") === oldParentId){
+
+
+                                var rowsUndOrg = $(trc).find("tbody tr");
+
+                                $.each(rowsUndOrg,function(x,y){
+                                    $(y).attr('data-indexParent',count);
+                                    $(y).find('td input[name$="UnidadOrganicaId"]').attr("name", sut.string.format('ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].UnidadOrganicaId', count, x));
+                                    $(y).find('td input[name$="ProcedimientoId"]').attr("name", sut.string.format('ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].ProcedimientoId', count, x));
+                                    $(y).find('td input[name$="SedeId"]').attr("name", sut.string.format('ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].SedeId', count, x));
+                                    $(y).find('td a').attr("href",sut.string.format('javascript:sut.editProcedimiento.UndOrgRecepcion.borrar({0},{1})', count ,x));
+                                })
+
+                                $(trc).attr("data-indexParent",count);
+                            }
+                        });
+
+                        count++;
+                    });
+
+
+                    $.each($("#tblCanales tbody tr"), function (i, v) {
+
+                        var c = $(this).find("input:checkbox");
+                        var t = $(this).find("input:text");
+
+
+                        if (concatLstOrganica === "") {
+
+                            if ($(c).attr("original") !== "1") {
+                                if ($(c).attr("oficinaAutocompletar") === "1") {
+
+                                    $(t).val(concatLstOrganica);
+                                    $(c).prop("checked", false);
+
+                                }
+                            }
+                        } else {
+                            if ($(c).attr("original") !== "1") {
+                                if ($(c).attr("oficinaAutocompletar") === "1") {
+
+                                    $(t).val(concatLstOrganica);
+                                    $(c).prop("checked", true);
+                                }
+                            }
+                        }
+                    });
+                },
+                generar : function(data){
+
+                    var tblSede = $('#tblSede tbody[data-principal]');
+                    var s = tblSede.find('tr[data-rowPadre]').size();
+
+
+                    var trSedes = $("#tblSede tbody tr[data-rowPadre]");
+                    $.each(trSedes,function(i,r){
+                        var v = parseInt($(r).find('td input[name$="SedeId"]').val());
+                        var find = false;
+                        $.each(data,function(idx,re){
+                            if(re.SedeId === v){
+                                data.splice(idx,1);
+                                find = true;
+                            }
+
+                            if(find)
+                                return false;
+                        })
+
+                    });
+
+                    $.each(data,function(i,r){
+                        var rows = "";
+                        rows += sut.string.format('<tr data-rowPadre="{0}">',s);
+
+                        rows += '<td>';
+                        rows += sut.string.format('<span>{0}</span><input type="hidden" name="ProcedimientoSede[{1}].SedeId" value="{2}" />', s + 1,s, r.SedeId);
+                        rows += sut.string.format('<input type="hidden" name="ProcedimientoId" value="{0}" />',null);
+                        rows += '</td>';
+
+                        rows += sut.string.format('<td>{0}<br />{1}<br />{2}<br /></td>', r.Nombre || '', r.Direccion || '', r.Horario || '');
+                        rows += '<td><div class="btn-group">';
+                        if ("@user.rolmenu[0].Eliminar" == "True")
+                        {
+                            rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.Sede.delete({0})" ><i class="fa fa-close" ></i></a>', s);
+                        }
+                        rows += '</div></td>';
+                        rows += '</tr>';
+
+                        rows += sut.string.format('<tr><td colspan="5"><table class="table table-condensed table-bordered" data-indexParent="{0}">',s);
+                        rows += '<thead><tr><th style="width:100px;"></th><th style="width:100px;">';
+                        if ("@user.rolmenu[0].Agregar" == "True"){
+                            rows += sut.string.format('<a href="javascript:sut.editProcedimiento.UndOrgRecepcion.openSelectUndOrg({0},{1},{2})" data-UndOrg="1" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>',null,r.SedeId,s);
+                        }
+                        rows += '</th><th>Unidades donde se presenta la documentación:</th><th style="width:100px;"></th></tr></thead><tbody>';
+                        rows += '</tbody></table></td></tr>';
+                        rows += "</tr>";
+
+
+                        tblSede.append(rows);
+                        s++;
+                        sut.editProcedimiento.Sede.update();
+                    });
+
+
+                }
+            },
+            UndOrgRecepcion : {
+                UndOrgProcediemientoId:0,
+                UndOrgSedeIdProcedimiento:0,
+                IndexParent : 0,
+                newFila : function(pIndexParent,UndOrgSede,pProcedimientoId,pSedeId){
+                    debugger;
+                    var rows = "";
+                    $.each(UndOrgSede,function(i,r){
+
+                        if(pSedeId == r.SedeId){
+                            rows += sut.string.format('<tr data-index="{0}" data-indexParent="{1}" class="UndOrg" >', i,pIndexParent);
+                            rows += "<td></td>";
+                            rows += '<td>';
+                            //rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].UnidadOrganicaId" value="{2}" />', pIndexParent,i, r.UnidadOrganicaId);
+                            rows += sut.string.format('<input type="hidden" name="ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].ProcedimientoId" value="{2}" />', pIndexParent, i , pProcedimientoId);
+                            rows += sut.string.format('<input type="hidden" name="ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].SedeId" value="{2}" />', pIndexParent,i, r.SedeId);
+                            rows += '</td>';
+                            rows += sut.string.format("<td>{0}</td>", r.nombre);
+                            if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7) {
+                                rows += sut.string.format('<td> ');
+                                if ("@user.rolmenu[0].Eliminar" == "True"){
+                                    rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.UndOrgRecepcion.borrar({0},{1})" ><i class="fa fa-close" ></i></a> ', pIndexParent,i);
+                                }
+                                rows += sut.string.format('</td>', pIndexParent,i);
+                            }
+                            rows += '</tr>'
+                        }
+                    });
+
+                    return rows;
+                },
+                newFiladata : function(pIndexParent,UndOrgSede,pProcedimientoId,pSedeId){
+                    debugger;
+                    var rows = "";
+                    $.each(UndOrgSede,function(i,r){
+
+                        if(pSedeId == r.SedeId){
+                            rows=  rows +','+ r.nombre ;
+                        }
+                    });
+
+                    return rows;
+                },
+                openSelectUndOrg: function (pProcedimientoId,pSedeId,text,pIndexParent) {
+                    debugger;
+                    UndOrgProcediemientoId = pProcedimientoId;
+                    UndOrgSedeIdProcedimiento = pSedeId;
+                    IndexParent = pIndexParent;
+
+                    if(pProcedimientoId==null){
+
+
+                        showNotification('top', 'right', 'Debe guardar la información para poder reconocer la Sede Agregado.', 2);
+                        return;
+                    }
+
+
+                    debugger;
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/UnidadOrganica/Select',
+                        url: '@Url.Content("~/Simplificacion/UnidadOrganica/Select")',
+                        data: { multi: true, fnAdd: 'sut.editProcedimiento.UndOrgRecepcion.setUndOrg' ,texto:text, SedeId : UndOrgSedeIdProcedimiento},
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container-editar');
+                            $('#modal-ventana-editar').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container-editar').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana-editar').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                setUndOrg: function (data) {
+                    debugger;
+                    $('#modal-ventana-editar').modal('hide');
+
+                    if (!$.isArray(data)) data = [data];
+
+
+                    var tabla = $('table[data-indexParent=' + IndexParent +'] tbody').eq(0);
+                    var s = tabla.children('tr').size();
+
+                    var trUndOrg =  $('table[data-indexParent=' + IndexParent +'] tbody tr');
+
+                    $.each(trUndOrg,function(i,v){
+
+                        var idUndOrg = parseInt($(v).find("td input[name$=UnidadOrganicaId]").val());
+                        var find = false;
+                        $.each(data,function(ix,vx){
+                            if(vx.id === idUndOrg){
+                                data.splice(ix,1);
+                                find = true;
+                            }
+
+                            if(find)
+                                return false;
+                        })
+                    });
+
+                    var rows = '';
+
+                    $.each(data, (i, r) => {
+                        rows += sut.string.format('<tr data-index="{0}" class="UndOrg" >', i);
+                        rows += "<td></td>";
+                        rows += '<td>';
+                        //rows += sut.string.format('<span>{0}</span>', i + 1);
+                        rows += sut.string.format('<input type="hidden" name="ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].ProcedimientoId" value="{2}" />', IndexParent,s, UndOrgProcediemientoId);
+                        rows += sut.string.format('<input type="hidden" name="ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].SedeId" value="{2}" />', IndexParent,s, UndOrgSedeIdProcedimiento);
+                        rows += sut.string.format('<input type="hidden" name="ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].UnidadOrganicaId" value="{2}" />', IndexParent,s, r.id);
+
+                        rows += '</td>';
+                        rows += sut.string.format("<td>{0}</td>",r.nombre);
+                        rows += sut.string.format('<td>');
+                        if ("@user.rolmenu[0].Eliminar" == "True"){
+                            rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.UndOrgRecepcion.borrar({0},{1})" ><i class="fa fa-close" ></i></a>', IndexParent,s);
+                        }
+                        rows += sut.string.format('</td>');
+                        rows += '</tr>'
+                    });
+
+                    tabla.append(rows);
+
+                    sut.editProcedimiento.UndOrgRecepcion.actualizar(IndexParent);
+
+
+                },
+                borrar : function(pIndexParent, index){
+                    var tr = $('table[data-indexParent=' + pIndexParent +'] tbody tr');
+
+                    $(tr).eq(index).remove();;
+
+
+                    sut.editProcedimiento.UndOrgRecepcion.actualizar(pIndexParent);
+                },
+                actualizar : function(pIndexParent){
+
+                    var rows = $('table[data-indexParent=' + pIndexParent +'] tbody').eq(0).find("tr");
+
+                    $.each(rows,function(i,tr){
+                        $(tr).data("index",i);
+                        //$(tr).find('td span').html(i+1);
+                        $(tr).find('td input[name$="ProcedimientoId"]').attr("name", sut.string.format('ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].ProcedimientoId', pIndexParent, i));
+                        $(tr).find('td input[name$="SedeId"]').attr("name", sut.string.format('ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].SedeId', pIndexParent, i));
+                        $(tr).find('td input[name$="UnidadOrganicaId"]').attr("name", sut.string.format('ProcedimientoSede[{0}].UndOrgRecepcionDocumentos[{1}].UnidadOrganicaId', pIndexParent, i));
+                        $(tr).find('td a').attr('href',sut.string.format('javascript:sut.editProcedimiento.UndOrgRecepcion.borrar({0},{1})', pIndexParent ,i));
+                    });
+                }
+            },
+            Nota: {
+
+                tipos: @Html.Raw(ViewBag.TipoNota != null ? ViewBag.TipoNota : "[]"),
+                comboTipo: function (index, id) {
+
+                    if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7) {
+                        var cb = sut.string.format('<select class="form-control" name="NotaCiudadano[{0}].TipoNotaId" >', index);
+                        $.each(sut.editProcedimiento.Nota.tipos, function (i, r) {
+                            cb += sut.string.format('<option value="{0}" {2}>{1}</option>', r.MetaDatoId, r.Nombre, r.MetaDatoId == id ? 'selected' : '');
+                        });
+                        cb += '</select>';
+                    } else {
+                        var cb = sut.string.format('<select class="form-control" name="NotaCiudadano[{0}].TipoNotaId" disabled="disabled ">', index);
+                        $.each(sut.editProcedimiento.Nota.tipos, function (i, r) {
+                            cb += sut.string.format('<option value="{0}" {2}>{1}</option>', r.MetaDatoId, r.Nombre, r.MetaDatoId == id ? 'selected' : '');
+                        });
+                        cb += '</select>';
+                    }
+                    return cb;
+                },
+                init: function () {
+                    debugger;
+                    var lista = @Html.Raw(ViewBag.ListaNota != null ? ViewBag.ListaNota : "[]");
+                    var tabla = $('#tblNota tbody');
+
+                    if (lista.length <= 0) {
+                        $('#mensaje2').hide();
+                        $('#mensaje1').show();
+
+
+                    } else {
+                        $('#mensaje2').show();
+                        $('#mensaje1').hide();
+                        //sut.control.Actualizartexto();
+                    }
+
+                    if (lista.length > 0) {
+                        var data = [];
+                        $.each(lista, function (i, r) {
+                            var rows = '';
+                            rows += '<tr>';
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="NotaCiudadano[{0}].NotaCiudadanoId" value="{1}" />', i, r.NotaCiudadanoId);
+                            rows += sut.string.format('<input type="hidden" name="NotaCiudadano[{0}].Orden" value="{1}" />', i, i + 1);
+                            rows += '</td>';
+                            rows += sut.string.format('<td>{0}</td>', sut.editProcedimiento.Nota.comboTipo(i, r.TipoNotaId));
+                            if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7) {
+                                rows += sut.string.format('<td><textarea name="NotaCiudadano[{0}].Nota" class="form-control" style="scroll-behavior: smooth;resize:vertical;" required >{1}</textarea></td>', i, r.Nota || '');
+                            } else {
+                                rows += sut.string.format('<td><textarea name="NotaCiudadano[{0}].Nota" disabled="disabled" style="scroll-behavior: smooth;resize:vertical;" class="form-control" required >{1}</textarea></td>', i, r.Nota || '');
+                            }
+
+                            rows += '<td><div class="btn-group">';
+                            if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7)
+                            {
+                                if ("@user.rolmenu[0].Eliminar" == "True")
+                                {
+                                    rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.Nota.delete({0})" ><i class="fa fa-close" ></i></a>', r.NotaCiudadanoId);
+                                }
+                            }
+                            rows += '</div></td>';
+                            rows += '</tr>';
+
+                            tabla.append(rows);
+                        });
+                    }
+                },
+                add: function () {
+                    var tabla = $('#tblNota tbody');
+                    var rows = '';
+                    rows += '<tr>';
+                    rows += '<td>';
+                    rows += '<span>0</span>';
+                    rows += '<input type="hidden" name="NotaCiudadano[0].NotaCiudadanoId" value="0" />';
+                    rows += '<input type="hidden" name="NotaCiudadano[0].Orden" value="0" />';
+                    rows += '</td>';
+                    rows += sut.string.format('<td>{0}</td>', sut.editProcedimiento.Nota.comboTipo(0, 0));
+                    rows += sut.string.format('<td><textarea name="NotaCiudadano[0].Nota" class="form-control" required></textarea></td>', '');
+                    rows += '<td><div class="btn-group">';
+                    if ("@user.rolmenu[0].Eliminar" == "True")
+                    {
+                        rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.Nota.delete({0})" ><i class="fa fa-close" ></i></a>', 0);
+                    }
+                    rows += '</div></td>';
+                    rows += '</tr>';
+
+                    tabla.append(rows);
+                    sut.editProcedimiento.Nota.update();
+                },
+                delete: function (id) {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                    var num = 1;
+                    $.each($('#tblNota tbody tr'), function (index, tr) {
+                        var NotaCiudadanoId = Number($(tr).find('td input[name$="NotaCiudadanoId"]').val());
+                        if (NotaCiudadanoId == id) $(tr).remove();
+                    });
+                    sut.editProcedimiento.Nota.update();
+                    //});
+                },
+                update: function () {
+                    $.each($('#tblNota tbody tr'), function (i, tr) {
+                        $(tr).find('td span').html(i + 1);
+                        $(tr).find('td input[name$="NotaCiudadanoId"]').attr('name', sut.string.format('NotaCiudadano[{0}].NotaCiudadanoId', i)).val(i + 1)
+                        $(tr).find('td input[name$="Orden"]').attr('name', sut.string.format('NotaCiudadano[{0}].Orden', i)).val(i + 1)
+                        $(tr).find('td textarea[name$="Nota"]').attr('name', sut.string.format('NotaCiudadano[{0}].Nota', i))
+                        $(tr).find('td select[name$="TipoNotaId"]').attr('name', sut.string.format('NotaCiudadano[{0}].TipoNotaId', i))
+                        $(tr).find('td div a').attr('href', sut.string.format('javascript:sut.editProcedimiento.Nota.delete({0})', i + 1));
+                    });
+                }
+            },
+            PasoSeguir: {
+                init: function () {
+                    var lista = @Html.Raw(ViewBag.ListaPasoSeguir != null ? ViewBag.ListaPasoSeguir : "[]");
+                    var tabla = $('#tblPasoSeguir tbody');
+
+                    if (lista.length <= 0) {
+                        $('#mensaje2').hide();
+                        $('#mensaje1').show();
+
+                    } else {
+                        $('#mensaje2').show();
+                        $('#mensaje1').hide();
+                        sut.control.Actualizartexto();
+                    }
+                    if (lista.length > 0) {
+                        var data = [];
+                        $.each(lista, function (i, r) {
+                            var rows = '';
+                            rows += '<tr>';
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="PasoSeguir[{0}].PasoSeguirId" value="{1}" />', i, r.PasoSeguirId);
+                            rows += '</td>';
+                            if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7) {
+                                rows += sut.string.format('<td><textarea name="PasoSeguir[{0}].Descripcion" class="form-control" style="scroll-behavior: smooth;resize:vertical;" required >{1}</textarea></td>', i, r.Descripcion || '');
+                            } else {
+                                rows += sut.string.format('<td><textarea name="PasoSeguir[{0}].Descripcion" disabled="disabled" class="form-control" style="scroll-behavior: smooth;resize:vertical;"required >{1}</textarea></td>', i, r.Descripcion || '');
+                            }
+                            rows += '<td><div class="btn-group">';
+                            if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7) {
+                                if ("@user.rolmenu[0].Eliminar" == "True")
+                                {
+                                    rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.PasoSeguir.delete({0})" ><i class="fa fa-close" ></i></a>', r.PasoSeguirId);
+                                }
+                            }
+                            rows += '</div></td>';
+                            rows += '</tr>';
+
+                            tabla.append(rows);
+                        });
+                    }
+                },
+                add: function () {
+                    var tabla = $('#tblPasoSeguir tbody');
+                    var rows = '';
+                    rows += '<tr>';
+                    rows += '<td>';
+                    rows += '<span>0</span>';
+                    rows += '<input type="hidden" name="PasoSeguir[0].PasoSeguirId" value="0" />';
+                    rows += '</td>';
+                    rows += sut.string.format('<td><textarea name="PasoSeguir[0].Descripcion" class="form-control" style="scroll-behavior: smooth;resize:vertical;"required ></textarea></td>', '');
+                    rows += '<td><div class="btn-group">';
+                    if ("@user.rolmenu[0].Eliminar" == "True")
+                    {
+                        rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.PasoSeguir.delete({0})" ><i class="fa fa-close" ></i></a>', 0);
+                    }
+                    rows += '</div></td>';
+                    rows += '</tr>';
+
+                    tabla.append(rows);
+                    sut.editProcedimiento.PasoSeguir.update();
+                },
+                delete: function (id) {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                    var num = 1;
+                    $.each($('#tblPasoSeguir tbody tr'), function (index, tr) {
+                        var PasoSeguirId = Number($(tr).find('td input[name$="PasoSeguirId"]').val());
+                        if (PasoSeguirId == id) $(tr).remove();
+                    });
+                    sut.editProcedimiento.PasoSeguir.update();
+                    //});
+                },
+                update: function () {
+                    $.each($('#tblPasoSeguir tbody tr'), function (i, tr) {
+                        $(tr).find('td span').html(i + 1);
+                        $(tr).find('td input[name$="PasoSeguirId"]').attr('name', sut.string.format('PasoSeguir[{0}].PasoSeguirId', i)).val(i + 1);
+                        $(tr).find('td textarea[name$="Descripcion"]').attr('name', sut.string.format('PasoSeguir[{0}].Descripcion', i));
+                        $(tr).find('td div a').attr('href', sut.string.format('javascript:sut.editProcedimiento.PasoSeguir.delete({0})', i + 1));
+                    });
+                }
+            },
+            Modalidad : {
+                init: function () {
+                    var lista = @Html.Raw(ViewBag.ListaModalidad != null ? ViewBag.ListaModalidad : "[]");
+                    var tabla = $('#tblModalidad tbody');
+
+                    if (lista.length > 0) {
+                        var data = [];
+                        $.each(lista, function (i, r) {
+                            var rows = '';
+                            rows += sut.string.format('<tr data-index="{0}" >', i);
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="TablaAsme[{0}].TablaAsmeId" value="{1}" />', i, r.TablaAsmeId);
+                            rows += '</td>';
+                            rows += sut.string.format('<td><input type="text" name="TablaAsme[{0}].Codigo" value="{1}" class="form-control" readonly /></td>', i, r.Codigo);
+                            rows += sut.string.format('<td><input type="text" name="TablaAsme[{0}].Descripcion" value="{1}" class="form-control" {2} /></td>', i, r.Descripcion, sut.editProcedimiento.esProcEstadar ? 'readonly' : '');
+                            rows += sut.string.format('<td><input type="checkbox" data-type="EsGratuito" name="TablaAsme[{0}].EsGratuito"  {1} {2} /></td>', i, r.EsGratuito ? 'checked' : '', sut.editProcedimiento.esProcEstadar ? 'readonly' : '');
+
+                            if(sut.editProcedimiento.esTupaEstandar) {
+                                rows += sut.string.format('<td><input name="TablaAsme[{0}].Prestaciones" value="{1}" class="form-control" type="number" min="1" /></td>', i, r.Prestaciones);
+                            } else if (sut.editProcedimiento.esCargaInicial) {
+                                if (!sut.editProcedimiento.esProcEstadar) {
+                                    rows += sut.string.format('<td><input name="TablaAsme[{0}].CostoUnitario" value="{1}" class="form-control" type="number" min="1" {2} /></td>', i, r.CostoUnitario, r.EsGratuito ? 'disabled="disabled"' : '');
+                                }
+                            } else {
+                                if (!sut.editProcedimiento.esProcEstadar) {
+                                    rows += sut.string.format('<td><input name="TablaAsme[{0}].Prestaciones" value="{1}" class="form-control" type="number" min="1" /></td>', i, r.Prestaciones);
+                                }
+                            }
+
+                            rows += '<td><div class="btn-group">';
+                            if (i > 0) {
+                                if ("@user.rolmenu[0].Eliminar" == "True")
+                                {
+                                    rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.Modalidad.delete({0})" ><i class="fa fa-close" ></i></a>', i);
+                                }
+                            }
+                            rows += '</div></td>';
+                            rows += '</tr>';
+
+                            tabla.append(rows);
+                        });
+                    }
+                },
+                add: function () {
+                    var tabla = $('#tblModalidad tbody');
+
+                    var i = tabla.children('tr').size();
+
+                    var rows = '';
+                    rows += sut.string.format('<tr data-index="{0}" >', i);
+                    rows += '<td>';
+                    rows += sut.string.format('<span>{0}</span>', i + 1);
+                    rows += sut.string.format('<input type="hidden" name="TablaAsme[{0}].TablaAsmeId" value="{1}" />', i, 0);
+                    rows += '</td>';
+                    rows += sut.string.format('<td><input type="text" name="TablaAsme[{0}].Codigo" value="{1}" class="form-control" readonly /></td>', i, '-');
+                    rows += sut.string.format('<td><input type="text" name="TablaAsme[{0}].Descripcion" value="{1}" class="form-control" /></td>', i, '');
+                    rows += sut.string.format('<td><input type="checkbox" data-type="EsGratuito" name="TablaAsme[{0}].EsGratuito" value="false" /></td>', i);
+
+                    if (sut.editProcedimiento.esTupaEstandar) {
+                        rows += sut.string.format('<td><input name="TablaAsme[{0}].Prestaciones" value="{1}" class="form-control" type="number" min="1" /></td>', i, 0);
+                    } else if (sut.editProcedimiento.esCargaInicial) {
+                        if (!sut.editProcedimiento.esProcEstadar) {
+                            rows += sut.string.format('<td><input name="TablaAsme[{0}].CostoUnitario" value="{1}" class="form-control" type="number" min="1" /></td>', i, 0);
+                        }
+                    } else {
+                        if (!sut.editProcedimiento.esProcEstadar) {
+                            rows += sut.string.format('<td><input name="TablaAsme[{0}].Prestaciones" value="{1}" class="form-control" type="number" min="1" /></td>', i, 0);
+                        }
+                    }
+
+                    rows += '<td><div class="btn-group">';
+                    if (i > 0) {
+                        if ("@user.rolmenu[0].Eliminar" == "True")
+                        {
+                            rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.Modalidad.delete({0})" ><i class="fa fa-close" ></i></a>', i);
+                        }
+                    }
+                    rows += '</div></td>';
+                    rows += '</tr>';
+
+                    tabla.append(rows);
+                    sut.editProcedimiento.Modalidad.update();
+                },
+                delete: function (id) {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                    $.each($('#tblModalidad tbody tr'), function (index, tr) {
+                        var i = Number($(tr).data('index'));
+                        if (i == id) $(tr).remove();
+                    });
+                    sut.editProcedimiento.Modalidad.update();
+                    //});
+                },
+                update: function () {
+                    $.each($('#tblModalidad tbody tr'), function (i, tr) {
+                        $(tr).data('index', i);
+                        $(tr).find('td span').html(i + 1);
+                        $(tr).find('td input[name$="TablaAsmeId"]').attr('name', sut.string.format('TablaAsme[{0}].TablaAsmeId', i));
+                        $(tr).find('td input[name$="Codigo"]').attr('name', sut.string.format('TablaAsme[{0}].Codigo', i));
+                        $(tr).find('td input[name$="Descripcion"]').attr('name', sut.string.format('TablaAsme[{0}].Descripcion', i));
+                        $(tr).find('td input[name$="EsGratuito"]').attr('name', sut.string.format('TablaAsme[{0}].EsGratuito', i)).attr("data-type","EsGratuito");
+                        $(tr).find('td input[name$="Prestaciones"]').attr('name', sut.string.format('TablaAsme[{0}].Prestaciones', i));
+                        $(tr).find('td input[name$="CostoUnitario"]').attr('name', sut.string.format('TablaAsme[{0}].CostoUnitario', i));
+
+                        $(tr).find('td div a').attr('href', sut.string.format('javascript:sut.editProcedimiento.Modalidad.delete({0})', i));
+                    });
+                }
+            },
+            Requisito: {
+                indexReq: 0,
+                TipoRequisito : 0,
+                textCadenaTramite: (val, index) => {
+                    rows = '';
+                    rows += '<div class="input-group">';
+                    rows += sut.string.format('<input type="text" name="Requisito[{0}].CadenaTramite" value="{1}" class="form-control input-sm" />', index, val || '');
+                    rows += '<div class="input-group-btn">';
+                    rows += sut.string.format('<a href="javascript:sut.editProcedimiento.Requisito.openCadenaTramite({0})" class="cadenaTramite btn btn-danger btn-sm"><i class="fa fa-ellipsis-h"></i></a>', index);
+                    rows += '</div>';
+                    rows += '</div>';
+                    return rows;
+                },
+                setCadenaTramite: (data) => {
+                    $('#modal-ventana').modal('hide');
+                    debugger;
+                    var index = sut.editProcedimiento.Requisito.indexReq;
+                    var tabla = "";
+
+                    if (sut.editProcedimiento.Requisito.TipoRequisito === 1) {
+                        tabla = "#tblRequisitoGeneral";
+                    } else {
+                        tabla = "#tblRequisitoEspecifico";
+                    }
+
+                    var req = $(tabla +' tbody tr.requisito').eq(index);
+                    req.find('input[name$="CadenaTramite"]').val(data.Codigo);
+                },
+                openCadenaTramite: (index,TipoRequisito) => {
+                    sut.editProcedimiento.Requisito.indexReq = index;
+                    sut.editProcedimiento.Requisito.TipoRequisito = TipoRequisito;
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/Procedimiento/Select',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/Select")',
+                        data: { tipo: 1, multi: false, fnAdd: 'sut.editProcedimiento.Requisito.setCadenaTramite' },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                init: function () {
+                    var lista = @Html.Raw(ViewBag.ListaRequisito != null ? ViewBag.ListaRequisito : "[]");
+                    var tablaRGeneral = $('#tblRequisitoGeneral tbody');
+                    var tablaREspecifico = $('#tblRequisitoEspecifico tbody');
+                    var counttablaRGeneral = 0;
+                    var counttablaREspecifico = 0;
+                    debugger;
+
+                    if (lista.length > 0) {
+                        var data = [];
+                        $.each(lista, function (i, r) {
+                            var rows = '';
+                            if (r.TipoRequisito === 1) {
+                                i = counttablaRGeneral;
+                            } else {
+                                i = counttablaREspecifico;
+                            }
+
+                            rows += sut.string.format('<tr data-index="{0}" class="requisito" >', i);
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoId" value="{1}" />', i, r.RequisitoId);
+                            rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegalId" value="{1}" />', i, r.BaseLegalId);
+                            rows += sut.string.format('<input type="hidden" name="Requisito[{0}].SustentoTecnico" value="{1}" />', i, r.SustentoTecnico || '');
+                            rows += sut.string.format('<input type="hidden" name="Requisito[{0}].TipoRequisito" value="{1}" />', i, r.TipoRequisito);
+                            rows += '</td>';
+                            if (!sut.editProcedimiento.esTupaEstandar && !sut.editProcedimiento.esProcEstadar) {
+                                rows += sut.string.format('<td><input type="text" name="Requisito[{0}].Nombre" value="{1}" class="form-control" required /></td>', i, r.Nombre || '');
+                                //rows += sut.string.format('<td><textarea name="Requisito[{0}].Descripcion" class="form-control" >{1}</textarea></td>', i, r.Descripcion || '');
+                            } else if (sut.editProcedimiento.esTupaEstandar && sut.editProcedimiento.esProcEstadar) {
+                                rows += sut.string.format('<td><input type="text" name="Requisito[{0}].Nombre" value="{1}" class="form-control" required /></td>', i, r.Nombre || '');
+                                //rows += sut.string.format('<td><textarea name="Requisito[{0}].Descripcion" class="form-control" >{1}</textarea></td>', i, r.Descripcion || '');
+                            } else {
+                                rows += sut.string.format('<td><input type="text" name="Requisito[{0}].Nombre" value="{1}" class="form-control" readonly /></td>', i, r.Nombre || '');
+                                //rows += sut.string.format('<td><textarea name="Requisito[{0}].Descripcion" class="form-control" readonly >{1}</textarea></td>', i, r.Descripcion || '');
+                            }
+
+                            //rows += sut.string.format('<td>{0}</td>', sut.editProcedimiento.Requisito.textCadenaTramite(r.CadenaTramite, i));
+                            rows += '<td class="text-center" ><div class="btn-group">';
+
+                            if (!sut.editProcedimiento.esTupaEstandar && !sut.editProcedimiento.esProcEstadar) {
+                                if ("@user.rolmenu[0].Eliminar" == "True")
+                                {
+                                    rows += sut.string.format('<a class="delRequisito btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.Requisito.delete({0},{1})" ><i class="fa fa-close" ></i></a>', i, r.TipoRequisito);
+                                }
+                            } else if (sut.editProcedimiento.esTupaEstandar && sut.editProcedimiento.esProcEstadar) {
+                                if ("@user.rolmenu[0].Eliminar" == "True")
+                                {
+                                    rows += sut.string.format('<a class="delRequisito btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.Requisito.delete({0},{1})" ><i class="fa fa-close" ></i></a>', i, r.TipoRequisito);
+                                }
+                            } else {
+
+                            }
+                            rows += '</div></td>';
+                            rows += '</tr>';
+                            rows += '<tr><td colspan="4"><table class="table table-condensed table-bordered">';
+                            rows += '<thead><tr><th style="width:100px;"></th><th style="width:100px;">';
+                            if ("@user.rolmenu[0].Agregar" == "True"){
+                                rows += sut.string.format('<a href="javascript:sut.editProcedimiento.Formulario.edit({0},null,{1})" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>', i, r.TipoRequisito);
+                            }
+                            rows += '</th><th>Formulario</th><th style="width:60px;">Archivo</th><th style="width:100px;"></th></tr></thead><tbody>';
+                            $.each(r.RequisitoFormulario, (k, f) => {
+                                f.indexReq = r.TipoRequisito === 1 ? counttablaRGeneral : counttablaREspecifico;
+                                f.indexForm = k;
+                                f.TipoRequisito = r.TipoRequisito;
+                                rows += sut.editProcedimiento.Formulario.newFila(f);
+                            });
+                            rows += '</tbody></table></td></tr>';
+
+                            if (r.TipoRequisito === 1) {
+                                tablaRGeneral.append(rows);
+                                counttablaRGeneral++;
+                            } else {
+                                tablaREspecifico.append(rows);
+                                counttablaREspecifico++;
+                            }
+                        });
+
+                        sut.editProcedimiento.Requisito.update();
+                    }
+                },
+                add: function (TipoRequisito) {
+                    debugger;
+                    var tabla = null;
+                    debugger;
+                    if (TipoRequisito === 1) {
+                        tabla = $('#tblRequisitoGeneral tbody').eq(0);
+                    } else {
+                        tabla = $('#tblRequisitoEspecifico tbody').eq(0);
+                    }
+
+
+                    //var i = tabla.children('tr.requisito').size();
+                    var i = tabla.children('tr.requisito').size();
+
+                    var rows = '';
+                    rows += sut.string.format('<tr data-index="{0}" class="requisito" >', i);
+                    rows += '<td>';
+                    rows += sut.string.format('<span>{0}</span>', i + 1);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoId" value="{1}" />', i, 0);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegalId" value="{1}" />', i, 0);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].SustentoTecnico" value="{1}" />', i, '');
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].TipoRequisito" value="{1}" />', i, TipoRequisito);
+                    rows += '</td>';
+                    //rows += sut.string.format('<td><input type="text" name="Requisito[{0}].Codigo" value="{1}" class="form-control" readonly /></td>', i, '-');
+                    rows += sut.string.format('<td><input type="text" name="Requisito[{0}].Nombre" value="{1}" class="form-control" required /></td>', i, '');
+                    //rows += sut.string.format('<td><textarea name="Requisito[{0}].Descripcion" class="form-control" >{1}</textarea></td>', i, '');
+                    //rows += sut.string.format('<td>{0}</td>', sut.editProcedimiento.Requisito.textCadenaTramite('', i));
+                    rows += '<td class="text-center" ><div class="btn-group">';
+                    if ("@user.rolmenu[0].Eliminar" == "True")
+                    {
+                        rows += sut.string.format('<a class="delRequisito btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.Requisito.delete({0},{1})" ><i class="fa fa-close" ></i></a>', i, TipoRequisito);
+                    }
+                    rows += '</div></td>';
+                    rows += '</tr>';
+
+
+                    tabla.append(rows);
+                    sut.editProcedimiento.Requisito.update();
+                },
+                delete: function (index, pTipoRequisito) {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+
+                    var tabla = "";
+                    if (pTipoRequisito === 1) {
+                        tabla = "table#tblRequisitoGeneral";
+                    } else {
+                        tabla = "table#tblRequisitoEspecifico";
+                    }
+
+                    var TipoRequisito = $(tabla +' tbody tr.requisito').eq(index).find('td input[name$="TipoRequisito"]').attr('name');
+
+                    var req = $(tabla + ' tbody tr.requisito').eq(index);
+                    if (Number(req.find('td input[name$="RequisitoId"]').val()) > 0) req.next().remove();
+                    req.remove();
+
+                    //$.each($('#tblRequisito tbody tr.requisito'), function (index, tr) {
+                    //    var i = Number($(tr).data('index'));
+                    //    if (i == id) $(tr).remove();
+                    //});
+                    sut.editProcedimiento.Requisito.update();
+                    //});
+                },
+                update: function () {
+
+                    var cont = 0;
+
+                    $.each($('#tblRequisitoGeneral tbody tr.requisito'), function (i, tr) {
+                        $(tr).data('index', i);
+                        $(tr).find('td span').html(i + 1);
+                        $(tr).find('td input[name$="RequisitoId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoId', cont));
+                        $(tr).find('td input[name$="TipoRequisito"]').attr('name', sut.string.format('Requisito[{0}].TipoRequisito', cont));
+                        $(tr).find('td input[name$="BaseLegalId"]').attr('name', sut.string.format('Requisito[{0}].BaseLegalId', cont));
+                        $(tr).find('td input[name$="SustentoTecnico"]').attr('name', sut.string.format('Requisito[{0}].SustentoTecnico', cont));
+                        $(tr).find('td input[name$="Nombre"]').attr('name', sut.string.format('Requisito[{0}].Nombre', cont));
+                        $(tr).find('td input[name$="CadenaTramite"]').attr('name', sut.string.format('Requisito[{0}].CadenaTramite', cont));
+                        $(tr).find('td input[name$="Descripcion"]').attr('name', sut.string.format('Requisito[{0}].Descripcion', cont));
+                        $(tr).find('td div div a.cadenaTramite').attr('href', sut.string.format('javascript:sut.editProcedimiento.Requisito.openCadenaTramite({0},1)', cont));
+                        //$(tr).find('td div a.delRequisito').attr('href', sut.string.format('javascript:sut.editProcedimiento.Requisito.delete({0})', cont));
+
+                        if($(tr).find('td input[name$="RequisitoId"]').val() != '0') {
+                            $.each($(tr).next().find('td table tbody tr.formulario'), (k, f) => {
+                                $(f).data('index', k);
+                                $(f).find('td span').html(k + 1);
+                                $(f).find('td input[name$="RequisitoId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].RequisitoId', cont, k));
+                                $(f).find('td input[name$="FormularioId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].FormularioId', cont, k));
+                                $(f).find('td input[name$="Nombre"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].Nombre', cont, k));
+                                $(f).find('td input[name$="Url"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].Url', cont, k));
+                                $(f).find('td input[name$="ArchivoAdjuntoId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].ArchivoAdjuntoId', cont, k));
+                            });
+                        }
+
+                        cont++;
+                    });
+
+
+                    $.each($('#tblRequisitoEspecifico tbody tr.requisito'), function (i, tr) {
+                        $(tr).data('index', i);
+                        $(tr).find('td span').html(i + 1);
+                        $(tr).find('td input[name$="RequisitoId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoId', cont));
+                        $(tr).find('td input[name$="TipoRequisito"]').attr('name', sut.string.format('Requisito[{0}].TipoRequisito', cont));
+                        $(tr).find('td input[name$="BaseLegalId"]').attr('name', sut.string.format('Requisito[{0}].BaseLegalId', cont));
+                        $(tr).find('td input[name$="SustentoTecnico"]').attr('name', sut.string.format('Requisito[{0}].SustentoTecnico', cont));
+                        $(tr).find('td input[name$="Nombre"]').attr('name', sut.string.format('Requisito[{0}].Nombre', cont));
+                        $(tr).find('td input[name$="CadenaTramite"]').attr('name', sut.string.format('Requisito[{0}].CadenaTramite', cont));
+                        $(tr).find('td input[name$="Descripcion"]').attr('name', sut.string.format('Requisito[{0}].Descripcion', cont));
+                        $(tr).find('td div div a.cadenaTramite').attr('href', sut.string.format('javascript:sut.editProcedimiento.Requisito.openCadenaTramite({0},2)', cont));
+                        //$(tr).find('td div a.delRequisito').attr('href', sut.string.format('javascript:sut.editProcedimiento.Requisito.delete({0})', cont));
+
+                        if ($(tr).find('td input[name$="RequisitoId"]').val() != '0') {
+                            $.each($(tr).next().find('td table tbody tr.formulario'), (k, f) => {
+                                $(f).data('index', k);
+                                $(f).find('td span').html(k + 1);
+                                $(f).find('td input[name$="RequisitoId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].RequisitoId', cont, k));
+                                $(f).find('td input[name$="FormularioId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].FormularioId', cont, k));
+                                $(f).find('td input[name$="Nombre"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].Nombre', cont, k));
+                                $(f).find('td input[name$="Url"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].Url', cont, k));
+                                $(f).find('td input[name$="ArchivoAdjuntoId"]').attr('name', sut.string.format('Requisito[{0}].RequisitoFormulario[{1}].ArchivoAdjuntoId', cont, k));
+                            });
+                        }
+
+                        cont++;
+                    });
+                }
+            },
+            Formulario: {
+                newFila: (r) => {
+                    var rows = sut.string.format('<tr data-index="{0}" class="formulario" >', r.indexForm);
+                    rows += '<td></td>';
+                    rows += '<td>';
+                    rows += sut.string.format('<span>{0}</span>', r.indexForm + 1);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoFormulario[{1}].RequisitoId" value="{2}" />', r.indexReq, r.indexForm, r.RequisitoId);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoFormulario[{1}].FormularioId" value="{2}" />', r.indexReq, r.indexForm, r.FormularioId);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoFormulario[{1}].Nombre" value="{2}" />', r.indexReq, r.indexForm, r.Nombre);
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoFormulario[{1}].Url" value="{2}" />', r.indexReq, r.indexForm, r.Url || '');
+                    rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoFormulario[{1}].ArchivoAdjuntoId" value="{2}" />', r.indexReq, r.indexForm, r.ArchivoAdjuntoId);
+                    rows += '</td>';
+                    rows += sut.string.format('<td>{0}</td>', r.Nombre);
+                    rows += '<td class="text-center" ><div class="btn-group">';
+                    if (r.Url || '' != '') {
+                        rows += sut.string.format('<a class="btn btn-default btn-xs" href="{0}" ><i class="fa fa-link" ></i></a>', r.Url);
+                    } else {
+                        rows += sut.string.format('<a class="btn btn-primary btn-xs" href="{0}" ><i class="fa fa-download" ></i></a>', r.Url);
+                    }
+                    rows += '</div></td>';
+                    rows += '<td class="text-center" ><div class="btn-group">';
+                    if ('@user.Rol' != 8 && '@user.Rol' != 6 && '@user.Rol' != 7) {
+                        rows += sut.string.format('<a class="btn btn-success btn-xs" href="javascript:sut.editProcedimiento.Formulario.edit({0}, {1}, {2})" ><i class="fa fa-pencil" ></i></a>', r.indexReq, r.indexForm, r.TipoRequisito);
+                        if ("@user.rolmenu[0].Eliminar" == "True")
+                        {
+                            rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.Formulario.delete({0}, {1}, {2})" ><i class="fa fa-close" ></i></a>', r.indexReq, r.indexForm, r.TipoRequisito);
+                        }
+                    }
+                    rows += '</div></td>';
+                    rows += '</tr>';
+                    return rows;
+                },
+                add: (r) => {
+                    $('#modal-ventana').modal('hide');
+                    debugger;
+                    var ntabla = "";
+                    if (r.TipoRequisito === 1) {
+                        ntabla = "#tblRequisitoGeneral";
+                    } else {
+                        ntabla = "#tblRequisitoEspecifico";
+                    }
+
+                    var tabla = $('table' + ntabla + ' tbody tr.requisito').eq(r.indexReq).next().find('td[colspan="4"] table tbody');
+                    if (r.Nuevo == 1) {
+                        r.indexForm = tabla.find('tr.formulario').size();
+                        tabla.append(sut.editProcedimiento.Formulario.newFila(r));
+                    } else {
+                        var tr = tabla.find('tr.formulario').eq(r.indexForm);
+                        tr.find('td input[name$="RequisitoId"]').val(r.RequisitoId);
+                        tr.find('td input[name$="FormularioId"]').val(r.FormularioId);
+                        tr.find('td input[name$="Nombre"]').val(r.Nombre);
+                        tr.find('td input[name$="Url"]').val(r.Url);
+                        tr.find('td input[name$="ArchivoAdjuntoId"]').val(r.ArchivoAdjuntoId);
+                        tr.find('td').eq(2).html(r.Nombre);
+                    }
+                },
+                edit: (indexReq, indexForm,TipoRequisito) => {
+                    var model = {};
+
+                    debugger;
+                    var tabla = "";
+                    if (TipoRequisito === 1) {
+                        tabla = "#tblRequisitoGeneral";
+                    } else {
+                        tabla = "#tblRequisitoEspecifico";
+                    }
+
+                    if (indexForm != null) {
+                        var r = $('table' + tabla + ' tbody tr.requisito').eq(indexReq).next().find('td[colspan="4"] table tbody tr.formulario').eq(indexForm);
+                        model['model.RequisitoId'] = r.find('td input[name$="RequisitoId"]').val();
+                        model['model.FormularioId'] = r.find('td input[name$="FormularioId"]').val();
+                        model['model.Nombre'] = r.find('td input[name$="Nombre"]').val();
+                        model['model.Url'] = r.find('td input[name$="Url"]').val();
+                        model['model.ArchivoAdjuntoId'] = r.find('td input[name$="ArchivoAdjuntoId"]').val();
+                    } else {
+                        model['model.RequisitoId'] = $('table' + tabla + ' tbody tr.requisito').eq(indexReq).find('td input[name$=RequisitoId]').val();
+                        model['model.FormularioId'] = $('table' + tabla + ' tbody tr.requisito').eq(indexReq).next().find('td[colspan="4"] table tbody tr.formulario').size() + 1;
+                    }
+
+                    model['nuevo'] = indexForm == null ? 1 : 0;
+                    model['indexForm'] = indexForm == null ? 0 : indexForm;
+                    model['indexReq'] = indexReq;
+                    model['fnAdd'] = 'sut.editProcedimiento.Formulario.add';
+                    model['TipoRequisito'] = TipoRequisito
+
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Simplificacion/Procedimiento/EditarFormulario',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/EditarFormulario")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                delete: (indexReq, indexForm, TipoRequisito) => {
+
+                    var tabla = "";
+                    if (TipoRequisito === 1) {
+                        tabla = "#tblRequisitoGeneral";
+                    } else {
+                        tabla = "#tblRequisitoEspecifico";
+                    }
+
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                    var tr = $('table' + tabla + ' tbody tr.requisito').eq(indexReq).next().find('td[colspan="4"] table tbody tr').eq(indexForm);
+                    tr.remove();
+                    sut.editProcedimiento.Requisito.update();
+                    //});
+                }
+            },
+            BaseLegal: {
+                data: @Html.Raw(ViewBag.ListaBaseLegal != null ? ViewBag.ListaBaseLegal : "[]") ,
+                init: () => {
+                    sut.editProcedimiento.BaseLegal.generar();
+                },
+                edit: (index) => {
+                    var model = {};
+                    if (index != null) {
+                        var r = sut.editProcedimiento.BaseLegal.data[index];
+                        model['model.BaseLegalNormaId'] = r.BaseLegalNormaId;
+                        model['model.TipoBaseLegal'] = r.TipoBaseLegal;
+                        model['model.NormaId'] = r.NormaId;
+                        model['model.Descripcion'] = r.Descripcion == 'null' ? '' : r.Descripcion;
+                        model['model.TipoNormaId'] = r.TipoNormaId;
+                        model['model.Numero'] = r.Numero;
+                        model['model.FechaPublicacion'] = r.FechaPublicacion;
+                        model['model.Articulo'] = r.Articulo;
+                        model['model.Url'] = r.Url == 'null' ? '' : r.Url;
+                        model['model.ArchivoAdjuntoId'] = r.ArchivoAdjuntoId;
+                    }
+
+                    model['nuevo'] = index == null ? 1 : 0;
+                    model['index'] = index == null ? 0 : index;
+                    model['fnAdd'] = 'sut.editProcedimiento.BaseLegal.add';
+
+                    $.ajax({
+                        type: "GET",
+                        //url: '/General/BaseLegal/EditarDetalle',
+                        url: '@Url.Content("~/General/BaseLegal/EditarDetalle")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                generar: () => {
+                    var tabla = $('#tblBaseLegal tbody');
+                    $('#tblBaseLegal tbody tr').remove();
+                    if (sut.editProcedimiento.BaseLegal.data.length > 0) {
+                        var rows = '';
+                        $.each(sut.editProcedimiento.BaseLegal.data, function (i, r) {
+                            rows += sut.string.format('<tr data-index="{0}" >', i);
+                            rows += '<td>';
+                            rows += sut.string.format('<span>{0}</span>', i + 1);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].BaseLegalId" value="{1}" />', i, r.BaseLegalId);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].BaseLegalNormaId" value="{1}" />', i, r.BaseLegalNormaId);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].TipoBaseLegal" value="{1}" />', i, r.TipoBaseLegal);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].NormaId" value="{1}" />', i, r.NormaId);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].Descripcion" value="{1}" />', i, r.Descripcion);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].TipoNormaId" value="{1}" />', i, r.TipoNormaId);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].Numero" value="{1}" />', i, r.Numero);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].FechaPublicacion" value="{1}" />', i, r.FechaPublicacion);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].Articulo" value="{1}" />', i, r.Articulo);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].ArchivoAdjuntoId" value="{1}" />', i, r.ArchivoAdjuntoId);
+                            rows += sut.string.format('<input type="hidden" name="BaseLegal.BaseLegalNorma[{0}].Url" value="{1}" />', i, r.Url);
+                            rows += '</td>';
+                            rows += sut.string.format('<td>{0}</td>', r.NormaTipo);
+                            rows += sut.string.format('<td>{0}</td>', r.Numero);
+                            rows += sut.string.format('<td>{0}</td>', r.Descripcion);
+                            rows += sut.string.format('<td>{0}</td>', r.FechaPublicacion);
+                            rows += sut.string.format('<td>{0}</td>', r.Articulo);
+                            //rows += '<td class="text-center">';
+                            //if (r.TipoBaseLegal == 3) {
+                            //    rows += sut.string.format('<a href="{0}" class="btn btn-primary btn-xs" target="_blank" ><i class="fa fa-link"></i></a>', r.Url);
+                            //} else {
+                            //    rows += sut.string.format('<a href="{0}" class="btn btn-primary btn-xs" target="_blank" ><i class="fa fa-file"></i></a>', '');
+                            //}
+                            //rows += '</td>';
+                            rows += '<td><div class="btn-group">';
+                            if (!sut.editProcedimiento.esTupaEstandar && !sut.editProcedimiento.esProcEstadar) {
+                                rows += sut.string.format('<a class="btn btn-success btn-xs" href="javascript:sut.editProcedimiento.BaseLegal.edit({0})" ><i class="fa fa-pencil" ></i></a>', i);
+                                if ("@user.rolmenu[0].Eliminar" == "True")
+                                {
+                                    rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.BaseLegal.delete({0})" ><i class="fa fa-close" ></i></a>', i);
+                                }
+                            } else if (!sut.editProcedimiento.esTupaEstandar && !sut.editProcedimiento.esProcEstadar) {
+                                rows += sut.string.format('<a class="btn btn-success btn-xs" href="javascript:sut.editProcedimiento.BaseLegal.edit({0})" ><i class="fa fa-pencil" ></i></a>', i);
+                                if ("@user.rolmenu[0].Eliminar" == "True")
+                                {
+                                    rows += sut.string.format('<a class="btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.BaseLegal.delete({0})" ><i class="fa fa-close" ></i></a>', i);
+                                }
+                            }
+                            rows += '</div></td>';
+                            rows += '</tr>';
+                        });
+                        tabla.append(rows);
+                    }
+                },
+                add: (r) => {
+                    $('#modal-ventana').modal('hide');
+                    if (r.Nuevo == 1) {
+                        sut.editProcedimiento.BaseLegal.data.push(r);
+                    } else {
+                        var arr = [];
+                        $.each(sut.editProcedimiento.BaseLegal.data, function (i, d) {
+                            if (i != r.Index) arr.push(d);
+                            else arr.push(r);
+                        });
+                        sut.editProcedimiento.BaseLegal.data = arr;
+                    }
+                    sut.editProcedimiento.BaseLegal.generar();
+                },
+                delete: (index) => {
+                    //sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                    var arr = [];
+                    $.each(sut.editProcedimiento.BaseLegal.data, function (i, d) {
+                        if (i != index) arr.push(d);
+                    });
+                    sut.editProcedimiento.BaseLegal.data = arr;
+                    sut.editProcedimiento.BaseLegal.generar();
+                    //});
+                }
+            },
+
+            guardar: function (is_salir) {
+                var valid = true;
+
+                var deferred = $.Deferred();
+
+                $.each($("#tblModalidad input[data-type='EsGratuito']"), function (i, v) {
+                    if ($(this).is(':checked')) {
+                        $(this).attr("value", true);
+                    } else {
+                        $(this).attr("value", false);
+                    }
+                });
+
+                //$.each($("#tblCanales input[type='checkbox']"), function (i, v) {
+                //    if ($(this).is(':checked')) {
+                //        $(this).attr("value", true);
+                //        $(this).attr("checked", true);
+                //        $(this).prop("checked", true);
+                //    } else {
+                //        $(this).attr("value", false);
+                //        $(this).attr("checked", false);
+                //        $(this).prop("checked", false);
+                //    }
+                //});
+
+
+                if ($('#form-editar').valid() && valid) {
+                    var model = $('#form-editar').serialize();
+
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/DatosGeneralesInformacionCiudadano',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/DatosGeneralesInformacionCiudadano")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                @*//window.location = '/Simplificacion/Procedimiento/DatosGenerales/@Model.ProcedimientoId';*@
+                                deferred.resolve('Ok');
+                                if (!is_salir)
+                                    window.location = '@Url.Action("InformacionCiudadano", "Procedimiento", new { @area = "Simplificacion", @id = Model.ProcedimientoId })' + '?tab=' + sut.editProcedimiento.tab;
+                            });
+
+                            //showNotification('top', 'right', 'El Registro de Guardo Satisfactoriamente', 1);
+                            //debugger;
+                            //deferred.resolve('Ok'); // jleon 05022019
+                            //if (!is_salir)
+                            //    setTimeout("reFresh()", 1000);
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }
+
+                return deferred.promise();
+            },
+            editarCondicion: (id, Tipoficha) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/EditarCondicion")',
+                    data: { id: id, Tipoficha: Tipoficha  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            CondicionVolver: (id, Tipoficha) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/condicionvolver")',
+                    data: { id: id, Tipoficha: Tipoficha  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+                        if (data.estado == 0) {
+
+                            sut.msg.confirm('La ficha se encuentra en estado "SIN ACCIÓN". Desea Salir', () => {
+                                    window.location = '/Simplificacion/Expediente/EditarObservacion/@Model.ExpedienteId';
+                            });
+
+
+                            //showNotification('top', 'right', 'La Ficha se encuentra en estado "SIN ACCIÓN" ', 2);
+
+
+                        } else
+                        {
+                            window.location = '/Simplificacion/Expediente/EditarObservacion/@Model.ExpedienteId';
+                        }
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+
+
+
+            SiguientePA: (Expediente, ExplorarNum) => {
+                debugger;
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/SiguientePA")',
+                    data: { pExpediente: Expediente, pExplorarNum: ExplorarNum  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+
+                            if (data.estado == 0) {
+
+                                //sut.msg.confirm('No existe PA para Avanzar ', () => {
+
+                                //});
+                                sut.msg.msgUsuario('No existe PA para Avanzar', 'Alerta');
+
+                            } else
+                            {
+                                //~/Simplificacion/Procedimiento / InformacionCiudadano /
+                                window.location = '/Simplificacion/Procedimiento/InformacionCiudadano/' + data.estado;
+                            }
+
+
+
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+
+            AtrasPA: (Expediente, ExplorarNum) => {
+                debugger;
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/AtrasPA")',
+                    data: { pExpediente: Expediente, pExplorarNum: ExplorarNum  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                           debugger;
+                        $('#modal-ventana').modal('hide');
+                            if (data.estado == 0) {
+
+                                sut.msg.msgUsuario('No existe PA para retroceder', 'Alerta');
+                            } else
+                            {
+                                //~/Simplificacion/Procedimiento / InformacionCiudadano /
+                                window.location = '/Simplificacion/Procedimiento/InformacionCiudadano/' + data.estado;
+                            }
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            terminar: function () {
+                var valid = true;
+
+                if (valid) {
+                    valid = $('#tblRequisito tbody tr').size() > 0;
+                    if (!valid) sut.error.clientErrorShow('mensajes', 'Debe agregar al menos un Requisito.');
+                }
+
+                if (valid) {
+                    valid = $('#tblBaseLegal tbody tr').size() > 0;
+                    if (!valid) sut.error.clientErrorShow('mensajes', 'Debe agregar al menos un registro de Base Legal.');
+                }
+
+                if (valid) {
+                    var tablas = $('#tblModalidad tbody tr td input[name$="Prestaciones"]');
+                    $.each(tablas, (i, p) => {
+                        if (Number($(p).val()) == 0) valid = false;
+                    });
+                    if (!valid) sut.error.clientErrorShow('mensajes', 'Debe indicar la cantidad de prestaciones.');
+                }
+
+                if (valid && !sut.editProcedimiento.esTupaEstandar) {
+                    valid = $('#tblSede tbody tr').size() > 0;
+                    if(!valid) sut.error.clientErrorShow('mensajes', 'Debe agregar al menos una Sede donde se atiende el trámite.');
+                }
+
+                if (valid) {
+                    valid = $('#tblPasoSeguir tbody tr').size() > 0;
+                    if (!valid) sut.error.clientErrorShow('mensajes', 'Debe indicar los pasos a seguir para la realización del trámite.');
+                }
+
+                if (valid) {
+                    sut.msg.confirm('Si finaliza el registro no podrá modificarlo nuevamente.', () => {
+                        if ($('#form-editar').valid()) {
+                            var model = $('#form-editar').serialize();
+                            $.ajax({
+                                type: 'POST',
+                                //url: '/Simplificacion/Procedimiento/DatosGenerales',
+                                url: '@Url.Content("~/Simplificacion/Procedimiento/DatosGenerales")',
+                                data: model,
+                                dataType: 'json',
+                                beforeSend: function () {
+                                    $("#mensajes").hide();
+                                },
+                                complete: function () {
+
+                                },
+                                success: function (result) {
+
+                                    $.ajax({
+                                        type: 'POST',
+                                        //url: '/Simplificacion/Procedimiento/TerminarSustento',
+                                        url: '@Url.Content("~/Simplificacion/Procedimiento/TerminarSustento")',
+                                        data: {tipo: 1, ProcedimientoId: @Model.ProcedimientoId, estadoExpediente: '@Model.Expediente.EstadoExpediente', ExpedienteId: @Model.ExpedienteId},
+                                        dataType: 'json',
+                                        beforeSend: function () {
+                                            $("#mensajes").hide();
+                                        },
+                                        complete: function () {
+
+                                        },
+                                        success: function (result) {
+                                            sut.msg.success(result.mensaje, function () {
+                                                @*//window.location = '/Simplificacion/Procedimiento/DatosGenerales/@Model.ProcedimientoId';*@
+                                                window.location = '@Url.Action("DatosGenerales", "Procedimiento", new { @area = "Simplificacion", @id = Model.ProcedimientoId })' + '?tab=' + sut.editProcedimiento.tab;
+                                            });
+                                        },
+                                        error: function (result) {
+                                            sut.error.show('mensajes', result.responseText);
+                                        }
+                                    });
+
+                                },
+                                error: function (result) {
+                                    sut.error.show('mensajes', result.responseText);
+                                }
+                            });
+                        }
+                    });
+                }
+
+            },
+
+            Scroll: {
+                pos : 0,
+                init: () => {
+                    //$('.menu-compensador').css('height', $('#divBotones').height());
+                    //sut.editProcedimiento.Scroll.pos = $('#divBotones').offset().top;
+                    //window.onscroll = sut.editProcedimiento.Scroll.ejecutar;
+                    //sut.editProcedimiento.Scroll.ejecutar();
+                },
+                ejecutar: () => {
+                    var sc = window.pageYOffset;
+                    var menu = $('#divBotones');
+                    //var mot = menu.offset().top;
+                    if (sc > sut.editProcedimiento.Scroll.pos) {
+                        if (!menu.hasClass('fixed')) {
+                            menu.addClass('fixed');
+                            menu.appendTo($('.menu-fijo'));
+                            $('.menu-compensador').show();
+                        }
+                    } else if (menu.hasClass('fixed')) {
+                        menu.removeClass('fixed');
+                        menu.appendTo($('.menu-movil'));
+                        $('.menu-compensador').hide();
+                    }
+                },
+                getScrollOffsets: () => {
+                    /* Esto funciona para todos los navegadores excepto para IE8 y anteriores */
+                    if (window.pageXOffset != null) {
+                        return {
+                            x: window.pageXOffset,
+                            y: window.pageYOffset
+                        };
+                    }
+
+                    /* Funciona para navegadores standards */
+                    var doc = window.document;
+                    if (document.compatMode === "CSS1Compat") {
+                        return {
+                            x: doc.documentElement.scrollLeft,
+                            y: doc.documentElement.scrollTop
+                        };
+                    }
+
+                    /* Funciona para navegadores con compatibilidad con navegadores antiguos */
+                    return {
+                        x: doc.body.scrollLeft,
+                        y: doc.body.scrollTop
+                    };
+                }
+            }
+        };
+        function reFresh() {
+            window.location.reload();
+        }
+        $(function () {
+
+            if("@Model.InfCdnoTerminado"=="True"){
+
+                $("#idgeneral").css({ "pointer-events":"none" });
+
+                $(".btn-success").css({ "background-color":"#d2d6de" });
+                $(".btn-success").css({ "border-color":"#d2d6de" });
+            }
+
+            sut.editProcedimiento.Scroll.init();
+
+            $('a[href|="#edit"]').on('click', (e) => {
+                var href = $(e.target).attr('href');
+                sut.editProcedimiento.tab = href.substr(1, href.length - 1);
+            });
+
+            if (sut.editProcedimiento.tab == '') {
+                $('#edit-info-basica').addClass('active');
+                $('#edit-info-basica').parent().addClass('active');
+            } else {
+                $('#' + sut.editProcedimiento.tab).addClass('active');
+                $('a[href="#' + sut.editProcedimiento.tab + '"]').parent().addClass('active');
+            }
+
+            sut.editProcedimiento.Sede.init();
+            sut.editProcedimiento.Nota.init();
+            sut.editProcedimiento.PasoSeguir.init();
+            sut.editProcedimiento.Modalidad.init();
+            sut.editProcedimiento.Requisito.init();
+            sut.editProcedimiento.BaseLegal.init();
+
+            //$.each($('#tblCanales input[type="checkbox"], #tblFormasPago input[type="checkbox"]'), (i, r) => {
+            //    var chk = $(r);
+            //    if(!chk.is(':checked')) {
+            //        chk.parent().next().next().find('input[type="text"]').attr('disabled', 'disabled').val('');
+
+            //    }
+
+            //    chk.attr("original", "1");
+            //});
+
+            $.each($('#tblCanales input[type="checkbox"], #tblFormasPago input[type="checkbox"]'), (i, r) => {
+                var chk = $(r);
+                if (!chk.is(':checked')) {
+                    chk.parent().next().next().find('textarea').attr('disabled', 'disabled').val('');
+                }
+                chk.attr("original", "1");
+            });
+
+            //$('#tblCanales input[type="checkbox"], #tblFormasPago input[type="checkbox"]').on('change', (e) => {
+            //    var chk = $(e.target);
+            //    if(!chk.is(':checked')) {
+            //        chk.parent().next().next().find('input[type="text"]').attr('disabled', 'disabled').val('');
+            //    } else {
+            //        chk.parent().next().next().find('input[type="text"]').removeAttr('disabled');
+            //    }
+
+            //    chk.attr("original", "0");
+            //});
+            $('#tblCanales input[type="checkbox"], #tblFormasPago input[type="checkbox"]').on('change', (e) => {
+                var chk = $(e.target);
+                if (!chk.is(':checked')) {
+                    chk.parent().next().next().find('textarea').attr('disabled', 'disabled');
+                } else {
+                    chk.parent().next().next().find('textarea').removeAttr('disabled');
+
+                    if (chk[0].id == 'ProcedimientoDatoAdicional_0__Checked') {
+                        $("#ProcedimientoDatoAdicional_0__Comentario").val("Sedes de la Entidad. \n Centro de Mejora Atención al Ciudadano – MAC:");
+                    }
+
+
+                }
+            });
+
+
+            $('#tblModalidad').on('change', 'tbody tr td input[name$="EsGratuito"]', null, (e) => {
+                var chk = $(e.target);
+                var txtPrestaciones = chk.parent().parent().find('input[name$="Prestaciones"]');
+                var txtCostoUnitario = chk.parent().parent().find('input[name$="CostoUnitario"]');
+                if (sut.editProcedimiento.esCargaInicial) {
+                    if (chk.is(':checked')) {
+                        txtCostoUnitario.val(0).attr('min', 0).attr('disabled', 'disabled');
+                    } else {
+                        txtCostoUnitario.val(0).attr('min', 1).removeAttr('disabled');
+                    }
+                }
+            });
+
+            $('#form-editar').validate({
+                errorPlacement: function (error, element) {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+                    PlazoAtencion : 'integer',
+                    PzoReconPresent: 'integer',
+                    PzoReconResol: 'integer',
+                    PzoApelPresent: 'integer',
+                    PzoApelResol: 'integer',
+                    //Correo: {
+                    //    email: true
+                    //},
+                    Telefono: {
+                        maxlength: 1500
+                    },
+                    Anexo: {
+                        maxlength: 1500
+                    },
+                },
+                messages: {
+
+                }
+            });
+
+
+
+
+
+
+            /*desarrollo de la ayuda*/
+            /*minimizar un modal*/
+
+            var $content, $modal, $apnData, $modalCon;
+
+            $content = $(".min");
+
+
+            //To fire modal
+            $(".mdlFire").click(function (e) {
+                debugger;
+                e.preventDefault();
+
+                var $id = $(this).attr("data-target");
+
+                $($id).modal({ backdrop: false, keyboard: false });
+
+            });
+
+            debugger;
+
+            if(@user.Ayuda==1){
+                $('#edit-fase-preparatoria').addClass('active');
+                $('a[href="#edit-fase-preparatoria"]').parent().addClass('active');
+
+
+                $('#tituloocultar').hide();
+
+
+                $('#modalAyudaAvatar1').modal({backdrop: 'static', keyboard: false})
+                $modal = "#modalAyudaAvatar1"
+                $($modal).toggleClass("min");
+                $modal = "#modalAyudaAvatar1";
+                $(".modal-backdrop").addClass("display-none");
+                $(".minmaxConayuda").append($apnData);
+                $(".modal").css({
+                    backgroundColor: "transparent"
+                });
+
+            }
+
+
+
+            /*fin*/
+
+            $(".modalMinimize").on("click", function(){
+                debugger;
+                $modalCon = $(this).closest(".mymodal").attr("id");
+                $apnData = $(this).closest(".mymodal");
+                $modal = "#" + $modalCon;
+                $(".modal-backdrop").addClass("display-none");
+
+                $($modal).toggleClass("min2");
+                if ( $($modal).hasClass("min2") ){
+                    $('#tituloocultar').show();
+                    $(".minmaxCon").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-minus fa-2x').toggleClass( 'fa-clone fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                }
+                else {
+                    $('#tituloocultar').hide();
+                    $(".minmaxConayuda").append($apnData);
+                    //$(this).find("i").toggleClass( 'fa-clone fa-2x').toggleClass( 'fa-minus fa-2x');
+                    $(".modal").css({
+                        backgroundColor: "transparent"
+                    });
+                };
+            });
+
+
+
+        });
+
+        function reFresh() {
+            window.location = '@Url.Action("InformacionCiudadano", "Procedimiento", new { @area = "Simplificacion", @id = Model.ProcedimientoId })' + '?tab=' + sut.editProcedimiento.tab;
+
+        }
+
+        /*Agregado*/
+
+        document.getElementById('btnimportarnotaciudadano').addEventListener('click', async function () {
+
+            //var output = document.getElementById('output');
+            var file = document.getElementById('fileNCPS').files[0];
+            if (file) {
+                let result = await sut.subirExcel(file)
+                console.log(result)
+
+
+                let arrayPasos = [];
+                let arrayNotas = [];
+
+                result.forEach(objeto => {
+                    if (objeto['Tipo de nota al ciudadano']) { // Si "Requisitos" no está vacío ni es nulo
+                        arrayNotas.push(objeto);
+                    }
+                    if (objeto["Pasos a seguir "]) { // Si "Notas" no está vacío ni es nulo
+                        arrayPasos.push(objeto);
+                    }
+                });
+
+                for (let i = 0; i < arrayNotas.length; i++) {
+                    sut.editProcedimiento.Nota.add()
+                    $('select[name="NotaCiudadano[' + i + '].TipoNotaId"]').val(arrayNotas[i]['Tipo de nota al ciudadano']);
+
+                    $('textarea[name="NotaCiudadano[' + i + '].Nota"]').val(arrayNotas[i]['Nota al ciudadano']);
+
+
+                    
+                    //document.getElementsByName(`Requisito[${i}].Nombre`)[0].value = arrayRequisitos[i];
+
+                }
+                for (let j = 0; j < arrayPasos.length; j++) {
+                    console.log(arrayPasos)
+                    sut.editProcedimiento.PasoSeguir.add();
+                    $('textarea[name="PasoSeguir[' + j + '].Descripcion"]').val(arrayPasos[j]["Pasos a seguir "]);
+
+                }
+
+            
+            } else {
+                showNotification('top', 'right', "No se seleccionó ningún archivo", 3);
+            }
+        });
+
+
+    </script>
+}

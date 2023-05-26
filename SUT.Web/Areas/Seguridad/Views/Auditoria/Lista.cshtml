@@ -1,0 +1,238 @@
+﻿@model List<Sut.Entities.Auditoria>
+@{
+    ViewBag.Title = "Auditoria";
+    ViewBag.Descripcion = "Listado de Auditoria"; 
+    Sut.Security.UsuarioInfo user = ViewBag.User as Sut.Security.UsuarioInfo; 
+}
+<div class="callout callout-warning" style="height: inherit;padding: inherit;display: block;">
+    Para efectos de comunicados y notificaciones formales: Los datos registrados en este apartado deben responder a la verdad y mantenerse actualizados, bajo responsabilidad de la Entidad y el Administrador del SUT
+</div>
+<div id="mensajes"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body"> 
+
+                <a class="btn btn-facebook" id="filtro" href="javascript:sut.Auditoria.filtro()"><i class="fa fa-filter"></i>Más Filtros</a>
+                <a class="btn btn-facebook" id="quitarfiltro" href="javascript:sut.Auditoria.quitarfiltro()"><i class="fa fa-filter"></i> Quitar Filtro</a>
+                <a class="btn btn-primary " id="descargar" href="javascript:sut.Auditoria.Descargar()"><i class="fa fa-download"></i>Descargar</a>
+                @*<a class="btn btn-primary " data-toggle="tooltip" data-placement="left" title="Descargar" href="@Url.Content("~/General/Reporte/ImformacionAuditoria")?EntidadId=@user.EntidadId&nombreEntidad=$('#txtFilterEntidad').val()&Usuario=$('#txtFilterUsuario').val()&Actividad=$('#txtFilterActividad').val()&Pantalla=$('#txtFilterPantalla').val()&Fecha=$('#txtFilterFecha').val()&roladmi=@user.Rol" target="_blank"><i class="fa fa-download"></i>Descargar</a>*@
+                <br /> 
+                
+                <div class="table-responsive"> 
+
+                    <div  style="margin: 1rem;padding: 1rem; border-top-color: #dd4b39;border: 3px solid #d2d6de;" id="idFiltros">
+                        
+                        <label style="padding: 0.5rem;" class="col-sm-1 col-xs-2 control-label">Entidad :</label>
+                        <div class="col-sm-5 col-xs-2">
+                            <input id="txtFilterEntidad" type="text" class="form-control input-sm" />
+                        </div>
+                        <label  style="padding: 0.5rem;" class="col-sm-1 col-xs-2 control-label">Usuario :</label>
+                        <div class="col-sm-5 col-xs-2">
+                            <input id="txtFilterUsuario" type="text" class="form-control input-sm" />
+                        </div>
+                        <br />
+                        <br />
+                        <br />
+                        <label  style="padding: 0.5rem;" class="col-sm-1 col-xs-2 control-label">Actividad :</label>
+                        <div class="col-sm-2 col-xs-2">
+                            <input id="txtFilterActividad" type="text" class="form-control input-sm" />
+                        </div>
+
+                        <label  style="padding: 0.5rem;" class="col-sm-1 col-xs-2 control-label">Pantalla :</label>
+                        <div class="col-sm-2 col-xs-2">
+                            <input id="txtFilterPantalla" type="text" class="form-control input-sm" />
+                        </div> 
+
+                        <label style="padding: 0.5rem;" class="col-sm-1 col-xs-2 control-label">Fecha Creación :</label>
+                        <div class="col-sm-2 col-xs-2"> 
+                            <input id="txtFilterFecha" type="text" class="form-control input-sm" />
+                        </div>  
+
+                        <a class="btn btn-facebook" id="aplicarfiltro" href="javascript:sut.Auditoria.listar(1)"><i class="fa fa-filter"></i> Buscar</a>
+                      
+                    </div>
+
+                  
+
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="100"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.Auditoria.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th class="colAction">Nro.</th>
+                                <th>Entidad</th>
+                                <th>Usuario</th>
+                                <th>Actividad</th>
+                                <th>Pantalla</th>
+                                <th style="width:150px">Fecha Creación</th>  
+                            </tr> 
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr><td colspan="6"><div id="paginator"></div></td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+    </div>
+</div>
+  
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="14"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 60px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        } 
+
+    </style>
+}
+@section Script {
+    <script>
+        sut.Auditoria = {
+
+            filtro: function () {
+
+                $("#idFiltros").show();
+                $("#quitarfiltro").show();
+                $("#filtro").hide();
+
+            },
+            init:function () {
+                $("#idFiltros").hide();
+                $("#quitarfiltro").hide();
+                $("#filtro").show();
+            },
+            quitarfiltro: function () {
+
+                $('#txtFilterEntidad').val('');
+                $('#txtFilterUsuario').val('');
+                $('#txtFilterActividad').val('');
+                $('#txtFilterPantalla').val('');
+                $('#txtFilterFecha').val('');
+                $("#idFiltros").hide();
+                $("#quitarfiltro").hide();
+                $("#filtro").show();
+                sut.Auditoria.listar(1);
+            },
+            Descargar: function () {
+
+
+
+                @*var ur="@Url.Content("~/General/Reporte/ListaTablaAsmeFormato")?TablaAsmeId="+@ViewBag.TablaAsmeId+'&lstTablaAsme='+ JSON.stringify(data) +'';
+                window.location.href = "@Url.Content("~/General/Reporte/ListaTablaAsmeFormato")?TablaAsmeId="+@ViewBag.TablaAsmeId;*@
+
+                var v1=$('#txtFilterEntidad').val();
+                var v2=$('#txtFilterUsuario').val();
+                var v3=$('#txtFilterActividad').val();
+                var v4=$('#txtFilterPantalla').val();
+                var v5=$('#txtFilterFecha').val();
+                var v6 = @user.EntidadId;
+                document.location.target='_blank';
+                window.location.href = "@Url.Content("~/General/Reporte/ImformacionAuditoria")?EntidadId=" +v6 +'&nombreEntidad=' + v1 + '&Usuario=' + v2 + '&Actividad=' + v3 + '&Pantalla=' + v4 + '&Fecha=' + v5 + '&roladmi='+@user.Rol;
+
+
+
+            },
+            listar: (page) => {
+                table = $('#tblLista');
+                var model = {
+                    'filtro.Entidad.Nombre': $('#txtFilterEntidad').val(),
+                    'filtro.Usuario': $('#txtFilterUsuario').val(),
+                    'filtro.Actividad': $('#txtFilterActividad').val(),
+                    'filtro.Pantalla': $('#txtFilterPantalla').val(),
+                    'filtro.FecCreacion': $('#txtFilterFecha').val(),
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+                $.ajax({
+                    //url: "/Seguridad/Auditoria/GetAllLikePagin",
+                    url: '@Url.Content("~/Seguridad/Auditoria/GetAllLikePagin")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: () => {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: (data) => {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.Auditoria.generar(data.lista);
+                        if (data.totalRows == 0)  $('#tblLista tbody').append("<tr><td colspan='6' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+
+                    },
+                    error: (data) => {
+                        sut.error.show('mensajes', data.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            generar: (lista) => {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, (i, r) => {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += sut.string.format('<td>{0}</td>', r.Entidad);
+                    rows += sut.string.format('<td>{0}</td>', r.Usuario);
+                    rows += sut.string.format('<td>{0}</td>', r.Actividad);
+                    rows += sut.string.format('<td>{0}</td>', r.Pantalla);
+                    rows += sut.string.format('<td style="text-align: center;" >{0}</td>', r.FecCreacion);
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            }
+        };
+
+        $(() => {
+            sut.Auditoria.init();
+            sut.Auditoria.listar(1);
+
+
+            $('#tblLista thead button').click((e) => {
+                $('#txtFilterEntidad').val('');
+                $('#txtFilterUsuario').val('');
+                $('#txtFilterActividad').val('');
+                $('#txtFilterPantalla').val('');
+                $('#txtFilterFecha').val('');
+                sut.Auditoria.listar(1);
+            });
+
+
+        });
+
+
+    </script>
+}

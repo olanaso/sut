@@ -1,0 +1,354 @@
+﻿@model List<Sut.Entities.CalendarioActividades>
+@{
+    ViewBag.Title = "Registro de Actividades";
+    ViewBag.Descripcion = "";
+    var activar = "active";
+}
+
+
+<div id="mensajes"></div>
+
+<div style="position: fixed; right: -10%; top: 54px; margin-bottom: 0; z-index: 5; width: 45%; ">
+
+    <div class="accordion"  style="background-color: #337ab7">
+        <input type="checkbox" name="toggle" class="accordion-toggle" />
+        <div class="accordion-header "  style="background-color: #d9edf7;">Leyenda</div>
+        <div class="accordion-content">
+            <div class="panel-body" style=" padding: 3px;"> 
+                <p><a href="#" class="text-secondary" style="color: #f39c12;">Por iniciar</a> : todavia no inicia el evento</p> 
+            </div>
+            <div class="panel-body" style=" padding: 3px;"> 
+                <p><a href="#" class="text-secondary" style="color: #337ab7;">En proceso</a>  : evento en proceso</p>
+            </div>
+            <div class="panel-body" style=" padding: 3px;"> 
+                <p><a href="#"class="text-secondary" style="color: #00a65a;">Concluido</a>: se concluyo el evento</p> 
+            </div>
+            <div class="panel-body" style=" padding: 3px;"> 
+                <p><a href="#" class="text-secondary" style="color: #999;">Fuera de plazo</a>: se modifico el plazo establecido</p> 
+            </div>
+            <div class="panel-body" style=" padding: 3px;"> 
+                <p><a href="#" class="text-secondary" style="color: #dd4b39;">Cancelado</a> : se cancelo el evento</p> 
+
+            </div>
+        </div>
+    </div>
+</div> 
+
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="box-body">
+                <a class="btn btn-success" href="javascript:sut.CalendarioActividades.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>
+                <br />
+                <div class="table-responsive">
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="20"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.CalendarioActividades.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th>Nro.</th>
+                                <th>Equipo/SubSecretaría</th>
+                                <th>Asistencia Técnica</th>
+                                <th>Modalidad</th>
+                                <th>Responsable</th>
+                                <th>Materia</th>
+                                @*<th>Fecha Programada</th>
+                                    <th>Fecha Ejecutada</th>*@
+                                <th>Lugar de Ejecución</th>
+                                <th> Entidades</th>
+                                <th>Estado</th>
+                                @*<th>Observaciones</th>
+                                    <th>Tipo Rango</th>*@
+                                <th class="colAction"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr><td colspan="14"><div id="paginator"></div></td></tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="4"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 30px;
+        }
+
+        #tblLista .colAbreviatura {
+            width: 80px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        }
+
+
+        /*-------------------------------*/
+
+        .accordion {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            width: 50%;
+            height: auto;
+            font-family: Arial, Helvetica, sans-serif;
+            border: 1px solid #dedede;
+            border-radius: 8px;
+            margin: 0 auto;
+        }
+        /*Contenedor común plegar/desplegar*/
+        .accordion-toggle,
+        .accordion-header {
+            font-size: 15px;
+            width: 100%;
+            height: 3em;
+            margin: 0;
+            line-height: 3em;
+            cursor: pointer;
+        }
+        /*El botón que pliega/despliega*/
+        .accordion-toggle {
+            opacity: 0;
+            background-color: transparent;
+            z-index: 1;
+            margin-bottom: 2px;
+        }
+        /*Bloque para el título*/
+        .accordion-header {
+            background-color: #ffffff;
+            color: #7f8787;
+            position: relative;
+            margin-top: -3em;
+            padding-left: 10px
+        }
+
+        /*Bloque replegable con el contenido */
+        .accordion-content {
+            box-sizing: border-box;
+            background-color: #f7f7f7;
+            color: #7f8787;
+            overflow: auto;
+            position: relative;
+            width: 100%;
+            height: 250px;
+            margin-bottom: -250px;
+            padding: 20px;
+            transition: margin 0.3s ease 0.1s;
+        }
+
+        .accordion-toggle:checked + .accordion-header + .accordion-content {
+            margin-bottom: 0;
+            margin-right: 0;
+        }
+
+        .accordion-header::before,
+        .accordion-toggle:checked + .accordion-header::before {
+            content: '+';
+            display: inline-block;
+            text-align: center;
+            width: 1em;
+            font-size: 1.em;
+        }
+
+        .accordion-toggle:checked + .accordion-header::before {
+            content: '-';
+        }
+
+        .accordion-toggle:hover + .accordion-header {
+            background-color: #f7f1f1;
+        }
+
+        .accordion-toggle:checked + .accordion-header {
+            background-color: #fff;
+        }
+
+
+        /*------------------------------------*/
+    </style>
+}
+
+@section Script {
+    <script>
+
+        sut.CalendarioActividades = {
+            estadoExpColor: ['label-danger', 'label-primary', 'label-danger', 'label-primary'],
+            estado: ['INACTIVO', 'POR INICIAR', 'EN PROCESO', 'CONCLUIDO', 'EN PROCESO','FUERA PLAZO','CANCELADO'],
+            estadoExpColor: ['label-danger', 'label-primary', 'label-danger', 'label-primary', 'label-primary', 'label-danger', 'label-primary'],
+            TipoRango: ['INACTIVO', 'Fecha Programada', 'Rango Fecha', 'Fecha Multiple'],
+            editar: function (id) {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/CalendarioActividades/Editar',
+                    url: '@Url.Content("~/Simplificacion/CalendarioActividades/Editar")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+
+            detalle: function (id) {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Simplificacion/CalendarioActividades/Editar',
+                    url: '@Url.Content("~/Simplificacion/CalendarioActividades/EditarDetalle")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+
+
+
+            listar: function (page) {
+                debugger;
+                table = $('#tblLista');
+                var model = {
+                    //'filtro.Abreviatura': $('#txtFilterAbreviatura').val(),
+                    //'filtro.Nombre': $('#txtFilterNombre').val(),
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+                $.ajax({
+                    //url: "/Simplificacion/CalendarioActividades/GetAllLikePagin",
+                    url: '@Url.Content("~/Simplificacion/CalendarioActividades/GetAllLikePagin")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        sut.CalendarioActividades.generar(data.lista);
+                        if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='4' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            },
+            generar: function (lista) {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += sut.string.format('<td>{0}</td>', r.EquipoSub);
+                    rows += sut.string.format('<td>{0}</td>', r.AsisTec);
+                    rows += sut.string.format('<td>{0}</td>', r.Modalidad);
+                    rows += sut.string.format('<td>{0}</td>', r.Responsable);
+                    rows += sut.string.format('<td>{0}</td>', r.Materia);
+                    //rows += sut.string.format('<td class = "text-center">{0}</td>', r.FecProgramada);
+                    //rows += sut.string.format('<td class = "text-center">{0}</td>', r.FecEjecucion);
+                    rows += sut.string.format('<td>{0}</td>', r.LugarEjecucion);
+                    //rows += sut.string.format('<td>{0}</td>', r.Cantidad);
+
+                    rows += sut.string.format('<td>');
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Editar Menú" href="javascript:sut.CalendarioActividades.detalleentidad({0})" >{1}</a>', r.CalendarioActividadesId, r.Cantidad);
+                    rows += '</div>';
+                    rows += '</td>';
+
+
+                    rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.CalendarioActividades.estadoExpColor[r.Cumplimiento], sut.CalendarioActividades.estado[r.Cumplimiento]);
+      /*              rows += sut.string.format('<td>{0}</td>', r.Observaciones);*/
+
+                    //rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.CalendarioActividades.estadoExpColor[r.TipoRango], sut.CalendarioActividades.TipoRango[r.TipoRango]);
+
+                    rows += '<td>';
+                    rows += '<div class="btn-group">';
+                        rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.CalendarioActividades.editar({0})" ><i class="fa fa-pencil"></i></a>', r.CalendarioActividadesId);
+
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += '<td>';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-facebook btn-xs" data-toggle="tooltip" data-placement="left" title="Detalle" href="javascript:sut.CalendarioActividades.detalle({0})" ><i class="fa fa-list-alt"></i></a>', r.CalendarioActividadesId);
+
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            },
+             detalleentidad: function (Id, entidaId) {
+
+                debugger;
+                 window.location = "@Url.Content("~/Seguridad/Entidad/ListadetalleentidadActividad")?id=" + Id + '&entidaId=10';
+
+            },
+
+        };
+
+        $(function () {
+            sut.CalendarioActividades.listar(1);
+
+            //$('#txtFilterNombre, #txtFilterAbreviatura').keypress(function (e) {
+            //    var key = e.keyCode || event.keyCode;
+            //    if (key == 13) sut.UnidadMedida.listar(1);
+            //});
+            //$('#tblLista thead button').click(function (e) {
+            //    $('#txtFilterNombre').val('');
+            //    $('#txtFilterAbreviatura').val('');
+            //    sut.UnidadMedida.listar(1);
+            //});
+        });
+    </script>
+}

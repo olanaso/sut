@@ -1,0 +1,156 @@
+﻿@model Sut.Entities.ExpedienteNorma 
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">Sustento Publicación del TUPA</h4>
+        </div>
+        <div class="modal-body form-horizontal">
+            @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-editar" }))
+            {
+                @Html.HiddenFor(model => model.NormaId)
+                @Html.HiddenFor(model => model.ExpedienteId)
+                @Html.HiddenFor(model => model.ArchivoAdjuntoId)
+                @Html.HiddenFor(model => model.ArMotivoAdjuntoId)
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12" for="TipoNormaId">Tipo</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => model.TipoNormaId, ViewBag.TipoNormaLista as List<SelectListItem>, new { @class = "form-control" })
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Descripción</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.TextBoxFor(model => model.Descripcion, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12" for="ENUM_TIPO_NORMA_APROBACION">Tipo norma aprobación</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.DropDownListFor(model => model.ENUM_TIPO_NORMA_APROBACION, ViewBag.TipoNormaAprobacion as List<SelectListItem>, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Fecha de Publicación</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @if (Model.NormaId == 0)
+                        {
+                            <input type="text" name="Fecha" class="form-control input-sm" value="" />
+
+                        }
+                        else
+                        {
+                            <input type="text" name="Fecha" class="form-control input-sm" value="@MvcHtmlString.Create(Model.Fecha == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.Fecha.Value.Day, Model.Fecha.Value.Month, Model.Fecha.Value.Year))" />
+
+                        }
+
+                    </div>
+                </div>
+
+            }
+            @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-archivo-adjunto", @enctype = "multipart/form-data" }))
+            {
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Archivo 1 </label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.HiddenFor(model => model.ArchivoAdjuntoId)
+                        <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArchivoAdjunto != null ? "" : "file-empty")">
+                            <ul>
+                                <li>
+                                    <span class="text">
+                                        <i class="fa fa-file"></i>
+                                        @*<a href="@MvcHtmlString.Create(Model.ArchivoAdjunto != null ? string.Format("/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto.ArchivoAdjuntoId) : "")" target="_blank">
+                                            @MvcHtmlString.Create(Model.ArchivoAdjunto != null ? Model.ArchivoAdjunto.NombreArchivo : "")
+                                        </a>*@
+                                        <a href="@MvcHtmlString.Create(Model.ArchivoAdjunto != null ? @Url.Content(string.Format("~/General/Adjunto/Descargar/{0}", Model.ArchivoAdjunto.ArchivoAdjuntoId)) : "")" target="_blank">
+                                            @MvcHtmlString.Create(Model.ArchivoAdjunto != null ? Model.ArchivoAdjunto.NombreArchivo : "")
+                                        </a>
+                                    </span>
+                                    <div class="tools">
+                                        <i class="fa fa-remove"></i>
+                                    </div>
+                                </li>
+                            </ul>
+                            @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @using (Html.BeginForm("", "", FormMethod.Post, new { @id = "form-armotivo-adjunto", @enctype = "multipart/form-data" }))
+            {
+                <div class="form-group">
+                    <label class="control-label col-sm-3 col-xs-12">Archivo 2</label>
+                    <div class="col-sm-9 col-xs-12">
+                        @Html.HiddenFor(model => model.ArMotivoAdjuntoId)
+                        <div class="col-sm-12 col-xs-12 file-list @MvcHtmlString.Create(Model.ArMotivoAdjunto != null ? "" : "file-empty")">
+                            <ul>
+                                <li>
+                                    <span class="text">
+                                        <i class="fa fa-file"></i>
+                                        @*<a href="@MvcHtmlString.Create(Model.ArMotivoAdjunto != null ? string.Format("/General/MotivoAdjunto/Descargar/{0}", Model.ArMotivoAdjunto.ArMotivoAdjuntoId) : "")" target="_blank">
+                                            @MvcHtmlString.Create(Model.ArMotivoAdjunto != null ? Model.ArMotivoAdjunto.NombreArchivo : "")
+                                        </a>*@
+                                        <a href="@MvcHtmlString.Create(Model.ArMotivoAdjunto != null ? @Url.Content(string.Format("~/General/MotivoAdjunto/Descargar/{0}", Model.ArMotivoAdjunto.ArMotivoAdjuntoId)) : "")" target="_blank">
+                                            @MvcHtmlString.Create(Model.ArMotivoAdjunto != null ? Model.ArMotivoAdjunto.NombreArchivo : "")
+                                        </a>
+                                    </span>
+                                    <div class="tools">
+                                        <i class="fa fa-remove"></i>
+                                    </div>
+                                </li>
+                            </ul>
+                            @Html.TextBox("PostedFile", "", new { @type = "file", @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success btn-sm" onclick="sut.editPlanTrabajo.guardarpublicado()"><i class="fa fa-save"></i> Publicar</button>
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+    </div>
+</div>
+<script>
+    $(function () {
+        sut.control.uploadfile('form-archivo-adjunto'); 
+        sut.control.uploadfilemotivo('form-armotivo-adjunto');
+        debugger;
+        $(document).ready(function () {
+            document.getElementById("PostedFile").setAttribute('accept', 'application/pdf');
+        })
+
+        
+        $('input[name="Fecha"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es' });
+        //$('input[name="Fecha"]').datepicker({ format: 'dd/mm/yyyy' });
+        debugger;
+        var model = $('#form-editar').serialize();
+        debugger;
+        $('#form-editar').validate({
+            errorPlacement: function (error, element) {
+                debugger;
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: { 
+                Descripcion: 'required',
+                Fecha: 'required'
+            },
+            messages: {
+
+            }
+        });
+    });
+</script>

@@ -1,0 +1,443 @@
+﻿@model Sut.Entities.BaseLegalNorma
+@{
+
+
+}
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@
+            <h4 class="modal-title">Base Legal</h4>
+        </div>
+        <div class="modal-body form-horizontal">
+
+            <div class="col-sm-12 col-xs-12">
+
+                @using (Html.BeginForm("", "", FormMethod.Get, new { @id = "form-bl-detalle" }))
+                {
+                    @Html.HiddenFor(model => model.BaseLegalNormaId)
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-3 col-xs-12">Tipo de Norma</label>
+                        <div class="col-sm-9 col-xs-12">
+                            @Html.DropDownListFor(model => model.TipoNormaId, ViewBag.listTipoNorma as List<SelectListItem>, new { @class = "form-control input-sm" })
+                        </div>
+                    </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Número</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.Numero, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Denominación</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.Descripcion, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Artículo</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.Articulo, new { @class = "form-control input-sm" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Fecha de Publicación </label>
+                            <div class="col-sm-9 col-xs-12">
+                                <input type="text" name="FechaPublicacion" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FechaPublicacion == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FechaPublicacion.Value.Day, Model.FechaPublicacion.Value.Month, Model.FechaPublicacion.Value.Year))" />
+                                (No es obligatorio si fue publicado en El Peruano)
+                            </div>
+                        </div>
+                        <div class="form-group"> 
+                            <label class="control-label col-sm-3 col-xs-12"></label>
+                            <div class="col-sm-9 col-xs-12">
+                                <label class="col-sm-12 col-xs-12">Si desea pasar este PA-EXANTE a otra entidad seleccione el siguiente listado caso contrario dejar en la opción "seleccionar"</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3 col-xs-12">Migrar a la Entidad:</label>
+                            <div class="col-sm-9 col-xs-12">
+                                @Html.DropDownListFor(model => model.MigracionEntidad, ViewBag.ListaEntidad as List<SelectListItem>, new { @class = "form-control", @style = "width: 100 %" })                                
+                            </div>
+                        </div>
+
+                    if (@ViewBag.pantalla == 2)
+                    {
+                        <h4 class="modal-title">Seleccionar Procedimiento</h4>
+                            <div class="table-responsive">
+                                <table id="tblBuscarSede" class="table table-bordered table-striped table-hover"
+                                       data-pagesize="20"
+                                       data-page="1"
+                                       data-totalrows="0"
+                                       data-function="sut.Masivo.listar"
+                                       data-paginator="paginator">
+                                    <thead>
+                                        <tr>
+                                            <th class="colCheck">
+
+                                            </th>
+                                            <th>Código</th>
+                                            <th>Denominación</th>
+                                        </tr>
+                                        <tr>
+                                            <th><button type="button" class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                                            <th><input name="CodigoCorto" type="text" class="form-control input-sm" /></th>
+                                            <th><input name="Denominacion" type="text" class="form-control input-sm" /></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr><td colspan="4"><div id="paginator"></div></td></tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                    }
+                }
+
+            </div>
+
+
+        </div>
+        <div id="msgEditar"></div>
+        <div class="modal-footer">
+            @if (@ViewBag.pantalla != 2)
+            {
+                <button type="button" class="btn btn-success btn-sm" onclick="sut.EditarDetalleNorma.nuevogenerar()"><i class="fa fa-check"></i> Aceptar</button>
+            }
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana-editar">
+    <div id="ventana-container-editar">
+    </div>
+</div>
+<script>
+    sut.EditarDetalleNorma = {
+        listar: function ( page) {
+            debugger;
+            table = $('#tblBuscarSede');
+            var model = {
+                'filtro.expedienteId': @ViewBag.ExpedienteId,
+                'filtro.CodigoCorto': $('#form-bl-detalle input[name="CodigoCorto"]').val(),
+                'filtro.Denominacion': $('#form-bl-detalle input[name="Denominacion"]').val(),
+                'pageIndex': page,
+                'pageSize': table.data('pagesize')
+            };
+            $.ajax({
+                url: '@Url.Content("~/Simplificacion/Procedimiento/GetAllLikePaginPAACR")',
+                type: 'GET',
+                data: model,
+                dataType: 'json',
+                beforeSend: function () {
+                    sut.wait.appendProgress('#buscarSede .modal-footer');
+                },
+                success: function (data) {
+                    sut.wait.removeProgress('#buscarSede .modal-footer');
+                    table.data('page', page);
+                    table.data('totalrows', data.totalRows);
+                    sut.EditarDetalleNorma.generar(table, data.lista);
+                    if (data.totalRows == 0){
+                        $('#tblBuscarSede tbody').append('<tr><td colspan="4" class="text-center text-bold">NO EXISTEN REGISTROS</td></td>');
+                    }
+
+
+                },
+                error: function (data) {
+                    sut.error.show('mensajes', data.responseText);
+                }
+            });
+        },
+        generar: function (table, lista) {
+            var tabla = table.children('tbody');
+            tabla.children('tr').remove();
+            var rows = '';
+            var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+            $.each(lista, function (i, r) {
+
+                //rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarSede{0}"   class="icheck" type="checkbox" value="{0}|{1}|{2}" /></td><td>{1}</td><td>{2}</td></tr>',
+                //        r.ProcedimientoId, r.CodigoACR, r.Denominacion);
+
+                rows += sut.string.format('<tr class="rowselect" ><td><input id="chkbuscarSede{0}"   class="icheck" type="hidden" value="{0}|{1}|{2}" /></td><td>{1}</td><td>{2}</td></tr>',
+                       r.ProcedimientoId, r.CodigoCorto, r.Denominacion);
+
+
+            });
+            sut.pagination.update(table);
+            tabla.append(rows);
+
+        },
+        nuevogenerar: function () {
+
+ 
+
+            var BaseLegalNormaId = $('#form-bl-detalle input[name="BaseLegalNormaId"]').val();
+            //var TipoBaseLegal = $('#form-bl-detalle select[name="TipoBaseLegal"]').val();
+            //var NormaId = $('#form-bl-detalle input[name="NormaId"]').val();
+            var Descripcion = $('#form-bl-detalle input[name="Descripcion"]').val();
+            var TipoNormaId = $('#form-bl-detalle select[name="TipoNormaId"]').val();
+            //var NormaTipo = $('#form-bl-detalle select[name="TipoNormaId"] option:selected').text();
+            var Numero = $('#form-bl-detalle input[name="Numero"]').val();
+            var FechaPublicacion = $('#form-bl-detalle input[name="FechaPublicacion"]').val();
+            var Articulo = $('#form-bl-detalle input[name="Articulo"]').val();
+
+
+            
+            
+            //var TextMigracionEntidad = $('#form-bl-detalle select[name="MigracionEntidad"]').text;
+            var TextMigracionEntidad = $('#MigracionEntidad option:selected').text();
+
+            var MigracionEntidad = $('#form-bl-detalle select[name="MigracionEntidad"]').val();
+             
+            sut.msg.confirm('Esta seguro de enviar el PA a la entidad ' +  TextMigracionEntidad, () => {
+                //$('#modal-ventana').modal('hide');
+               
+            });
+           
+
+
+            if(TipoNormaId==0){
+                showNotification('top', 'right', 'Favor de Seleccionar Tipo de Norma', 2);
+                return;
+            }
+            if(Numero.trim()==""){
+                showNotification('top', 'right', 'Favor de Ingresar Número', 2);
+                Numero.focus();     return;
+            }
+            if(Descripcion.trim()==""){
+                showNotification('top', 'right', 'Favor de Ingresar Denominación', 2);
+                Numero.focus();     return;
+            }
+            if(Articulo.trim()==""){
+                showNotification('top', 'right', 'Favor de Ingresar Artículo', 2);
+                Numero.focus();     return;
+            }
+
+            debugger;
+
+            if(MigracionEntidad!=0){
+                sut.msg.confirm('Esta seguro de enviar el PA EXANTE a la entidad ' +  TextMigracionEntidad, () => {
+                    //$('#modal-ventana').modal('hide');
+                    $.ajax({
+                        //url: "/Simplificacion/ACR/Generar",
+                        url: '@Url.Content("~/Simplificacion/ACRExante/GenerarNuevoMigrar")',
+                        type: "POST",
+                        data: { ICODCALIDADEXANTE: @ViewBag.ICODCALIDADEXANTE,tipoNormaId:TipoNormaId,numero:Numero ,descripcion:Descripcion, articulo:Articulo,fechaPublicacion:FechaPublicacion,entidadID:MigracionEntidad },
+                        dataType: "json",
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            debugger;
+                            if (data.valid) {
+                            } else {
+
+                                window.setTimeout
+                                if (data.mensaje == "0") {
+                                    showNotification('top', 'right', "La entidad no cuenta con un expediente en proceso o el expediente es carga inicial", 2);
+                                } else
+                                {
+                                    showNotification('top', 'right', data.mensaje, 1);
+                                    $('#modal-ventana').modal('hide');
+                                    location.reload();
+                                } 
+
+                            }
+
+                        },
+                        error: function (data) {
+                            sut.error.clientErrorShow('mensajes', [data.responseText]);
+                        }
+                    });
+                });
+            }
+            else
+            {
+                sut.msg.confirm('Agregar el PA EXANTE', () => {
+                    $.ajax({
+                        //url: "/Simplificacion/ACR/Generar",
+                        url: '@Url.Content("~/Simplificacion/ACRExante/GenerarNuevo")',
+                        type: "POST",
+                        data: { ICODCALIDADEXANTE: @ViewBag.ICODCALIDADEXANTE,tipoNormaId:TipoNormaId,numero:Numero ,descripcion:Descripcion, articulo:Articulo,fechaPublicacion:FechaPublicacion },
+                        dataType: "json",
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            debugger;
+                            if (data.valid) {
+                            } else {
+
+                                window.setTimeout
+                                if (data.mensaje == "0") {
+                                    showNotification('top', 'right', "La entidad no cuenta con un expediente en proceso o el expediente es carga inicial", 2);
+                                } else
+                                {
+                                    showNotification('top', 'right', data.mensaje, 1);
+                                    $('#modal-ventana').modal('hide');
+                                    location.reload();
+                                } 
+
+                            }
+
+                        },
+                        error: function (data) {
+                            sut.error.clientErrorShow('mensajes', [data.responseText]);
+                        }
+                    });
+                });
+            }
+             
+         
+        },
+        aceptarSingle: function (tr) {
+            debugger;
+
+            var BaseLegalNormaId = $('#form-bl-detalle input[name="BaseLegalNormaId"]').val();
+            var Descripcion = $('#form-bl-detalle input[name="Descripcion"]').val();
+            var TipoNormaId = $('#form-bl-detalle select[name="TipoNormaId"]').val();
+            var Numero = $('#form-bl-detalle input[name="Numero"]').val();
+            var FechaPublicacion = $('#form-bl-detalle input[name="FechaPublicacion"]').val();
+            var Articulo = $('#form-bl-detalle input[name="Articulo"]').val();
+
+            if(TipoNormaId==0){
+                showNotification('top', 'right', 'Favor de Seleccionar Tipo de Norma', 2);
+                return;
+            }
+            if(Numero.trim()==""){
+                showNotification('top', 'right', 'Favor de Ingresar Número', 2);
+                Numero.focus();     return;
+            }
+            if(Descripcion.trim()==""){
+                showNotification('top', 'right', 'Favor de Ingresar Denominación', 2);
+                Numero.focus();     return;
+            }
+            if(Articulo.trim()==""){
+                showNotification('top', 'right', 'Favor de Ingresar Artículo', 2);
+                Numero.focus();     return;
+            }
+
+
+            var input = $(tr).find('input[id^="chkbuscarSede"]');
+            var v = input.val().split('|');
+            var ProcedimientoId=Number(v[0]);
+            var nomtablaasme=v[2];
+
+
+            sut.msg.confirm('Deseas Reemplazar el procedimiento '+ nomtablaasme , function () {
+
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Content("~/Simplificacion/ACRExante/GenerarReemplazo")',
+                    type: "POST",
+                    data: { ICODCALIDADEXANTE: @ViewBag.ICODCALIDADEXANTE,tipoNormaId:TipoNormaId,numero:Numero ,descripcion:Descripcion, articulo:Articulo,fechaPublicacion:FechaPublicacion,procedimientoId:ProcedimientoId },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                        window.setTimeout
+                        if (data.mensaje == "0") {
+                            showNotification('top', 'right', "La entidad no cuenta con un expediente en proceso o el expediente es carga inicial", 2);
+                        } else
+                        {
+                            showNotification('top', 'right', data.mensaje, 1);
+                            $('#modal-ventana').modal('hide');
+                            location.reload();
+                        }
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        debugger;
+                        showNotification('top', 'right', 'Ya Existe Información en la tabla Asme, favor de eliminar las actividades para poder copiar', 2);
+                        //sut.error.show('mensajes', "Ya Existe Información en la tabla Asme favor de eliminar las actividades para poder copiar");
+                    }
+                });
+
+
+            });
+        }
+    };
+
+    $(function () {
+
+
+        $('select[name="MigracionEntidad"]').select2();
+        @*if (( @MvcHtmlString.Create(ViewBag.User.Rol == (short)Sut.Entities.Rol.Coordinador ? "true" : "false")))  {
+          $('select[name="EntidadId"]').attr('disabled', 'disabled');
+        }*@
+
+
+
+        if (@ViewBag.pantalla == 2) {
+            sut.EditarDetalleNorma.listar(1);
+            $('#form-bl-detalle input[name="CodigoCorto"]').keypress(function (e) {
+                var key = e.keyCode || event.keyCode
+                if (key == 13) {
+                    sut.EditarDetalleNorma.listar( 1);
+                    e.preventDefault();
+                }
+            });
+
+            $('#form-bl-detalle input[name="Denominacion"]').keypress(function (e) {
+                var key = e.keyCode || event.keyCode
+                if (key == 13) {
+                    sut.EditarDetalleNorma.listar( 1);
+                    e.preventDefault();
+                }
+            });
+
+            $('#tblBuscarSede button').eq(0).click(function (e) {
+                $('#form-bl-detalle input[name="CodigoCorto"]').val(""),
+                $('#form-bl-detalle input[name="Denominacion"]').val(""),
+                sut.EditarDetalleNorma.listar( 1);
+            });
+        }
+
+
+
+
+        $('input[name="FechaPublicacion"]').datepicker({ format: 'dd/mm/yyyy', endDate: '+0d', language: 'es' });
+
+        $.validator.addMethod('selTipoNorma', $.validator.methods.min, 'Debe seleccionar un Tipo de Norma.');
+
+
+        $('#form-bl-detalle').validate({
+            errorPlacement: function (error, element) {
+                if (element.parent('div.input-group').length > 0) {
+                    error.insertAfter(element.parent('div.input-group'));
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            rules: {
+                Numero: 'required',
+                Descripcion: 'required',
+                //FechaPublicacion: 'required',
+                Articulo: 'required',
+                Url: {
+                    required: true,
+                    url: true
+                },
+                TipoNormaId: {
+                    selTipoNorma: 1
+                }
+            },
+            messages: {
+
+            }
+        });
+
+        sut.table.selectRow('#tblBuscarSede', false, sut.EditarDetalleNorma.aceptarSingle);
+
+    });
+
+</script>
+

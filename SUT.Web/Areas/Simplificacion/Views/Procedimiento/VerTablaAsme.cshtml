@@ -1,0 +1,448 @@
+﻿@using Sut.Entities;
+@model Sut.Entities.Procedimiento
+
+@{ Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+                ViewBag.Icon = "fa fa-file-text-o";
+                ViewBag.Title = "Tabla ASME-VM - " + Model.CodigoCorto;
+                ViewBag.Descripcion = ""; }
+
+@using (Html.BeginForm("SustentoTecnico", "Procedimiento", new { @area = "Simplificacion" }, FormMethod.Post, new { @id = "form-editar" }))
+{
+@Html.HiddenFor(model => model.ProcedimientoId)
+                @Html.HiddenFor(model => model.Operacion) if (Model.Operacion != OperacionExpediente.Eliminacion)
+                                {
+
+                <div class="box box-default">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"> Tablas ASME del Procedimiento/Servicio</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table id="tblModalidad" class="table table-condensed table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th style="width:40px;">
+
+                                        </th>
+                                        <th style="width:160px;">Código</th>
+                                        <th>Descripción</th>
+                                        <th style="width:50px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.TablaAsme.Count > 0)
+                                    {
+                                        for (int i = 0; i < Model.TablaAsme.Count; i++)
+                                        {
+                <tr>
+                    <td>
+                        @MvcHtmlString.Create((i + 1).ToString())
+                    </td>
+                    <td>@Model.TablaAsme[i].Codigo</td>
+                    <td>@Model.TablaAsme[i].Descripcion</td>
+                    <td>
+                        @*<a class="btn btn-primary btn-xs" href="javascript:window.location='/Simplificacion/TablaAsme/Editar/@Model.TablaAsme[i].TablaAsmeId'"><i class="fa fa-table"></i></a>*@
+                        <a class="btn btn-primary btn-xs" href="javascript:window.location='@Url.Content("~/Simplificacion/TablaAsme/Editar/")@Model.TablaAsme[i].TablaAsmeId'"><i class="fa fa-table"></i></a>
+                    </td>
+                </tr> }
+                                    }
+                                    else
+                                    {
+                <tr><td colspan="4" style="font-weight:bold; text-align:center;">NO EXISTEN REGISTROS</td></tr>}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> }
+                                else
+                                {
+                <div class="box box-default">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"> Sustento Técnico de los Requisitos</h3>
+                    </div>
+                    <div class="box-body">
+                        @Html.TextAreaFor(model => model.SustentoEliminacion, new { @class = "form-control", @readonly = true })
+                    </div>
+                </div> } @*<div class="box box-default">
+                        <div class="box-body">
+                            <div class="btn-group pull-right">
+                                <a href="/Simplificacion/Expediente/Editar/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+                                <a href="javascript:sut.editProcedimiento.activar()" class="btn btn-warning"><i class="fa fa-check"></i> Activar</a>
+                            </div>
+                        </div>
+                    </div>*@
+
+
+            }
+
+<div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;">
+
+    <a href="javascript:sut.editProcedimiento.AtrasPA(@Model.ExpedienteId,@Model.ExplorarNum)" class="btn btn-danger"><i class="fa fa-id-card-o"></i> ATRAS </a>
+    <a href="javascript:sut.editProcedimiento.SiguientePA(@Model.ExpedienteId,@Model.ExplorarNum)" class="btn btn-danger"><i class="fa fa-id-card-o"></i> SIGUIENTE </a>
+    @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7 && user.Rol != 1)
+    {
+<a href="@Url.Content("~/Simplificacion/Procedimiento/InformacionCiudadano/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Inf. Ciudadano </a>
+                <a href="@Url.Content("~/Simplificacion/Procedimiento/DatosGenerales/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Ir Datos Generales </a> if (Model.Expediente.TipoExpediente == TipoExpediente.ExpedienteRegular)
+                {
+<a href="@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-file-pdf-o"></i> Ir Sus. Tec. Legal</a>
+                    <a href="#" class="btn btn-success"><i class="fa fa-id-card-o"></i> Tabla Asme</a> } @*<a href="/Simplificacion/Expediente/Editar/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+                                    <a href="@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a> }
+                                else
+                                {
+                                    if (user.Rol == 8 || user.Rol == 6 || user.Rol == 7)
+                                    { @*if (@Model.EstadotablaasmeEva == 0)
+                                            {
+                                                <a class="btn btn-warning btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,4)">Sin Acción </a>
+                                            }
+                                            else if (@Model.EstadotablaasmeEva == 1)
+                                            {
+                                                <a class="btn btn-dropbox btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,4)">En Revisión</a>
+                                            }
+                                            else if (@Model.EstadotablaasmeEva == 4)
+                                            {
+                                                <a class="btn btn-danger  btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,4)">Observado</a>
+                                            }
+                                            else if (@Model.EstadotablaasmeEva == 5)
+                                            {
+                                                <a class="btn btn-warning  btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,4)">Subsanado</a>
+                                            }
+                                            else if (@Model.EstadotablaasmeEva == 6)
+                                            {
+                                                <a class="btn btn-success  btn-xs" data-toggle="tooltip" data-placement="left" title="Tipo de Calificación" href="javascript:sut.editProcedimiento.editarCondicion(@Model.ProcedimientoId,4)">Validado</a>
+                                            }*@
+                                                        <a href="@Url.Content("~/Simplificacion/Procedimiento/InformacionCiudadano/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Inf. Ciudadano </a>
+                                                                            <a href="@Url.Content("~/Simplificacion/Procedimiento/DatosGenerales/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Ir Datos Generales </a> if (Model.Expediente.TipoExpediente == TipoExpediente.ExpedienteRegular)
+                                                                            {
+                                                        <a href="@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-file-pdf-o"></i> Ir Sus. Tec. Legal</a>
+                                                                                <a href="#" class="btn btn-success"><i class="fa fa-id-card-o"></i> Tabla Asme</a> } @*<a href="/Simplificacion/Expediente/EditarObservacion/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@ @*<a href="@Url.Content("~/Simplificacion/Expediente/EditarObservacion/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+
+                                                                                                    <a href="javascript:sut.editProcedimiento.CondicionVolver(@Model.ProcedimientoId,4)" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a> }
+                                                                                                else
+                                                                                                {
+                                                                                <a href="@Url.Content("~/Simplificacion/Procedimiento/InformacionCiudadano/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Inf. Ciudadano </a>
+                                                                                                    <a href="@Url.Content("~/Simplificacion/Procedimiento/DatosGenerales/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-id-card-o"></i> Ir Datos Generales </a> if (Model.Expediente.TipoExpediente == TipoExpediente.ExpedienteRegular)
+                                                                                                    {
+                                                                                <a href="@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId" class="btn btn-facebook"><i class="fa fa-file-pdf-o"></i> Ir Sus. Tec. Legal</a>
+                                                                                                        <a href="#" class="btn btn-success"><i class="fa fa-id-card-o"></i> Tabla Asme</a> } @*<a href="/Simplificacion/Expediente/Editar/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@ if (user.Rol == (short)Rol.Administrador)
+                                                                                                        {
+                                                                                    <a href="@Url.Content("~/Simplificacion/Expediente/EditarObservacion/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a> }
+                                                                                else
+                                                                                {
+                                                            <a href="@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>}
+
+
+                                                    }
+
+                                                }
+
+    @if (@user.rolmenu[0].Activar == true && user.Rol != 8 && user.Rol != 6 && user.Rol != 7 && user.Rol != 1 && Model.Expediente.EstadoExpediente != EstadoExpediente.Presentado && Model.Expediente.EstadoExpediente != EstadoExpediente.Aprobado && Model.Expediente.EstadoExpediente != EstadoExpediente.Anulado && Model.Operacion != OperacionExpediente.Ninguna && Model.Expediente.EstadoExpediente != EstadoExpediente.Publicado)
+    {
+        if (Model.Estadotablaasme != 6)
+        {
+<a href="javascript:sut.editProcedimiento.activarasme()" class="btn btn-warning"><i class="fa fa-check"></i> Activar</a>}
+}
+
+
+
+</div>
+
+<div class="modal fade" id="modal-ventana">
+    <div id="ventana-container">
+
+    </div>
+</div>
+
+@section Script {
+    <script>
+
+        sut.editProcedimiento = {
+
+
+            SiguientePA: (Expediente, ExplorarNum) => {
+                debugger;
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/SiguientePA")',
+                    data: { pExpediente: Expediente, pExplorarNum: ExplorarNum  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+
+                            if (data.estado == 0) {
+
+                                //sut.msg.success('No existe PA para retroceder ', () => {
+                                   
+                                //});
+                                sut.msg.msgUsuario('No existe PA para Avanzar', 'Alerta');
+                            } else
+                            {
+                                //~/Simplificacion/Procedimiento / InformacionCiudadano /
+                                window.location = '/Simplificacion/Procedimiento/InformacionCiudadano/' + data.estado;
+                            }
+
+
+
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+
+            AtrasPA: (Expediente, ExplorarNum) => {
+                debugger;
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/AtrasPA")',
+                    data: { pExpediente: Expediente, pExplorarNum: ExplorarNum  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                           debugger;
+                        $('#modal-ventana').modal('hide');
+                            if (data.estado == 0) { 
+                                    sut.msg.msgUsuario('No existe PA para retroceder', 'Alerta');
+                            } else
+                            {
+                                //~/Simplificacion/Procedimiento / InformacionCiudadano /
+                                window.location = '/Simplificacion/Procedimiento/InformacionCiudadano/' + data.estado;
+                            }
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            guardar: function () {
+                if ($('#form-editar').valid()) {
+                    var model = $('#form-editar').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/SustentoTecnico',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                @*window.location = '/Simplificacion/Procedimiento/SustentoTecnico/@Model.ProcedimientoId';*@
+                                window.location = '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId';
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }
+            },
+            terminar: function () {
+                sut.msg.confirm('Si finaliza el registro no podrá modificarlo nuevamente.', () => {
+                    if ($('#form-editar').valid()) {
+                        var model = $('#form-editar').serialize();
+                        $.ajax({
+                            type: 'POST',
+                            //url: '/Simplificacion/Procedimiento/SustentoTecnico',
+                            url: '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico")',
+                            data: model,
+                            dataType: 'json',
+                            beforeSend: function () {
+                                $("#mensajes").hide();
+                            },
+                            complete: function () {
+
+                            },
+                            success: function (result) {
+
+                                $.ajax({
+                                    type: 'POST',
+                                    //url: '/Simplificacion/Procedimiento/TerminarSustento',
+                                    url: '@Url.Content("~/Simplificacion/Procedimiento/TerminarSustento")',
+                                    data: {tipo: 2, ProcedimientoId: @Model.ProcedimientoId},
+                                    dataType: 'json',
+                                    beforeSend: function () {
+                                        $("#mensajes").hide();
+                                    },
+                                    complete: function () {
+
+                                    },
+                                    success: function (result) {
+                                        sut.msg.success(result.mensaje, function () {
+                                            @*window.location = '/Simplificacion/Procedimiento/SustentoTecnico/@Model.ProcedimientoId';*@
+                                            window.location = '@Url.Content("~/Simplificacion/Procedimiento/SustentoTecnico/")@Model.ProcedimientoId';
+                                        });
+                                    },
+                                    error: function (result) {
+                                        sut.error.show('mensajes', result.responseText);
+                                    }
+                                });
+                            },
+                            error: function (result) {
+                                sut.error.show('mensajes', result.responseText);
+                            }
+                        });
+                    }
+                });
+            },
+
+            editarCondicion: (id, Tipoficha) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/EditarCondicion")',
+                    data: { id: id, Tipoficha: Tipoficha  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+               CondicionVolver: (id, Tipoficha) => {
+
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Content("~/Simplificacion/Procedimiento/condicionvolver")',
+                    data: { id: id, Tipoficha: Tipoficha  },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        debugger;
+                        $('#modal-ventana').modal('hide');
+                        if (data.estado == 0) {
+                            //showNotification('top', 'right', 'La Ficha se encuentra en estado "SIN ACCIÓN" ', 2);
+                              sut.msg.confirm('La ficha se encuentra en estado "SIN ACCIÓN". Desea Salir', () => {
+                                    window.location = '/Simplificacion/Expediente/EditarObservacion/@Model.ExpedienteId';
+                              });
+                        } else
+                        {
+                            window.location = '/Simplificacion/Expediente/EditarObservacion/@Model.ExpedienteId';
+                        }
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+                activar : function(){
+
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/ActivarSustento',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/ActivarSustento")',
+                        data: {tipo: 2, ProcedimientoId: @Model.ProcedimientoId, estadoExpediente:  '@Model.Expediente.EstadoExpediente', ExpedienteId: @Model.ExpedienteId},
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                //window.location = '/Simplificacion/Procedimiento/DatosGenerales/@Model.ProcedimientoId';
+                                window.location = '@Url.Action("SustentoTecnico", "Procedimiento", new { @area = "Simplificacion", @id = Model.ProcedimientoId })';
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+
+                },
+                activarasme: function () {
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/TerminarSustento',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/ActivarSustento")',
+                        data: {tipo: 6, ProcedimientoId: @Model.ProcedimientoId, estadoExpediente:  '@Model.Expediente.EstadoExpediente', ExpedienteId: @Model.ExpedienteId},
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            if(result.valid) {
+                                sut.msg.success(result.mensaje, function () {
+                                    @*window.location = '/Simplificacion/Procedimiento/SustentoTecnico/@Model.ProcedimientoId';*@
+                                    window.location = '@Url.Content("~/Simplificacion/Procedimiento/TablaAsme/")@Model.ProcedimientoId';
+                                });
+
+                                //showNotification('top', 'right', 'El Registro se Termino Satisfactoriamente', 1);
+                                //setTimeout("reFresh()", 800);
+
+                            } else {
+
+                                sut.error.clientErrorShow('mensajes', result.mensaje);
+                            }
+                        },
+                        error: function (result) {
+                            debugger;
+                            //alert('verde');
+                            sut.error.show('mensajes', result.responseText);
+                            //showNotification('top', 'right', result.mensaje + 'Debe terminar el registro de Sustento Tecnico.', 2);
+                        }
+                    });
+                },
+
+
+        };
+
+        $(function () {
+            $('#form-editar').validate({
+                errorPlacement: function (error, element) {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+
+                },
+                messages: {
+
+                }
+            });
+        });
+    </script>
+}

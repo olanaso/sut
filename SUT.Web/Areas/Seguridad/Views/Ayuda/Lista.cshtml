@@ -1,0 +1,371 @@
+﻿@model List<Sut.Entities.PreguntasFrecuentes>
+
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    ViewBag.Title = "Preguntas Frecuentes";
+    ViewBag.Descripcion = "Ayuda del Sistema SUT";
+}
+
+<div id="mensajes"></div>
+<div style="position: absolute;right: 15px;top: 55px; /* padding-top: 15px; */ margin-bottom: 0;">
+
+    @*@if (@user.Rol!=1 && @user.Rol != 6 && @user.Rol != 7 && @user.Rol != 8 )
+    {
+        if (@user.Ayuda == 1)
+        {
+            <a class="btn btn-reddit" href="javascript:sut.preguntas.activar(0)"><i class="fa fa-times"></i> Desactivar Ayuda</a>
+        }
+        else
+        {
+            <a class="btn btn-reddit" href="javascript:sut.preguntas.activar(1)"><i class="fa fa-check"></i> Activar Ayuda</a>
+        }
+    }*@
+
+    @if (@user.Rol == 1)
+    {
+        <a class="btn btn-success" href="javascript:sut.preguntas.editar(0)"><i class="fa fa-envelope-o"></i> Responder Pregunta</a>
+    }
+    else
+    {
+        <a class="btn btn-success" href="javascript:sut.preguntas.editar(0)"><i class="fa fa-envelope-o"></i> Enviar Pregunta</a>
+    }
+    @if (@user.Rol != 1)
+    {
+        <a class="btn btn-facebook" id="lista" href="javascript:sut.preguntas.listaDetallada()"><i class="fa fa-bars"></i> Lista Preguntas </a>
+        <a class="btn btn-facebook" id="pregunta" href="javascript:sut.preguntas.mostarpregunta()"><i class="fa fa-bars"></i> Mostrar Preguntas </a>
+    }
+    <a class="btn btn-primary"  <a href="@Url.Content("~/Content/SUT_Manual_de_usuario.pdf")" target="_blank"><i class="fa fa-download"></i> Descargar Manual</a>
+
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+            <div class="table-responsive">
+                <div class="panel-group" id="accordion">
+                </div>
+
+                @if (@user.Rol == 1)
+                {
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="20"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.preguntas.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th>Nro.</th>
+                                <th>Nombre</th>
+                                <th>Telefono</th>
+                                <th>Anexo</th>
+                                <th>Pregunta</th>
+                                <th>Fecha Envio</th>
+                                <th>Fecha Respuesta</th>
+                                <th>Publicar</th>
+                                <th class="colAction"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr><td colspan="12"><div id="paginator"></div></td></tr>
+                        </tfoot>
+                    </table>
+                }
+                else
+                {
+
+                    <table id="tblLista" class="table table-bordered table-striped table-hover"
+                           data-pagesize="20"
+                           data-page="1"
+                           data-totalrows="0"
+                           data-function="sut.UIT.listar"
+                           data-paginator="paginator">
+                        <thead>
+                            <tr>
+                                <th>Nro.</th>
+                                <th>Pregunta</th>
+                                <th>Titulo</th>
+                                <th>Respuesta</th>
+                                <th>Publicar</th>
+                                <th class="colAction"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+                            <tr><td colspan="12"><div id="paginator"></div></td></tr>
+                        </tfoot>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+    </div>
+</div>
+@section Style {
+    <style type="text/css">
+        table#tblLista thead tr th {
+            text-align: center;
+        }
+
+        table#tblLista tbody tr td[colspan="6"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblLista .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblLista .colAction {
+            width: 30px;
+        }
+
+        #tblLista tfoot .pagination {
+            margin: 0px 0px;
+        }
+    </style>
+}
+@section Script {
+    <script>
+
+        sut.preguntas = {
+            estadoExpColor: ['label-danger', 'label-primary'],
+            estado: ['INACTIVO', 'ACTIVO'],
+            editar: function (id) {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Seguridad/Ayuda/Editar',
+                    url: '@Url.Content("~/Seguridad/Ayuda/Editar")',
+                    data: { id: id },
+                    cache: false,
+                    beforeSend: function () {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: function (data) {
+                        $('#ventana-container').html(data);
+                    },
+                    error: function (result) {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    }
+                });
+            },
+            listar: function (page) {
+                debugger;
+                table = $('#tblLista');
+                var model = {
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+                $.ajax({
+                    //url: "/Seguridad/Ayuda/GetAllLikePagin",
+                    url: '@Url.Content("~/Seguridad/Ayuda/GetAllLikePagin")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        table.data('page', page);
+                        table.data('totalrows', data.totalRows);
+                        if(data.cont==1){
+                            sut.preguntas.generar(data.lista);
+                        }else{
+                            sut.preguntas.generarentidad(data.lista);
+                        }
+                        if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='4' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            },
+
+            listarAcordion: function (page) {
+                debugger;
+                table = $('#tblLista');
+                var model = {
+                    pageIndex: page,
+                    pageSize: table.data('pagesize')
+                };
+                $.ajax({
+                    //url: "/Seguridad/Ayuda/GetAllLikePaginAcordion",
+                    url: '@Url.Content("~/Seguridad/Ayuda/GetAllLikePaginAcordion")',
+                    type: "GET",
+                    data: model,
+                    dataType: "json",
+                    beforeSend: function () {
+                        sut.wait.appendOverlay('#boxLista');
+                    },
+                    success: function (data) {
+                        sut.wait.removeOverlay('#boxLista');
+                        sut.preguntas.generaracordion(data.lista);
+
+                    },
+                    error: function (data) {
+                        sut.error.show('mensajes', data.responseText);
+                    }
+                });
+            },
+            listaDetallada: () => {
+                sut.preguntas.listar(1);
+
+                $('#lista').hide();
+                $('#pregunta').show();
+                $('#tblLista').show();
+                $('#accordion').hide();
+            },
+
+            mostarpregunta: () => {
+                sut.preguntas.listar(1);
+                $('#pregunta').hide();
+                $('#lista').show();
+                $('#tblLista').hide();
+                $('#accordion').show();
+            },
+            generar: function (lista) {
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += sut.string.format('<td>{0}</td>', r.nombreCompleto);
+                    rows += sut.string.format('<td class = "text-center" >{0}</td>', r.telefono);
+                    rows += sut.string.format('<td class = "text-center">{0}</td>', r.anexo);
+                    rows += sut.string.format('<td class = "text-center">{0}</td>', r.descripcion);
+                    rows += sut.string.format('<td class = "text-center">{0}</td>', r.FecCreacion);
+                    rows += sut.string.format('<td class = "text-center">{0}</td>', r.FecModificacion);
+                    rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.preguntas.estadoExpColor[r.estadoPublicar], sut.preguntas.estado[r.estadoPublicar]);
+                    rows += '<td>';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.preguntas.editar({0})" ><i class="fa fa-pencil"></i></a>', r.PreguntasID);
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            },
+
+            generaracordion: function (lista) {
+                debugger;
+                var numero = 1;
+                var numero2 = 1;
+                $.each(lista, function (i, r) {
+                    var rows = '';
+                    rows += ('<div class="panel panel-default ">');
+                    rows += ('         <div class="panel-heading" style="background: #dd4b39;color: white;">');
+                    rows += ('             <h4 class="panel-title">');
+                    //rows += sut.string.format('                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse{0}">', ++numero);
+                    rows += sut.string.format('                 <a data-toggle="collapse"  href="#collapse{0}">', ++numero);
+                    rows += (r.titulo);
+                    rows += ('                 </a>');
+                    rows += ('             </h4>');
+                    rows += ('         </div>');
+                    if (numero2 == 1) {
+                        rows += sut.string.format('         <div id="collapse{0}" class="panel-collapse collapse  in">', ++numero2);
+                    } else { rows += sut.string.format('         <div id="collapse{0}" class="panel-collapse collapse  ">', ++numero2);}
+                    rows += ('             <div class="panel-body">');
+                    rows += (r.contenido);
+                    rows += ('             </div>');
+                    rows += ('         </div>');
+                    rows += ('</div>');
+                    $('#accordion').append(rows);
+                });
+
+
+
+
+            },
+            generarentidad: function (lista) {
+                debugger;
+                var table = $('#tblLista');
+                var tabla = table.children('tbody');
+                tabla.children('tr').remove();
+                var rows = '';
+                var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                $.each(lista, function (i, r) {
+                    rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                    rows += sut.string.format('<td class = "text-center">{0}</td>', r.descripcion);
+                    if (r.titulo != null) { rows += sut.string.format('<td class = "text-center">{0}</td>', r.titulo); }
+                    else { rows += sut.string.format('<td class = "text-center"> </td>'); }
+
+                    if (r.contenido != null) { rows += sut.string.format('<td class = "text-center">{0}</td>', r.contenido); }
+                    else { rows += sut.string.format('<td class = "text-center"> </td>'); }
+
+                    rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.preguntas.estadoExpColor[r.estadoPublicar], sut.preguntas.estado[r.estadoPublicar]);
+                    rows += '<td>';
+                    rows += '<div class="btn-group">';
+                    rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.preguntas.editar({0})" ><i class="fa fa-pencil"></i></a>', r.PreguntasID);
+                    rows += '</div>';
+                    rows += '</td>';
+                    rows += '</tr>';
+                });
+                sut.pagination.update(table);
+                tabla.append(rows);
+            },
+            activar: (activar) => {
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    //url: "/Seguridad/Usuario/Guardar",
+                    url: '@Url.Content("~/Account/DesactivarAyuda")',
+                    data: {activar:activar},
+                    dataType: 'json',
+                    beforeSend: () => {
+                    },
+                    complete: () => {
+                    },
+                    success: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        //sut.msg.success(result.mensaje, () => {
+                        //    window.location.reload();
+                        //});
+                        window.location.reload();
+                    },
+                    error: (result) => {
+                        window.location.reload();
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            }
+
+        };
+
+
+        $(function () {
+
+            sut.preguntas.listar(1);
+            sut.preguntas.listarAcordion(1);
+            debugger;
+            if (@user.Rol != 1) {
+
+                $('#tblLista').hide();
+                $('#pregunta').hide();
+            } else{
+                $('#accordion').hide();
+            }
+
+            //$('#txtFilterNombre, #txtFilterAbreviatura').keypress(function (e) {
+            //    var key = e.keyCode || event.keyCode;
+            //    if (key == 13) sut.UnidadMedida.listar(1);
+            //});
+            //$('#tblLista thead button').click(function (e) {
+            //    $('#txtFilterNombre').val('');
+            //    $('#txtFilterAbreviatura').val('');
+            //    sut.UnidadMedida.listar(1);
+            //});
+        });
+    </script>
+}

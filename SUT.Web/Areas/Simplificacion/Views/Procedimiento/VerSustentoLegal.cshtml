@@ -1,0 +1,351 @@
+﻿@using Sut.Entities;
+@model Sut.Entities.Procedimiento
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    ViewBag.Icon = "fa fa-file-text-o";
+    ViewBag.Title = "Sustento Legal " + Model.Codigo;
+    ViewBag.Descripcion = "";
+}
+@using (Html.BeginForm("SustentoTecnico", "Procedimiento", new { @area = "Simplificacion" }, FormMethod.Post, new { @id = "form-editar" }))
+{
+    @Html.HiddenFor(model => model.ProcedimientoId)
+      
+    <div class="box box-danger">
+        <div class="box-body form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label" for="Denominacion">Denominación :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.TextBoxFor(model => model.Denominacion, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Tipo :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.TipoProcedimiento(Model.TipoProcedimiento)
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-xs-12 control-label">Dependencia a Cargo :</label>
+                <div class="col-sm-10 col-xs-12">
+                    @Html.TextBoxFor(model => model.UndOrgResponsable.Nombre, new { @class = "form-control", @readonly = "readonly" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h3 class="box-title"> Sustento Legal de los Requisitos</h3>
+        </div>
+        <div class="box-body">
+            <div class="table-responsive">
+                <table id="tblRequisito" class="table table-condensed table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th style="width:40px;">
+                            </th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Sustento Legal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Requisito.Count > 0)
+                        {
+                            for (int i = 0; i < Model.Requisito.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        @MvcHtmlString.Create((i + 1).ToString())
+                                        @Html.HiddenFor(model => model.Requisito[i].RequisitoId)
+                                    </td>
+                                    <td>@Model.Requisito[i].Nombre</td>
+                                    <td>@Model.Requisito[i].Descripcion</td>
+                                    <td>
+                                        @Html.HiddenFor(model => model.Requisito[i].BaseLegalId)
+                                        @Html.HiddenFor(model => model.Requisito[i].BaseLegal.BaseLegalId)
+                                        <div class="table-responsive">
+                                            <table id="tblBaseLegal_@MvcHtmlString.Create(i.ToString())" class="table table-condensed table-bordered table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                        </th>
+                                                        <th>Tipo de Norma</th>
+                                                        <th>Número</th>
+                                                        <th>Descripción</th>
+                                                        <th>Fecha de Publicación</th>
+                                                        <th>Artículo</th>
+                                                        @*<th style="width:100px;">Documento</th>*@
+                                                        @*<th style="width:60px;"></th>*@
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="4" style="font-weight:bold; text-align:center;">NO EXISTEN REGISTROS</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+}
+<div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;z-index: 5;">
+    <div class="box-body">
+        <div class="btn-group pull-right">
+
+            @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+            {
+                @*<a href="/Simplificacion/Expediente/Editar/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+                <a href="@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+
+            }
+            else
+            {
+                if (user.Rol == 8 || user.Rol == 6 || user.Rol == 7)
+                {
+                    @*<a href="/Simplificacion/Expediente/EditarObservacion/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+                    <a href="@Url.Content("~/Simplificacion/Expediente/EditarObservacion/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+
+                }
+                else
+                { 
+                    @*<a href="/Simplificacion/Expediente/Editar/@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>*@
+                    <a href="@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+                }
+
+            }
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana">
+    <div id="ventana-container">
+    </div>
+</div>
+@section Script {
+    <script>
+
+        sut.editProcedimiento = {
+            BaseLegal: {
+                data: @Html.Raw(ViewBag.ListaBaseLegal != null ? ViewBag.ListaBaseLegal : "[]") ,
+                init: () => {
+                    sut.editProcedimiento.BaseLegal.generar();
+                },
+                edit: (k, index) => {
+                    var model = {};
+                    if (index != null) {
+                        var r = sut.editProcedimiento.BaseLegal.data[k][index];
+                        model['model.BaseLegalNormaId'] = r.BaseLegalNormaId;
+                        model['model.TipoBaseLegal'] = r.TipoBaseLegal;
+                        model['model.NormaId'] = r.NormaId;
+                        model['model.Descripcion'] = r.Descripcion == 'null' ? '' : r.Descripcion;
+                        model['model.TipoNormaId'] = r.TipoNormaId;
+                        model['model.Numero'] = r.Numero;
+                        model['model.FechaPublicacion'] = r.FechaPublicacion;
+                        model['model.Articulo'] = r.Articulo;
+                        model['model.Url'] = r.Url == 'null' ? '' : r.Url;
+                        model['model.ArchivoAdjuntoId'] = r.ArchivoAdjuntoId;
+                    }
+
+                    model['nuevo'] = index == null ? 1 : 0;
+                    model['index'] = index == null ? 0 : index;
+                    model['fnAdd'] = sut.string.format('sut.editProcedimiento.BaseLegal.add({0})', k);
+
+                    $.ajax({
+                        type: "GET",
+                        //url: '/General/BaseLegal/EditarDetalle',
+                        url: '@Url.Content("~/General/BaseLegal/EditarDetalle")',
+                        data: model,
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+                generar: () => {
+                    for (var k = 0; k < sut.editProcedimiento.BaseLegal.data.length; k++) {
+                        var tabla = $('#tblBaseLegal_' + k + ' tbody');
+                        $('#tblBaseLegal_' + k + ' tbody tr').remove();
+                        if (sut.editProcedimiento.BaseLegal.data[k].length > 0) {
+                            var rows = '';
+                            $.each(sut.editProcedimiento.BaseLegal.data[k], function (i, r) {
+                                rows += sut.string.format('<tr data-index="{0}" >', i);
+                                rows += '<td>';
+                                rows += sut.string.format('<span>{0}</span>', i + 1);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].BaseLegalId" value="{2}" />', k, i, r.BaseLegalId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].BaseLegalNormaId" value="{2}" />', k, i, r.BaseLegalNormaId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].TipoBaseLegal" value="{2}" />', k, i, r.TipoBaseLegal);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].NormaId" value="{2}" />', k, i, r.NormaId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].Descripcion" value="{2}" />', k, i, r.Descripcion);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].TipoNormaId" value="{2}" />', k, i, r.TipoNormaId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].Numero" value="{2}" />', k, i, r.Numero);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].FechaPublicacion" value="{2}" />', k, i, r.FechaPublicacion);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].Articulo" value="{2}" />', k, i, r.Articulo);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].ArchivoAdjuntoId" value="{2}" />', k, i, r.ArchivoAdjuntoId);
+                                rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegal.BaseLegalNorma[{1}].Url" value="{2}" />', k, i, r.Url);
+                                rows += '</td>';
+                                rows += sut.string.format('<td>{0}</td>', r.NormaTipo);
+                                rows += sut.string.format('<td>{0}</td>', r.Numero);
+                                rows += sut.string.format('<td>{0}</td>', r.Descripcion);
+                                rows += sut.string.format('<td>{0}</td>', r.FechaPublicacion);
+                                rows += sut.string.format('<td>{0}</td>', r.Articulo);
+                                //rows += '<td class="text-center">';
+                                //if (r.TipoBaseLegal == 3) {
+                                //    rows += sut.string.format('<a href="{0}" class="btn btn-primary btn-xs" target="_blank" ><i class="fa fa-link"></i></a>', r.Url);
+                                //} else {
+                                //    rows += sut.string.format('<a href="{0}" class="btn btn-primary btn-xs" target="_blank" ><i class="fa fa-file"></i></a>', '');
+                                //}
+                                //rows += '</td>';
+                                //rows += '<td><div class="btn-group">';
+                                //rows += sut.string.format('<a class="btn btn-success btn-xs" href="javascript:sut.editProcedimiento.BaseLegal.edit({0}, {1})" ><i class="fa fa-pencil" ></i></a>', k, i);
+                                //rows += '</div></td>';
+                                rows += '</tr>';
+                            });
+                            tabla.append(rows);
+                        }
+                    }
+                },
+                add: (k) => {
+                    return function (r) {
+                        console.log(r);
+                        console.log(k);
+                        $('#modal-ventana').modal('hide');
+                        if (r.Nuevo == 1) {
+                            sut.editProcedimiento.BaseLegal.data[k].push(r);
+                        } else {
+                            var arr = [];
+                            $.each(sut.editProcedimiento.BaseLegal.data[k], function (i, d) {
+                                if (i != r.Index) arr.push(d);
+                                else arr.push(r);
+                            });
+                            sut.editProcedimiento.BaseLegal.data[k] = arr;
+                        }
+                        sut.editProcedimiento.BaseLegal.generar();
+                    }
+                },
+                delete: (index) => {
+                    sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
+                        var arr = [];
+                        $.each(sut.editProcedimiento.BaseLegal.data, function (i, d) {
+                            if (i != index) arr.push(d);
+                        });
+                        sut.editProcedimiento.BaseLegal.data = arr;
+                        sut.editProcedimiento.BaseLegal.generar();
+                    });
+                }
+            },
+            guardar: function () {
+                if ($('#form-editar').valid()) {
+                    var model = $('#form-editar').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Simplificacion/Procedimiento/SustentoLegal',
+                        url: '@Url.Content("~/Simplificacion/Procedimiento/SustentoLegal")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                        },
+                        complete: function () {
+
+                        },
+                        success: function (result) {
+                            sut.msg.success(result.mensaje, function () {
+                                @*window.location = '/Simplificacion/Procedimiento/SustentoLegal/@Model.ProcedimientoId';*@
+                                window.location = '@Url.Content("~/Simplificacion/Procedimiento/SustentoLegal/")@Model.ProcedimientoId';
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }
+            },
+            terminar: function () {
+                sut.msg.confirm('Si finaliza el registro no podrá modificarlo nuevamente.', () => {
+                    if ($('#form-editar').valid()) {
+                        var model = $('#form-editar').serialize();
+                        $.ajax({
+                            type: 'POST',
+                            //url: '/Simplificacion/Procedimiento/SustentoLegal',
+                            url: '@Url.Content("~/Simplificacion/Procedimiento/SustentoLegal")',
+                            data: model,
+                            dataType: 'json',
+                            beforeSend: function () {
+                                $("#mensajes").hide();
+                            },
+                            complete: function () {
+
+                            },
+                            success: function (result) {
+
+                                $.ajax({
+                                    type: 'POST',
+                                    //url: '/Simplificacion/Procedimiento/TerminarSustento',
+                                    url: '@Url.Content("~/Simplificacion/Procedimiento/TerminarSustento")',
+                                    data: {tipo: 3, ProcedimientoId: @Model.ProcedimientoId},
+                                    dataType: 'json',
+                                    beforeSend: function () {
+                                        $("#mensajes").hide();
+                                    },
+                                    complete: function () {
+
+                                    },
+                                    success: function (result) {
+                                        sut.msg.success(result.mensaje, function () {
+                                            @*window.location = '/Simplificacion/Procedimiento/SustentoLegal/@Model.ProcedimientoId';*@
+                                            window.location = '@Url.Content("~/Simplificacion/Procedimiento/SustentoLegal/")@Model.ProcedimientoId';
+                                        });
+                                    },
+                                    error: function (result) {
+                                        sut.error.show('mensajes', result.responseText);
+                                    }
+                                });
+                            },
+                            error: function (result) {
+                                sut.error.show('mensajes', result.responseText);
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+        $(function () {
+
+            sut.editProcedimiento.BaseLegal.init();
+
+            $('#form-editar').validate({
+                errorPlacement: function (error, element) {
+                    if (element.parent('div.input-group').length > 0) {
+                        error.insertAfter(element.parent('div.input-group'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+
+                },
+                messages: {
+
+                }
+            });
+        });
+    </script>
+}

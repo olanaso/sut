@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    @*<meta name="robots" content="noindex" />*@
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="@Url.Content("~/favicon.ico")" rel="shortcut icon" type="image/x-ic0.on" />
+    <title>SUT</title>
+    <script src="~/Scripts/jquery-2.2.3.min.js"></script>
+
+
+    @*<script src="~/Scripts/bootstrap.min.js"></script>*@
+    <script src="~/Scripts/bootstrap5/bootstrap.min.js"></script>
+
+    <link href="~/dist/css/lreclamaciones.css" rel="stylesheet" />
+    <link href="~/dist/css/fontawesome.min.css" rel="stylesheet" />
+    <link href="~/dist/css/bootstrap5/bootstrap.min.css" rel="stylesheet" />
+    @*<link href="~/Content/common.css" rel="stylesheet" />*@
+    @*<link href="~/dist/css/bootstrap.min.css" rel="stylesheet" />*@
+    @*<link href="~/Content/bootstrap2.css" rel="stylesheet" />*@
+    @*<link href="~/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <script src="~/plugins/sweetalert2/sweetalert2.min.js"></script>*@
+
+    <script src="~/Scripts/sut.js"></script>
+    @*<script src="~/Scripts/common.js"></script>*@
+    <script src="~/Scripts/sweetalert2@11.js"></script>
+
+</head>
+@*<body>
+   
+                            @RenderBody()
+                             
+</body>*@
+
+<body>
+    <header>
+        @*<div class="header__content container flex">*@
+            <div class="header__content flex">
+                <div class="logo">
+                    <a href="#">
+                        <img src="~/dist/img/logo_escudo.svg" class="logo__escudo" alt="Escudo Peruano">
+                        @*<img src="~/dist/img/logo_gobpe.svg" class="logo__gobpe" alt="gob.pe">*@
+                        <img src="~/dist/img/logo_texto.svg" class="logo__texto" alt="Plataforma digital única del Estado Peruano">
+                    </a>
+                </div>
+                @*<div class="wrap-ingresar"><span class="text-white align-middle texto-ingresar">Acceso a la ciudadanía&nbsp;</span> <a href="http://192.168.144.24/sutciudadano/ConsultaSUT.aspx"><button class="btn btn-danger"> click aquí <i class="fas fa-sign-in-alt"></i></button></a></div>*@
+            </div>
+    </header>
+     
+    <section class="col-sx-12 main-content">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </section>
+    <footer class="text-left">
+        <div class="container info-footer">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul>
+                        @*<li>En caso requieras presentar una denuncia por actos de corrupción haz &nbsp;<button class="btn btn-danger btn-sm"><small>click aquí</small></button></li>
+                        <li>En caso requieras presentar una queja por tramitación de un expediente administrativo haz &nbsp;<button class="btn btn-danger btn-sm"><small>click aquí</small></button></li>*@
+                    </ul>
+                </div>
+                <hr style="border-top: 1px solid #646565; width: 100%;" />
+            </div>
+            <div class="row mt-2">
+                <div class="col-sm-12 col-md-4 mb-4">
+                    <a href="https://www.gob.pe/" target="_blank">SOBRE EL ESTADO PERUANO</a>
+                </div>
+                <div class="col-sm-12 col-md-4">
+                    <h6>SÍGUENOS</h6>
+                    <ul class="d-flex mb-0">
+                        <li class="mr-2"><a href="https://es-la.facebook.com/PCMPERU/" target="_blank"><i class="fab fa-facebook-square footer__icons"></i></a></li>
+                        <li class="mr-2"><a href="https://twitter.com/pcmperu" target="_blank"><i class="fab fa-twitter-square footer__icons"></i></a></li>
+                        <li class="mr-2"><a href="https://www.instagram.com/pcmperu" target="_blank"><i class="fab fa-instagram footer__icons"></i></a></li>
+                        <li class="mr-2"><a href="https://www.youtube.com/user/Audiovisualespcm" target="_blank"><i class="fab fa-youtube-square footer__icons"></i></a></li>
+                        <li><a href="https://www.flickr.com/photos/prensapcm" target="_blank"><i class="fab fa-flickr footer__icons"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer> 
+
+    @RenderSection("Scripts", required: false)
+   
+</body>
+</html> 
