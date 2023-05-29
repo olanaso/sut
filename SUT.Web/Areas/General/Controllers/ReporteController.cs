@@ -17,9 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
-// summary>
-// hjhjhjhjhjjh
-// summary>
+
 
 namespace Sut.Web.Areas.General.Controllers
 {
@@ -2611,6 +2609,7 @@ namespace Sut.Web.Areas.General.Controllers
         }
         private void AdicionarCabecera(Document Doc, long ExpedienteId)
         {
+            //asdasdasd
             var expediente = _expedienteService.GetOne(ExpedienteId);
             var entidad = _entidadService.GetOne(expediente.EntidadId);
             string nombreArchivo = entidad.Logoentidad;
