@@ -1,0 +1,906 @@
+﻿@using Sut.Entities;
+@model List<Procedimiento>
+@{ Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    Sut.Security.UsuarioInfo userCostos = ViewBag.UsuarioCostos as Sut.Security.UsuarioInfo;
+    Sut.Security.UsuarioInfo userrptTupaCompleto = ViewBag.UsuariorptTupaCompleto as Sut.Security.UsuarioInfo;
+    Sut.Security.UsuarioInfo userrptSTLCompleto = ViewBag.UsuariorptSTLCompleto as Sut.Security.UsuarioInfo;
+    Expediente exp = ViewBag.Expediente as Expediente;
+}
+<tbody data-totalrows="@ViewBag.TotalRows">
+@if (Model.Count() > 0)
+{
+     int i = (int)ViewBag.Row;
+     foreach (Procedimiento p in Model)
+     {
+            <tr>
+           @if (p.Posicion == 1)
+            {
+                    if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                    {
+                       <td style="color: #000; background: #ccc; width: 50px; text-align: center">@p.Numero</td>
+                    }
+                    else
+                    {
+                        <td style="text-align: center; color: #000;background: #ccc;"></td>
+                    }
+                    <td style="width:150px;text-align:center; color: #000;background: #ccc;">@Html.TipoOperacion(p.Operacion)</td>
+                    <td style="color: #000;background: #ccc;">@p.UndOrgResponsable.Nombre</td>
+                    <td style="color: #000;background: #ccc;">@p.CodigoCorto</td>
+                    <td style="color: #000;background: #ccc;">@p.Denominacion</td>
+                    <td style="color: #000;background: #ccc;">@Html.TipoProcedimiento(p.TipoProcedimiento)</td>
+                    <td style="color: #000;background: #ccc;">@p.NombreCategoria</td>
+                    <td style="color: #000;background: #ccc;" class="text-center">
+
+                        @if (user.Rol == (short)Rol.Administrador)
+                        {
+                            if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                            {
+                            <td style="color: #000; background: #ccc; width: 50px; text-align: center">@p.Numero</td>
+                        }
+                        else
+                        {
+                            <td style="text-align: center; color: #000;background: #ccc;"></td>
+                        }
+                        <td style="width:150px;text-align:center; color: #000;background: #ccc;">@Html.TipoOperacion(p.Operacion)</td>
+                        <td style="color: #000;background: #ccc;">@p.CodigoCorto</td>
+                        <td style="color: #000;background: #ccc;">@p.UndOrgResponsable.Nombre</td>
+                        <td style="color: #000;background: #ccc;">@p.Denominacion</td>
+                        <td style="color: #000;background: #ccc;">@Html.TipoProcedimiento(p.TipoProcedimiento)</td>
+                        <td style="color: #000;background: #ccc;">@p.NombreCategoria</td>
+                        <td style="color: #000;background: #ccc;" class="text-center">
+
+                            @if (user.Rol == (short)Rol.Administrador)
+                            {
+                                if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                                {
+                                    if (@p.CodigoCorto != null)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verNotasCiudadano(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadoInfoEva)</a>
+                                    }
+                                }
+                                else if (p.Operacion == OperacionExpediente.Ninguna || p.Operacion == OperacionExpediente.Eliminacion)
+                                {
+                                    <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verNotasCiudadano(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                }
+                            }
+                            else if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                            {
+                                if (@p.CodigoCorto != null)
+                                {
+                                    <a href="javascript:sut.Procedimiento.verNotasCiudadano(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadoInfoEva)</a>
+                                }
+                            }
+
+                        </td>
+                        <td style="color: #000;background: #ccc;" class="text-center">
+
+                            @if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                            {
+                                if (exp.EstadoExpediente == EstadoExpediente.Subsanado || exp.EstadoExpediente == EstadoExpediente.Observado || exp.EstadoExpediente == EstadoExpediente.Presentado || exp.EstadoExpediente == EstadoExpediente.Aprobado)
+                                {
+                                    if (p.ObsDG == 0)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                                    }
+                                }
+                                else if (exp.EstadoExpediente == EstadoExpediente.Publicado)
+                                {
+                                    <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                                }
+                                else if (user.Rol == (short)Rol.Administrador)
+                                {
+                                    <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                                }
+                                else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                                {
+                                    <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                                }
+                            }
+                            else if (p.Operacion == OperacionExpediente.Ninguna)
+                            {
+                                <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                            }
+                            else if (user.Rol == (short)Rol.Administrador)
+                            {
+                                <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                            }
+                            else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                            {
+                                <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                            }
+                        </td>
+
+                        if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                        {
+                            <td style="color: #000;background: #ccc;" class="text-center">
+                                @if (user.TipoTupa != (short)TipoTupa.Estandar)
+                                {
+                                    if (p.Operacion != OperacionExpediente.Ninguna)
+                                    {
+                                        if (exp.EstadoExpediente == EstadoExpediente.Subsanado || exp.EstadoExpediente == EstadoExpediente.Observado || exp.EstadoExpediente == EstadoExpediente.Presentado || exp.EstadoExpediente == EstadoExpediente.Aprobado)
+                                        {
+                                            if (p.ObsSTL == 0)
+                                            {
+                                                <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                            }
+                                            else
+                                            {
+                                                <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                            }
+                                        }
+                                        else if (exp.EstadoExpediente == EstadoExpediente.Publicado)
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                        }
+                                        else if (user.Rol == (short)Rol.Administrador)
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                        }
+                                        else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                        }
+                                    }
+                                    else if (p.Operacion == OperacionExpediente.Ninguna)
+                                    {
+                                        <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                    }
+                                    else if (user.Rol == (short)Rol.Administrador)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                    }
+                                    else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                    }
+                                }
+                                else
+                                {
+                                    if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                                    {
+                                        if (exp.EstadoExpediente == EstadoExpediente.Subsanado || exp.EstadoExpediente == EstadoExpediente.Observado || exp.EstadoExpediente == EstadoExpediente.Presentado)
+                                        {
+                                            if (p.ObsSTL == 0)
+                                            {
+                                                <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                            }
+                                            else
+                                            {
+                                                <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                            }
+                                        }
+                                        else if (exp.EstadoExpediente == EstadoExpediente.Publicado)
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                        }
+                                    }
+                                    else if (p.Operacion == OperacionExpediente.Ninguna)
+                                    {
+                                        <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                    }
+                                    else if (user.Rol == (short)Rol.Administrador)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                    }
+                                    else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                    }
+                                }
+                            </td>
+                        }
+
+                        if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                        {
+                            <td style="color: #000;background: #ccc;">
+                                @{
+                                    if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                                    {
+                                        if (exp.EstadoExpediente == EstadoExpediente.Subsanado || exp.EstadoExpediente == EstadoExpediente.Observado || exp.EstadoExpediente == EstadoExpediente.Presentado || exp.EstadoExpediente == EstadoExpediente.Aprobado)
+                                        {
+                                            if (p.ObsASME == 0)
+                                            {
+                                                <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                            }
+                                            else
+                                            {
+                                                <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                            }
+                                        }
+                                        else if (exp.EstadoExpediente == EstadoExpediente.Publicado)
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                        }
+                                        else if (user.Rol == (short)Rol.Administrador)
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                        }
+                                        else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                        }
+
+                                    }
+                                    else if (p.Operacion == OperacionExpediente.Ninguna)
+                                    {
+                                        <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                    }
+                                    else if (user.Rol == (short)Rol.Administrador)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                    }
+                                    else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                    }
+                                }
+                            </td>
+                        }
+
+                        <td style="color: #000;background: #ccc;">
+                            @{
+                                if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                                {
+                                    if (@p.CodigoCorto != null)
+                                    {
+                                        <a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.ReporteTupa(@p.ExpedienteId,@p.ProcedimientoId,1)"><i class="fa fa-file-pdf-o"></i></a>
+                                    }
+                                }
+                                else if (p.Operacion == OperacionExpediente.Ninguna)
+                                {
+                                    <a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.ReporteTupa(@p.ExpedienteId,@p.ProcedimientoId,1)"><i class="fa fa-file-pdf-o"></i></a>
+                                }
+                            }
+                        </td>
+
+                        if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                        {
+                            <td style="color: #000;background: #ccc;">
+                                @{
+                                    if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                                    {
+                                        if (@p.CodigoCorto != null)
+                                        {
+                                            <a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.FSLT(2,@p.ProcedimientoId)"><i class="fa fa-file-pdf-o"></i></a>
+                                        }
+                                    }
+                                    else if (p.Operacion == OperacionExpediente.Ninguna)
+                                    {
+                                        <a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.FSLT(2,@p.ProcedimientoId)"><i class="fa fa-file-pdf-o"></i></a>
+
+                                    }
+                                }
+
+                            </td>
+                            <td class="text-center" style="color: #000;background: #ccc;">@p.PlazoAtencion</td>
+                            <td class="text-center" style="color: #000;background: #ccc;">@p.Pprestacionesanuales</td>
+                        }
+                        <td class="text-center" style="color: #000;background: #ccc;">@p.Prequisitos</td>
+                        <td class="text-center" style="color: #000;background: #ccc;">@p.CodigoACR</td>
+                    }
+                    else
+                    {
+                        if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                        {
+                            <td style="width:50px;text-align:center">@p.Numero</td>
+                        }
+                        else
+                        {
+                            @*<td></td>*@
+                            <td style="width:50px;text-align:center">@p.Numero</td>
+                        }
+                        <td style="width:150px;text-align:center">@Html.TipoOperacion(p.Operacion)</td>
+                        <td>@p.CodigoCorto</td>
+                        <td>@p.UndOrgResponsable.Nombre</td>
+                        <td>@p.Denominacion</td>
+                        <td>@Html.TipoProcedimiento(p.TipoProcedimiento)</td>
+                        <td>@p.NombreCategoria</td>
+                        <td class="text-center">
+                            @if (user.Rol == (short)Rol.Administrador)
+                            {
+                                if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                                {
+                                    if (@p.CodigoCorto != null)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verNotasCiudadano(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadoInfoEva)</a>
+                                    }
+                                }
+                                else if (p.Operacion == OperacionExpediente.Ninguna || p.Operacion == OperacionExpediente.Eliminacion)
+                                {
+                                    <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verNotasCiudadano(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                }
+                            }
+                            else if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                            {
+                                if (@p.CodigoCorto != null)
+                                {
+                                    <a href="javascript:sut.Procedimiento.verNotasCiudadano(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadoInfoEva)</a>
+                                }
+                                else if (p.Operacion == OperacionExpediente.Ninguna || p.Operacion == OperacionExpediente.Eliminacion)
+                                {
+                                    <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verNotasCiudadano(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                }
+                            }
+                            else if (p.Operacion == OperacionExpediente.Ninguna)
+                            {
+                                <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verNotasCiudadano(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                            }
+                        </td>
+                        <td class="text-center">
+                            @*@if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion && p.CodigoACR == "0" && p.TipoProcedimiento != TipoProcedimiento.Estandar)*@
+
+                            @if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                            {
+                                //if (p.DatosGeneralesTerminado)
+                                //{
+                                // <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                //}
+                                //else
+                                //{
+                                if (exp.EstadoExpediente == EstadoExpediente.Subsanado || exp.EstadoExpediente == EstadoExpediente.Observado || exp.EstadoExpediente == EstadoExpediente.Presentado || exp.EstadoExpediente == EstadoExpediente.Aprobado)
+                                {
+                                    if (p.ObsDG == 0)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                                    }
+                                }
+                                else if (exp.EstadoExpediente == EstadoExpediente.Publicado)
+                                {
+                                    <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                                }
+                                else if (user.Rol == (short)Rol.Administrador)
+                                {
+                                    <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                                }
+                                else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                                {
+                                    <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                                }
+                                else
+                                {
+                                    <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                                }
+
+                                //}
+                            }
+                            else if (p.Operacion == OperacionExpediente.Ninguna)
+                            {
+                                <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                            }
+                            else if (user.Rol == (short)Rol.Administrador)
+                            {
+                                <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                            }
+                            else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                            {
+                                <a href="javascript:sut.Procedimiento.verDatosGenerales(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadodatosEva)</a>
+                            }
+                        </td>
+
+                        if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                        {
+                            <td class="text-center">
+                                @if (user.TipoTupa != (short)TipoTupa.Estandar)
+                                {
+                                    //if (p.TipoProcedimiento != TipoProcedimiento.Estandar)
+                                    //{
+                                    //if (p.Operacion != OperacionExpediente.Ninguna && p.CodigoACR == "0" && p.TipoProcedimiento != TipoProcedimiento.Estandar)
+                                    if (p.Operacion != OperacionExpediente.Ninguna)
+                                    {
+                                        //if (p.SustTecnicoTerminado)
+                                        //{
+                                        @*<a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                            }
+                                            else
+                                            { *@
+                                        @*< a class="btn btn-danger btn-xs" href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)"><i class="fa fa-pencil"></i></a>*@ //
+                                    }
+
+                                    if (exp.EstadoExpediente == EstadoExpediente.Subsanado || exp.EstadoExpediente == EstadoExpediente.Observado || exp.EstadoExpediente == EstadoExpediente.Presentado || exp.EstadoExpediente == EstadoExpediente.Aprobado)
+                                    {
+                                        if (p.ObsSTL == 0)
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)"> @Html.TipoEstadoOpciones2(p.EstadostlEva) </a>
+                                        }
+                                    }
+                                    else if (exp.EstadoExpediente == EstadoExpediente.Publicado)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                    }
+                                    else if (user.Rol == (short)Rol.Administrador)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                    }
+                                    else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                    }
+                                }
+                                else if (p.Operacion == OperacionExpediente.Ninguna)
+                                {
+                                    <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                }
+                                else if (user.Rol == (short)Rol.Administrador)
+                                {
+                                    <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                }
+                                else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                                {
+                                    <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                }
+
+                                else
+                                {
+                                    if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                                    {
+                                        @*if (p.SustTecnicoTerminado)
+                                            {
+                                                <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                            }
+                                            else
+                                            {*@
+                                        @*<a class="btn btn-danger btn-xs" href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)"><i class="fa fa-pencil"></i></a>*@
+                                        //}
+
+                                        if (exp.EstadoExpediente == EstadoExpediente.Subsanado || exp.EstadoExpediente == EstadoExpediente.Observado || exp.EstadoExpediente == EstadoExpediente.Presentado)
+                                        {
+                                            if (p.ObsSTL == 0)
+                                            {
+                                                <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                            }
+                                            else
+                                            {
+                                                <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                            }
+                                        }
+                                        else if (exp.EstadoExpediente == EstadoExpediente.Publicado)
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                        }
+                                    }
+                                    else if (p.Operacion == OperacionExpediente.Ninguna)
+                                    {
+                                        <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                    }
+                                    else if (user.Rol == (short)Rol.Administrador)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                    }
+                                    else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verSustentoTecnico(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadostlEva)</a>
+                                    }
+                                }
+                            </td>
+                        }
+                        if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                        {
+                            <td class="text-center">
+                                @{
+                                    //if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion && p.CodigoACR == "0" && p.TipoProcedimiento != TipoProcedimiento.Estandar)
+                                    if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                                    {
+                                        //if (!p.SustTecnicoTerminado)
+                                        //{
+
+                                        @*<a class="btn btn-danger btn-xs" href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)"><i class="fa fa-pencil"></i></a>*@
+                                        //}
+                                        @* else
+                                            {
+                                                <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                             }
+                                        *@
+                                        if (exp.EstadoExpediente == EstadoExpediente.Subsanado || exp.EstadoExpediente == EstadoExpediente.Observado || exp.EstadoExpediente == EstadoExpediente.Presentado || exp.EstadoExpediente == EstadoExpediente.Aprobado)
+                                        {
+                                            if (p.ObsASME == 0)
+                                            {
+                                                <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                            }
+                                            else
+                                            {
+                                                <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                            }
+                                        }
+                                        else if (exp.EstadoExpediente == EstadoExpediente.Publicado)
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                        }
+                                        else if (user.Rol == (short)Rol.Administrador)
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                        }
+                                        else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                        }
+                                    }
+                                    else if (p.Operacion == OperacionExpediente.Ninguna)
+                                    {
+                                        <a class="btn btn-primary btn-xs" href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)"><i class="fa fa-search"></i></a>
+                                    }
+                                    else if (user.Rol == (short)Rol.Administrador)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                    }
+                                    else if ((user.Rol == (short)Rol.Evaluador || user.Rol == (short)Rol.Ratificador || user.Rol == (short)Rol.Ratificador) && exp.EstadoExpediente == EstadoExpediente.EnProceso)
+                                    {
+                                        <a href="javascript:sut.Procedimiento.verTablaAsme(@p.ProcedimientoId)">@Html.TipoEstadoOpciones2(p.EstadotablaasmeEva)</a>
+                                    }
+                                }
+                            </td>
+                        } @*@if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                            {*@
+                        <td>
+                            @{
+                                if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                                {
+                                    @*<a class="btn btn-default btn-xs" href="/General/Reporte/FormatoTupasdgsdfg?ExpedienteId=@p.ExpedienteId&ProcedimientoId=@p.ProcedimientoId" target="_blank"><i class="fa fa-file-pdf-o"></i></a>*@
+                                    @*<a class="btn btn-default btn-xs" href="~/General/Reporte/ReporteTupa?ExpedienteId=@p.ExpedienteId&&ProcedimientoId=@p.ProcedimientoId&&orden=1" target="_blank"><i class="fa fa-file-pdf-o"></i></a>*@
+                                    if (@p.CodigoCorto != null)
+                                    { @*<a class="btn btn-default btn-xs" href="@Url.Content("~/General/Reporte/ReporteTupa")?ExpedienteId=@p.ExpedienteId&&ProcedimientoId=@p.ProcedimientoId&&orden=1" target="_blank"><i class="fa fa-file-pdf-o"></i></a>*@ @*<a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.ReporteTupa(@p.ExpedienteId,@p.ProcedimientoId,1)"><i class="fa fa-file-pdf-o"></i></a>
+                                        JJJMSP2*@
+                                    <a class="btn btn-default btn-xs"><input name="ReportePAs" type="checkbox" id=@p.ProcedimientoId></a>
+                                }
+                            }
+                            else if (p.Operacion == OperacionExpediente.Ninguna)
+                            {
+                                @*<a class="btn btn-default btn-xs" href="@Url.Content("~/General/Reporte/ReporteTupa")?ExpedienteId=@p.ExpedienteId&&ProcedimientoId=@p.ProcedimientoId&&orden=1" target="_blank"><i class="fa fa-file-pdf-o"></i></a>*@
+                                @*<a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.ReporteTupa(@p.ExpedienteId,@p.ProcedimientoId,1)"><i class="fa fa-file-pdf-o"></i></a>
+                                    JJJMSP2*@
+                                <a class="btn btn-default btn-xs"><input name="ReportePAs" type="checkbox" id=@p.ProcedimientoId></a>
+                            }
+                            }
+                        </td>
+                        //}
+                        if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                        {
+                            <td>
+                                @{ if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+                                    { @*<a class="btn btn-default btn-xs" href="~/General/Reporte/FSLT?tipo=2&id=@p.ProcedimientoId" target="_blank"><i class="fa fa-file-pdf-o"></i></a>*@
+                                    if (@p.CodigoCorto != null)
+                                    { @*<a class="btn btn-default btn-xs" href="@Url.Content("~/General/Reporte/FSLT")?tipo=2&id=@p.ProcedimientoId" target="_blank"><i class="fa fa-file-pdf-o"></i></a>*@ @*<a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.FSLT(2,@p.ProcedimientoId)"><i class="fa fa-file-pdf-o"></i></a>
+                                        JJJMSP2*@
+                                    <a class="btn btn-default btn-xs"><input name="ReporteFSTLs" type="checkbox" id=@p.ProcedimientoId></a>
+                                }
+                            }
+                            else if (p.Operacion == OperacionExpediente.Ninguna)
+                            {
+                                @*<a class="btn btn-default btn-xs" href="@Url.Content("~/General/Reporte/FSLT")?tipo=2&id=@p.ProcedimientoId" target="_blank"><i class="fa fa-file-pdf-o"></i></a>*@
+                                @*<a class="btn btn-default btn-xs" href="javascript:sut.Procedimiento.FSLT(2,@p.ProcedimientoId)"><i class="fa fa-file-pdf-o"></i></a>
+                                    JJJMSP2*@
+                                <a class="btn btn-default btn-xs"><input name="ReporteFSTLs" type="checkbox" id=@p.ProcedimientoId></a>
+                            }
+                                }
+                            </td>
+                            @*<td>@p.Pprestacioncosto</td>*@
+                            <td class="text-center">@p.PlazoAtencion</td>
+                            <td class="text-center">@p.Pprestacionesanuales</td>
+                        }
+
+                        @*<td>@p.Pduracion</td>*@
+                        <td class="text-center">@p.Prequisitos</td>
+                        <td class="text-center">@p.CodigoACR</td>
+                    }
+                    </tr>
+            }
+            
+       }
+}
+else
+{
+                <tr>
+                    <td colspan="10" class="text-center text-bold">NO SE ENCONTRARON REGISTROS.</td>
+                </tr>
+}
+                <tr>
+                    <td colspan="4">
+                        <table class="table table-bordered table-condensed">
+                            <tbody>
+                                <tr>
+                                    <td>Total de Procedimientos/Servicios :</td>
+                                    <td class="text-right">@ViewBag.Estadisticas["total"]</td>
+                                </tr>
+                                <tr>
+                                    <td>Información Ciudadana terminados :</td>
+                                    <td class="text-right">@ViewBag.Estadisticas["Informacion_ciudadano"] / @ViewBag.Estadisticas["total_dg"]</td>
+                                </tr>
+                                <tr>
+                                    <td>Datos Generales registrados :</td>
+                                    <td class="text-right">@ViewBag.Estadisticas["datos_generales"] / @ViewBag.Estadisticas["total_dg"]</td>
+                                </tr>
+                                @if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                                {
+                                    <tr>
+                                        <td>Sustentos Técnico y Legal terminados :</td>
+                                        <td class="text-right">@ViewBag.Estadisticas["sustento_tecnico"] / @ViewBag.Estadisticas["total_st"]</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tabla Asme terminados :</td>
+                                        <td class="text-right">@ViewBag.Estadisticas["tabla_asme"] / @ViewBag.Estadisticas["total_st"]</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                    <td colspan="@(exp.TipoExpediente != TipoExpediente.CargaInicial ? 5 : 2)">
+                        @*JJJMSP2*@
+                        <table class="table table-bordered table-condensed">
+                            <tbody>
+                                <tr>
+                                    <td class="col-sm-2 col-xs-12 text-center">
+                                        <div style="display:inline; width:90px;height:90px;">
+                                            <canvas style="width: 100px; height: 100px; -moz-border-radius: 50%; -webkit-border-radius: 50%; border-radius: 50%; background: rgb(221, 75, 57);"></canvas>
+                                            <input type="text" disabled class="knob" value="@ViewBag.Estadisticas["Informacion_ciudadano_pct"]" data-width="90" data-height="90" data-fgcolor="#dd4b39" data-readonly="true" readonly="readonly" style="width: 59px; height: 45px; position: relative; vertical-align: middle; margin-top: -88px; margin-left: -80px; border: 0px; background: none; font: bold 36px Arial; text-align: center; color: #f4f4f4; padding: 0px; appearance: none;">
+                                        </div>
+                                        <div class="knob-label">Información Ciudadana %</div>
+                                    </td>
+                                    <td class="col-sm-2 col-xs-12 text-center">
+                                        <canvas style="width: 100px; height: 100px; -moz-border-radius: 50%; -webkit-border-radius: 50%; border-radius: 50%; background: rgb(221, 75, 57);"></canvas>
+                                        <input type="text" disabled class="knob" value="@ViewBag.Estadisticas["datos_generales_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true" style="width: 59px; height: 45px; position: relative; vertical-align: middle; margin-top: -88px; margin-left: -80px; border: 0px; background: none; font: bold 36px Arial; text-align: center; color: #f4f4f4; padding: 0px; appearance: none;">
+                                        <div class="knob-label">Datos Generales %</div>
+                                    </td>
+                                    @if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                                    {
+                                        <td class="col-sm-2 col-xs-12 text-center">
+                                            <canvas style="width: 100px; height: 100px; -moz-border-radius: 50%; -webkit-border-radius: 50%; border-radius: 50%; background: rgb(221, 75, 57);"></canvas>
+                                            <input type="text" disabled class="knob" value="@ViewBag.Estadisticas["sustento_tecnico_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true" style="width: 59px; height: 45px; position: relative; vertical-align: middle; margin-top: -88px; margin-left: -80px; border: 0px; background: none; font: bold 36px Arial; text-align: center; color: #f4f4f4; padding: 0px; appearance: none;">
+                                            <div class="knob-label">Sustento Técnico %</div>
+                                        </td>
+                                        <td class="col-sm-2 col-xs-12 text-center">
+                                            <canvas style="width: 100px; height: 100px; -moz-border-radius: 50%; -webkit-border-radius: 50%; border-radius: 50%; background: rgb(221, 75, 57);"></canvas>
+                                            <input type="text" disabled class="knob" value="@ViewBag.Estadisticas["tabla_asme_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true" style="width: 59px; height: 45px; position: relative; vertical-align: middle; margin-top: -88px; margin-left: -80px; border: 0px; background: none; font: bold 36px Arial; text-align: center; color: #f4f4f4; padding: 0px; appearance: none;">
+                                            <div class="knob-label">Tabla Asme %</div>
+                                        </td>
+                                    }
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td colspan="8">
+                        <table class="table table-bordered table-condensed">
+                            <tbody>
+                                <tr>
+                                    <td>Ingresar a Sustento de costos :</td>
+                                    <td class="text-right">
+                                        @if (exp.TipoExpediente == TipoExpediente.ExpedienteRegular)
+                                        {
+                                            if (exp.SustCostosTerminado)
+                                            {
+                                                if (exp.ObsCOSTO == 0)
+                                                {
+                                                    <a href="@Url.Content("~/Simplificacion/Configuracion/Resumen/")@exp.ExpedienteId" class="btn btn-primary pull-right" style="width: 100%;"><i class="fa fa-money"></i> Sustento de Costos</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Content("~/Simplificacion/Configuracion/Resumen/")@exp.ExpedienteId" class="btn btn-danger pull-right" style="width: 100%;"><i class="fa fa-money"></i> Sustento de Costos</a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (exp.ObsCOSTO == 0)
+                                                {
+                                                    <a href="@Url.Content("~/Simplificacion/Configuracion/Resumen/")@exp.ExpedienteId" class="btn btn-primary pull-right" style="width: 100%;"><i class="fa fa-money"></i> Sustento de Costos</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Content("~/Simplificacion/Configuracion/Resumen/")@exp.ExpedienteId" class="btn btn-danger pull-right" style="width: 100%;"><i class="fa fa-money"></i> Sustento de Costos</a>
+                                                }
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                                @*JJJMSP2 INI*@
+                                <tr>
+                                    <td>Descargar Reporte :</td>
+                                    <td>
+                                        <select id="cbFilterReporte" class="form-control input-sm">
+                                            <option value="0">(Seleccione un Reporte)</Seleccionar></option>
+                                            @if (userrptTupaCompleto.rolmenu[0].Ver == true)
+                                            {
+                                                <option value="1">Reporte TUPA</option>
+                                                <option value="2">Reporte TUPA Seleccionados</option>
+                                            }
+                                            @if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                                            {
+                                                if (userrptSTLCompleto.rolmenu[0].Ver == true)
+                                                {
+                                                    <option value="3">Reporte STL</option>
+                                                    <option value="4">Reporte STL Seleccionados</option>
+                                                }
+                                            }
+                                            @if (userrptTupaCompleto.rolmenu[0].Ver == true && exp.TipoExpediente != TipoExpediente.CargaInicial && userrptSTLCompleto.rolmenu[0].Ver == true)
+                                            {
+                                                <option value="5">Reporte Todos Seleccionados</option>
+                                            }
+                                        </select>
+                                        <a href="javascript:sut.Procedimientame.ReporteFilter(@exp.ExpedienteId)" class="btn btn-default" style="width: 100%;"><i class="fa  fa-file-pdf-o"></i> Descargar Reporte</a>
+                                    </td>
+                                </tr>
+                                @*<tr>
+                                    <td>Descargar Reporte TUPA completo :</td>
+                                         <td class="text-right">
+                                             @if (userrptTupaCompleto.rolmenu[0].Ver == true)
+                                             {@*<a href="@Url.Content("~/General/Reporte/ReporteTupa")?ExpedienteId=@Model.ExpedienteId&&ProcedimientoId=0&&orden=1" target="_blank" class="btn btn-default"><i class="fa  fa-file-pdf-o"></i> Reporte TUPA</a>  @
+                                             <a href="javascript:sut.Procedimiento.ReporteTupa(@exp.ExpedienteId,0,1)" class="btn btn-default" style="width: 100%;"><i class="fa  fa-file-pdf-o"></i> Reporte TUPA</a>
+                                             <a href="javascript:sut.Procedimientame.ReporteTupaSeleccion(@exp.ExpedienteId)" class="btn btn-default" style="width: 100%;"><i class="fa  fa-file-pdf-o"></i> Reporte PA seleccionados</a>}
+                                         </td>
+                                     </tr>
+                                     <tr>
+                                         <td>Descargar Reporte Sustento Tecnico Legal :</td>
+                                         <td class="text-right">
+                                             @if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                                             {
+                                                 if (userrptSTLCompleto.rolmenu[0].Ver == true)
+                                                 {@*<a href="@Url.Content("~/General/Reporte/FSLT")?tipo=1&id=@Model.ExpedienteId" target="_blank" class="btn btn-default"><i class="fa fa-download"></i>   Reporte  STL</a> @
+                                                 <a href="javascript:sut.Procedimiento.FSLT(1,@exp.ExpedienteId)" class="btn btn-default" style="width: 100%;"><i class="fa fa-download"></i>   Reporte  STL</a>
+                                                 <a href="javascript:sut.Procedimientame.ReporteFSTLSeleccion(2,@exp.ExpedienteId)" class="btn btn-default" style="width: 100%;"><i class="fa fa-download"></i> Reporte STL Seleccionados</a>}
+                                         }
+                                         </td>
+                                     </tr>*@
+                                @*JJJMSP2 FIN*@
+                                <tr>
+                                    <td>Descargar Factor TUPA :</td>
+                                    <td class="text-right">
+
+                                        @*<a href="@Url.Content("~/General/Reporte/FSLT")?tipo=1&id=@Model.ExpedienteId" target="_blank" class="btn btn-default"><i class="fa fa-download"></i>   Reporte  STL</a> *@
+                                        <a href="@Url.Content("~/General/Reporte/TablaAsmefactortupa")?ExpedienteId=@exp.ExpedienteId" class="btn btn-success pull-right" style="width: 100%;"><i class="fa fa-download"></i> Factor Tupa</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    @if (exp.TipoExpediente != TipoExpediente.CargaInicial)
+                                    {
+                                        if (@ViewBag.Estadisticas["Informacion_ciudadano_pct"] == 100 && @ViewBag.Estadisticas["datos_generales_pct"] == 100 && @ViewBag.Estadisticas["sustento_tecnico_pct"] == 100 && @ViewBag.Estadisticas["tabla_asme_pct"] == 100)
+                                        {
+                                            if (exp.EstadoReporteWord == 0)
+                                            {
+                                                <td> Reporte TUPA el Peruano :</td>
+                                                <td colspan="2" class="text-right">
+                                                    @*<a href="javascript:sut.Procedimiento.ReporteWord(@exp.ExpedienteId)" title="Solicitar archivo word" class="btn btn-default" style="width: 100%;"><i class="fa fa-download"></i> Word</a> *@
+                                                    <a href="javascript:sut.Procedimiento.RptTupaPer(@exp.ExpedienteId,0,1)" class="btn btn-default" style="width: 100%;"><i class="fa  fa-file-pdf-o"></i> TUPA Diario</a>
+                                                </td>
+
+                                            }
+                                            @*else if (exp.EstadoReporteWord == 1)
+                                                {
+                                                     <td>Solicitar Reporte TUPA en Word :</td>
+                                                     <td colspan="2" class="text-right">
+                                                         <a href="#" class="btn btn-default" title="Procesando archivo word" style="width: 100%;"><i class="fa fa-download"></i>  Procesando...</a>
+                                                     </td>
+
+                                                 }*@ @*else if (exp.EstadoReporteWord == 2)
+                                                        {
+                                                            <td>Volver a solicitar Reporte TUPA en Word en caso se modifique el expediente :</td>
+                                                            <td class="text-right">
+                                                                <a href="javascript:sut.Procedimiento.ReporteWord(@exp.ExpedienteId)" title="volver a generar archivo word" class="btn btn-default"><i class="fa fa-download"></i> Generar</a>
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <a class="btn btn-primary btn-xs" data-placement="left" title="Descargar archivo word" href="@Url.Content("~/General/Adjunto/Descargar/")@exp.ArchivoAdjuntoId"><i class="fa fa-download"></i></a>
+                                                            </td>
+                                                } *@
+                                            }
+                                        }
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+            @*JJJMSP2 INI*@
+            @if (Model.Count() > 0)
+            {
+                Procedimiento registroMasReciente = Model.OrderByDescending(p => p.FecModificacion).FirstOrDefault();
+                long procedimientoIdMasReciente = registroMasReciente?.ProcedimientoId ?? 0;
+
+                <script>
+		const procedimientoIds = [];
+		const FSTLIds = [];
+		sut.Procedimientame = {
+			ReporteFilter: (expedienteId) => {
+				selecion = $("#cbFilterReporte").val();
+				if (selecion == 0) {
+					showNotification('top', 'right', 'Seleccione algun reporte', 3);
+				}
+				if (selecion == 1) {
+					sut.Procedimiento.ReporteTupa(expedienteId, 0, 1);
+				}
+				if (selecion == 2) {
+					sut.Procedimientame.ReporteTupaSeleccion(@exp.ExpedienteId);
+				}
+				if (selecion == 3) {
+					sut.Procedimiento.FSLT(1,@exp.ExpedienteId);
+				}
+				if (selecion == 4) {
+					sut.Procedimientame.ReporteFSTLSeleccion(2,@exp.ExpedienteId);
+				}
+				if (selecion == 5) {
+					sut.Procedimientame.ReporteTupaSeleccion(@exp.ExpedienteId);
+					sut.Procedimientame.ReporteFSTLSeleccion(2,@exp.ExpedienteId);
+				}
+				if (selecion == 6) {
+					//"@Url.Content("~/General/Reporte/TablaAsmefactortupa")?ExpedienteId=@exp.ExpedienteId";
+				}
+			},
+			ReporteTupaSeleccion: (expedienteId) => {
+				if (procedimientoIds.length > 0) {
+					showNotification('top', 'right', 'procedimientoids Envio PDF', 1);
+					//console.log('procedimientoIds enviando:', procedimientoIds);
+					sut.Procedimiento.ReporteTupa(expedienteId, procedimientoIds, 1);
+				} else {
+					showNotification('top', 'right', 'La lista de procedimientoIds está vacía', 3);
+				}
+			},
+			ReporteFSTLSeleccion: (orden, Expedienteid) => {
+				if (FSTLIds.length > 0) {
+					showNotification('top', 'right', 'STL.Ids Envio PDF: ' + Expedienteid, 1);
+					//console.log('FSTLIds enviando:', FSTLIds);
+					sut.Procedimiento.FSLT(orden, FSTLIds);
+				} else {
+					showNotification('top', 'right', 'La lista de STLIds está vacía', 3);
+				}
+			},
+		};
+
+		$(document).ready(function () {
+			// Agrega el evento 'click' a los checkboxes
+			$("input[type='checkbox'][name='ReportePAs']").click(function (e) {
+				var chk = $(e.target);
+				const procedimientoId = chk.attr('id');
+				if (chk.is(':checked')) {
+					// Agregar el ID al arreglo de procedimientoIds si el checkbox está seleccionado
+					procedimientoIds.push(procedimientoId);
+					showNotification('top', 'right', 'procedimientoid seleccionado: ' + procedimientoId, 2);
+				} else {
+					// Eliminar el ID del arreglo de procedimientoIds si el checkbox se deselecciona
+					const index = procedimientoIds.indexOf(procedimientoId);
+					if (index !== -1) {
+						procedimientoIds.splice(index, 1);
+					}
+				}
+				console.log('procedimientoIds:', procedimientoIds);
+			});
+			$("input[type='checkbox'][name='ReporteFSTLs']").click(function (e) {
+				var chk = $(e.target);
+				const procedimientoId = chk.attr('id');
+				if (chk.is(':checked')) {
+					// Agregar el ID al arreglo de procedimientoIds si el checkbox está seleccionado
+					FSTLIds.push(procedimientoId);
+					showNotification('top', 'right', 'STLIds seleccionado: ' + procedimientoId, 2);
+				} else {
+					// Eliminar el ID del arreglo de procedimientoIds si el checkbox se deselecciona
+					const index = FSTLIds.indexOf(procedimientoId);
+					if (index !== -1) {
+						FSTLIds.splice(index, 1);
+					}
+				}
+				console.log('FSTLIds:', FSTLIds);
+			});
+			var procedimientoIdMasReciente = '@procedimientoIdMasReciente';
+			$('#tblLista tbody tr').each(function () {
+				var procedimientoId = $(this).find('input[name="ReportePAs"]').attr('id');
+				if (procedimientoId === procedimientoIdMasReciente) {
+					$(this).css("background-color", "#A1DCF2");
+				}
+			});
+		});
+                </script>
+            }@*JJJMSP2 FIN*@

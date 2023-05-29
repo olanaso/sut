@@ -12,8 +12,32 @@
         int i = (int)ViewBag.Row;
         foreach (Procedimiento p in Model)
         {
-            <tr>
-                @if (p.Posicion == 1)
+    <tr>
+
+        @if (p.Posicion == 1)
+        {
+
+            if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
+            {
+                <td style="color: #000; background: #ccc; width: 50px; text-align: center">@p.Numero</td>
+            }
+
+            else
+            {
+                <td style="text-align: center; color: #000;background: #ccc;"></td>
+            }
+            <td style="width:150px;text-align:center; color: #000;background: #ccc;">@Html.TipoOperacion(p.Operacion)</td>
+            <td style="color: #000;background: #ccc;">@p.UndOrgResponsable.Nombre</td>
+            <td style="color: #000;background: #ccc;">@p.CodigoCorto</td>
+            <td style="color: #000;background: #ccc;">@p.Denominacion</td>
+            <td style="color: #000;background: #ccc;">@Html.TipoProcedimiento(p.TipoProcedimiento)</td>
+            <td style="color: #000;background: #ccc;">
+                @p.NombreCategoria
+            </td>
+
+            <td style="color: #000;background: #ccc;" class="text-center">
+
+                @if (user.Rol == (short)Rol.Administrador)
                 {
                     if (p.Operacion != OperacionExpediente.Ninguna && p.Operacion != OperacionExpediente.Eliminacion)
                     {
