@@ -2613,7 +2613,7 @@ namespace Sut.Web.Areas.General.Controllers
             string nombreArchivo = entidad.Logoentidad;
             string srutalogo;
             string sexists;
-            sexists = "";
+            sexists = "SIEXISTE";
             Paragraph p = new Paragraph();
             if (nombreArchivo != null || nombreArchivo != "")
             {
