@@ -2608,36 +2608,43 @@ namespace Sut.Web.Areas.General.Controllers
         }
         private void AdicionarCabecera(Document Doc, long ExpedienteId)
         {
-            //string pathImagen = Server.MapPath("/dist/img/logo_pcm.png");
-            //Image logo = Image.GetInstance(pathImagen);
-            //logo.BorderWidth = 0;
-            //logo.ScalePercent(25f);
-            //logo.SetAbsolutePosition(500f - Doc.LeftMargin, 800f);
-            //Doc.Add(logo);
-
-            //pathlogoentidad
             var expediente = _expedienteService.GetOne(ExpedienteId);
             var entidad = _entidadService.GetOne(expediente.EntidadId);
             string nombreArchivo = entidad.Logoentidad;
-            string rutalogo = "";
+            string srutalogo;
+            string sexists;
+            sexists = "";
             Paragraph p = new Paragraph();
             if (nombreArchivo != null || nombreArchivo != "")
             {
-                rutalogo = Path.Combine(pathlogoentidad, nombreArchivo);
-                //string pathImagen = Server.MapPath(rutalogo);
-                Image logo = Image.GetInstance(rutalogo);
-                logo.BorderWidth = 0;
-                logo.ScalePercent(13f);
-                p.Add(new Chunk(logo, 0, 0, true));
+                srutalogo = Path.Combine(pathlogoentidad, nombreArchivo);
+                if (System.IO.File.Exists(srutalogo))
+                {
+                    Image logo = Image.GetInstance(srutalogo);
+                    logo.BorderWidth = 0;
+                    logo.ScalePercent(13f);
+                    p.Add(new Chunk(logo, 0, 0, true));
+                }
+                else { sexists = "NOEXISTE"; }
             }
-            string pathImagen2 = Server.MapPath("/dist/img/logo_pcm.png");
-            Image logo2 = Image.GetInstance(pathImagen2);
-            logo2.BorderWidth = 0;
-            logo2.ScalePercent(25f);
-            p.Add(new Chunk(logo2, logo2.Width + 130, 0, true));
+            string pathImagen2;
+            pathImagen2 = Path.Combine(pathlogoentidad, "logo_pcm.png");
+            if (System.IO.File.Exists(pathImagen2))
+            {
+                Image logo2 = Image.GetInstance(pathImagen2);
+                logo2.BorderWidth = 0;
+                logo2.ScalePercent(25f);
+                if (sexists == "NOEXISTE")
+                {
+                    p.Add(new Chunk(logo2, 360, 0, true));
+                }
+                else
+                {
+                    p.Add(new Chunk(logo2, 340, 0, true));
+                }
+            }
             HeaderFooter header1 = new HeaderFooter(p, false);
             header1.Border = 0;
-            //header1.Alignment = Element.ALIGN_RIGHT;
             header1.PageNumber = 0;
             Doc.Header = header1;
         }
