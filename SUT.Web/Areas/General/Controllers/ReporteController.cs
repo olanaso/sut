@@ -2607,7 +2607,7 @@ namespace Sut.Web.Areas.General.Controllers
             }
         }
         private void AdicionarCabecera(Document Doc, long ExpedienteId)
-        {   //Adicionar subiendo al git
+        {
             var expediente = _expedienteService.GetOne(ExpedienteId);
             var entidad = _entidadService.GetOne(expediente.EntidadId);
             string nombreArchivo = entidad.Logoentidad;
@@ -2619,7 +2619,7 @@ namespace Sut.Web.Areas.General.Controllers
             {
                 srutalogo = Path.Combine(pathlogoentidad, nombreArchivo);
                 if (System.IO.File.Exists(srutalogo))
-                {   
+                {
                     Image logo = Image.GetInstance(srutalogo);
                     logo.BorderWidth = 0;
                     logo.ScalePercent(13f);
@@ -2627,10 +2627,10 @@ namespace Sut.Web.Areas.General.Controllers
                 }
                 else { sexists = "NOEXISTE"; }
             }
-            string pathImagen2; 
+            string pathImagen2;
             pathImagen2 = Path.Combine(pathlogoentidad, "logo_pcm.png");
             if (System.IO.File.Exists(pathImagen2))
-            { 
+            {
                 Image logo2 = Image.GetInstance(pathImagen2);
                 logo2.BorderWidth = 0;
                 logo2.ScalePercent(25f);
