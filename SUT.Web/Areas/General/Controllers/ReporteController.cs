@@ -2607,7 +2607,7 @@ namespace Sut.Web.Areas.General.Controllers
             }
         }
         private void AdicionarCabecera(Document Doc, long ExpedienteId)
-        {
+        {   //Adicionar subiendo al git
             var expediente = _expedienteService.GetOne(ExpedienteId);
             var entidad = _entidadService.GetOne(expediente.EntidadId);
             string nombreArchivo = entidad.Logoentidad;
