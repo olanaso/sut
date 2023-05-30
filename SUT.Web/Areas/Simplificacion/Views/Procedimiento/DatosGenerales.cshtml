@@ -7719,7 +7719,7 @@
             //var output = document.getElementById('output');
             var file = document.getElementById('inputreqnotas').files[0];
             if (file) {
-                let result = await sut.subirExcel(file)
+                let result = await sut.subirExcel(file, ['Requisitos', 'Notas']);
 
 
                 let arrayRequisitos = [];
@@ -7784,7 +7784,7 @@
             //var output = document.getElementById('output');
             var file = document.getElementById('inputbaselegal').files[0];
             if (file) {
-                let result = await sut.subirExcel(file)
+                let result = await sut.subirExcel(file, ['Articulo', 'Denominacion', 'Tipo_Norma', 'Numero','Fecha_de_Publicacion'])
 
 
                 result.forEach(objeto => {

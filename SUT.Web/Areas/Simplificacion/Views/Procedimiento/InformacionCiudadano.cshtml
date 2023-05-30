@@ -2610,7 +2610,7 @@
             //var output = document.getElementById('output');
             var file = document.getElementById('fileNCPS').files[0];
             if (file) {
-                let result = await sut.subirExcel(file)
+                let result = await sut.subirExcel(file, ['Tipo de nota al ciudadano', 'Nota al ciudadano', 'Pasos a seguir ']);
                 console.log(result)
 
 
