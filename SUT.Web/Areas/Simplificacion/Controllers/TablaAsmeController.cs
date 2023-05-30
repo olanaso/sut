@@ -878,188 +878,215 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
 
             List<string> lstCabecera = new List<string>();
             List<string> lista = new List<string>();
-           // try
-            //{
+            try
+            {
 
-                /*auditoria agregar*/
-                objauditoria.EntidadId = user.EntidadId;
-                objauditoria.SectorId = user.Sector;
-                objauditoria.ProvinciaId = user.Provincia;
-                objauditoria.Usuario = user.NombreCompleto;
-                objauditoria.Actividad = "Importar Actividades";
-                objauditoria.Pantalla = "Actividades";
-                objauditoria.UserCreacion = user.NroDocumento;
-                objauditoria.FecCreacion = DateTime.Now;
-                /*auditoria*/
-                //Int32 tablaAsmeId = Convert.ToInt32(System.Web.HttpContext.Current.Session["tablaAsmeId"]);
-               
-                var dataAsmeunidad = _unidadOrganicaService.GetAll(user.EntidadId);
-                List<UnidadOrganica> unidad_organica = new List<UnidadOrganica>();
-                foreach (var val in dataAsmeunidad)
-                    unidad_organica.Add(new UnidadOrganica()
-                    {
-                        UnidadOrganicaId = val.UnidadOrganicaId,
-                        Nombre = val.Nombre.Trim(),
-                        Numero = val.Numero
+            /*auditoria agregar*/
+            objauditoria.EntidadId = user.EntidadId;
+            objauditoria.SectorId = user.Sector;
+            objauditoria.ProvinciaId = user.Provincia;
+            objauditoria.Usuario = user.NombreCompleto;
+            objauditoria.Actividad = "Importar Actividades";
+            objauditoria.Pantalla = "Actividades";
+            objauditoria.UserCreacion = user.NroDocumento;
+            objauditoria.FecCreacion = DateTime.Now;
+            /*auditoria*/
+            //Int32 tablaAsmeId = Convert.ToInt32(System.Web.HttpContext.Current.Session["tablaAsmeId"]);
 
-                    });
-
-                var dataAsmeRecursos = _actividadService.GetDataByTablaAsmeRecursos(user.EntidadId);
-                List<Recurso> tipos_recursos = new List<Recurso>();
-                foreach (var val in dataAsmeRecursos)
-                    tipos_recursos.Add(new Recurso()
-                    {
-                        RecursoId = val.RecursoId,
-                        Nombre = val.Nombre.Trim(),
-                        TipoRecurso = val.TipoRecurso
-
-                    });
-
-                List<MetaDato> tipos_act = new List<MetaDato>();
-                foreach (var val in Enum.GetValues(typeof(TipoActividad)))
-                    tipos_act.Add(new MetaDato()
-                    {
-                        MetaDatoId = (short)val,
-                        Nombre = Enum.GetName(typeof(TipoActividad), val)
-                    });
-
-                List<MetaDato> tipos_valor = new List<MetaDato>();
-                foreach (var val in Enum.GetValues(typeof(TipoValor)))
-                    tipos_valor.Add(new MetaDato()
-                    {
-                        MetaDatoId = (short)val,
-                        Nombre = Enum.GetName(typeof(TipoValor), val)
-                    });
-
-                FileInfo info = new FileInfo(fileExcel.FileName);
-                string path = ConfigurationManager.AppSettings["Sut.PathUpload"];
-                string filename = string.Format("excelASME_{0}_{1}.{2}", user.NroDocumento, DateTime.Now.ToString("yyyMddHHmmss"), info.Extension);
-                filename = Path.Combine(path, filename);
-
-                fileExcel.SaveAs(filename);
-
-
-
-
-                //List<string> lstCabecera = new List<string>();
-
-                var excel = new ExcelQueryFactory(filename);
-
-                List<Actividad> lstact = new List<Actividad>();
-                //List<Actividad> lstactrecursosCompleto = new List<Actividad>();
-
-                var worksheetNames = excel.GetWorksheetNames().ToArray();
-                //
-                //Mapping
-                //
-                for (int i = 0; i < worksheetNames.Length; i++)
+            var dataAsmeunidad = _unidadOrganicaService.GetAll(user.EntidadId);
+            List<UnidadOrganica> unidad_organica = new List<UnidadOrganica>();
+            foreach (var val in dataAsmeunidad)
+                unidad_organica.Add(new UnidadOrganica()
                 {
-                    int contador = 0;
-                    int contvalores = 0;
-                    var codeIndex = 0;
-                    var IndexTipo = 0;
-                    var Indexvalor = 0;
+                    UnidadOrganicaId = val.UnidadOrganicaId,
+                    Nombre = val.Nombre.Trim(),
+                    Numero = val.Numero
 
-                    foreach (var product in excel.WorksheetNoHeader(worksheetNames[i])
-                        .Where(x => x[codeIndex] != ""))
+                });
+
+            var dataAsmeRecursos = _actividadService.GetDataByTablaAsmeRecursos(user.EntidadId);
+            List<Recurso> tipos_recursos = new List<Recurso>();
+            foreach (var val in dataAsmeRecursos)
+                tipos_recursos.Add(new Recurso()
+                {
+                    RecursoId = val.RecursoId,
+                    Nombre = val.Nombre.Trim(),
+                    TipoRecurso = val.TipoRecurso
+
+                });
+
+            List<MetaDato> tipos_act = new List<MetaDato>();
+            foreach (var val in Enum.GetValues(typeof(TipoActividad)))
+                tipos_act.Add(new MetaDato()
+                {
+                    MetaDatoId = (short)val,
+                    Nombre = Enum.GetName(typeof(TipoActividad), val)
+                });
+
+            List<MetaDato> tipos_valor = new List<MetaDato>();
+            foreach (var val in Enum.GetValues(typeof(TipoValor)))
+                tipos_valor.Add(new MetaDato()
+                {
+                    MetaDatoId = (short)val,
+                    Nombre = Enum.GetName(typeof(TipoValor), val)
+                });
+
+            FileInfo info = new FileInfo(fileExcel.FileName);
+            string path = ConfigurationManager.AppSettings["Sut.PathUpload"];
+            string filename = string.Format("excelASME_{0}_{1}.{2}", user.NroDocumento, DateTime.Now.ToString("yyyMddHHmmss"), info.Extension);
+            filename = Path.Combine(path, filename);
+
+            fileExcel.SaveAs(filename);
+
+
+
+
+            //List<string> lstCabecera = new List<string>();
+
+            var excel = new ExcelQueryFactory(filename);
+
+            List<Actividad> lstact = new List<Actividad>();
+            //List<Actividad> lstactrecursosCompleto = new List<Actividad>();
+
+            var worksheetNames = excel.GetWorksheetNames().ToArray();
+            //
+            //Mapping
+            //
+            for (int i = 0; i < worksheetNames.Length; i++)
+            {
+                int contador = 0;
+                int contvalores = 0;
+                var codeIndex = 0;
+                var IndexTipo = 0;
+                var Indexvalor = 0;
+
+                foreach (var product in excel.WorksheetNoHeader(worksheetNames[i])
+                    .Where(x => x[codeIndex] != ""))
+                {
+                    contador = contador + 1;
+                    contvalores = product.Count() - 8;
+                    //if (contador == 5)
+                    //{
+                    //      tablaAsmeId = Convert.ToInt32(product[0].ToString().Trim());
+                    //}
+
+
+                    if (contador == 5)
                     {
-                        contador = contador + 1;
-                        contvalores = product.Count() - 8;
-                        //if (contador == 5)
-                        //{
-                        //      tablaAsmeId = Convert.ToInt32(product[0].ToString().Trim());
-                        //}
-
-
-                        if (contador == 5)
+                        for (var j = 0; j < product.Count(); j++)
                         {
-                            for (var j = 0; j < product.Count(); j++)
+                            if (product[j] != "")
                             {
-                                if (product[j] != "")
-                                {
-                                    lstCabecera.Add(product[j].ToString().Trim());
-                                }
+                                lstCabecera.Add(product[j].ToString().Trim());
                             }
                         }
-                        if (contador > 5)
+                    }
+                    if (contador > 5)
+                    {
+                        Actividad act = new Actividad();
+                        //Actividad actrecurso = new Actividad();
+
+
+                        List<ActividadRecurso> lstactrecursos = new List<ActividadRecurso>();
+                        act.TablaAsmeId = tablaAsmeId;
+                        if (product[0] != "")
                         {
-                            Actividad act = new Actividad();
-                            //Actividad actrecurso = new Actividad();
 
-
-                            List<ActividadRecurso> lstactrecursos = new List<ActividadRecurso>();
-                            act.TablaAsmeId = tablaAsmeId;
-                            if (product[0] != "")
+                            if (product[0].ToString().Trim() != "TOTAL :")
                             {
 
-                                if (product[0].ToString().Trim() != "TOTAL :")
+
+                                act.Orden = Convert.ToInt32(product[0].ToString().Trim());
+                                if (act.Orden == 0)
                                 {
+                                    lista.Add(string.Format("Debe asignar número de orden a la fila. {0}", string.Join(",", act.Orden.ToString())));
+                                }
+                                act.Descripcion = product[1].ToString().Trim();
+
+                                if (act.Descripcion == "")
+                                {
+                                    lista.Add(string.Format("Debe asignar una actividad en la fila. {0}", string.Join(",", act.Orden.ToString())));
+                                }
 
 
-                                    act.Orden = Convert.ToInt32(product[0].ToString().Trim());
-                                    if (act.Orden == 0)
+                                if (product[2].ToString().Trim() != "")
+                                {
+                                    if (unidad_organica.Any(x => x.Numero.ToString().Trim() == product[2].ToString().Trim()))
                                     {
-                                        lista.Add(string.Format("Debe asignar número de orden a la fila. {0}", string.Join(",", act.Orden.ToString())));
-                                    }
-                                    act.Descripcion = product[1].ToString().Trim();
-
-                                    if (act.Descripcion == "")
-                                    {
-                                        lista.Add(string.Format("Debe asignar una actividad en la fila. {0}", string.Join(",", act.Orden.ToString())));
-                                    }
-
-
-                                    if (product[2].ToString().Trim() != "")
-                                    {
-                                        if (unidad_organica.Any(x => x.Numero.ToString().Trim() == product[2].ToString().Trim()))
-                                        {
-                                            act.UnidadOrganicaId = unidad_organica.First(x => x.Numero.ToString().Trim() == product[2].ToString().Trim()).UnidadOrganicaId;
-                                        }
-                                        else
-                                        {
-                                            lista.Add(string.Format("No existe la unidad organica {0} ", string.Join(",", "'" + product[2].ToString().Trim() + "'" + "en la fila." + act.Orden.ToString())));
-                                        }
+                                        act.UnidadOrganicaId = unidad_organica.First(x => x.Numero.ToString().Trim() == product[2].ToString().Trim()).UnidadOrganicaId;
                                     }
                                     else
                                     {
-                                        lista.Add(string.Format("Debe asignar una unidad organica en la fila. {0}", string.Join(",", act.Orden.ToString())));
+                                        lista.Add(string.Format("No existe la unidad organica {0} ", string.Join(",", "'" + product[2].ToString().Trim() + "'" + "en la fila." + act.Orden.ToString())));
                                     }
+                                }
+                                else
+                                {
+                                    lista.Add(string.Format("Debe asignar una unidad organica en la fila. {0}", string.Join(",", act.Orden.ToString())));
+                                }
 
-                                    if (!EsNumeroEntero(product[3].ToString().Trim())) // product[3].ToString().Trim() == "" || product[3].ToString() == "0")
+                                if (!EsNumeroEntero(product[3].ToString().Trim())) // product[3].ToString().Trim() == "" || product[3].ToString() == "0")
+                                {
+                                    lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la fila. {0} de la Cabecera <b>" + lstCabecera[3] + "</b>", string.Join(",", act.Orden.ToString())));
+                                }
+                                else
+                                {
+                                    act.Duracion = Convert.ToDecimal(product[3].ToString().Trim());
+                                }
+
+                                //validando que sea numero 
+                                for (var h = 4; h <= 23; h++)
+                                {
+                                    if (!EsNumeroEntero(product[h].ToString().Trim()))
                                     {
-                                        lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la fila. {0} de la Cabecera <b>" + lstCabecera[3] + "</b>", string.Join(",", act.Orden.ToString())));
+                                        lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la fila. {0} de la Cabecera <b>" + lstCabecera[h] + "</b>", string.Join(",", act.Orden.ToString())));
+
+                                    }
+                                }
+                                //validando que sea numero
+                                for (var l = 24; l <= 45; l++)
+                                {
+                                    var input = product[l].ToString().Trim();
+                                    if (string.IsNullOrEmpty(input) || input.ToLower() == "x")
+                                    {
+                                        // El string es válido (es 'X', 'x' o un string vacío)
                                     }
                                     else
                                     {
-                                        act.Duracion = Convert.ToDecimal(product[3].ToString().Trim());
+                                        lista.Add(string.Format("Debe contener un <b>X</b>. en la fila {0} de la Cabecera <b>" + lstCabecera[l] + "</b>", string.Join(",", act.Orden.ToString())));
                                     }
+                                }
 
-                                    //validando que sea numero 
-                                    for (var h = 4; h <= 23; h++)
-                                    {
-                                        if (!EsNumeroEntero(product[h].ToString().Trim()))
-                                        {
-                                            lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la fila. {0} de la Cabecera <b>"+ lstCabecera[h]+"</b>", string.Join(",", act.Orden.ToString())));
-
-                                        }
-                                    }
-                                    //validando que sea numero
-                                    for (var l = 24; l <= 45; l++)
-                                    {
-                                        var input = product[l].ToString().Trim();
-                                        if (string.IsNullOrEmpty(input) || input.ToLower() == "x")
-                                        {
-                                            // El string es válido (es 'X', 'x' o un string vacío)
-                                        }
-                                        else
-                                        {
-                                            lista.Add(string.Format("Debe contener un <b>X</b>. en la fila {0} de la Cabecera <b>" + lstCabecera[l] + "</b>", string.Join(",", act.Orden.ToString())));
-                                        }
-                                    }
-
-                                    //validando que sea numero
+                                    //validando marcado columna unica tipo actividad
                                     var column = -1;
-                                    var activado=false;
+                                    var activado = false;
+                                    for (var k = 41; k <= 45; k++)
+                                    {
+                                        var input = product[k].ToString().Trim();
+                                        if (input.ToLower() == "x")
+                                        {
+                                            if (!activado)
+                                            {
+
+
+                                                column = k;
+                                                activado = true;
+                                            }
+                                            else
+                                            {
+                                                if (column != k)
+                                                {
+                                                    lista.Add(string.Format("No debe contener un <b>X</b> en la columna. {0} de la Cabecera <b>" + lstCabecera[k] + "</b>", string.Join(",", act.Orden.ToString())));
+                                                }
+                                            }
+                                        }
+
+                                    }
+
+
+                                    //validando marcado columna unica tipo valor
+                                    column = -1;
+                                    activado = false;
                                     for (var l = 46; l <= 48; l++)
                                     {
                                         var input = product[l].ToString().Trim();
@@ -1068,9 +1095,9 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                             if (!activado)
                                             {
 
-                                            
-                                            column = l;
-                                            activado = true;
+
+                                                column = l;
+                                                activado = true;
                                             }
                                             else
                                             {
@@ -1080,139 +1107,139 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                                 }
                                             }
                                         }
-                                      
+
                                     }
 
 
 
                                     for (var r = 4; r < lstCabecera.Count() - 8; r++)
+                                {
+                                    if (product[r].ToString().Replace("0", "").Trim() != "")
                                     {
-                                        if (product[r].ToString().Replace("0", "").Trim() != "")
+                                        ActividadRecurso actrecursos = new ActividadRecurso();
+                                        if (tipos_recursos.Any(x => x.Nombre.ToUpper() == lstCabecera[r].ToUpper()))
+                                            actrecursos.RecursoId = tipos_recursos.First(x => x.Nombre.ToUpper().Trim() == lstCabecera[r].ToUpper().Trim()).RecursoId;
+
+                                        var tiporecurso = tipos_recursos.First(x => x.Nombre.ToUpper().Trim() == lstCabecera[r].ToUpper().Trim()).TipoRecurso;
+
+
+                                        if (tiporecurso == TipoRecurso.MaterialNoFungible || tiporecurso == TipoRecurso.ServicioTerceros || tiporecurso == TipoRecurso.Depreciacion || tiporecurso == TipoRecurso.Fijos)
                                         {
-                                            ActividadRecurso actrecursos = new ActividadRecurso();
-                                            if (tipos_recursos.Any(x => x.Nombre.ToUpper() == lstCabecera[r].ToUpper()))
-                                                actrecursos.RecursoId = tipos_recursos.First(x => x.Nombre.ToUpper().Trim() == lstCabecera[r].ToUpper().Trim()).RecursoId;
-
-                                            var tiporecurso = tipos_recursos.First(x => x.Nombre.ToUpper().Trim() == lstCabecera[r].ToUpper().Trim()).TipoRecurso;
-
-
-                                            if (tiporecurso == TipoRecurso.MaterialNoFungible || tiporecurso == TipoRecurso.ServicioTerceros || tiporecurso == TipoRecurso.Depreciacion || tiporecurso == TipoRecurso.Fijos)
-                                            {
-                                                actrecursos.Cantidad = Convert.ToDecimal(0);
-                                            }
-                                            else
-                                            {
-                                                actrecursos.Cantidad = Convert.ToDecimal(product[r].ToString().Trim());
-                                            }
-                                            actrecursos.UserCreacion = user.NroDocumento.ToString().Trim();
-                                            actrecursos.UserModificacion = user.NroDocumento.ToString().Trim();
-                                            actrecursos.FecCreacion = DateTime.Now;
-                                            actrecursos.FecModificacion = DateTime.Now;
-
-                                            lstactrecursos.Add(actrecursos);
+                                            actrecursos.Cantidad = Convert.ToDecimal(0);
                                         }
+                                        else
+                                        {
+                                            actrecursos.Cantidad = Convert.ToDecimal(product[r].ToString().Trim());
+                                        }
+                                        actrecursos.UserCreacion = user.NroDocumento.ToString().Trim();
+                                        actrecursos.UserModificacion = user.NroDocumento.ToString().Trim();
+                                        actrecursos.FecCreacion = DateTime.Now;
+                                        actrecursos.FecModificacion = DateTime.Now;
 
-                                        IndexTipo = r;
+                                        lstactrecursos.Add(actrecursos);
                                     }
 
-                                    act.ActividadRecurso = lstactrecursos.Select(x => new ActividadRecurso()
+                                    IndexTipo = r;
+                                }
+
+                                act.ActividadRecurso = lstactrecursos.Select(x => new ActividadRecurso()
+                                {
+                                    ActividadId = x.ActividadId,
+                                    Cantidad = x.Cantidad,
+                                    RecursoId = x.RecursoId,
+                                    UserCreacion = x.UserCreacion,
+                                    UserModificacion = x.UserModificacion,
+                                    FecCreacion = x.FecCreacion,
+                                    FecModificacion = x.FecModificacion
+
+                                }).ToList();
+
+                                for (var ar = IndexTipo + 1; ar < lstCabecera.Count() - 3; ar++)
+                                {
+                                    string ver = product[ar].ToString().Trim();
+                                    if (product[ar].ToString().Trim() != "")
                                     {
-                                        ActividadId = x.ActividadId,
-                                        Cantidad = x.Cantidad,
-                                        RecursoId = x.RecursoId,
-                                        UserCreacion = x.UserCreacion,
-                                        UserModificacion = x.UserModificacion,
-                                        FecCreacion = x.FecCreacion,
-                                        FecModificacion = x.FecModificacion
-
-                                    }).ToList();
-
-                                    for (var ar = IndexTipo + 1; ar < lstCabecera.Count() - 3; ar++)
-                                    {
-                                        string ver = product[ar].ToString().Trim();
-                                        if (product[ar].ToString().Trim() != "")
-                                        {
-                                            if (tipos_act.Any(x => x.Nombre.ToUpper().Trim() == lstCabecera[ar].Replace('ó', 'o').ToUpper().Trim()))
-                                                act.TipoActividad = (TipoActividad)(tipos_act.First(x => x.Nombre.ToUpper().Trim() == lstCabecera[ar].Replace('ó', 'o').ToUpper().Trim()).MetaDatoId);
-                                        }
-                                        Indexvalor = ar;
-
+                                        if (tipos_act.Any(x => x.Nombre.ToUpper().Trim() == lstCabecera[ar].Replace('ó', 'o').ToUpper().Trim()))
+                                            act.TipoActividad = (TipoActividad)(tipos_act.First(x => x.Nombre.ToUpper().Trim() == lstCabecera[ar].Replace('ó', 'o').ToUpper().Trim()).MetaDatoId);
                                     }
-
-                                    for (var valor = Indexvalor + 1; valor < lstCabecera.Count(); valor++)
-                                    {
-                                        string ver = product[valor].ToString().Trim();
-                                        if (product[valor].ToString().Trim() != "")
-                                        {
-                                            if (tipos_valor.Any(x => x.Nombre.ToUpper().Trim() == lstCabecera[valor].ToUpper().Trim()))
-                                                act.TipoValor = (TipoValor)(tipos_valor.First(x => x.Nombre.ToUpper().Trim() == lstCabecera[valor].ToUpper().Trim()).MetaDatoId);
-                                        }
-                                    }
-                                    act.UserCreacion = user.NroDocumento;
-                                    act.UserModificacion = user.NroDocumento;
-                                    act.FecCreacion = DateTime.Now;
-                                    act.FecModificacion = DateTime.Now;
-
-
-                                    lstact.Add(act);
+                                    Indexvalor = ar;
 
                                 }
+
+                                for (var valor = Indexvalor + 1; valor < lstCabecera.Count(); valor++)
+                                {
+                                    string ver = product[valor].ToString().Trim();
+                                    if (product[valor].ToString().Trim() != "")
+                                    {
+                                        if (tipos_valor.Any(x => x.Nombre.ToUpper().Trim() == lstCabecera[valor].ToUpper().Trim()))
+                                            act.TipoValor = (TipoValor)(tipos_valor.First(x => x.Nombre.ToUpper().Trim() == lstCabecera[valor].ToUpper().Trim()).MetaDatoId);
+                                    }
+                                }
+                                act.UserCreacion = user.NroDocumento;
+                                act.UserModificacion = user.NroDocumento;
+                                act.FecCreacion = DateTime.Now;
+                                act.FecModificacion = DateTime.Now;
+
+
+                                lstact.Add(act);
+
                             }
-                            //lstactrecursosCompleto.Add(actrecurso);
                         }
+                        //lstactrecursosCompleto.Add(actrecurso);
                     }
                 }
+            }
 
 
 
-                if (lista.Count() > 0)
-                {
-                    return Json(new
-                    {
-                        valid = false,
-                        mensaje = lista
-                    });
-                }
-                else
-                {
-                    TablaAsme asme = new TablaAsme();
-                    asme.Actividad = lstact;
-                    asme.TablaAsmeId = tablaAsmeId;
-                    _tablaAsmeService.Guardarexcel(asme);
-                    _AuditoriaService.Save(objauditoria);
-
-                }
-
-
-
-                //Actividad Activi = new Actividad();
-                //Activi.ActividadRecurso = lstactrecursosCompleto[0].ActividadRecurso;
-                //Activi.ActividadId = 1323;
-                //_actividadService.GuardarRecursos(Activi);
-
-
-
-                return Json(new
-                {  
-                    text = lista,
-                    valid = true,
-                }, JsonRequestBehavior.AllowGet);
-            //}
-           /* catch (Exception ex)
+            if (lista.Count() > 0)
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                ModelState.Clear();
-                ModelState.AddModelError("", ex.Message);
-
-                _log.Error(ex);
                 return Json(new
                 {
-                    error = ex.Message,
-                    lista= lista
+                    valid = false,
+                    mensaje = lista
+                });
+            }
+            else
+            {
+                TablaAsme asme = new TablaAsme();
+                asme.Actividad = lstact;
+                asme.TablaAsmeId = tablaAsmeId;
+                _tablaAsmeService.Guardarexcel(asme);
+                _AuditoriaService.Save(objauditoria);
 
-                }, JsonRequestBehavior.AllowGet);
-                //return PartialView("_Error");
-            }*/
+            }
+
+
+
+            //Actividad Activi = new Actividad();
+            //Activi.ActividadRecurso = lstactrecursosCompleto[0].ActividadRecurso;
+            //Activi.ActividadId = 1323;
+            //_actividadService.GuardarRecursos(Activi);
+
+
+
+            return Json(new
+            {
+                text = lista,
+                valid = true,
+            }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+             {
+                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                 ModelState.Clear();
+                 ModelState.AddModelError("", ex.Message);
+
+                 _log.Error(ex);
+                 return Json(new
+                 {
+                     error = ex.Message,
+                     lista= lista
+
+                 }, JsonRequestBehavior.AllowGet);
+                 //return PartialView("_Error");
+             }
         }
     }
 }
