@@ -5,7 +5,7 @@
     List<Sut.Entities.Observacion> obs = ViewBag.Observacion as List<Sut.Entities.Observacion>;
     ViewBag.Icon = "fa fa-file-text-o";
     ViewBag.Title = "Sustento de Costos - Expediente " + Model.Codigo;
-    ViewBag.Descripcion = ""; 
+    ViewBag.Descripcion = "";
 }
 <div id="mensajes">
     @{Html.RenderPartial("_Error");}
@@ -32,7 +32,7 @@
         <div class="btn-group">
 
             @if (@user.rolmenu[0].Descargar == true)
-            { 
+            {
                 <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-download"></i> Descargar <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                     <li class="dropdown-submenu">
@@ -109,7 +109,7 @@
 
 
                     @*@if (user.Rol == 6 || user.Rol == 7 || user.Rol == 8 || user.Rol == 1)
-        {*@
+                        {*@
 
 
 
@@ -149,7 +149,7 @@
                     }
                     if (@user.rolmenu[0].Guardar == true)
                     {
-                        <a href="javascript:sut.Resumen.guardar()" class="btn btn-primary"><i class="fa fa-save"></i> Guardar Derecho de Tramitación</a>
+                        <a id="btnGuardarDereTramitacion" href="javascript:sut.Resumen.guardar()" class="btn btn-primary"><i class="fa fa-save"></i> Guardar Derecho de Tramitación</a>
                     }
                     if (@user.rolmenu[0].Terminar == true)
                     {
@@ -164,7 +164,7 @@
                     }
                     if (@user.rolmenu[0].Guardar == true)
                     {
-                        <a href="javascript:sut.Resumen.guardar()" class="btn btn-primary"><i class="fa fa-save"></i> Guardar Derecho de Tramitación</a>
+                        <a id="btnGuardarDereTramitacion" href="javascript:sut.Resumen.guardar()" class="btn btn-primary"><i class="fa fa-save"></i> Guardar Derecho de Tramitación</a>
                     }
                     if (@user.rolmenu[0].Terminar == true)
                     {
@@ -185,12 +185,12 @@
                     }
                 }
                 @*if (Model.EstadoExpediente != EstadoExpediente.Presentado && Model.EstadoExpediente != EstadoExpediente.Publicado && Model.EstadoExpediente != EstadoExpediente.Aprobado)
-                {
-                    if (@user.rolmenu[0].Activar == true)
                     {
-                            <a href="javascript:sut.Resumen.activar()" class="btn btn-warning"><i class="fa fa-check"></i> Activar</a>
-                        }
-                    }*@
+                        if (@user.rolmenu[0].Activar == true)
+                        {
+                                <a href="javascript:sut.Resumen.activar()" class="btn btn-warning"><i class="fa fa-check"></i> Activar</a>
+                            }
+                        }*@
             }
 
             @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
@@ -258,21 +258,21 @@
         </div>
     </div>
     @*<div class="box-footer">
-        <div class="pull-right">
+            <div class="pull-right">
 
-            @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
-            {
-            
-                <a href="@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
-            }
-            else
-            {
-                
-                <a href="@Url.Content("~/Simplificacion/Expediente/EditarObservacion/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+                @if (user.Rol != 8 && user.Rol != 6 && user.Rol != 7)
+                {
 
-            }
-        </div>
-    </div>*@
+                    <a href="@Url.Content("~/Simplificacion/Expediente/Editar/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+                }
+                else
+                {
+
+                    <a href="@Url.Content("~/Simplificacion/Expediente/EditarObservacion/")@Model.ExpedienteId" class="btn btn-danger"><i class="fa fa-arrow-left"></i> Volver</a>
+
+                }
+            </div>
+        </div>*@
 </div>
 <div class="modal fade" id="modal-ventana">
     <div id="ventana-container">
@@ -365,7 +365,7 @@
                 var valor = id.substring(8);
                 $('#mensajeResumen' + valor).hide();
                 document.querySelector('#mensajeResumen' + valor).innerText = '';
-                
+
             },
             procesar : function () {
                 $.ajax({
@@ -394,20 +394,20 @@
                             if(data.mensaje!= undefined){
                                // sut.error.clientErrorShow('mensajes', data.mensaje);
                                 showNotification('top', 'right', data.mensaje, 2);
-                                
+
                                 //sut.msg.alerta2(data.mensaje, function () {
 
                                 //});
                             }
-                           
+
                             if(data.mensaje4!= undefined){
                                 showNotification('top', 'right', data.mensaje4, 2);
                             }
                         }
                     },
                     error: function (data) {
-                        $('#modal-ventana').modal('hide'); 
-                   
+                        $('#modal-ventana').modal('hide');
+
                         showNotification('top', 'right', [data.responseText], 2);
                         //sut.error.clientErrorShow('mensajes', [data.responseText]);
                     }
@@ -450,8 +450,8 @@
                         });
                     },
                     complete: function () {
-                       
-                      
+
+
                     },
                     error: function (data) {
                         sut.error.clientErrorShow('mensajes', [data.responseText]);
@@ -462,8 +462,8 @@
             },
             btnGuardarDerchTramitacion_State: function () {
 
-                
-                
+
+
                 function updateButtonState() {
                     var isChecked = false;
                     $('.btn_guardar_derch_tramitacion').each(function () {
@@ -624,7 +624,7 @@
                         {
                             rows += sut.string.format('<td><input id="DerechoTramitacion{0}"  name="[{0}].DerechoTramitacion" type="number" class="form-control no-spinners" value="{1}" {2} /> </td>', i, sut.format.decimalEspecialdos(sut.format.decimalEspecialTrunc(r.DerechoTramitacion)), r.EsSubvencion ? '' : 'readonly');
                             rows += '<td><span style="display:none" class="label label-danger"><i class="fa fa-pencil-square-o"></i><span></td>';
-                            rows += sut.string.format('<td><input  id="Check{0}" name="[{0}].Check" type="checkbox" {1} /><input name="[{0}].EsSubvencion" type="hidden" value="{2}" disabled/></td>', i, r.EsSubvencion ? 'checked' : '', r.EsSubvencion);
+                            rows += sut.string.format('<td><input class="btn_guardar_derch_tramitacion" id="Check{0}" name="[{0}].Check" type="checkbox" {1} /><input name="[{0}].EsSubvencion" type="hidden" value="{2}" disabled/></td>', i, r.EsSubvencion ? 'checked' : '', r.EsSubvencion);
 
                         }
                     }
@@ -635,7 +635,7 @@
                             rows += sut.string.format('<a class="btn btn-success  btn-xs" data-toggle="tooltip" data-placement="left" title="Autorizado MEF" href="javascript:sut.Resumen.autorizacionmef({0})" ><i class="fa fa-envelope-o"></i></a>', r.TablaAsmeId);
                         } else if (r.autorizacionmef == 3) {
                             rows += sut.string.format('<a class="btn btn-danger  btn-xs" data-toggle="tooltip" data-placement="left" title="No Autorizado MEF" href="javascript:sut.Resumen.autorizacionmef({0})" ><i class="fa fa-envelope-o"></i></a>', r.TablaAsmeId);
-                        } 
+                        }
                         else {
 
                             if (!r.EsGratuito) {
@@ -721,7 +721,7 @@
                     }
                 });
 
-              
+
 
 
             },
@@ -790,7 +790,6 @@
                 });
             } ,
             guardar: () => {
-                debugger;
 
                 //$('#tblResumen tbody').on('change', 'tr td input[type="checkbox"]', (e) => {
                 //    debugger;
@@ -845,7 +844,7 @@
                 });
             },
             terminar: () => {
-                sut.msg.confirm('Si finaliza el registro no podrá modificarlo nuevamente.', () => { 
+                sut.msg.confirm('Si finaliza el registro no podrá modificarlo nuevamente.', () => {
                     $.ajax({
                         type: 'POST',
                                @*url: '/Simplificacion/Configuracion/TerminarSustento/@Model.ExpedienteId',*@
@@ -862,7 +861,7 @@
 
                             sut.wait.removeOverlay('#boxLista');
 
-                            
+
 
                             if (result.valid) {
                                 sut.msg.success(result.mensaje, function () {
@@ -875,9 +874,9 @@
                                     //sut.error.clientErrorShow('mensajes', result.mensaje);
                                     showNotification('top', 'right', result.mensaje, 2);
                                 }
-                           
+
                                 if(result.mensaje4!= undefined){
-                                    showNotification('top', 'right', result.mensaje4, 2); 
+                                    showNotification('top', 'right', result.mensaje4, 2);
                                 }
                             }
                         },
@@ -1572,11 +1571,11 @@
 
         $(function () {
             sut.Resumen.listar(1);
-           
-            
-           
+
+
+
             $('#tblResumen tbody').on('change', 'tr td input[type="checkbox"]', (e) => {
-               
+
                 var chk = $(e.target);
                 var txt = $(e.target).parent().parent().find('input[name$="DerechoTramitacion"]');
                 $(e.target).parent().parent().find('input[name$="EsSubvencion"]').val(chk.is(':checked'));
@@ -1596,17 +1595,17 @@
                var isChecked = false;
                 $('.btn_guardar_derch_tramitacion').each(function () {
 
-                  
+
                         if ($(this).is(":checked")) {
                             isChecked = true;
                             return false; // rompe el bucle
                         }
                 });
-                !isChecked ? $('#btnGuardarDereTramitacion').hide() : $('#btnGuardarDereTramitacion').show(); 
+                !isChecked ? $('#btnGuardarDereTramitacion').hide() : $('#btnGuardarDereTramitacion').show();
 
-                
-               
-               
+
+
+
 
             });
 

@@ -1039,7 +1039,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                 {
                                     if (!EsNumeroEntero(product[h].ToString().Trim()))
                                     {
-                                        lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la fila. {0} de la Cabecera <b>" + lstCabecera[h] + "</b>", string.Join(",", act.Orden.ToString())));
+                                        lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la actividad. {0} de la Cabecera <b>" + lstCabecera[h] + "</b>", string.Join(",", act.Orden.ToString())));
 
                                     }
                                 }
@@ -1053,7 +1053,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                     }
                                     else
                                     {
-                                        lista.Add(string.Format("Debe contener un <b>X</b>. en la fila {0} de la Cabecera <b>" + lstCabecera[l] + "</b>", string.Join(",", act.Orden.ToString())));
+                                        lista.Add(string.Format("Debe contener un <b>X</b>. en la fila {0} de la actividad <b>" + lstCabecera[l] + "</b>", string.Join(",", act.Orden.ToString())));
                                     }
                                 }
 
@@ -1076,7 +1076,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                             {
                                                 if (column != k)
                                                 {
-                                                    lista.Add(string.Format("No debe contener un <b>X</b> en la columna. {0} de la Cabecera <b>" + lstCabecera[k] + "</b>", string.Join(",", act.Orden.ToString())));
+                                                    lista.Add(string.Format("Revisar la sección TIPO DE ACTIVIDAD,las actividades deben ser clasificadas solo con un tipo de actividad.", string.Join(",", act.Orden.ToString())));
                                                 }
                                             }
                                         }
@@ -1103,7 +1103,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                             {
                                                 if (column != l)
                                                 {
-                                                    lista.Add(string.Format("No debe contener un <b>X</b> en la columna. {0} de la Cabecera <b>" + lstCabecera[l] + "</b>", string.Join(",", act.Orden.ToString())));
+                                                    lista.Add(string.Format("Revisar la sección TIPO DE VALOR, las actividades deben ser clasificadas solo con un tipo de valor.", string.Join(",", act.Orden.ToString())));
                                                 }
                                             }
                                         }

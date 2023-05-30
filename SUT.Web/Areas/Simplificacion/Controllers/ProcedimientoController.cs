@@ -4984,7 +4984,6 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 {
                     foreach (Requisito req in RE)
                     {
-
                         model.Requisito.Add(req);
                     }
 
@@ -5011,11 +5010,6 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 {
                     model.EsGratuito = x.EsGratuito;
                 });
-
-
-
-
-
 
                 if (model.DenominacionAnterior != model.Denominacion)
                 {

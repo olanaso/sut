@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31205.134
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sut.Web", "SUT.Web\Sut.Web.csproj", "{2D91D38A-E682-46B1-9EE9-619C9B950C7A}"
 EndProject
@@ -153,88 +153,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36318E6B-E241-416E-A47F-E8D0C8A18DF0}
-	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 13
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://dev.azure.com/lionvalle
-		SccProjectUniqueName0 = Sut.Entities\\Sut.Entities.csproj
-		SccProjectTopLevelParentUniqueName0 = SUT.sln
-		SccProjectName0 = Sut.Entities
-		SccAuxPath0 = https://dev.azure.com/lionvalle
-		SccLocalPath0 = Sut.Entities
-		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName1 = Sut.Context\\Sut.Context.csproj
-		SccProjectTopLevelParentUniqueName1 = SUT.sln
-		SccProjectName1 = Sut.Context
-		SccAuxPath1 = https://dev.azure.com/lionvalle
-		SccLocalPath1 = Sut.Context
-		SccProvider1 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName2 = Sut.Security\\Sut.Security.csproj
-		SccProjectTopLevelParentUniqueName2 = SUT.sln
-		SccProjectName2 = Sut.Security
-		SccAuxPath2 = https://dev.azure.com/lionvalle
-		SccLocalPath2 = Sut.Security
-		SccProvider2 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName3 = Sut.IApplicationServices\\Sut.IApplicationServices.csproj
-		SccProjectTopLevelParentUniqueName3 = SUT.sln
-		SccProjectName3 = Sut.IApplicationServices
-		SccAuxPath3 = https://dev.azure.com/lionvalle
-		SccLocalPath3 = Sut.IApplicationServices
-		SccProvider3 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName4 = Sut.IDomainServices\\Sut.IDomainServices.csproj
-		SccProjectTopLevelParentUniqueName4 = SUT.sln
-		SccProjectName4 = Sut.IDomainServices
-		SccAuxPath4 = https://dev.azure.com/lionvalle
-		SccLocalPath4 = Sut.IDomainServices
-		SccProvider4 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName5 = Sut.IRepositories\\Sut.IRepositories.csproj
-		SccProjectTopLevelParentUniqueName5 = SUT.sln
-		SccProjectName5 = Sut.IRepositories
-		SccAuxPath5 = https://dev.azure.com/lionvalle
-		SccLocalPath5 = Sut.IRepositories
-		SccProvider5 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName6 = Sut.Extensions\\Sut.Extensions.csproj
-		SccProjectTopLevelParentUniqueName6 = SUT.sln
-		SccProjectName6 = Sut.Extensions
-		SccAuxPath6 = https://dev.azure.com/lionvalle
-		SccLocalPath6 = Sut.Extensions
-		SccProvider6 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName7 = Sut.Repositories\\Sut.Repositories.csproj
-		SccProjectTopLevelParentUniqueName7 = SUT.sln
-		SccProjectName7 = Sut.Repositories
-		SccAuxPath7 = https://dev.azure.com/lionvalle
-		SccLocalPath7 = Sut.Repositories
-		SccProvider7 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName8 = Sut.ApplicationServices\\Sut.ApplicationServices.csproj
-		SccProjectTopLevelParentUniqueName8 = SUT.sln
-		SccProjectName8 = Sut.ApplicationServices
-		SccAuxPath8 = https://dev.azure.com/lionvalle
-		SccLocalPath8 = Sut.ApplicationServices
-		SccProvider8 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName9 = Sut.DomainServices\\Sut.DomainServices.csproj
-		SccProjectTopLevelParentUniqueName9 = SUT.sln
-		SccProjectName9 = Sut.DomainServices
-		SccAuxPath9 = https://dev.azure.com/lionvalle
-		SccLocalPath9 = Sut.DomainServices
-		SccProvider9 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName10 = SUT.Web\\Sut.Web.csproj
-		SccProjectTopLevelParentUniqueName10 = SUT.sln
-		SccProjectName10 = SUT.Web
-		SccAuxPath10 = https://dev.azure.com/lionvalle
-		SccLocalPath10 = SUT.Web
-		SccProvider10 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName11 = Sut.Exceptions\\Sut.Exceptions.csproj
-		SccProjectTopLevelParentUniqueName11 = SUT.sln
-		SccProjectName11 = Sut.Exceptions
-		SccAuxPath11 = https://dev.azure.com/lionvalle
-		SccLocalPath11 = Sut.Exceptions
-		SccProvider11 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccProjectUniqueName12 = Sut.Log\\Sut.Log.csproj
-		SccProjectTopLevelParentUniqueName12 = SUT.sln
-		SccProjectName12 = Sut.Log
-		SccAuxPath12 = https://dev.azure.com/lionvalle
-		SccLocalPath12 = Sut.Log
-		SccProvider12 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 	EndGlobalSection
 EndGlobal

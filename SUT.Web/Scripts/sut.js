@@ -1433,6 +1433,9 @@ max-height: 500px;
 
                     // ahora jsonData[0] debe contener las cabeceras
                     const headers = Object.keys(jsonData[0]);
+                    if (cabecerasdefinidas==null || cabecerasdefinidas.length == 0) {
+                        return resolve(jsonData);
+                    }
                     let comparearrays = this.compareArrays(headers, cabecerasdefinidas)
                     console.log(cabecerasdefinidas)
 
