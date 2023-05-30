@@ -597,26 +597,26 @@
             <table class="table table-bordered table-condensed">
                 <tbody>
                     <tr>
-                        <td>Total de Procedimientos/Servicios :</td>
-                        <td class="text-right">@ViewBag.Estadisticas["total"]</td>
+                        <td class="text-left" style="width: 280px;">Total de Procedimientos/Servicios :</td>
+                        <td class="text-right" style="width: 50px;">@ViewBag.Estadisticas["total"]</td>
                     </tr>
                     <tr>
-                        <td>Información Ciudadana terminados :</td>
-                        <td class="text-right">@ViewBag.Estadisticas["Informacion_ciudadano"] / @ViewBag.Estadisticas["total_dg"]</td>
+                        <td class="text-left" style="width: 280px;">Información Ciudadana terminados :</td>
+                        <td class="text-right" style="width: 50px;">@ViewBag.Estadisticas["Informacion_ciudadano"] / @ViewBag.Estadisticas["total_dg"]</td>
                     </tr>
                     <tr>
-                        <td>Datos Generales registrados :</td>
-                        <td class="text-right">@ViewBag.Estadisticas["datos_generales"] / @ViewBag.Estadisticas["total_dg"]</td>
+                        <td class="text-left" style="width: 280px;">Datos Generales registrados :</td>
+                        <td class="text-right" style="width: 50px;">@ViewBag.Estadisticas["datos_generales"] / @ViewBag.Estadisticas["total_dg"]</td>
                     </tr>
                     @if (exp.TipoExpediente != TipoExpediente.CargaInicial)
                     {
                         <tr>
-                            <td>Sustentos Técnico y Legal terminados :</td>
-                            <td class="text-right">@ViewBag.Estadisticas["sustento_tecnico"] / @ViewBag.Estadisticas["total_st"]</td>
+                            <td class="text-left" style="width: 280px;">Sustentos Técnico y Legal terminados :</td>
+                            <td class="text-right" style="width: 50px;">@ViewBag.Estadisticas["sustento_tecnico"] / @ViewBag.Estadisticas["total_st"]</td>
                         </tr>
                         <tr>
-                            <td>Tabla Asme terminados :</td>
-                            <td class="text-right">@ViewBag.Estadisticas["tabla_asme"] / @ViewBag.Estadisticas["total_st"]</td>
+                            <td class="text-left" style="width: 280px;">Tabla Asme terminados :</td>
+                            <td class="text-right" style="width: 50px;">@ViewBag.Estadisticas["tabla_asme"] / @ViewBag.Estadisticas["total_st"]</td>
                         </tr>
                     }
                 </tbody>
@@ -822,11 +822,11 @@
             },
             ReporteTupaSeleccion: (expedienteId) => {
                 if (procedimientoIds.length > 0) {
-                    showNotification('top', 'right', 'procedimientoids Envio PDF', 1);
+                    showNotification('top', 'right', 'PA.Ids Envio PDF', 1);
                     //console.log('procedimientoIds enviando:', procedimientoIds);
                     sut.Procedimiento.ReporteTupa(expedienteId, procedimientoIds, 1);
                 } else {
-                    showNotification('top', 'right', 'La lista de procedimientoIds está vacía', 3);
+                    showNotification('top', 'right', 'La lista de PA.Ids está vacía', 3);
                 }
             },
             ReporteFSTLSeleccion: (orden, Expedienteid) => {
@@ -835,7 +835,7 @@
                     //console.log('FSTLIds enviando:', FSTLIds);
                     sut.Procedimiento.FSLT(orden, FSTLIds);
                 } else {
-                    showNotification('top', 'right', 'La lista de STLIds está vacía', 3);
+                    showNotification('top', 'right', 'La lista de STL.Ids está vacía', 3);
                 }
             },
         };
@@ -848,7 +848,7 @@
                 if (chk.is(':checked')) {
                     // Agregar el ID al arreglo de procedimientoIds si el checkbox está seleccionado
                     procedimientoIds.push(procedimientoId);
-                    showNotification('top', 'right', 'procedimientoid seleccionado: ' + procedimientoId, 2);
+                    showNotification('top', 'right', 'PA.Ids seleccionado: ' + procedimientoId, 2);
                 } else {
                     // Eliminar el ID del arreglo de procedimientoIds si el checkbox se deselecciona
                     const index = procedimientoIds.indexOf(procedimientoId);
@@ -856,7 +856,7 @@
                         procedimientoIds.splice(index, 1);
                     }
                 }
-                console.log('procedimientoIds:', procedimientoIds);
+                console.log('PA.Ids:', procedimientoIds);
             });
             $("input[type='checkbox'][name='ReporteFSTLs']").click(function (e) {
                 var chk = $(e.target);
@@ -864,7 +864,7 @@
                 if (chk.is(':checked')) {
                     // Agregar el ID al arreglo de procedimientoIds si el checkbox está seleccionado
                     FSTLIds.push(procedimientoId);
-                    showNotification('top', 'right', 'STLIds seleccionado: ' + procedimientoId, 2);
+                    showNotification('top', 'right', 'STL.Ids seleccionado: ' + procedimientoId, 2);
                 } else {
                     // Eliminar el ID del arreglo de procedimientoIds si el checkbox se deselecciona
                     const index = FSTLIds.indexOf(procedimientoId);
@@ -872,7 +872,7 @@
                         FSTLIds.splice(index, 1);
                     }
                 }
-                console.log('FSTLIds:', FSTLIds);
+                console.log('STL.Ids:', FSTLIds);
             });
             var procedimientoIdMasReciente = '@procedimientoIdMasReciente';
             $('#tblLista tbody tr').each(function () {
@@ -882,5 +882,5 @@
                 }
             });
         });
-    </script>
+    </script> 
 }@*JJJMSP2 FIN*@
