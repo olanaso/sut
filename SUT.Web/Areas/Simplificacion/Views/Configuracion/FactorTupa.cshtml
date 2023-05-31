@@ -125,7 +125,7 @@
             <h3 class="box-title">Configuración del Inductor de Asignación de Costos</h3> 
             <div class="box-tools pull-right">
                 @*JJJMSP2 INI*@
-                <a href="javascript:sut.FactorTupa.listarTodoAutoCalc()" class="btn btn-warning"><i class="fa fa-calculator"></i> Calcular Todo</a>
+                <a href="javascript:sut.FactorTupa.listarTodoAutoCalc()" class="btn btn-warning"><i class="fa fa-calculator"></i> Calcular Todas U.O.</a>
                 <a href="javascript:sut.FactorTupa.listarAutoCalc()" class="btn btn-warning"><i class="fa fa-calculator"></i> Auto Calcular</a>
                 @if (@user.rolmenu[0].Guardar == true)
                 {
@@ -227,6 +227,7 @@
                     select.selectedIndex = i;
                     sut.error.show('mensajes', $('#cbUndOrganica').val());
                     sut.FactorTupa.listarAutoCalc();
+                    showNotification('top', 'right', 'Completado el Calculo de Todas las Unidades Organicas.', 1);
                 };
             },/*JJJMSP2 FIN*/
 

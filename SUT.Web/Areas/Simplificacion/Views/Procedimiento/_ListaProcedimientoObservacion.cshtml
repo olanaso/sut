@@ -690,53 +690,35 @@
                         </td>
                     </tr>
                     @*JJJMSP2 INI*@
-                    <tr>
-                        <td>Descargar Reporte :</td>
-                        <td>
-                            <select id="cbFilterReporte" class="form-control input-sm">
-                                <option value="0">(Seleccione un Reporte)</Seleccionar></option>
-                                @if (userrptTupaCompleto.rolmenu[0].Ver == true)
-                                {
-                                    <option value="1">Reporte TUPA</option>
-                                    <option value="2">Reporte TUPA Seleccionados</option>
-                                }
+                <tr>
+                    <td>Seleccionar Reporte :</td>
+                    <td>
+                        <div class="btn-group dropup">
+                            <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-download"></i> Descargar <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+                                <a href="javascript:sut.Procedimientame.ReporteFilter(@exp.ExpedienteId, 1)">Reporte Tupa</a>
+                                <li class="divider"></li>
+                                <a href="javascript:sut.Procedimientame.ReporteFilter(@exp.ExpedienteId, 2)">Reporte Tupa - PA Seleccionados</a>
+
                                 @if (exp.TipoExpediente != TipoExpediente.CargaInicial)
                                 {
                                     if (userrptSTLCompleto.rolmenu[0].Ver == true)
                                     {
-                                        <option value="3">Reporte STL</option>
-                                        <option value="4">Reporte STL Seleccionados</option>
+                                        <li class="divider"></li>
+                                        <a href="javascript:sut.Procedimientame.ReporteFilter(@exp.ExpedienteId, 3)">Reporte STL</a>
+                                        <li class="divider"></li>
+                                        <a href="javascript:sut.Procedimientame.ReporteFilter(@exp.ExpedienteId, 4)">Reporte STL - PA Seleccionados</a>
                                     }
                                 }
                                 @if (userrptTupaCompleto.rolmenu[0].Ver == true && exp.TipoExpediente != TipoExpediente.CargaInicial && userrptSTLCompleto.rolmenu[0].Ver == true)
                                 {
-                                    <option value="5">Reporte Todos Seleccionados</option>
+                                    <li class="divider"></li>
+                                    <a href="javascript:sut.Procedimientame.ReporteFilter(@exp.ExpedienteId, 5)">Reporte Tupa y STL - PA Seleccionados</a>
                                 }
-                            </select>
-                            <a href="javascript:sut.Procedimientame.ReporteFilter(@exp.ExpedienteId)" class="btn btn-default" style="width: 100%;"><i class="fa  fa-file-pdf-o"></i> Descargar Reporte</a>
-                        </td>
-                    </tr>
-                    @*<tr>
-                        <td>Descargar Reporte TUPA completo :</td>
-                             <td class="text-right">
-                                 @if (userrptTupaCompleto.rolmenu[0].Ver == true)
-                                 {@*<a href="@Url.Content("~/General/Reporte/ReporteTupa")?ExpedienteId=@Model.ExpedienteId&&ProcedimientoId=0&&orden=1" target="_blank" class="btn btn-default"><i class="fa  fa-file-pdf-o"></i> Reporte TUPA</a>  @
-                                 <a href="javascript:sut.Procedimiento.ReporteTupa(@exp.ExpedienteId,0,1)" class="btn btn-default" style="width: 100%;"><i class="fa  fa-file-pdf-o"></i> Reporte TUPA</a>
-                                 <a href="javascript:sut.Procedimientame.ReporteTupaSeleccion(@exp.ExpedienteId)" class="btn btn-default" style="width: 100%;"><i class="fa  fa-file-pdf-o"></i> Reporte PA seleccionados</a>}
-                             </td>
-                         </tr>
-                         <tr>
-                             <td>Descargar Reporte Sustento Tecnico Legal :</td>
-                             <td class="text-right">
-                                 @if (exp.TipoExpediente != TipoExpediente.CargaInicial)
-                                 {
-                                     if (userrptSTLCompleto.rolmenu[0].Ver == true)
-                                     {@*<a href="@Url.Content("~/General/Reporte/FSLT")?tipo=1&id=@Model.ExpedienteId" target="_blank" class="btn btn-default"><i class="fa fa-download"></i>   Reporte  STL</a> @
-                                     <a href="javascript:sut.Procedimiento.FSLT(1,@exp.ExpedienteId)" class="btn btn-default" style="width: 100%;"><i class="fa fa-download"></i>   Reporte  STL</a>
-                                     <a href="javascript:sut.Procedimientame.ReporteFSTLSeleccion(2,@exp.ExpedienteId)" class="btn btn-default" style="width: 100%;"><i class="fa fa-download"></i> Reporte STL Seleccionados</a>}
-                             }
-                             </td>
-                         </tr>*@
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
                     @*JJJMSP2 FIN*@
                     <tr>
                         <td>Descargar Factor TUPA :</td>
@@ -795,8 +777,8 @@
         const procedimientoIds = [];
         const FSTLIds = [];
         sut.Procedimientame = {
-            ReporteFilter: (expedienteId) => {
-                selecion = $("#cbFilterReporte").val();
+            ReporteFilter: (expedienteId, seleccion) => {
+                //selecion = $("#cbFilterReporte").val();
                 if (selecion == 0) {
                     showNotification('top', 'right', 'Seleccione algun reporte', 3);
                 }
