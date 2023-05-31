@@ -21,42 +21,40 @@ using System.Web.Routing;
 
 namespace Sut.Web.Areas.General.Controllers
 {
-
     public class ReporteController : Controller
     {
         public Dictionary<string, Dictionary<string, CuadroCalculo>> cuadro = new Dictionary<string, Dictionary<string, CuadroCalculo>>();
-        string path = ConfigurationManager.AppSettings["Sut.PathUpload"].ToString();
+        readonly string path = ConfigurationManager.AppSettings["Sut.PathUpload"].ToString();
         string pathdocumentos = ConfigurationManager.AppSettings["Sut.PathUploadDocumentos"].ToString();
-        string pathdocumentosCiudadano = ConfigurationManager.AppSettings["Sut.PathUploadDocumentosCiudadano"].ToString();
-        string pathLinkarchivos = ConfigurationManager.AppSettings["Sut.PathLinkarchivos"].ToString();
+        readonly string pathdocumentosCiudadano = ConfigurationManager.AppSettings["Sut.PathUploadDocumentosCiudadano"].ToString();
+        readonly string pathLinkarchivos = ConfigurationManager.AppSettings["Sut.PathLinkarchivos"].ToString();
         /*JJJMSP2*/
-        string pathlogoentidad = ConfigurationManager.AppSettings["Sut.PathLogosentidades"].ToString();
+        readonly string pathlogoentidad = ConfigurationManager.AppSettings["Sut.PathLogosentidades"].ToString();
         string estadoformulario = "";
-        Font fontsTituloNormal = FontFactory.GetFont("Arial", 8, Font.NORMAL);
-        Font fontsTituloNegrita = FontFactory.GetFont("Arial", 10, Font.BOLD);
-        Font fontsSubTituloNormal = FontFactory.GetFont("Arial", 9, Font.BOLD);
-        Font fontsLetraNormal = FontFactory.GetFont("Arial", 7, Font.NORMAL);
-        Font fontssubLetraNormal = FontFactory.GetFont("Arial", 6, Font.NORMAL);
-        Font fontsNormal = FontFactory.GetFont("Arial", 8, Font.NORMAL);
-        Font fontsNormalUnderline = FontFactory.GetFont("Arial", 5, Font.ITALIC + Font.UNDERLINE);
-        Font fontsNegrita = FontFactory.GetFont("Arial", 7, Font.BOLD);
-        Font fontsUnderline = FontFactory.GetFont("Arial", 5, Font.BOLDITALIC + Font.UNDERLINE);
-        Font fontsTransparente = FontFactory.GetFont(FontFactory.TIMES, 5, Font.NORMAL, iTextSharp.text.Color.WHITE);
-        Font fontsCabFooter = FontFactory.GetFont("Arial", 8, Font.BOLD);
-        Font fontsDetalle = FontFactory.GetFont("Arial", 4, Font.NORMAL);
+        readonly Font fontsTituloNormal = FontFactory.GetFont("Arial", 8, Font.NORMAL);
+        readonly Font fontsTituloNegrita = FontFactory.GetFont("Arial", 10, Font.BOLD);
+        readonly Font fontsSubTituloNormal = FontFactory.GetFont("Arial", 9, Font.BOLD);
+        readonly Font fontsLetraNormal = FontFactory.GetFont("Arial", 7, Font.NORMAL);
+        readonly Font fontssubLetraNormal = FontFactory.GetFont("Arial", 6, Font.NORMAL);
+        readonly Font fontsNormal = FontFactory.GetFont("Arial", 8, Font.NORMAL);
+        readonly Font fontsNormalUnderline = FontFactory.GetFont("Arial", 5, Font.ITALIC + Font.UNDERLINE);
+        readonly Font fontsNegrita = FontFactory.GetFont("Arial", 7, Font.BOLD);
+        readonly Font fontsUnderline = FontFactory.GetFont("Arial", 5, Font.BOLDITALIC + Font.UNDERLINE);
+        readonly Font fontsTransparente = FontFactory.GetFont(FontFactory.TIMES, 5, Font.NORMAL, iTextSharp.text.Color.WHITE);
+        readonly Font fontsCabFooter = FontFactory.GetFont("Arial", 8, Font.BOLD);
+        readonly Font fontsDetalle = FontFactory.GetFont("Arial", 4, Font.NORMAL);
 
         ReportDataSource sub_rds1;
         ReportDataSource sub_rds2;
         ReportDataSource sub_rds3;
         ReportDataSource sub_rds4;
         ReportDataSource sub_rds5;
-        ReportDataSource sub_rds8;
+        //ReportDataSource sub_rds8;
         int pagcab;
         int pagcab2;
         int pagcabCompleto;
         int pagcabhoja;
         ReportDataSource sub_rds6;
-
 
         public string[] tipo = new string[8];
 
@@ -86,15 +84,11 @@ namespace Sut.Web.Areas.General.Controllers
         private readonly IInductorService _inductorService;
         private readonly IFactorDedicacionService _factorDedicacionService;
 
-
         private readonly IInductorValorService _inductorValorService;
-
         private readonly IInformeService _InformeService;
-
         private readonly IProcedimientoCargosService _procedimientoCargosService;
         private readonly IProcedimientoCargosApeService _procedimientoCargosApeService;
         private readonly IProcedimientoCargosOtrosService _procedimientoCargosOtrosService;
-
         private readonly IProcedimientoUndOrgResponsableService _ProcedimientoUndOrgResponsableService;
         public ReporteController(IReporteService reporteService,
                                 ITablaAsmeService tablaAsmeService,
@@ -122,10 +116,10 @@ namespace Sut.Web.Areas.General.Controllers
                                 IFactorDedicacionService factorDedicacionService,
                                 IProcedimientoCargosService procedimientoCargosService,
                                 IProcedimientoCargosApeService procedimientoCargosApeService,
-                                        IProcedimientoUndOrgResponsableService procedimientoUndOrgResponsableService,
-                                        IProcedimientoCargosOtrosService procedimientoCargosOtrosService,
-                                        IInformeService informeService,
-                                    IInductorValorService inductorValorService)
+                                IProcedimientoUndOrgResponsableService procedimientoUndOrgResponsableService,
+                                IProcedimientoCargosOtrosService procedimientoCargosOtrosService,
+                                IInformeService informeService,
+                                IInductorValorService inductorValorService)
         {
             _log = new LogService<ReporteController>();
             _reporteService = reporteService;
@@ -153,13 +147,10 @@ namespace Sut.Web.Areas.General.Controllers
             _inductorService = inductorService;
             _factorDedicacionService = factorDedicacionService;
             _InformeService = informeService;
-
             _procedimientoCargosService = procedimientoCargosService;
             _procedimientoCargosApeService = procedimientoCargosApeService;
-
             _ProcedimientoUndOrgResponsableService = procedimientoUndOrgResponsableService;
             _procedimientoCargosOtrosService = procedimientoCargosOtrosService;
-
             _inductorValorService = inductorValorService;
         }
 
@@ -168,7 +159,6 @@ namespace Sut.Web.Areas.General.Controllers
             try
             {
                 var ds = new DataSet1.DescargasDataTable();
-
 
                 Expediente filtro = new Expediente();
                 filtro.ExpedienteId = ExpedienteId;
@@ -185,10 +175,6 @@ namespace Sut.Web.Areas.General.Controllers
 
                 filtro.campo10 = pcampo10;
                 filtro.campo11 = pcampo11;
-
-
-
-
 
                 var data = _expedienteService.GetAllLikePaginRptActividadRPT(filtro);
 
@@ -207,8 +193,6 @@ namespace Sut.Web.Areas.General.Controllers
                     dr["campo10"] = data[i].campo10;
                     dr["campo11"] = data[i].campo11;
                     dr["campo12"] = data[i].campo12;
-
-
                     dr["campo13"] = data[i].campo12;
                     dr["campo14"] = data[i].campo12;
                     dr["campo15"] = data[i].campo12;
@@ -220,21 +204,18 @@ namespace Sut.Web.Areas.General.Controllers
                     dr["campo21"] = data[i].campo12;
                     dr["campo22"] = data[i].campo12;
                     dr["campo23"] = data[i].campo12;
-
                     ds.Rows.Add(dr);
                 }
                 var ruta = "";
                 var nombre = "";
                 if (ptiporeporte == 1)
                 {
-
                     ruta = Server.MapPath("~/Reportes/rptActividades.rdlc");
                     nombre = "Reporte De Duración De Actividades";
                 }
                 else
                 {
                     ruta = Server.MapPath("~/Reportes/rptActividades2.rdlc");
-
                     nombre = "Reporte de Recursos Asignados a Actividades";
                 }
                 ReporteModel rpt = new ReporteModel()
@@ -255,13 +236,6 @@ namespace Sut.Web.Areas.General.Controllers
                 throw ex;
             }
         }
-
-
-
-
-
-
-
 
         public ActionResult AnexoPersonal(long ExpedienteId)
         {
@@ -1037,7 +1011,7 @@ namespace Sut.Web.Areas.General.Controllers
                         }
 
 
-                        NUM = NUM + 1;
+                        NUM = NUM++;
                         ds.Rows.Add(dr);
                     }
                 }
@@ -1141,7 +1115,6 @@ namespace Sut.Web.Areas.General.Controllers
                             dr["Fec_Suspencion_ITSE_Subsanacion"] = DS.Fec_Suspencion_ITSE_Subsanacion;
                         }
 
-
                         if (DS.Fec_Emision_Cert_ITSE == null)
                         {
                             //dr["Fec_Emision_Cert_ITSE"] = DateTime.Parse(dateString);
@@ -1169,19 +1142,10 @@ namespace Sut.Web.Areas.General.Controllers
                             dr["Cod_Acreditacion_Inspector_ITSE"] = DS.Cod_Acreditacion_Inspector_ITSE;
                         }
 
-
                         dr["EntidadId"] = DS.EntidadId;
-
                         //dr["Estado"] = DS.Estado;
-
                         dr["NombreEntidad"] = DS.Entidad.Nombre;
                         dr["Acronimo"] = DS.Entidad.Acronimo;
-
-
-
-
-
-
 
                         if (DS.Renovacion_ITSE == null)
                         {
@@ -1191,7 +1155,6 @@ namespace Sut.Web.Areas.General.Controllers
                         {
                             dr["Renovacion_ITSE"] = DS.Renovacion_ITSE;
                         }
-
 
                         if (DS.EstadoIngreso == 0)
                         {
@@ -1224,17 +1187,13 @@ namespace Sut.Web.Areas.General.Controllers
                             dr["UserModificacion"] = DS.UserModificacion;
                         }
 
-
-
                         //dr["FecModificacion"] = DS.FecModificacion;
-
                         dr["Archivo_Fec_Ing_Sol"] = 0;
                         dr["Archivo_Fec_Emision_Cert_ITSE"] = 0;
                         dr["Archivo_Fec_Notificacion_Cert_ITSE"] = 0;
                         dr["Archivo_Fec_Emision_Licencia_Funcionamiento"] = 0;
                         dr["Archivo_Fec_Notificacion_Licencia_Funcionamiento"] = 0;
                         dr["Archivo_Fec_Suspencion_ITSE_Subsanacion"] = 0;
-
 
                         if (DS.FecModificacion == null)
                         {
@@ -1262,8 +1221,6 @@ namespace Sut.Web.Areas.General.Controllers
                         {
                             dr["Fec_Suspencion_ITSE"] = DS.Fec_Suspencion_ITSE;
                         }
-
-
 
                         if (DS.FecCorte == null)
                         {
@@ -1294,10 +1251,7 @@ namespace Sut.Web.Areas.General.Controllers
                             dr["Eva_Observacion"] = DS.Eva_Observacion;
                         }
                         dr["Eva_Resultado"] = DS.Eva_Resultado;
-
-
-
-                        NUM = NUM + 1;
+                        NUM = NUM++;
                         ds.Rows.Add(dr);
                     }
                 }
@@ -1642,7 +1596,7 @@ namespace Sut.Web.Areas.General.Controllers
                     var lsttablaasme = _tablaAsmeService.GetByProcedimiento(r.ProcedimientoId);
                     foreach (TablaAsme t in lsttablaasme)
                     {
-                        numero = numero + 1;
+                        numero = numero++;
 
                         var dataAsme = _actividadService.GetDataByTablaAsme(t.TablaAsmeId).Where(x => x.Actividad.TipoActividad != TipoActividad.Espera).ToList();
                         //var dataAsme = _actividadService.GetDataByTablaAsmeActividad(TablaAsmeId);
@@ -1806,7 +1760,7 @@ namespace Sut.Web.Areas.General.Controllers
             {
                 var dsFactorTupa = new DataSet1.FactorTupaDataTable();
 
-                Int32 numero = 0;
+                //Int32 numero = 0;
                 FactorDedicacion factorDedicacion = new FactorDedicacion();
 
                 var lstFactorTupa = _AuditoriaService.rptFactorTupa_NoTupa(ExpedienteId);
@@ -2609,7 +2563,6 @@ namespace Sut.Web.Areas.General.Controllers
         }
         private void AdicionarCabecera(Document Doc, long ExpedienteId)
         {
-            //asdasdasd
             var expediente = _expedienteService.GetOne(ExpedienteId);
             var entidad = _entidadService.GetOne(expediente.EntidadId);
             string nombreArchivo = entidad.Logoentidad;
@@ -2617,7 +2570,7 @@ namespace Sut.Web.Areas.General.Controllers
             string sexists;
             sexists = "SIEXISTE";
             Paragraph p = new Paragraph();
-            if (nombreArchivo != null || nombreArchivo != "")
+            if (nombreArchivo != null)
             {
                 srutalogo = Path.Combine(pathlogoentidad, nombreArchivo);
                 if (System.IO.File.Exists(srutalogo))
@@ -2807,10 +2760,10 @@ namespace Sut.Web.Areas.General.Controllers
 
             List<Dato> categorias = _datoService.GetByTipo(TipoDato.CategoriaProcedimiento);
             if (1 == 1) dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.CategoriaProcedimientoId != null ? x.CategoriaProcedimientoId.Value : 0).ToList().OrderBy(x => x.Numero);
-            else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
+            //else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
             var Denominacion = "";
-            int i = 1;
-            int ii = 1;
+            //int i = 1;
+            //int ii = 1;
             //pagcab = 1;
             //pagcab2 = 1;
             MemoryStream stream = new MemoryStream();
@@ -2836,8 +2789,8 @@ namespace Sut.Web.Areas.General.Controllers
             }
             else
             {
-                pagcab = pagcab + 1;
-                i = 1;
+                pagcab = pagcab++;
+                //i = 1;
                 foreach (Procedimiento proc in dataProc)
                 {
                     var cat = categorias.Single(x => x.MetaDatoId == proc.CategoriaProcedimientoId);
@@ -2857,7 +2810,7 @@ namespace Sut.Web.Areas.General.Controllers
             if (estadoformulario != "")
             {
                 ///añadir los formulario
-                pagcab = pagcab + 1;
+                pagcab = pagcab++;
                 foreach (Procedimiento pr in dataProc)
                 {
 
@@ -3038,9 +2991,9 @@ namespace Sut.Web.Areas.General.Controllers
 
             List<Dato> categorias = _datoService.GetByTipo(TipoDato.CategoriaProcedimiento);
             if (1 == 1) dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.CategoriaProcedimientoId != null ? x.CategoriaProcedimientoId.Value : 0).ToList().OrderBy(x => x.Numero);
-            else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
+            //else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
             var nom = "";
-            var nomtitulo = "";
+            //var nomtitulo = "";
             var Denominacion = "";
             int i = 1;
             int ii = 1;
@@ -3068,7 +3021,7 @@ namespace Sut.Web.Areas.General.Controllers
                         celda.Add(fnChunk("  1." + i + " " + cat.Nombre, (int)Fuente.FuenteNormal));
                         tdatos.AddCell(celda);
                         nom = cat.Nombre;
-                        i = i + 1;
+                        i = i++;
 
                         celda = new Cell();
                         celda.Border = 0;
@@ -3118,7 +3071,7 @@ namespace Sut.Web.Areas.General.Controllers
             //                celda.Add(fnChunk("  1." + i + " " + proc2.UndOrgReconsideracion.Nombre, (int)Fuente.FuenteNormal));
             //                tdatos.AddCell(celda);
             //                nom = proc2.UndOrgReconsideracion.Nombre;
-            //                i = i + 1;
+            //                i = i++;
 
             //                celda = new Cell();
             //                celda.Border = 0;
@@ -3168,7 +3121,7 @@ namespace Sut.Web.Areas.General.Controllers
             celda.VerticalAlignment = Element.ALIGN_RIGHT;
             celda.Add(fnChunk("N° " + pagcab, (int)Fuente.FuenteNormal));
             tdatos.AddCell(celda);
-            pagcab = pagcab + 1;
+            pagcab = pagcab++;
             i = 1;
             foreach (Procedimiento proc in dataProc)
             {
@@ -3187,7 +3140,7 @@ namespace Sut.Web.Areas.General.Controllers
                         celda.Add(fnChunk("  2." + i + " " + cat.Nombre, (int)Fuente.FuenteNormal));
                         tdatos.AddCell(celda);
                         nom = cat.Nombre;
-                        i = i + 1;
+                        i = i++;
 
                         celda = new Cell();
                         celda.Border = 0;
@@ -3221,7 +3174,7 @@ namespace Sut.Web.Areas.General.Controllers
 
             }
 
-            //pagcab = pagcab + 1;
+            //pagcab = pagcab++;
             celda = new Cell();
             celda.Border = 0;
             celda.BorderWidth = 0;
@@ -3239,7 +3192,7 @@ namespace Sut.Web.Areas.General.Controllers
             tdatos.AddCell(celda);
 
             ///añadir los formulario
-            pagcab = pagcab + 1;
+            pagcab = pagcab++;
 
             string nombreduplicado = "";
             foreach (Procedimiento pr in dataProc)
@@ -3490,9 +3443,9 @@ namespace Sut.Web.Areas.General.Controllers
 
             List<Dato> categorias = _datoService.GetByTipo(TipoDato.CategoriaProcedimiento);
             if (1 == 1) dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.CategoriaProcedimientoId != null ? x.CategoriaProcedimientoId.Value : 0).ToList().OrderBy(x => x.Numero);
-            else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
+            //else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
             var nom = "";
-            var nomtitulo = "";
+            //var nomtitulo = "";
             var Denominacion = "";
             int i = 1;
             int ii = 1;
@@ -3521,7 +3474,7 @@ namespace Sut.Web.Areas.General.Controllers
                         celda.Add(fnChunk("  1." + i + " " + cat.Nombre, (int)Fuente.FuenteNormal));
                         tdatos.AddCell(celda);
                         nom = cat.Nombre;
-                        i = i + 1;
+                        i = i++;
 
                         celda = new Cell();
                         celda.Border = 0;
@@ -3569,7 +3522,7 @@ namespace Sut.Web.Areas.General.Controllers
             celda.VerticalAlignment = Element.ALIGN_RIGHT;
             celda.Add(fnChunk("N° " + pagcab, (int)Fuente.FuenteNormal));
             tdatos.AddCell(celda);
-            pagcab = pagcab + 1;
+            pagcab = pagcab++;
             i = 1;
             foreach (Procedimiento proc in dataProc)
             {
@@ -3589,7 +3542,7 @@ namespace Sut.Web.Areas.General.Controllers
                         celda.Add(fnChunk("  2." + i + " " + cat.Nombre, (int)Fuente.FuenteNormal));
                         tdatos.AddCell(celda);
                         nom = cat.Nombre;
-                        i = i + 1;
+                        i = i++;
 
                         celda = new Cell();
                         celda.Border = 0;
@@ -3623,7 +3576,7 @@ namespace Sut.Web.Areas.General.Controllers
 
             }
 
-            //pagcab = pagcab + 1;
+            //pagcab = pagcab++;
             celda = new Cell();
             celda.Border = 0;
             celda.BorderWidth = 0;
@@ -3641,7 +3594,7 @@ namespace Sut.Web.Areas.General.Controllers
             tdatos.AddCell(celda);
 
             ///añadir los formulario
-            pagcab = pagcab + 1;
+            pagcab = pagcab++;
 
             string nombreduplicado = "";
 
@@ -3677,7 +3630,7 @@ namespace Sut.Web.Areas.General.Controllers
                             var n = Rd.NumberOfPages;
                             if (n != 1)
                             {
-                                pagcabCompleto = pagcabCompleto + 1;
+                                pagcabCompleto = pagcabCompleto++;
                                 vercont = 1;
                             }
                             else
@@ -3961,9 +3914,9 @@ namespace Sut.Web.Areas.General.Controllers
 
             List<Dato> categorias = _datoService.GetByTipo(TipoDato.CategoriaProcedimiento);
             if (1 == 1) dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.CategoriaProcedimientoId != null ? x.CategoriaProcedimientoId.Value : 0).ToList().OrderBy(x => x.Numero);
-            else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
+            //else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
             var nom = "";
-            var nomtitulo = "";
+            //var nomtitulo = "";
             var Denominacion = "";
             int i = 1;
             int ii = 1;
@@ -3999,7 +3952,7 @@ namespace Sut.Web.Areas.General.Controllers
                         celda.Add(fnChunk("1." + i + " " + cat.Nombre, (int)Fuente.FuenteNormal));
                         tdatos.AddCell(celda);
                         nom = cat.Nombre;
-                        i = i + 1;
+                        i = i++;
 
                         celda = new Cell();
                         celda.Border = 0;
@@ -4027,7 +3980,7 @@ namespace Sut.Web.Areas.General.Controllers
                         n = Rd.NumberOfPages;
                         if (n != 1)
                         {
-                            pagcabCompleto = pagcabCompleto + 1;
+                            pagcabCompleto = pagcabCompleto++;
                             vercont = 1;
                         }
                         else
@@ -4054,7 +4007,7 @@ namespace Sut.Web.Areas.General.Controllers
                         //pagcab = pagcab + 2;
                     }
 
-                    contpag = contpag + 1;
+                    contpag = contpag++;
                 }
             }
 
@@ -4080,7 +4033,7 @@ namespace Sut.Web.Areas.General.Controllers
             celda.VerticalAlignment = Element.ALIGN_RIGHT;
             celda.Add(fnChunk("N° " + pagcabCompleto, (int)Fuente.FuenteNormal));
             tdatos.AddCell(celda);
-            //pagcab = pagcab + 1;
+            //pagcab = pagcab++;
             i = 1;
             contpag = 0;
             vercont = 0;
@@ -4113,7 +4066,7 @@ namespace Sut.Web.Areas.General.Controllers
                         celda.Add(fnChunk("2." + i + " " + cat.Nombre, (int)Fuente.FuenteNormal));
                         tdatos.AddCell(celda);
                         nom = cat.Nombre;
-                        i = i + 1;
+                        i = i++;
 
                         celda = new Cell();
                         celda.Border = 0;
@@ -4142,7 +4095,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                         if (n != 1)
                         {
-                            pagcabCompleto = pagcabCompleto + 1;
+                            pagcabCompleto = pagcabCompleto++;
                             vercont = 1;
                         }
                         else
@@ -4169,7 +4122,7 @@ namespace Sut.Web.Areas.General.Controllers
 
 
                     }
-                    contpag = contpag + 1;
+                    contpag = contpag++;
                 }
 
             }
@@ -4179,7 +4132,7 @@ namespace Sut.Web.Areas.General.Controllers
             n = Rd.NumberOfPages;
             pagcabCompleto = pagcabCompleto + n;
 
-            //pagcab = pagcab + 1;
+            //pagcab = pagcab++;
             celda = new Cell();
             celda.Border = 0;
             celda.BorderWidth = 0;
@@ -4197,7 +4150,7 @@ namespace Sut.Web.Areas.General.Controllers
             tdatos.AddCell(celda);
 
             ///añadir los formulario
-            //pagcab = pagcab + 1;
+            //pagcab = pagcab++;
 
             string nombreduplicado = "";
             vercont = 0;
@@ -4233,7 +4186,7 @@ namespace Sut.Web.Areas.General.Controllers
                             n = Rd.NumberOfPages;
                             if (n != 1)
                             {
-                                pagcabCompleto = pagcabCompleto + 1;
+                                pagcabCompleto = pagcabCompleto++;
                                 vercont = 1;
                             }
                             else
@@ -4293,7 +4246,7 @@ namespace Sut.Web.Areas.General.Controllers
             rut = @pathdocumentos + "Archivo" + ExpedienteId + "_Sedes.pdf";
             Rd = new PdfReader(rut);
             n = Rd.NumberOfPages;
-            pagcabCompleto = pagcabCompleto + 1;
+            pagcabCompleto = pagcabCompleto++;
 
 
             //celda = new Cell();
@@ -4463,20 +4416,15 @@ namespace Sut.Web.Areas.General.Controllers
             celda.Add(fnChunk(" ", (int)Fuente.FuenteNormal));
             tlineablanco.AddCell(celda);
             Doc.Add(tlineablanco);
-
             Doc.Add(tdatos);
-
             Doc.Close();
-
 
         }
         private void GenerarProceAdm(Document Doc, long ExpedienteId, List<long> ProcedimientoIds, PdfWriter writer)
         {
-
             List<ItemIndice> lstIndice = new List<ItemIndice>();
             var expediente = _expedienteService.GetOne(ExpedienteId);
             var entidad = _entidadService.GetOne(expediente.EntidadId);
-
             var dataProc = _procedimientoService.GetByExpediente(ExpedienteId).ToList().Where(x => ProcedimientoIds.Contains(x.ProcedimientoId)).OrderBy(x => x.Numero);
             var dataReq = _requisitoService.GetByExpediente(ExpedienteId).OrderBy(x => x.RecNum).Where(x => ProcedimientoIds.Contains(x.ProcedimientoId) && x.Eliminado != 3);
             var dataAsme = _tablaAsmeService.GetByExpediente(ExpedienteId).Where(x => ProcedimientoIds.Contains(x.ProcedimientoId));
@@ -4546,7 +4494,7 @@ namespace Sut.Web.Areas.General.Controllers
             //generacion de los reportes formato tupa por procedimento
             List<Dato> categorias = _datoService.GetByTipo(TipoDato.CategoriaProcedimiento);
             if (1 == 1) dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.CategoriaProcedimientoId != null ? x.CategoriaProcedimientoId.Value : 0).ToList().OrderBy(x => x.Numero);
-            else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
+            //else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
             int sededat = 0;
 
             int contpag = 0;
@@ -4835,7 +4783,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     Generales = Generales + "\n" + req.RecNum + ".- " + req.Nombre + "\n";
                                 }
 
-                                idGenerales = idGenerales + 1;
+                                idGenerales = idGenerales++;
 
                             }
                         }
@@ -4867,7 +4815,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     Generales = Generales + "\n" + "" + req.Nombre + "\n";
                                 }
 
-                                idGenerales = idGenerales + 1;
+                                idGenerales = idGenerales++;
 
                             }
                         }
@@ -4906,7 +4854,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     Nota = Nota + "\n" + req.RecNum + ".- " + req.Nombre;
                                 }
 
-                                idnota = idnota + 1;
+                                idnota = idnota++;
                             }
                         }
                     }
@@ -4940,7 +4888,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     Nota = Nota + "\n" + "" + req.Nombre + "\n";
                                 }
 
-                                idnota = idnota + 1;
+                                idnota = idnota++;
                             }
                         }
                     }
@@ -6229,7 +6177,7 @@ namespace Sut.Web.Areas.General.Controllers
                                 String ver = proc.ProcedimientoId.ToString();
                             }
 
-                            sededat3 = sededat3 + 1;
+                            sededat3 = sededat3++;
 
                         }
 
@@ -6250,7 +6198,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     {
 
                                         sedes = sedes + ", " + item2.Sede.Nombre;
-                                        valor = valor + 1;
+                                        valor = valor++;
 
                                         if (item2.UndOrgRecepcionDocumentos[i].UnidadOrganica == null)
                                         {
@@ -6295,8 +6243,8 @@ namespace Sut.Web.Areas.General.Controllers
                                 unidad = unidad + "\n" + nom;
                             }
                             //}
-                            idvalor = valor + 1;
-                            sededat4 = sededat4 + 1;
+                            idvalor = valor++;
+                            sededat4 = sededat4++;
                         }
                     }
 
@@ -6318,7 +6266,7 @@ namespace Sut.Web.Areas.General.Controllers
                     Doc.Add(tableunidad);
 
 
-                    sededat = sededat + 1;
+                    sededat = sededat++;
 
                     //inicio
                     Table tdatos13 = new Table(5);
@@ -8067,7 +8015,7 @@ namespace Sut.Web.Areas.General.Controllers
                             }
                         }
 
-                        sedebase = sedebase + 1;
+                        sedebase = sedebase++;
 
                     }
                     Doc.Add(tdatos4);
@@ -8085,10 +8033,6 @@ namespace Sut.Web.Areas.General.Controllers
                 cb.Stroke();
             }
             //fin grupo
-
-
-
-
         }
 
 
@@ -8111,7 +8055,7 @@ namespace Sut.Web.Areas.General.Controllers
             rutpag = @pathdocumentos + "Archivo" + ExpedienteId + "_tituloProce.pdf";
             Rdpag = new PdfReader(rutpag);
             npag = Rdpag.NumberOfPages;
-            pagcabhoja = pagcabhoja + npag + 1;
+            pagcabhoja = pagcabhoja + npag++;
 
 
 
@@ -8504,7 +8448,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     Generales = Generales + "\n" + req.RecNum + ".- " + req.Nombre + "\n";
                                 }
 
-                                idGenerales = idGenerales + 1;
+                                idGenerales = idGenerales++;
 
                             }
                         }
@@ -8536,7 +8480,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     Generales = Generales + "\n" + "" + req.Nombre + "\n";
                                 }
 
-                                idGenerales = idGenerales + 1;
+                                idGenerales = idGenerales++;
 
                             }
                         }
@@ -8575,7 +8519,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     Nota = Nota + "\n" + req.RecNum + ".- " + req.Nombre;
                                 }
 
-                                idnota = idnota + 1;
+                                idnota = idnota++;
                             }
                         }
                     }
@@ -8609,7 +8553,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     Nota = Nota + "\n" + "" + req.Nombre + "\n";
                                 }
 
-                                idnota = idnota + 1;
+                                idnota = idnota++;
                             }
                         }
                     }
@@ -9905,7 +9849,7 @@ namespace Sut.Web.Areas.General.Controllers
                                 String ver = proc.ProcedimientoId.ToString();
                             }
 
-                            sededat3 = sededat3 + 1;
+                            sededat3 = sededat3++;
 
                         }
 
@@ -9926,7 +9870,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     {
 
                                         sedes = sedes + ", " + item2.Sede.Nombre;
-                                        valor = valor + 1;
+                                        valor = valor++;
 
                                         if (item2.UndOrgRecepcionDocumentos[i].UnidadOrganica == null)
                                         {
@@ -9971,8 +9915,8 @@ namespace Sut.Web.Areas.General.Controllers
                                 unidad = unidad + "\n" + nom;
                             }
                             //}
-                            idvalor = valor + 1;
-                            sededat4 = sededat4 + 1;
+                            idvalor = valor++;
+                            sededat4 = sededat4++;
                         }
                     }
 
@@ -9994,7 +9938,7 @@ namespace Sut.Web.Areas.General.Controllers
                     Doc.Add(tableunidad);
 
 
-                    sededat = sededat + 1;
+                    sededat = sededat++;
 
                     //inicio
                     Table tdatos13 = new Table(5);
@@ -11739,7 +11683,7 @@ namespace Sut.Web.Areas.General.Controllers
                             }
                         }
 
-                        sedebase = sedebase + 1;
+                        sedebase = sedebase++;
 
                     }
                     cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
@@ -11762,7 +11706,7 @@ namespace Sut.Web.Areas.General.Controllers
                     Rdpag = new PdfReader(rutpag);
                     npag = Rdpag.NumberOfPages;
 
-                    contpag = contpag + 1;
+                    contpag = contpag++;
                     //Doc.NewPage();
                     pagcabhoja = pagcabhoja + npag;
 
@@ -11818,7 +11762,7 @@ namespace Sut.Web.Areas.General.Controllers
             //generacion de los reportes formato tupa por procedimento
             List<Dato> categorias = _datoService.GetByTipo(TipoDato.CategoriaProcedimiento);
             if (1 == 1) dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.CategoriaProcedimientoId != null ? x.CategoriaProcedimientoId.Value : 0).ToList().OrderBy(x => x.Numero);
-            else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
+            //else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
             int sededat = 0;
 
             int contpag = 0;
@@ -12167,7 +12111,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     Generales = Generales + "\n" + req.RecNum + ".- " + req.Nombre + "\n";
                                 }
 
-                                idGenerales = idGenerales + 1;
+                                idGenerales = idGenerales++;
 
                             }
                         }
@@ -12199,7 +12143,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     Generales = Generales + "\n" + "" + req.Nombre + "\n";
                                 }
 
-                                idGenerales = idGenerales + 1;
+                                idGenerales = idGenerales++;
 
                             }
                         }
@@ -12238,7 +12182,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     Nota = Nota + "\n" + req.RecNum + ".- " + req.Nombre;
                                 }
 
-                                idnota = idnota + 1;
+                                idnota = idnota++;
                             }
                         }
                     }
@@ -12272,7 +12216,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     Nota = Nota + "\n" + "" + req.Nombre + "\n";
                                 }
 
-                                idnota = idnota + 1;
+                                idnota = idnota++;
                             }
                         }
                     }
@@ -13568,7 +13512,7 @@ namespace Sut.Web.Areas.General.Controllers
                                 String ver = proc.ProcedimientoId.ToString();
                             }
 
-                            sededat3 = sededat3 + 1;
+                            sededat3 = sededat3++;
 
                         }
 
@@ -13589,7 +13533,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     {
 
                                         sedes = sedes + ", " + item2.Sede.Nombre;
-                                        valor = valor + 1;
+                                        valor = valor++;
 
                                         if (item2.UndOrgRecepcionDocumentos[i].UnidadOrganica == null)
                                         {
@@ -13634,8 +13578,8 @@ namespace Sut.Web.Areas.General.Controllers
                                 unidad = unidad + "\n" + nom;
                             }
                             //}
-                            idvalor = valor + 1;
-                            sededat4 = sededat4 + 1;
+                            idvalor = valor++;
+                            sededat4 = sededat4++;
                         }
                     }
 
@@ -13657,7 +13601,7 @@ namespace Sut.Web.Areas.General.Controllers
                     Doc.Add(tableunidad);
 
 
-                    sededat = sededat + 1;
+                    sededat = sededat++;
 
                     //inicio
                     Table tdatos13 = new Table(5);
@@ -15402,7 +15346,7 @@ namespace Sut.Web.Areas.General.Controllers
                             }
                         }
 
-                        sedebase = sedebase + 1;
+                        sedebase = sedebase++;
 
                     }
                     cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
@@ -15425,7 +15369,7 @@ namespace Sut.Web.Areas.General.Controllers
                     Rdpag = new PdfReader(rutpag);
                     npag = Rdpag.NumberOfPages;
 
-                    contpag = contpag + 1;
+                    contpag = contpag++;
                     //Doc.NewPage();
                     pagcabhoja = pagcabhoja + npag;
 
@@ -15604,11 +15548,9 @@ namespace Sut.Web.Areas.General.Controllers
 
             try
             {
-
                 List<ItemIndice> lstIndice = new List<ItemIndice>();
                 var expediente = _expedienteService.GetOne(ExpedienteId);
                 var entidad = _entidadService.GetOne(expediente.EntidadId);
-
                 var dataProc = _procedimientoService.GetByExpediente(ExpedienteId).ToList().Where(x => ProcedimientoIds.Contains(x.ProcedimientoId)).OrderBy(x => x.Numero);
                 var dataReq = _requisitoService.GetByExpediente(ExpedienteId).OrderBy(x => x.RecNum).Where(x => ProcedimientoIds.Contains(x.ProcedimientoId) && x.Eliminado != 3);
                 var dataAsme = _tablaAsmeService.GetByExpediente(ExpedienteId).Where(x => ProcedimientoIds.Contains(x.ProcedimientoId));
@@ -15651,12 +15593,16 @@ namespace Sut.Web.Areas.General.Controllers
                 //generacion de los reportes formato tupa por procedimento
                 List<Dato> categorias = _datoService.GetByTipo(TipoDato.CategoriaProcedimiento);
                 if (1 == 1) dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.CategoriaProcedimientoId != null ? x.CategoriaProcedimientoId.Value : 0).ToList().OrderBy(x => x.Numero);
-                else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
+                //else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
                 int sededat = 0;
-
+                int contpag = 0;
                 MemoryStream stream = new MemoryStream();
                 foreach (Procedimiento proc in dataProc)
                 {
+                    if (contpag == 1)
+                    {
+                        Doc.NewPage();
+                    }
                     proc.TablaAsme = proc.TablaAsme.OrderBy(x => x.TablaAsmeId).ToList();
                     cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
                     cb.Stroke();
@@ -15932,7 +15878,7 @@ namespace Sut.Web.Areas.General.Controllers
                         //        {
                         //            Generales = Generales + "\n\n" + req.RecNum + ".- " + req.Nombre;
                         //        }
-                        //        idGenerales = idGenerales + 1;
+                        //        idGenerales = idGenerales++;
                         //    }
                         //}
                         if (proc.sinnotas == 0)
@@ -15962,7 +15908,7 @@ namespace Sut.Web.Areas.General.Controllers
                                         Generales = Generales + "\n" + req.RecNum + ".- " + req.Nombre;
                                     }
 
-                                    idGenerales = idGenerales + 1;
+                                    idGenerales = idGenerales++;
 
                                 }
                             }
@@ -15994,7 +15940,7 @@ namespace Sut.Web.Areas.General.Controllers
                                         Generales = Generales + "\n" + "        " + req.Nombre + "\n";
                                     }
 
-                                    idGenerales = idGenerales + 1;
+                                    idGenerales = idGenerales++;
 
                                 }
                             }
@@ -16018,7 +15964,7 @@ namespace Sut.Web.Areas.General.Controllers
                         //            Nota = Nota + "\n\n" + idnota + ".- " + req.Nombre;
                         //        }
 
-                        //        idnota = idnota + 1;
+                        //        idnota = idnota++;
                         //    }
                         //}
 
@@ -16051,7 +15997,7 @@ namespace Sut.Web.Areas.General.Controllers
                                         Nota = Nota + "\n" + req.RecNum + ".- " + req.Nombre;
                                     }
 
-                                    idnota = idnota + 1;
+                                    idnota = idnota++;
                                 }
                             }
                         }
@@ -16085,7 +16031,7 @@ namespace Sut.Web.Areas.General.Controllers
                                         Nota = Nota + "\n" + "        " + req.Nombre + "\n";
                                     }
 
-                                    idnota = idnota + 1;
+                                    idnota = idnota++;
                                 }
                             }
                         }
@@ -16430,7 +16376,7 @@ namespace Sut.Web.Areas.General.Controllers
                         //Pago por derecho de Tramitación 
 
                         string tramite = "";
-                        string monto = "";
+                        //string monto = "";
 
                         for (int i = 0; i < proc.TablaAsme.Count(); i++)
                         {
@@ -16637,7 +16583,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     {
                                         if (proc.CodigoCorto == "PE123299E43" || proc.CodigoCorto == "PA128013BA" || proc.CodigoCorto == "PA19002B5F")
                                         {
-                                            tramite = tramite;
+                                            //tramite = tramite;
                                         }
                                         else
                                         {
@@ -17079,7 +17025,7 @@ namespace Sut.Web.Areas.General.Controllers
                         tdatossedes.HorizontalAlignment = Element.ALIGN_LEFT;
 
 
-                        string sedehora = "";
+                        //string sedehora = "";
                         foreach (var item in dataSede.Where(x => x.ProcedimientoId == proc.ProcedimientoId))
                         {
                             var horario = (item.Sede.EsLunesViernes ? (item.Sede.TipoTurno == "C" ?
@@ -17260,7 +17206,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                                 }
 
-                                sededat3 = sededat3 + 1;
+                                sededat3 = sededat3++;
 
                             }
 
@@ -17284,7 +17230,7 @@ namespace Sut.Web.Areas.General.Controllers
                                             {
 
                                                 sedes = sedes + ", " + item2.Sede.Nombre;
-                                                valor = valor + 1;
+                                                valor = valor++;
 
                                                 nomb = item2.UndOrgRecepcionDocumentos[i].UnidadOrganica.Nombre.ToString();
                                             }
@@ -17326,8 +17272,8 @@ namespace Sut.Web.Areas.General.Controllers
                                     unidad = unidad + "\n" + nom;
                                 }
                                 //}
-                                idvalor = valor + 1;
-                                sededat4 = sededat4 + 1;
+                                idvalor = valor++;
+                                sededat4 = sededat4++;
                             }
                         }
 
@@ -17348,7 +17294,7 @@ namespace Sut.Web.Areas.General.Controllers
                         tableunidad.AddCell(cellunidad);
                         Doc.Add(tableunidad);
 
-                        sededat = sededat + 1;
+                        sededat = sededat++;
 
                         //inicio
                         Table tdatos13 = new Table(5);
@@ -17931,25 +17877,22 @@ namespace Sut.Web.Areas.General.Controllers
 
                                 }
 
-                                sedebase = sedebase + 1;
+                                sedebase = sedebase++;
 
                             }
                         }
-
-
-
 
                         Doc.Add(tdatos4);
 
                         cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
                         cb.Stroke();
 
-                        Doc.NewPage();
+                        contpag = 1; 
+                        // Doc.NewPage();
 
                         cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
                         cb.Stroke();
                     }
-
                 }
                 //fin grupo
             }
@@ -17966,7 +17909,7 @@ namespace Sut.Web.Areas.General.Controllers
 
             try
             {
-                pagcabhoja = pagcabhoja + 1;
+                pagcabhoja = pagcabhoja++;
                 List<ItemIndice> lstIndice = new List<ItemIndice>();
                 var expediente = _expedienteService.GetOne(ExpedienteId);
                 var entidad = _entidadService.GetOne(expediente.EntidadId);
@@ -18370,7 +18313,7 @@ namespace Sut.Web.Areas.General.Controllers
                                         Generales = Generales + "\n" + req.RecNum + ".- " + req.Nombre;
                                     }
 
-                                    idGenerales = idGenerales + 1;
+                                    idGenerales = idGenerales++;
 
                                 }
                             }
@@ -18402,7 +18345,7 @@ namespace Sut.Web.Areas.General.Controllers
                                         Generales = Generales + "\n" + "        " + req.Nombre + "\n";
                                     }
 
-                                    idGenerales = idGenerales + 1;
+                                    idGenerales = idGenerales++;
 
                                 }
                             }
@@ -18441,7 +18384,7 @@ namespace Sut.Web.Areas.General.Controllers
                                         Nota = Nota + "\n" + req.RecNum + ".- " + req.Nombre;
                                     }
 
-                                    idnota = idnota + 1;
+                                    idnota = idnota++;
                                 }
                             }
                         }
@@ -18475,7 +18418,7 @@ namespace Sut.Web.Areas.General.Controllers
                                         Nota = Nota + "\n" + "        " + req.Nombre + "\n";
                                     }
 
-                                    idnota = idnota + 1;
+                                    idnota = idnota++;
                                 }
                             }
                         }
@@ -19416,7 +19359,7 @@ namespace Sut.Web.Areas.General.Controllers
                         tdatossedes.HorizontalAlignment = Element.ALIGN_LEFT;
 
 
-                        string sedehora = "";
+                        //string sedehora = "";
                         foreach (var item in dataSede.Where(x => x.ProcedimientoId == proc.ProcedimientoId))
                         {
                             var horario = (item.Sede.EsLunesViernes ? (item.Sede.TipoTurno == "C" ?
@@ -19466,9 +19409,6 @@ namespace Sut.Web.Areas.General.Controllers
 
                         //Doc.Add(tdatossedes);
 
-
-
-
                         //inicio
                         Table tdatos12 = new Table(2);
                         int[] widths12 = new int[2];
@@ -19481,10 +19421,6 @@ namespace Sut.Web.Areas.General.Controllers
                         tdatos12.BorderWidth = 0;
                         tdatos12.Padding = 2;
                         tdatos12.DefaultHorizontalAlignment = Element.ALIGN_LEFT;
-
-
-
-
 
                         celda = new Cell();
                         celda.Border = 0;
@@ -19567,13 +19503,8 @@ namespace Sut.Web.Areas.General.Controllers
                                         var mensaje = "Error message: " + e.Message;
 
                                     }
-
-
-
                                 }
-
-                                sededat3 = sededat3 + 1;
-
+                                sededat3 = sededat3++;
                             }
 
                             string nom = string.Empty;
@@ -19596,7 +19527,7 @@ namespace Sut.Web.Areas.General.Controllers
                                             {
 
                                                 sedes = sedes + ", " + item2.Sede.Nombre;
-                                                valor = valor + 1;
+                                                valor = valor++;
 
                                                 nomb = item2.UndOrgRecepcionDocumentos[i].UnidadOrganica.Nombre.ToString();
                                             }
@@ -19622,8 +19553,8 @@ namespace Sut.Web.Areas.General.Controllers
                                     unidad = unidad + "\n" + nom;
                                 }
                                 //}
-                                idvalor = valor + 1;
-                                sededat4 = sededat4 + 1;
+                                idvalor = valor++;
+                                sededat4 = sededat4++;
                             }
                         }
 
@@ -19644,7 +19575,7 @@ namespace Sut.Web.Areas.General.Controllers
                         tableunidad.AddCell(cellunidad);
                         Doc.Add(tableunidad);
 
-                        sededat = sededat + 1;
+                        sededat = sededat++;
 
                         //inicio
                         Table tdatos13 = new Table(5);
@@ -20112,7 +20043,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                                 }
 
-                                sedebase = sedebase + 1;
+                                sedebase = sedebase++;
 
                             }
                         }
@@ -20128,7 +20059,7 @@ namespace Sut.Web.Areas.General.Controllers
                         cb.Stroke();
 
                         Doc.Close();
-                        //contpag = contpag + 1; 
+                        //contpag = contpag++; 
                         cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
                         cb.Stroke();
 
@@ -20137,7 +20068,7 @@ namespace Sut.Web.Areas.General.Controllers
                         PdfReader Rdpag = new PdfReader(rutpag);
                         var npag = Rdpag.NumberOfPages;
 
-                        contpag = contpag + 1;
+                        contpag = contpag++;
                         //Doc.NewPage();
                         pagcabhoja = pagcabhoja + npag;
 
@@ -20163,7 +20094,7 @@ namespace Sut.Web.Areas.General.Controllers
 
             try
             {
-                pagcabhoja = pagcabhoja + 1;
+                pagcabhoja = pagcabhoja++;
                 List<ItemIndice> lstIndice = new List<ItemIndice>();
                 var expediente = _expedienteService.GetOne(ExpedienteId);
                 var entidad = _entidadService.GetOne(expediente.EntidadId);
@@ -20202,7 +20133,7 @@ namespace Sut.Web.Areas.General.Controllers
                 //generacion de los reportes formato tupa por procedimento
                 List<Dato> categorias = _datoService.GetByTipo(TipoDato.CategoriaProcedimiento);
                 if (1 == 1) dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.CategoriaProcedimientoId != null ? x.CategoriaProcedimientoId.Value : 0).ToList().OrderBy(x => x.Numero);
-                else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
+                //else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
                 int sededat = 0;
                 int contpag = 0;
                 MemoryStream stream = new MemoryStream();
@@ -20559,7 +20490,7 @@ namespace Sut.Web.Areas.General.Controllers
                                         Generales = Generales + "\n" + req.RecNum + ".- " + req.Nombre;
                                     }
 
-                                    idGenerales = idGenerales + 1;
+                                    idGenerales = idGenerales++;
 
                                 }
                             }
@@ -20591,7 +20522,7 @@ namespace Sut.Web.Areas.General.Controllers
                                         Generales = Generales + "\n" + "        " + req.Nombre + "\n";
                                     }
 
-                                    idGenerales = idGenerales + 1;
+                                    idGenerales = idGenerales++;
 
                                 }
                             }
@@ -20630,7 +20561,7 @@ namespace Sut.Web.Areas.General.Controllers
                                         Nota = Nota + "\n" + req.RecNum + ".- " + req.Nombre;
                                     }
 
-                                    idnota = idnota + 1;
+                                    idnota = idnota++;
                                 }
                             }
                         }
@@ -20664,7 +20595,7 @@ namespace Sut.Web.Areas.General.Controllers
                                         Nota = Nota + "\n" + "        " + req.Nombre + "\n";
                                     }
 
-                                    idnota = idnota + 1;
+                                    idnota = idnota++;
                                 }
                             }
                         }
@@ -21010,7 +20941,7 @@ namespace Sut.Web.Areas.General.Controllers
                         //Pago por derecho de Tramitación 
 
                         string tramite = "";
-                        string monto = "";
+                        //string monto = "";
                         cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
                         cb.Stroke();
                         for (int i = 0; i < proc.TablaAsme.Count(); i++)
@@ -21599,7 +21530,7 @@ namespace Sut.Web.Areas.General.Controllers
                         tdatossedes.HorizontalAlignment = Element.ALIGN_LEFT;
 
 
-                        string sedehora = "";
+                        //string sedehora = "";
                         foreach (var item in dataSede.Where(x => x.ProcedimientoId == proc.ProcedimientoId))
                         {
                             var horario = (item.Sede.EsLunesViernes ? (item.Sede.TipoTurno == "C" ?
@@ -21755,7 +21686,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                                 }
 
-                                sededat3 = sededat3 + 1;
+                                sededat3 = sededat3++;
 
                             }
 
@@ -21779,7 +21710,7 @@ namespace Sut.Web.Areas.General.Controllers
                                             {
 
                                                 sedes = sedes + ", " + item2.Sede.Nombre;
-                                                valor = valor + 1;
+                                                valor = valor++;
 
                                                 nomb = item2.UndOrgRecepcionDocumentos[i].UnidadOrganica.Nombre.ToString();
                                             }
@@ -21805,8 +21736,8 @@ namespace Sut.Web.Areas.General.Controllers
                                     unidad = unidad + "\n" + nom;
                                 }
                                 //}
-                                idvalor = valor + 1;
-                                sededat4 = sededat4 + 1;
+                                idvalor = valor++;
+                                sededat4 = sededat4++;
                             }
                         }
 
@@ -21827,7 +21758,7 @@ namespace Sut.Web.Areas.General.Controllers
                         tableunidad.AddCell(cellunidad);
                         Doc.Add(tableunidad);
 
-                        sededat = sededat + 1;
+                        sededat = sededat++;
 
                         //inicio
                         Table tdatos13 = new Table(5);
@@ -22295,7 +22226,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                                 }
 
-                                sedebase = sedebase + 1;
+                                sedebase = sedebase++;
 
                             }
                         }
@@ -22311,7 +22242,7 @@ namespace Sut.Web.Areas.General.Controllers
                         cb.Stroke();
 
                         Doc.Close();
-                        //contpag = contpag + 1; 
+                        //contpag = contpag++; 
                         cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
                         cb.Stroke();
 
@@ -22320,7 +22251,7 @@ namespace Sut.Web.Areas.General.Controllers
                         PdfReader Rdpag = new PdfReader(rutpag);
                         var npag = Rdpag.NumberOfPages;
 
-                        contpag = contpag + 1;
+                        contpag = contpag++;
                         //Doc.NewPage();
                         pagcabhoja = pagcabhoja + npag;
 
@@ -22553,7 +22484,7 @@ namespace Sut.Web.Areas.General.Controllers
                     string PAEXC = @pathdocumentos + "Archivo" + ExpedienteId + "_P" + CONTEO + ".pdf";
                     Lista.Add(PAEXC);
 
-                    CONTEO = CONTEO + 1;
+                    CONTEO = CONTEO++;
                 }
             }
 
@@ -22578,7 +22509,7 @@ namespace Sut.Web.Areas.General.Controllers
                     string PAEXC = @pathdocumentos + "Archivo" + ExpedienteId + "_S" + CONTEO + ".pdf";
                     Lista.Add(PAEXC);
 
-                    CONTEO = CONTEO + 1;
+                    CONTEO = CONTEO++;
                 }
             }
             Lista.Add(tituloform);
@@ -22719,7 +22650,7 @@ namespace Sut.Web.Areas.General.Controllers
                     string PAEXC = @pathdocumentos + "Archivo" + ExpedienteId + "_P" + CONTEO + ".pdf";
                     Lista.Add(PAEXC);
 
-                    CONTEO = CONTEO + 1;
+                    CONTEO = CONTEO++;
                 }
             }
 
@@ -22744,7 +22675,7 @@ namespace Sut.Web.Areas.General.Controllers
                     string PAEXC = @pathdocumentos + "Archivo" + ExpedienteId + "_S" + CONTEO + ".pdf";
                     Lista.Add(PAEXC);
 
-                    CONTEO = CONTEO + 1;
+                    CONTEO = CONTEO++;
                 }
             }
             Lista.Add(tituloform);
@@ -23802,28 +23733,23 @@ namespace Sut.Web.Areas.General.Controllers
                 //string pathDoc2 = @"D:\ExpedienteSutentidades\Expediente_1301.doc";
 
                 //var app = new Microsoft.Office.Interop.Word.Application();
-
                 //var doc = app.Documents.Open(pathPDF);
                 //doc.SaveAs2(Path.ChangeExtension(pathDoc2, ".doc"), Microsoft.Office.Interop.Word.WdSaveFormat.wdFormatDocument97);
 
-
                 //UsandoSpirePdf();
-
                 //load PDF with an instance of Document
                 //SautinSoft.PdfFocus f = new SautinSoft.PdfFocus();
                 //f.OpenPdf(pathPDF);
                 //if (f.PageCount > 0)
                 //    f.ToWord(pathDoc2);
-
                 // TODO: Obtenga su AppSID y AppKey en https://dashboard.groupdocs.cloud (se requiere registro gratuito). 
 
-
-                Warning[] warn = null;
-                string[] streamids = null;
+                //Warning[] warn = null;
+                //string[] streamids = null;
                 string mime = string.Empty, encoding = string.Empty, extension = string.Empty;
-                byte[] byteViewer;
-                ReportViewer viewer;
-                PdfReader pdfReader;
+                //byte[] byteViewer;
+                //ReportViewer viewer;
+                //PdfReader pdfReader;
 
                 List<ItemIndice> lstIndice = new List<ItemIndice>();
                 var expediente = _expedienteService.GetOne(ExpedienteId);
@@ -23878,7 +23804,6 @@ namespace Sut.Web.Areas.General.Controllers
 
                     //GenerarIndiceCompleto( ExpedienteId, ProcedimientoId);
 
-
                     //TituloProceAdm(Doc, ExpedienteId, ProcedimientoId);
 
                     TituloProceAdmCompleto(ExpedienteId, ProcedimientoIds);
@@ -23886,20 +23811,14 @@ namespace Sut.Web.Areas.General.Controllers
                 }
                 else
                 {
-
                     Doc.Open();
-
                 }
 
-
                 var pageBorderRect = new Rectangle(Doc.PageSize);
-
                 pageBorderRect.Left += Doc.LeftMargin;
                 pageBorderRect.Right -= Doc.RightMargin;
                 pageBorderRect.Top -= Doc.TopMargin;
                 pageBorderRect.Bottom += Doc.BottomMargin;
-
-
 
                 //PdfContentByte cb = writer.DirectContent;
                 //// los costados, ancho, alto, curva
@@ -23926,7 +23845,6 @@ namespace Sut.Web.Areas.General.Controllers
                         }
                         else
                         {
-
                             GenerarProceAdm(Doc, ExpedienteId, procedimientoidproc, writer);
                             if (estadoformulario != "")
                             {
@@ -23936,21 +23854,17 @@ namespace Sut.Web.Areas.General.Controllers
                             IndiceConteo(ExpedienteId, procedimientoidproc, "P");
                             //Doc.Close();
                         }
-
                     }
                     Doc.Close();
                 }
                 else
                 {
-
                     GenerarProceAdmCompleto(ExpedienteId, ProcedimientoIds, writer);
                     //Doc.NewPage();  
-
 
                     //TituloPresExc(Doc, ExpedienteId, ProcedimientoId);
                     TituloPresExcCompleto(ExpedienteId, ProcedimientoIds);
                     //Doc.NewPage();
-
 
                     //cb.RoundRectangle(50f, 40f, 495f, 752f, 3f);
                     //cb.Stroke();
@@ -23958,14 +23872,12 @@ namespace Sut.Web.Areas.General.Controllers
                     //GenerarPresExc(Doc, ExpedienteId, ProcedimientoId, writer);
                     GenerarPresExcCompleto(ExpedienteId, ProcedimientoIds, writer);
 
-
                     //TituloForm(Doc, ExpedienteId, ProcedimientoId, "SECCIÓN N° 3: FORMULARIOS");
                     TituloFormCompleto(ExpedienteId, ProcedimientoIds, "SECCIÓN N° 3: FORMULARIOS");
                     //Doc.NewPage();
 
                     //Doc.Close();
                 }
-
 
                 //if (ProcedimientoId != 0)
                 if (ProcedimientoIds[0] != 0)
@@ -24034,8 +23946,6 @@ namespace Sut.Web.Areas.General.Controllers
                 //footer3.BorderWidthTop = 1;
                 //footer3.Alignment = Element.ALIGN_CENTER;
                 //Doc2.Footer = footer3;
-
-
                 //cb.RoundRectangle(50f, 40f, 495f, 752f, 3f);
                 //cb.Stroke();
 
@@ -24043,30 +23953,22 @@ namespace Sut.Web.Areas.General.Controllers
                 if (ProcedimientoIds[0] == 0)
                 {
                     GenerarIndiceCompleto(ExpedienteId, ProcedimientoIds);
-
                 }
 
                 //if (ProcedimientoId != 0)
                 if (ProcedimientoIds[0] != 0)
                 {
-
                     UnirForm(Doc2, ExpedienteId, expediente.EntidadId, ProcedimientoIds, 0);
                     Doc2.Close();
-
-
                 }
                 else
                 {
-
                     GenerarForm(Doc2, ExpedienteId, expediente.EntidadId, ProcedimientoIds, 0);
                     Doc2.Close();
-
                 }
                 Doc.Close();
 
-
                 string Nombre = "Expediente_" + ExpedienteId + ".pdf";
-
                 string Ruta = @pathdocumentos + "Archivo" + ExpedienteId + "_EXPORTAR.pdf";
                 //Response.ClearContent();
                 //Response.ClearHeaders();
@@ -24097,12 +23999,12 @@ namespace Sut.Web.Areas.General.Controllers
         {
             try
             {
-                Warning[] warn = null;
-                string[] streamids = null;
+                //Warning[] warn = null;
+                //string[] streamids = null;
                 string mime = string.Empty, encoding = string.Empty, extension = string.Empty;
-                byte[] byteViewer;
-                ReportViewer viewer;
-                PdfReader pdfReader;
+                //byte[] byteViewer;
+                //ReportViewer viewer;
+                //PdfReader pdfReader;
 
                 List<ItemIndice> lstIndice = new List<ItemIndice>();
                 var expediente = _expedienteService.GetOne(ExpedienteId);
@@ -24378,12 +24280,12 @@ namespace Sut.Web.Areas.General.Controllers
             {
 
 
-                Warning[] warn = null;
-                string[] streamids = null;
+                //Warning[] warn = null;
+                //string[] streamids = null;
                 string mime = string.Empty, encoding = string.Empty, extension = string.Empty;
-                byte[] byteViewer;
-                ReportViewer viewer;
-                PdfReader pdfReader;
+                //byte[] byteViewer;
+                //ReportViewer viewer;
+                //PdfReader pdfReader;
 
                 List<ItemIndice> lstIndice = new List<ItemIndice>();
                 var expediente = _expedienteService.GetOne(ExpedienteId);
@@ -24486,12 +24388,12 @@ namespace Sut.Web.Areas.General.Controllers
         {
             try
             {
-                Warning[] warn = null;
-                string[] streamids = null;
+                //Warning[] warn = null;
+                //string[] streamids = null;
                 string mime = string.Empty, encoding = string.Empty, extension = string.Empty;
-                byte[] byteViewer;
-                ReportViewer viewer;
-                PdfReader pdfReader;
+                //byte[] byteViewer;
+                //ReportViewer viewer;
+                //PdfReader pdfReader;
 
                 List<ItemIndice> lstIndice = new List<ItemIndice>();
                 var expediente = _expedienteService.GetOne(InformeId);
@@ -24919,12 +24821,12 @@ namespace Sut.Web.Areas.General.Controllers
         {
             try
             {
-                Warning[] warn = null;
-                string[] streamids = null;
+                //Warning[] warn = null;
+                //string[] streamids = null;
                 string mime = string.Empty, encoding = string.Empty, extension = string.Empty;
-                byte[] byteViewer;
-                ReportViewer viewer;
-                PdfReader pdfReader;
+                //byte[] byteViewer;
+                //ReportViewer viewer;
+                //PdfReader pdfReader;
 
                 List<ItemIndice> lstIndice = new List<ItemIndice>();
                 var expediente = _expedienteService.GetOne(ExpedienteId);
@@ -25194,12 +25096,12 @@ namespace Sut.Web.Areas.General.Controllers
 
             try
             {
-                Warning[] warn = null;
-                string[] streamids = null;
+                //Warning[] warn = null;
+                //string[] streamids = null;
                 string mime = string.Empty, encoding = string.Empty, extension = string.Empty;
-                byte[] byteViewer;
-                ReportViewer viewer;
-                PdfReader pdfReader;
+                //byte[] byteViewer;
+                //ReportViewer viewer;
+                //PdfReader pdfReader;
 
 
                 var fecha = DateTime.Now.ToString("dd/MM/yyyy").Substring(0, 10).Replace("/", "");
@@ -25342,7 +25244,7 @@ namespace Sut.Web.Areas.General.Controllers
             {
 
 
-                int totalRows = 0;
+                //int totalRows = 0;
 
                 string cadena1 = "FORMATO DE SUSTENTACIÓN LEGAL Y TÉCNICA DE PROCEDIMIENTO ADMINISTRATIVO Y SERVICIOS PRESTADOS EN EXCLUSIVIDAD CONTENIDOS EN EL TUPA DE LA ENTIDAD";
 
@@ -25931,7 +25833,7 @@ namespace Sut.Web.Areas.General.Controllers
                         celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
                         tdatos5.AddCell(celda);
 
-                        cont = cont + 1;
+                        cont = cont++;
                     }
                 }
 
@@ -28561,7 +28463,7 @@ namespace Sut.Web.Areas.General.Controllers
                 ////        rowMaestros.Cells.Add(new WorksheetCell("", DataType.Number, "Default_Font10_Borde") { Formula = "=RC[-1]/12" });
                 ////        nom1 = listaPD[i].UnidadOrganica.Nombre;
                 ////        nom2 = listaPD[i].Recurso.Nombre;
-                ////        contlistaPD = contlistaPD + 1;
+                ////        contlistaPD = contlistaPD++;
                 ////    }
 
                 ////}
@@ -29052,7 +28954,7 @@ namespace Sut.Web.Areas.General.Controllers
                         rowMaestros.Cells.Add(new WorksheetCell("", DataType.Number, "Default_Font10_Borde") { Formula = "=RC[-1]/12" });
                         nom1 = listaPD[i].UnidadOrganica.Nombre;
                         nom2 = listaPD[i].Recurso.Nombre;
-                        contlistaPD = contlistaPD + 1;
+                        contlistaPD = contlistaPD++;
                     }
 
                 }
