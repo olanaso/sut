@@ -1381,8 +1381,27 @@ max-height: 500px;
         }
 
  },
-
-    subirExcel: function (file) {
+    compareArrays(a, b) {
+        if (a.length !== b.length) {
+            return { areEqual: false, diff: [...a, ...b] };
+        }
+        let diff = [];
+        for (let i = 0; i < a.length; i++) {
+            if (!b.includes(a[i])) {
+                diff.push(a[i]);
+            }
+        }
+        for (let i = 0; i < b.length; i++) {
+            if (!a.includes(b[i])) {
+                diff.push(b[i]);
+            }
+        }
+        if (diff.length === 0) {
+            return { areEqual: true, diff: [] };
+        }
+        return { areEqual: false, diff: diff };
+    }
+   , subirExcel: function (file,cabecerasdefinidas) {
 
 
         return new Promise((resolve, reject) => {
@@ -1406,11 +1425,36 @@ max-height: 500px;
                     // Convertir los datos a un arreglo de objetos
                     const jsonData = XLSX.utils.sheet_to_json(sheet);
 
+                    if (jsonData.length == 0) {
+
+                        this.msg.msgError2("Archivo Vacio", `El archivo no tiene ningúna fila registrada.`)
+                        return;
+                    }
+
+                    // ahora jsonData[0] debe contener las cabeceras
+                    const headers = Object.keys(jsonData[0]);
+                    if (cabecerasdefinidas==null || cabecerasdefinidas.length == 0) {
+                        return resolve(jsonData);
+                    }
+                    let comparearrays = this.compareArrays(headers, cabecerasdefinidas)
+                    console.log(cabecerasdefinidas)
+
+                    // validar las cabeceras
+                    if (comparearrays.areEqual) {
+                        return resolve(jsonData);
+                    }
+                    else {
+                        this.msg.msgError2("Error en las cabeceras", `Las cabeceras ${comparearrays.diff.join(',')} es desconocida o no está en la lista de cabeceras válidas.`)
+                        return;
+                    }
+
+                    
+
 
                     //console.log(jsonData)
 
                     // Imprimir los datos
-                    return resolve(jsonData);
+                  
                 };
 
                 reader.onerror = (e) => {

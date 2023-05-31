@@ -2002,7 +2002,7 @@ namespace Sut.Web.Areas.General.Controllers
                 };
                 var stream = new MemoryStream(rpt.DescargarExcel());
 
-
+               
                 return File(stream, rpt.mimeType, string.Format("{0}.{1}", "TablaASME", rpt.extension));
             }
             catch (Exception ex)
