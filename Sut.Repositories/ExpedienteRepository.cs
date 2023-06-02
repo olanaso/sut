@@ -178,6 +178,8 @@ namespace Sut.Repositories
 
                 return ctx.Expediente 
                         .Include(x => x.Entidad)
+                        .Include("Provincia")
+                        .Include("Provincia.Departamento")
                         .OrderByDescending(x => x.EntidadId)
                         .OrderByDescending(x => x.ExpedienteId)
                         .OrderByDescending(x => x.FecCreacion) 

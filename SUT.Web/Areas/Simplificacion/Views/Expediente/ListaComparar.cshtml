@@ -18,6 +18,20 @@
     </div>
     <div class="box-body">
         <div class="form-group">
+            <label class="col-sm-2 col-xs-12 control-label">Entidad :</label>
+            <div class="col-sm-5 col-xs-12">
+                @if (Model.Rol == 1)
+                {
+                    @Html.DropDownList("FiltroEntidad1", new SelectList(ViewBag.listaentidades, "Value", "Text", Model.EntidadId), new { @id = "cbFilterEntidad1", @class = "form-control" })
+                }
+                else
+                {
+                    @Html.DropDownList("FiltroEntidad1", new SelectList(ViewBag.listaentidades, "Value", "Text", Model.EntidadId), new { @id = "cbFilterEntidad1", @class = "form-control", @disabled = "disabled" })
+                }
+            </div>
+        </div>
+        <br> </br>
+        <div class="form-group">
             <label class="col-sm-2 col-xs-12 control-label">Expediente Base :</label>
             <div class="col-sm-5 col-xs-12">
                 @Html.DropDownList("FiltroExpedienteid1", ViewBag.listaexpedientesCompara as List<SelectListItem>, new { @id = "cbFilterExpediente1", @class = "form-control" })
@@ -28,20 +42,6 @@
             <label class="col-sm-2 col-xs-12 control-label">Expediente Comparar :</label>
             <div class="col-sm-5 col-xs-12">
                 @Html.DropDownList("FiltroExpedienteid2", ViewBag.listaexpedientesCompara as List<SelectListItem>, new { @id = "cbFilterExpediente2", @class = "form-control" })
-            </div>
-        </div>
-        <br> </br>
-        <div class="form-group">
-            <label class="col-sm-2 col-xs-12 control-label">Entidad :</label>
-            <div class="col-sm-5 col-xs-12">
-                @if (Model.Rol == 1)
-                {
-                @Html.DropDownList("FiltroEntidad1", new SelectList(ViewBag.listaentidades, "Value", "Text", Model.EntidadId), new { @id = "cbFilterEntidad1", @class = "form-control" })
-                }
-                else
-                {
-                @Html.DropDownList("FiltroEntidad1", new SelectList(ViewBag.listaentidades, "Value", "Text", Model.EntidadId), new { @id = "cbFilterEntidad1", @class = "form-control", @disabled = "disabled" })
-                }
             </div>
         </div>
     </div>
@@ -67,16 +67,16 @@
                         </tr>
                         <tr>
                             <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 4px;" class="colAction">Nro</th>
-                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 40px ">Codigo</th>
-                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 250px ">Denominacion</th>
-                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 250px">Objetivo</th>
-                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle" width: 50px">Cargo Resp.</th>
-                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 130px;">Unidad Organica</th>
-                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 40px ">Codigo</th>
-                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 250px ">Denominacion</th>
-                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 250px ">Objetivo</th>
-                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle " width: 50px">Cargo Resp.</th>
-                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 130px; ">Unidad Organica</th>
+                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 40px;">Codigo</th>
+                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 400px;">Denominacion</th>
+                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Plazo Atención</th>
+                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Nro Requisitos</th>
+                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Tiempo Total</th>
+                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 40px;">Codigo</th>
+                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 400px;">Denominacion</th>
+                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Plazo Atención</th>
+                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Nro Requisitos</th>
+                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Tiempo Total</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -197,19 +197,19 @@
                         rows += sut.string.format('<td>{0}</td>', r.Camp2_Base);
                     }
                     if (r.c6 == 'Iguales 6') {
-                        rows += sut.string.format('<td style="background-color: #A1DCE5;">{0}</td>', r.Camp6_Base);
+                        rows += sut.string.format('<td style="background-color: #A1DCE5;" align="center">{0}</td>', r.Camp3_Base);
                     } else {
-                        rows += sut.string.format('<td>{0}</td>', r.Camp6_Base);
+                        rows += sut.string.format('<td align="center">{0}</td>', r.Camp3_Base);
                     }
                     if (r.c7 == 'Iguales 7') {
-                        rows += sut.string.format('<td style="background-color: #A1DCF2;">{0}</td>', r.Camp7_Base);
+                        rows += sut.string.format('<td style="background-color: #A1DCF2;" align="center">{0}</td>', r.Camp4_Base);
                     } else {
-                        rows += sut.string.format('<td>{0}</td>', r.Camp7_Base);
+                        rows += sut.string.format('<td align="center">{0}</td>', r.Camp4_Base);
                     }
                     if (r.c5 == 'Iguales 5') {
-                        rows += sut.string.format('<td style="background-color: #A1DCF9;">{0}</td>', r.Camp5_Base);
+                        rows += sut.string.format('<td style="background-color: #A1DCF9;" align="center">{0}</td>', r.Camp6_Base);
                     } else {
-                        rows += sut.string.format('<td>{0}</td>', r.Camp5_Base);
+                        rows += sut.string.format('<td align="center">{0}</td>', r.Camp6_Base);
                     }
                     if (r.c1 == 'Iguales 1') {
                         rows += sut.string.format('<td style="background-color: #A1DCD2;">{0}</td>', r.Campo1_Comp);
@@ -222,19 +222,19 @@
                         rows += sut.string.format('<td>{0}</td>', r.Campo2_Comp);
                     }
                     if (r.c6 == 'Iguales 6') {
-                        rows += sut.string.format('<td style="background-color: #A1DCE5;">{0}</td>', r.Campo6_Comp);
+                        rows += sut.string.format('<td style="background-color: #A1DCE5;" align="center">{0}</td>', r.Campo3_Comp);
                     } else {
-                        rows += sut.string.format('<td>{0}</td>', r.Campo6_Comp);
+                        rows += sut.string.format('<td align="center">{0}</td>', r.Campo3_Comp);
                     }
                     if (r.c7 == 'Iguales 7') {
-                        rows += sut.string.format('<td style="background-color: #A1DCF2;">{0}</td>', r.Campo7_Comp);
+                        rows += sut.string.format('<td style="background-color: #A1DCF2;" align="center">{0}</td>', r.Campo4_Comp);
                     } else {
-                        rows += sut.string.format('<td>{0}</td>', r.Campo7_Comp);
+                        rows += sut.string.format('<td align="center">{0}</td>', r.Campo4_Comp);
                     }
                     if (r.c5 == 'Iguales 5') {
-                        rows += sut.string.format('<td style="background-color: #A1DCF9;">{0}</td>', r.Campo5_Comp);
+                        rows += sut.string.format('<td style="background-color: #A1DCF9;" align="center">{0}</td>', r.Campo6_Comp);
                     } else {
-                        rows += sut.string.format('<td>{0}</td>', r.Campo5_Comp);
+                        rows += sut.string.format('<td align="center">{0}</td>', r.Campo6_Comp);
                     }
                     rows += '</tr>';
                 });

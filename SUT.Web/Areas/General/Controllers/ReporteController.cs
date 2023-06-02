@@ -30,6 +30,7 @@ namespace Sut.Web.Areas.General.Controllers
         readonly string pathLinkarchivos = ConfigurationManager.AppSettings["Sut.PathLinkarchivos"].ToString();
         /*JJJMSP2*/
         readonly string pathlogoentidad = ConfigurationManager.AppSettings["Sut.PathLogosentidades"].ToString();
+        readonly string pathnomlogopcm = ConfigurationManager.AppSettings["Sut.PathNomLogoPcm"].ToString();
         string estadoformulario = "";
         readonly Font fontsTituloNormal = FontFactory.GetFont("Arial", 8, Font.NORMAL);
         readonly Font fontsTituloNegrita = FontFactory.GetFont("Arial", 10, Font.BOLD);
@@ -2511,7 +2512,20 @@ namespace Sut.Web.Areas.General.Controllers
                                 dataSede[i].Sede.Turno2HorIni == null ? "-" : dataSede[i].Sede.Turno2HorIni.Value.ToString("HH:mm"),
                                 dataSede[i].Sede.Turno2HorFin == null ? "-" : dataSede[i].Sede.Turno2HorFin.Value.ToString("HH:mm"))
                                 )
-                                : "") +
+                                : (dataSede[i].Sede.TipoTurno == "C" ?
+                        string.Format("{0} {1} {2} {3} {4} de {5} a {6}. ", dataSede[i].Sede.EsLunes == true ? "Lunes, " : "",
+                                dataSede[i].Sede.EsMartes == true ? "Martes, " : "", dataSede[i].Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                dataSede[i].Sede.EsJueves == true ? "Jueves, " : "", dataSede[i].Sede.EsViernes == true ? "Viernes" : "",
+                                dataSede[i].Sede.CorridoHorIni == null ? "-" : dataSede[i].Sede.CorridoHorIni.Value.ToString("HH:mm"),
+                                dataSede[i].Sede.CorridoHorFin == null ? "-" : dataSede[i].Sede.CorridoHorFin.Value.ToString("HH:mm"))
+                        : string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", dataSede[i].Sede.EsLunes == true ? "Lunes, " : "",
+                                dataSede[i].Sede.EsMartes == true ? "Martes, " : "", dataSede[i].Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                dataSede[i].Sede.EsJueves == true ? "Jueves, " : "", dataSede[i].Sede.EsViernes == true ? "Viernes" : "",
+                                dataSede[i].Sede.Turno1HorIni == null ? "-" : dataSede[i].Sede.Turno1HorIni.Value.ToString("HH:mm"),
+                                dataSede[i].Sede.Turno1HorFin == null ? "-" : dataSede[i].Sede.Turno1HorFin.Value.ToString("HH:mm"),
+                                dataSede[i].Sede.Turno2HorIni == null ? "-" : dataSede[i].Sede.Turno2HorIni.Value.ToString("HH:mm"),
+                                dataSede[i].Sede.Turno2HorFin == null ? "-" : dataSede[i].Sede.Turno2HorFin.Value.ToString("HH:mm"))
+                                )) +
                     (dataSede[i].Sede.EsSabado ? string.Format("Sábados de {0} a {1}. ",
                                 dataSede[i].Sede.SabadoHorIni == null ? "-" : dataSede[i].Sede.SabadoHorIni.Value.ToString("HH:mm"),
                                 dataSede[i].Sede.SabadoHorFin == null ? "-" : dataSede[i].Sede.SabadoHorFin.Value.ToString("HH:mm"))
@@ -2566,30 +2580,25 @@ namespace Sut.Web.Areas.General.Controllers
             var expediente = _expedienteService.GetOne(ExpedienteId);
             var entidad = _entidadService.GetOne(expediente.EntidadId);
             string nombreArchivo = entidad.Logoentidad;
-            string srutalogo;
-            string sexists;
-            sexists = "SIEXISTE";
+            string srutalogo = Path.Combine(pathlogoentidad, nombreArchivo);
             Paragraph p = new Paragraph();
-            if (nombreArchivo != null)
+
+            if (!string.IsNullOrEmpty(nombreArchivo) && System.IO.File.Exists(srutalogo))
             {
-                srutalogo = Path.Combine(pathlogoentidad, nombreArchivo);
-                if (System.IO.File.Exists(srutalogo))
-                {
-                    Image logo = Image.GetInstance(srutalogo);
-                    logo.BorderWidth = 0;
-                    logo.ScalePercent(13f);
-                    p.Add(new Chunk(logo, 0, 0, true));
-                }
-                else { sexists = "NOEXISTE"; }
+                Image logo = Image.GetInstance(srutalogo);
+                logo.BorderWidth = 0;
+                logo.ScalePercent(13f);
+                p.Add(new Chunk(logo, 0, 0, true));
             }
-            string pathImagen2;
-            pathImagen2 = Path.Combine(pathlogoentidad, "logo_pcm.png");
-            if (System.IO.File.Exists(pathImagen2))
+
+            //string pathImagen2 = Path.Combine(pathlogoentidad, "logo_pcm.png");
+            if (System.IO.File.Exists(pathnomlogopcm))
             {
-                Image logo2 = Image.GetInstance(pathImagen2);
+                Image logo2 = Image.GetInstance(pathnomlogopcm);
                 logo2.BorderWidth = 0;
                 logo2.ScalePercent(25f);
-                if (sexists == "NOEXISTE")
+
+                if (string.IsNullOrEmpty(nombreArchivo) || !System.IO.File.Exists(srutalogo))
                 {
                     p.Add(new Chunk(logo2, 360, 0, true));
                 }
@@ -2598,10 +2607,24 @@ namespace Sut.Web.Areas.General.Controllers
                     p.Add(new Chunk(logo2, 340, 0, true));
                 }
             }
-            HeaderFooter header1 = new HeaderFooter(p, false);
-            header1.Border = 0;
-            header1.PageNumber = 0;
-            Doc.Header = header1;
+
+            if (p.IsEmpty())
+            {
+                Font transparentFont = FontFactory.GetFont(FontFactory.HELVETICA, 200f, Font.NORMAL, iTextSharp.text.Color.WHITE);
+                Paragraph emptyParagraph = new Paragraph();
+                emptyParagraph.Add(new Chunk("AAAAAA", transparentFont));
+                HeaderFooter header = new HeaderFooter(emptyParagraph, false);
+                header.Border = Rectangle.NO_BORDER;
+                header.PageNumber = 0;
+                Doc.Header = header;
+            }
+            else
+            {
+                HeaderFooter header1 = new HeaderFooter(p, false);
+                header1.Border = Rectangle.NO_BORDER;
+                header1.PageNumber = 0;
+                Doc.Header = header1;
+            }
         }
 
         private void GenerarCaratula(Document Doc, long ExpedienteId, List<long> ProcedimientoIds)
@@ -6040,7 +6063,20 @@ namespace Sut.Web.Areas.General.Controllers
                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
                                )
-                               : "") +
+                               : (item.Sede.TipoTurno == "C" ?
+                        string.Format("{0} {1} {2} {3} {4} de {5} a {6}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.CorridoHorIni == null ? "-" : item.Sede.CorridoHorIni.Value.ToString("HH:mm"),
+                                item.Sede.CorridoHorFin == null ? "-" : item.Sede.CorridoHorFin.Value.ToString("HH:mm"))
+                        : string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.Turno1HorIni == null ? "-" : item.Sede.Turno1HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno1HorFin == null ? "-" : item.Sede.Turno1HorFin.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
+                                )) +
                             (item.Sede.EsSabado ? string.Format("Sábados de {0} a {1}. ",
                                item.Sede.SabadoHorIni == null ? "-" : item.Sede.SabadoHorIni.Value.ToString("HH:mm"),
                                item.Sede.SabadoHorFin == null ? "-" : item.Sede.SabadoHorFin.Value.ToString("HH:mm"))
@@ -9712,7 +9748,20 @@ namespace Sut.Web.Areas.General.Controllers
                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
                                )
-                               : "") +
+                               : (item.Sede.TipoTurno == "C" ?
+                        string.Format("{0} {1} {2} {3} {4} de {5} a {6}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.CorridoHorIni == null ? "-" : item.Sede.CorridoHorIni.Value.ToString("HH:mm"),
+                                item.Sede.CorridoHorFin == null ? "-" : item.Sede.CorridoHorFin.Value.ToString("HH:mm"))
+                        : string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.Turno1HorIni == null ? "-" : item.Sede.Turno1HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno1HorFin == null ? "-" : item.Sede.Turno1HorFin.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
+                                )) +
                             (item.Sede.EsSabado ? string.Format("Sábados de {0} a {1}. ",
                                item.Sede.SabadoHorIni == null ? "-" : item.Sede.SabadoHorIni.Value.ToString("HH:mm"),
                                item.Sede.SabadoHorFin == null ? "-" : item.Sede.SabadoHorFin.Value.ToString("HH:mm"))
@@ -13375,7 +13424,20 @@ namespace Sut.Web.Areas.General.Controllers
                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
                                )
-                               : "") +
+                               : (item.Sede.TipoTurno == "C" ?
+                        string.Format("{0} {1} {2} {3} {4} de {5} a {6}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.CorridoHorIni == null ? "-" : item.Sede.CorridoHorIni.Value.ToString("HH:mm"),
+                                item.Sede.CorridoHorFin == null ? "-" : item.Sede.CorridoHorFin.Value.ToString("HH:mm"))
+                        : string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.Turno1HorIni == null ? "-" : item.Sede.Turno1HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno1HorFin == null ? "-" : item.Sede.Turno1HorFin.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
+                                )) +
                             (item.Sede.EsSabado ? string.Format("Sábados de {0} a {1}. ",
                                item.Sede.SabadoHorIni == null ? "-" : item.Sede.SabadoHorIni.Value.ToString("HH:mm"),
                                item.Sede.SabadoHorFin == null ? "-" : item.Sede.SabadoHorFin.Value.ToString("HH:mm"))
@@ -17038,7 +17100,20 @@ namespace Sut.Web.Areas.General.Controllers
                                    item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
                                    item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
                                    )
-                                   : "") +
+                                   : (item.Sede.TipoTurno == "C" ?
+                        string.Format("{0} {1} {2} {3} {4} de {5} a {6}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.CorridoHorIni == null ? "-" : item.Sede.CorridoHorIni.Value.ToString("HH:mm"),
+                                item.Sede.CorridoHorFin == null ? "-" : item.Sede.CorridoHorFin.Value.ToString("HH:mm"))
+                        : string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.Turno1HorIni == null ? "-" : item.Sede.Turno1HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno1HorFin == null ? "-" : item.Sede.Turno1HorFin.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
+                                )) +
                                 (item.Sede.EsSabado ? string.Format("Sábados de {0} a {1}. ",
                                    item.Sede.SabadoHorIni == null ? "-" : item.Sede.SabadoHorIni.Value.ToString("HH:mm"),
                                    item.Sede.SabadoHorFin == null ? "-" : item.Sede.SabadoHorFin.Value.ToString("HH:mm"))
@@ -19372,7 +19447,20 @@ namespace Sut.Web.Areas.General.Controllers
                                    item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
                                    item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
                                    )
-                                   : "") +
+                                   : (item.Sede.TipoTurno == "C" ?
+                        string.Format("{0} {1} {2} {3} {4} de {5} a {6}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.CorridoHorIni == null ? "-" : item.Sede.CorridoHorIni.Value.ToString("HH:mm"),
+                                item.Sede.CorridoHorFin == null ? "-" : item.Sede.CorridoHorFin.Value.ToString("HH:mm"))
+                        : string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.Turno1HorIni == null ? "-" : item.Sede.Turno1HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno1HorFin == null ? "-" : item.Sede.Turno1HorFin.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
+                                )) +
                                 (item.Sede.EsSabado ? string.Format("Sábados de {0} a {1}. ",
                                    item.Sede.SabadoHorIni == null ? "-" : item.Sede.SabadoHorIni.Value.ToString("HH:mm"),
                                    item.Sede.SabadoHorFin == null ? "-" : item.Sede.SabadoHorFin.Value.ToString("HH:mm"))
@@ -21543,7 +21631,20 @@ namespace Sut.Web.Areas.General.Controllers
                                    item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
                                    item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
                                    )
-                                   : "") +
+                                   : (item.Sede.TipoTurno == "C" ?
+                        string.Format("{0} {1} {2} {3} {4} de {5} a {6}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.CorridoHorIni == null ? "-" : item.Sede.CorridoHorIni.Value.ToString("HH:mm"),
+                                item.Sede.CorridoHorFin == null ? "-" : item.Sede.CorridoHorFin.Value.ToString("HH:mm"))
+                        : string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.Turno1HorIni == null ? "-" : item.Sede.Turno1HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno1HorFin == null ? "-" : item.Sede.Turno1HorFin.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
+                                )) +
                                 (item.Sede.EsSabado ? string.Format("Sábados de {0} a {1}. ",
                                    item.Sede.SabadoHorIni == null ? "-" : item.Sede.SabadoHorIni.Value.ToString("HH:mm"),
                                    item.Sede.SabadoHorFin == null ? "-" : item.Sede.SabadoHorFin.Value.ToString("HH:mm"))
@@ -23139,7 +23240,20 @@ namespace Sut.Web.Areas.General.Controllers
                             item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
                             item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
                             )
-                            : "") +
+                            : (item.Sede.TipoTurno == "C" ? 
+                        string.Format("{0} {1} {2} {3} {4} de {5} a {6}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.CorridoHorIni == null ? "-" : item.Sede.CorridoHorIni.Value.ToString("HH:mm"),
+                                item.Sede.CorridoHorFin == null ? "-" : item.Sede.CorridoHorFin.Value.ToString("HH:mm"))
+                        :string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.Turno1HorIni == null ? "-" : item.Sede.Turno1HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno1HorFin == null ? "-" : item.Sede.Turno1HorFin.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
+                                )) +
                 (item.Sede.EsSabado ? string.Format("Sábados de {0} a {1}. ",
                             item.Sede.SabadoHorIni == null ? "-" : item.Sede.SabadoHorIni.Value.ToString("HH:mm"),
                             item.Sede.SabadoHorFin == null ? "-" : item.Sede.SabadoHorFin.Value.ToString("HH:mm"))
@@ -23360,7 +23474,20 @@ namespace Sut.Web.Areas.General.Controllers
                             item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
                             item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
                             )
-                            : "") +
+                            : (item.Sede.TipoTurno == "C" ?
+                        string.Format("{0} {1} {2} {3} {4} de {5} a {6}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.CorridoHorIni == null ? "-" : item.Sede.CorridoHorIni.Value.ToString("HH:mm"),
+                                item.Sede.CorridoHorFin == null ? "-" : item.Sede.CorridoHorFin.Value.ToString("HH:mm"))
+                        : string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.Turno1HorIni == null ? "-" : item.Sede.Turno1HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno1HorFin == null ? "-" : item.Sede.Turno1HorFin.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
+                                )) +
                 (item.Sede.EsSabado ? string.Format("Sábados de {0} a {1}. ",
                             item.Sede.SabadoHorIni == null ? "-" : item.Sede.SabadoHorIni.Value.ToString("HH:mm"),
                             item.Sede.SabadoHorFin == null ? "-" : item.Sede.SabadoHorFin.Value.ToString("HH:mm"))
@@ -23605,7 +23732,20 @@ namespace Sut.Web.Areas.General.Controllers
                             item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
                             item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
                             )
-                            : "") +
+                            : (item.Sede.TipoTurno == "C" ?
+                        string.Format("{0} {1} {2} {3} {4} de {5} a {6}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.CorridoHorIni == null ? "-" : item.Sede.CorridoHorIni.Value.ToString("HH:mm"),
+                                item.Sede.CorridoHorFin == null ? "-" : item.Sede.CorridoHorFin.Value.ToString("HH:mm"))
+                        : string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.Turno1HorIni == null ? "-" : item.Sede.Turno1HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno1HorFin == null ? "-" : item.Sede.Turno1HorFin.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
+                                )) +
                 (item.Sede.EsSabado ? string.Format("Sábados de {0} a {1}. ",
                             item.Sede.SabadoHorIni == null ? "-" : item.Sede.SabadoHorIni.Value.ToString("HH:mm"),
                             item.Sede.SabadoHorFin == null ? "-" : item.Sede.SabadoHorFin.Value.ToString("HH:mm"))
