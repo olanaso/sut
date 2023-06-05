@@ -839,7 +839,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                     reclamacion = x.reclamacion,
                     revision = x.revision,
                     Calificaciones = x.Calificaciones,
-                     ActivarTlf = x.ChkAtencionTlf
+                    ActivarTlf = x.ChkAtencionTlf
                 }),
                 rol = 1,
                 totalRows = totalRows

@@ -326,9 +326,9 @@
 					rows += '<td style="text-align: center; background:#dd4b392e ">';
                     rows += '<div class="btn-group" >';
                     if (r.ActivarTlf == 0) {
-                        rows += sut.string.format('<a class="btn btn-primary btn-xs"   data-placement="left" title="Atención Tlf" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Inactivo</i></a>', r.ProcedimientoId, 1, 8);
+                        rows += sut.string.format('<a class="btn btn-primary btn-xs" data-placement="left" title="Atención Tlf" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Inactivo</i></a>', r.ProcedimientoId, 1, 8);
                     } else {
-                        rows += sut.string.format('<a class="btn btn-success btn-xs"   data-placement="left" title="Atención Tlf" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Activado</a>', r.ProcedimientoId, 0, 8);
+                        rows += sut.string.format('<a class="btn btn-success btn-xs" data-placement="left" title="Atención Tlf" href="javascript:sut.Expediente.Activar({0},{1},{2})" >Activado</a>', r.ProcedimientoId, 0, 8);
                     }
                     rows += '</div>';
                     rows += '</td>';

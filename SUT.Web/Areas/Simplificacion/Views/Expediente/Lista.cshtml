@@ -1265,7 +1265,7 @@ else
 
                     //JJJMSP2
                     rows += '<div class="btn-group" >';
-                    if ((r.EstadoExpediente == "5" || r.EstadoExpediente == "7" || r.EstadoExpediente == "2") && ('@Model.Rol'== 1 || '@Model.Rol'== 2) ) {
+                    if (i == 1 && (r.EstadoExpediente == "5") && ('@Model.Rol'== 1 || '@Model.Rol'== 2) ) {
                         rows += sut.string.format('<a class="btn btn-dropbox btn-xs" data-placement="left" title="Volver a Proceso" href="javascript:sut.Expediente.despublicarcargainicial({0})" title="Despublicar Expediente" ><i class="fa fa-history"></i></a>', r.ExpedienteId);
                     }
                     rows += '</div>';

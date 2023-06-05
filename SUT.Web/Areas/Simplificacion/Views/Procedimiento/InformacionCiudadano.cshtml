@@ -27,8 +27,7 @@
     @Html.HiddenFor(model => model.TablaAsmeTerminado)
     @Html.HiddenFor(model => model.SustentoEliminacion)
     @Html.HiddenFor(model => model.SustTecCalificacion)
- 
-
+    @Html.HiddenFor(model => model.TablaAsme)
     <div class="box box-danger">
         <div class="box-body form-horizontal">
             <div class="form-group">
@@ -166,7 +165,7 @@
                                             }
 
                                         </th>
-                                      
+
 
 
                                         <th colspan="2">Notas al Ciudadano</th>
@@ -193,8 +192,8 @@
                                                 {
                                                     <div class="card tab-pane active">
                                                         @*<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne3" class="btn btn-default" title="Importación de Notas al ciudadano y Pasos a seguir">
-                                                            <i class="fa fa-fw fa-cloud-upload"></i> Importación
-                                                        </a>*@
+                                                                <i class="fa fa-fw fa-cloud-upload"></i> Importación
+                                                            </a>*@
                                                         <div id="collapseOne3" class="panel-collapse collapse">
                                                             <div class="card-body">
                                                                 <fieldset>
@@ -212,7 +211,7 @@
                                                 }
                                                 else
                                                 {
-                                                    
+
 
                                                 }
 
@@ -284,6 +283,7 @@
                                     <tbody>
                                         @{
                                             int i = 0;
+                                            int j = 0;
                                         }
 
                                         @if (Model.ProcedimientoDatoAdicional.Count(x => x.Tipo == 1) > 0)
@@ -319,7 +319,7 @@
                                                             <td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>
                                                             <td>@Html.TextAreaFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true })</td>
                                                         }
-                                                       
+
 
                                                     </tr>
                                                 }
@@ -355,7 +355,7 @@
                                                         @*<td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>*@
                                                         <td></td>
                                                         @*@if (!Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre.Equals("Oficinas de la Entidad"))
-                        {*@
+                                                            {*@
                                                         <!--<td>@Html.TextAreaFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true, @readonly = "readonly" })</td>-->
                                                         @*}*@
 
@@ -414,7 +414,28 @@
                                                             }
                                                             else
                                                             {
-                                                                @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled " })
+                                                                if (Model.TablaAsme.Count() > 0)
+                                                                {
+                                                                    if (Model.TablaAsme[0].TablaAsmeReproduccion.Count() > 0)
+                                                                    {
+                                                                        for (j=0; j < Model.TablaAsme[0].TablaAsmeReproduccion.Count(); j++)
+                                                                        {
+                                                                            if (Model.TablaAsme[0].TablaAsmeReproduccion[j].Costo > 0)
+                                                                            {
+                                                                                @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked)
+                                                                                break;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled " })
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled " })
+                                                                    }
+                                                                }
                                                             }
                                                         </td>
                                                         <td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>
@@ -2660,7 +2681,7 @@
                     $('textarea[name="NotaCiudadano[' + i + '].Nota"]').val(arrayNotas[i]['Nota al ciudadano']);
 
 
-                    
+
                     //document.getElementsByName(`Requisito[${i}].Nombre`)[0].value = arrayRequisitos[i];
 
                 }
@@ -2671,7 +2692,7 @@
 
                 }
 
-            
+
             } else {
                 showNotification('top', 'right', "No se seleccionó ningún archivo", 3);
             }

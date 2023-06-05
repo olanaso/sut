@@ -1351,8 +1351,9 @@
                                 <table class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;">
                                     <thead>
                                         <tr>
-                                            <th style="width: 120px;"></th>
-                                            <th style="text-align: center;">Cargo</th>
+                                            <th style="width: 140px;"></th>
+                                            <th style="width: 140px;"></th>
+                                            <th style="text-align: center; width: 395px;">Cargo</th>
                                             <th style="text-align: center;">Unidad de Organización</th>
                                             <th style="text-align: center; width: 100px;">Presentar</th>
                                             <th style="text-align: center; width: 150px;"></th>
@@ -1463,18 +1464,18 @@
 
                                                     @if (@user.rolmenu[0].Agregar == true)
                                                     {
-                                                        <td style="width: 120px;">
+                                                        <td style="width: 140px;">
                                                             <a href="javascript:sut.editProcedimiento.Cargos.addReconsideracion()" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
                                                         </td>
                                                     }
 
                                                     @if (Model.reclamacion == 1)
                                                     {
-                                                        <td style="width: 120px;"><label class="control-label" for="Reconsideración">Reclamación</label></td>
+                                                        <td style="width: 140px;"><label class="control-label" for="Reconsideración">Reclamación</label></td>
                                                     }
                                                     else
                                                     {
-                                                        <td style="width: 120px;"><label class="control-label" for="Reconsideración">Reconsideración</label></td>
+                                                        <td style="width: 140px;"><label class="control-label" for="Reconsideración">Reconsideración</label></td>
                                                     }
 
 
@@ -1529,11 +1530,11 @@
 
                                                         @if (Model.reclamacion == 1)
                                                         {
-                                                            <td style="width: 120px;"><label class="control-label" for="Reconsideración">Reclamación</label></td>
+                                                            <td style="width: 140px;"><label class="control-label" for="Reconsideración">Reclamación</label></td>
                                                         }
                                                         else
                                                         {
-                                                            <td style="width: 120px;"><label class="control-label" for="Reconsideración">Reconsideración</label></td>
+                                                            <td style="width: 140px;"><label class="control-label" for="Reconsideración">Reconsideración</label></td>
                                                         }
                                                         <td style="text-align: center;">
                                                             @Html.TextBoxFor(model => model.CargoReconsideracion, new { @class = "form-control" })
@@ -1583,11 +1584,11 @@
                                                         <tr>
                                                             @if (Model.reclamacion == 1)
                                                             {
-                                                                <td style="width: 120px;"><label class="control-label" for="Reconsideración">Reclamación</label></td>
+                                                                <td style="width: 140px;"><label class="control-label" for="Reconsideración">Reclamación</label></td>
                                                             }
                                                             else
                                                             {
-                                                                <td style="width: 120px;"><label class="control-label" for="Reconsideración">Reconsideración</label></td>
+                                                                <td style="width: 140px;"><label class="control-label" for="Reconsideración">Reconsideración</label></td>
                                                             }
 
 
@@ -1738,12 +1739,12 @@
 
                                                 @if (@user.rolmenu[0].Agregar == true)
                                                 {
-                                                    <td style="width: 120px;">
+                                                    <td style="width: 140px;">
                                                         <a href="javascript:sut.editProcedimiento.Cargos.addApelacion()" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
                                                     </td>
                                                 }
-                                                @*<td style="width: 120px;">    </td>*@
-                                                <td style="width: 120px;"><label class="control-label" for="Reconsideración">Apelación</label></td>
+                                                @*<td style="width: 140px;">    </td>*@
+                                                <td style="width: 140px;"><label class="control-label" for="Reconsideración">Apelación</label></td>
                                                 <td style="text-align: center;">
                                                     @Html.TextBoxFor(model => model.CargoApelacion, new { @class = "form-control" })
                                                 </td>
@@ -1792,7 +1793,7 @@
                                             <tbody>
 
                                                 <tr>
-                                                    <td style="width: 120px;"><label class="control-label" for="Reconsideración">Apelación</label></td>
+                                                    <td style="width: 140px;"><label class="control-label" for="Reconsideración">Apelación</label></td>
                                                     <td style="text-align: center;">
                                                         @Html.TextBoxFor(model => model.CargoApelacion, new { @class = "form-control" })
                                                     </td>
@@ -1842,7 +1843,7 @@
                                                 <tbody>
 
                                                     <tr>
-                                                        <td style="width: 120px;"><label class="control-label" for="Reconsideración">Apelación</label></td>
+                                                        <td style="width: 140px;"><label class="control-label" for="Reconsideración">Apelación</label></td>
                                                         <td style="text-align: center;">
                                                             @Html.TextBoxFor(model => model.CargoApelacion, new { @class = "form-control" })
                                                         </td>
@@ -1902,12 +1903,12 @@
 
                                                     @if (@user.rolmenu[0].Agregar == true)
                                                     {
-                                                        <td style="width: 120px;">
+                                                        <td style="width: 140px;">
                                                             <a href="javascript:sut.editProcedimiento.Cargos.addOtros()" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Agregar</a>
                                                         </td>
                                                     }
-                                                    @*<td style="width: 120px;">    </td>*@
-                                                    <td style="width: 120px;"><label class="control-label" for="Reconsideración">Revisión</label></td>
+                                                    @*<td style="width: 140px;">    </td>*@
+                                                    <td style="width: 140px;"><label class="control-label" for="Reconsideración">Revisión</label></td>
                                                     <td style="text-align: center;">
                                                         @Html.TextBoxFor(model => model.CargoOtros, new { @class = "form-control" })
                                                     </td>
@@ -1956,7 +1957,7 @@
                                                 <tbody>
 
                                                     <tr>
-                                                        <td style="width: 120px;"><label class="control-label" for="Reconsideración">Revisión</label></td>
+                                                        <td style="width: 140px;"><label class="control-label" for="Reconsideración">Revisión</label></td>
                                                         <td style="text-align: center;">
                                                             @Html.TextBoxFor(model => model.CargoOtros, new { @class = "form-control" })
                                                         </td>
@@ -2003,7 +2004,7 @@
                                                 <tbody>
 
                                                     <tr>
-                                                        <td style="width: 120px;"><label class="control-label" for="Reconsideración">Revisión</label></td>
+                                                        <td style="width: 140px;"><label class="control-label" for="Reconsideración">Revisión</label></td>
                                                         <td style="text-align: center;">
                                                             @Html.TextBoxFor(model => model.CargoOtros, new { @class = "form-control" })
                                                         </td>
@@ -2558,11 +2559,11 @@
                                                 }
                                             }
                                         </th>
-                                        <th style="width: 8%;">Artículo	</th>
-                                        <th style="width: 34.5%;">Denominación </th>
-                                        <th style="width: 17%;">Tipo de Norma</th>
-                                        <th style="width: 13%;">Número	</th>
-                                        <th style="width: 19%;">Fecha de Publicación</th>
+                                        <th style="width: 8%; text-align: center;">Artículo	</th>
+                                        <th style="width: 34.5%; text-align: center;">Denominación </th>
+                                        <th style="width: 17%; text-align: center;">Tipo de Norma </th>
+                                        <th style="width: 13%; text-align: center;">Número </th>
+                                        <th style="width: 19%; text-align: center;">Fecha de Publicación <p>del Diario El Peruano</th>
                                         @*<th style="width:100px;">Documento</th>*@
                                         <th style="width:60px;"></th>
                                         <th style="width:60px;"></th>
@@ -2849,7 +2850,8 @@
                     }
                 });
             },
-            tab: '@Request.QueryString["tab"]',
+            @*tab: '@Request.QueryString["tab"]',*@
+            tab: '@ViewBag.TabValue',
             esProcEstadar: @Html.Raw(Model.TipoProcedimiento == TipoProcedimiento.Estandar ? "true" : "false") ,
             esCargaInicial: @MvcHtmlString.Create(ViewBag.EsCargaInicial ? "true" : "false") ,
             esTupaEstandar: @MvcHtmlString.Create(ViewBag.EsTupaEstandar ? "true" : "false") ,
@@ -3005,7 +3007,7 @@
                 }
             },
 
-             
+
             camposNoRequerido: function () {
                 debugger
                 var lista = $("input[norequired=True]");
@@ -7742,7 +7744,7 @@
 
         //Agregando envento al boton para subir el excel
 
-        
+
        //Requisitos
 
         document.getElementById('inputreqnotas').addEventListener('change', function () {
@@ -7778,7 +7780,7 @@
                 for (let i = 0; i < arrayRequisitos.length; i++) {
                     sut.editProcedimiento.Requisito.add(1)
                     document.getElementsByName(`Requisito[${i}].Nombre`)[0].value = arrayRequisitos[i];
-                    
+
                 }
                 for (let j = 0; j < arrayNotas.length; j++) {
                     sut.editProcedimiento.Requisito.add(2)
@@ -7787,7 +7789,7 @@
                 }
                 console.log(result)
             } else {
-                showNotification('top', 'right', "No se seleccionó ningún archivo", 3); 
+                showNotification('top', 'right', "No se seleccionó ningún archivo", 3);
             }
         });
 
@@ -7835,7 +7837,7 @@
                     bl.Nuevo = 1;
                     bl.BaseLegalNormaId = '0'; // $('#form-bl-detalle input[name="BaseLegalNormaId"]').val();
                     bl.TipoBaseLegal = '2';// $('#form-bl-detalle select[name="TipoBaseLegal"]').val();
-                    
+
                     //Informacion de excel
                     bl.Descripcion = objeto['Denominacion'];
                     bl.TipoNormaId = objeto['TipoNormaId']; //$('#form-bl-detalle select[name="TipoNormaId"]').val();
@@ -7880,7 +7882,7 @@
                    // sut.editProcedimiento.BaseLegal.add(r)
                 });
 
-                
+
                 console.log(result)
             } else {
                 showNotification('top', 'right', "No se seleccionó ningún archivo", 3);
@@ -7888,8 +7890,8 @@
         });
 
 
-       
-     
+
+
 
 
 

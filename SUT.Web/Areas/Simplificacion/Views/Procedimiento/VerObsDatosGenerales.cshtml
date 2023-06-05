@@ -761,11 +761,11 @@
                                     <tr>
                                         <th style="width:100px;">
                                         </th>
-                                        <th style="width: 8%;">Artículo	</th>
-                                        <th style="width: 34.5%;">Denominación </th>
-                                        <th style="width: 17%;">Tipo de Norma</th>
-                                        <th style="width: 13%;">Número	</th>
-                                        <th style="width: 19%;">Fecha de Publicación</th> 
+                                        <th style="width: 8%; text-align: center;">Artículo	</th>
+                                        <th style="width: 34.5%; text-align: center;">Denominación </th>
+                                        <th style="width: 17%; text-align: center;">Tipo de Norma</th>
+                                        <th style="width: 13%; text-align: center;">Número	</th>
+                                        <th style="width: 19%; text-align: center;">Fecha de Publicación</th> 
                                         <th style="width:60px;"></th>
                                     </tr>
                                 </thead>
@@ -838,7 +838,8 @@
     <script>
 
                 sut.editProcedimiento = {
-                    tab: '@Request.QueryString["tab"]',
+                    @*tab: '@Request.QueryString["tab"]',*@
+                    tab: '@ViewBag.Tabvalue',
                     esProcEstadar: @Html.Raw(Model.TipoProcedimiento == TipoProcedimiento.Estandar ? "true" : "false") ,
                     esCargaInicial: @MvcHtmlString.Create(ViewBag.EsCargaInicial ? "true" : "false") ,
                     esTupaEstandar: @MvcHtmlString.Create(ViewBag.EsTupaEstandar ? "true" : "false") ,
@@ -851,7 +852,7 @@
                         var id = input.id;
                         var txt = $(evt.target);
                         var valor = id.replace(/\d/g, "");
-                         
+
                         $('#mensaje' + valor).hide();
                         document.querySelector('#mensaje' + valor).innerText = '';
 
@@ -942,7 +943,7 @@
                         },
                         guardarObservarExp: function (idExpediente, procedimientoId) {
                             debugger;
-         
+
                             if ($('#txtaObservarExp').val().trim() == ""){
                                 showNotification('top', 'right', 'No puedes Guardar una obseración en blanco', 2);
                                 return;
@@ -1011,7 +1012,7 @@
                                     $('#modal-ventana').modal('hide');
                                     sut.error.show('mensajes', result.responseText);
                                 }
-                            }); 
+                            });
                         },
                         init: function () {
                             var lista = @Html.Raw(ViewBag.ListaSede != null ? ViewBag.ListaSede : "[]");
@@ -1490,10 +1491,10 @@
                                     num = i ;
                                     var rows = '';
 
-                             
+
                                         rows += sut.string.format('<tr data-index="{0}" >', num);
                                         rows += '<td colspan="5">';
-                                        rows += '<div class="form-group">'; 
+                                        rows += '<div class="form-group">';
                                         rows += '</div>';
                                         rows += '<table id="divModalidad0' + num + '" class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;">';
                                         rows += '<tbody></tbody>';
@@ -1521,7 +1522,7 @@
 
 
                                     rows += sut.string.format('</td>');
-                                   
+
 
                                     rows += sut.string.format('<td><input type="checkbox" id="chekModalidad' + i +'" name="TablaAsme[{0}].EsGratuito"  {1} {2} /></td>', i, r.EsGratuito ? 'checked' : '', 'disabled');
 
@@ -1547,21 +1548,21 @@
                                     rows += '</div></td>';
                                     rows += '</tr>';
 
-                                    tabla.append(rows); 
+                                    tabla.append(rows);
                                         if (@obs.Count != 0) {
                                             var cont1 = 0;
                                             var texto1 = "";
                                             for (var Mi = 0; Mi < listaobservaciones.length; Mi += 1) {
                                                 if (listaobservaciones[Mi].Pantalla == "Datos Generales" && listaobservaciones[Mi].NombreCampo == "NombredelaModalidad" + i) {
-                                                    
+
                                                     if (listaobservaciones[Mi].TipoEstado == "1") {
                                                         texto1 = listaobservaciones[Mi].Descripcion;
-                                                    } 
-                                                    else if (listaobservaciones[Mi].TipoEstado == "2") { 
+                                                    }
+                                                    else if (listaobservaciones[Mi].TipoEstado == "2") {
                                                         sut.editProcedimiento.textoobservacionModalidad("" + texto1 + "", "" + listaobservaciones[Mi].Descripcion + "", 4, "" + listaobservaciones[Mi].EstadoExpediente + "", i,lista.length);
                                                         //});
-                                                    } 
-                                                    else if (listaobservaciones[Mi].TipoEstado == "3") { 
+                                                    }
+                                                    else if (listaobservaciones[Mi].TipoEstado == "3") {
                                                         sut.editProcedimiento.textosustentoModalidad( listaobservaciones[Mi] + "", 4, "" + listaobservaciones[Mi].EstadoExpediente + "", i);
 
                                                     }
@@ -1690,20 +1691,20 @@
                                     $.each(lista, function (i, r) {
                                         var num = i;
 
-                                        var rows = ''; 
+                                        var rows = '';
 
                                         i = counttablaRGeneral + counttablaREspecifico;
-                                         
+
                                             rows += sut.string.format('<tr data-index="{0}" >', num);
-                                            rows += '<td colspan="5">'; 
+                                            rows += '<td colspan="5">';
                                             rows += '<table id="divRequisitos0' + num + '" class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;">';
                                             rows += '<tbody></tbody>';
                                             rows += '</table>';
                                             rows += '</td>';
-                                            rows += '</tr>'; 
+                                            rows += '</tr>';
 
                                         rows += sut.string.format('<tr data-index="{0}" class="requisito" id="trRequisitos' + num + '" >', i);
-                                        rows += '<td>'; 
+                                        rows += '<td>';
                                         rows += sut.string.format('<span>{0}</span>', r.RecNum);
 
 
@@ -1712,10 +1713,10 @@
                                         rows += sut.string.format('<input type="hidden" name="Requisito[{0}].SustentoTecnico" value="{1}" />', i, r.SustentoTecnico || '');
                                         rows += sut.string.format('<input type="hidden" name="Requisito[{0}].TipoRequisito" value="{1}" />', i, r.TipoRequisito);
                                         rows += '</td>';
-                                        
+
 
                                         rows += sut.string.format('<td colspan="2"><label  class="form-control" id="Nombre' + num + '" style="border-color:#ddd;background: #eeeeee;font-weight: 600;height: 100%;" name="Requisito[{0}].Nombre">{1}</label></td>', i, r.Nombre || '');
-                                         
+
                                         rows += '</tr>';
                                         if (r.TipoRequisito === 1) {
                                             rows += '<tr><td colspan="4"><table class="table table-condensed table-bordered" style="margin-bottom: 0px;">';
@@ -1738,28 +1739,28 @@
                                             tablaREspecifico.append(rows);
                                             counttablaREspecifico++;
                                         }
-                                         
+
                                             if (@obs.Count != 0) {
                                                 var cont1 = 0;
                                                 var texto1 = "";
-                                                for (var Mi = 0; Mi < listaObservacionRequisitos.length; Mi += 1) { 
+                                                for (var Mi = 0; Mi < listaObservacionRequisitos.length; Mi += 1) {
 
                                                     if (listaObservacionRequisitos[Mi].Pantalla == "Datos Generales" && listaObservacionRequisitos[Mi].NombreCampo == "NombredelosRequisitos" + i) {
 
                                                         if (listaObservacionRequisitos[Mi].TipoEstado == "1") {
                                                             texto1 = listaObservacionRequisitos[Mi].Descripcion;
-                                                        } 
-                                                        else if (listaObservacionRequisitos[Mi].TipoEstado == "2") { 
+                                                        }
+                                                        else if (listaObservacionRequisitos[Mi].TipoEstado == "2") {
                                                             sut.editProcedimiento.textoobservacionRequisitos("" + texto1 + "", "" + listaObservacionRequisitos[Mi].Descripcion + "", 4, "" + listaObservacionRequisitos[Mi].EstadoExpediente + "", i);
-                                                          
-                                                        }  
-                                                        else if (listaObservacionRequisitos[Mi].TipoEstado == "3") { 
-                                                            sut.editProcedimiento.textosustentoRequisitos( listaObservacionRequisitos[Mi].Descripcion + "", 4, "" + listaObservacionRequisitos[Mi].EstadoExpediente + "", i); 
+
+                                                        }
+                                                        else if (listaObservacionRequisitos[Mi].TipoEstado == "3") {
+                                                            sut.editProcedimiento.textosustentoRequisitos( listaObservacionRequisitos[Mi].Descripcion + "", 4, "" + listaObservacionRequisitos[Mi].EstadoExpediente + "", i);
                                                         }
                                                     }
-                                                } 
-                                            } 
-                                    }); 
+                                                }
+                                            }
+                                    });
                                     sut.editProcedimiento.Requisito.update();
 
                                 }
@@ -1777,8 +1778,8 @@
                             rows += sut.string.format('<input type="hidden" name="Requisito[{0}].RequisitoId" value="{1}" />', i, 0);
                             rows += sut.string.format('<input type="hidden" name="Requisito[{0}].BaseLegalId" value="{1}" />', i, 0);
                             rows += sut.string.format('<input type="hidden" name="Requisito[{0}].SustentoTecnico" value="{1}" />', i, '');
-                            rows += '</td>'; 
-                            rows += sut.string.format('<td><input type="text" name="Requisito[{0}].Nombre" value="{1}" class="form-control" required /></td>', i, ''); 
+                            rows += '</td>';
+                            rows += sut.string.format('<td><input type="text" name="Requisito[{0}].Nombre" value="{1}" class="form-control" required /></td>', i, '');
                             rows += '<td class="text-center" ><div class="btn-group">';
                             rows += sut.string.format('<a class="delRequisito btn btn-danger btn-xs" href="javascript:sut.editProcedimiento.Requisito.delete({0})" ><i class="fa fa-close" ></i></a>', i);
                             rows += '</div></td>';
@@ -1791,7 +1792,7 @@
                             sut.msg.confirm('!Se eliminará el dato seleccionado!', function () {
                                 var req = $('#tblRequisito tbody tr.requisito').eq(index);
                                 if (Number(req.find('td input[name$="RequisitoId"]').val()) > 0) req.next().remove();
-                                req.remove(); 
+                                req.remove();
                                 sut.editProcedimiento.Requisito.update();
                             });
                         },
@@ -2088,14 +2089,14 @@
                             if (sut.editProcedimiento.BaseLegal.data.length > 0) {
                                 var rows = '';
                                 var listaObservacionBaseLegal = @Html.Raw(ViewBag.ListaObservacionBaseLegal != null ? ViewBag.ListaObservacionBaseLegal : "[]");
-                              
+
                                 $.each(sut.editProcedimiento.BaseLegal.data, function (i, r) {
                                     var num = i;
 
 
-                                  
+
                                         rows += sut.string.format('<tr data-index="{0}" >', num);
-                                        rows += '<td colspan="7">'; 
+                                        rows += '<td colspan="7">';
                                         rows += '<table id="divBaseLegal0' + num + '" class="table table-condensed table-bordered table-striped" style=" margin-bottom: 0px;visibility: collapse;">';
                                         rows += '<thead>';
                                         rows += '    <tr>';
@@ -2105,7 +2106,7 @@
                                         rows += '        <th  style="color: white;width: 34.5%;background: #f9f9f9;"></th>';
                                         rows += '        <th  style="color: white;width: 17%;background: #f9f9f9;"></th>';
                                         rows += '        <th  style="color: white;width: 13%;background: #f9f9f9;"></th>';
-                                        rows += '        <th  style="color: white;width: 19%;background: #f9f9f9;"></th>'; 
+                                        rows += '        <th  style="color: white;width: 19%;background: #f9f9f9;"></th>';
                                         rows += '        <th style="width:60px;background: #f9f9f9;"></th>';
                                         rows += '    </tr>';
                                         rows += '</thead>';
@@ -2113,7 +2114,7 @@
                                         rows += '</table>';
                                         rows += '</td>';
                                         rows += '</tr>';
-                                   
+
 
 
 
@@ -2138,20 +2139,20 @@
 
                                     debugger;
                                     if (r.EstadoACR==2){
-                                        rows += sut.string.format('<td colspan="6">{0}</td>', r.DescripcionACR); 
+                                        rows += sut.string.format('<td colspan="6">{0}</td>', r.DescripcionACR);
                                     }else{
                                         rows += sut.string.format('<td>{0}</td>', r.Articulo);
                                         rows += sut.string.format('<td>{0}</td>', r.Descripcion);
                                         rows += sut.string.format('<td>{0}</td>', r.NormaTipo);
                                         rows += sut.string.format('<td>{0}</td>', r.Numero);
-                                        rows += sut.string.format('<td>{0}</td>', r.FechaPublicacion); 
-                                    } 
-                                    rows += '<td><div class="btn-group">';  
+                                        rows += sut.string.format('<td>{0}</td>', r.FechaPublicacion);
+                                    }
+                                    rows += '<td><div class="btn-group">';
                                     rows += '</div></td>';
                                     rows += '</tr>';
                                 });
                                 tabla.append(rows);
-                                $.each(sut.editProcedimiento.BaseLegal.data, function (i, r) { 
+                                $.each(sut.editProcedimiento.BaseLegal.data, function (i, r) {
                                         if (@obs.Count != 0) {
                                             var cont1 = 0;
                                             var texto1 = "";
@@ -2162,12 +2163,12 @@
 
                                                     if (listaObservacionBaseLegal[Mi].TipoEstado == "1") {
                                                         texto1 = listaObservacionBaseLegal[Mi].Descripcion;
-                                                    } 
-                                                    else if (listaObservacionBaseLegal[Mi].TipoEstado == "2") { 
+                                                    }
+                                                    else if (listaObservacionBaseLegal[Mi].TipoEstado == "2") {
                                                         sut.editProcedimiento.textoobservacionBaseLegal("" + texto1 + "", "" + listaObservacionBaseLegal[Mi].Descripcion + "", 4, "" + listaObservacionBaseLegal[Mi].EstadoExpediente + "", i);
-                                                      
-                                                    } 
-                                                    else if (listaObservacionBaseLegal[Mi].CodValidacion == "3") { 
+
+                                                    }
+                                                    else if (listaObservacionBaseLegal[Mi].CodValidacion == "3") {
                                                         sut.editProcedimiento.textosustentoBaseLegal( listaObservacionBaseLegal[Mi].Descripcion + "", 4, "" + listaObservacionBaseLegal[Mi].EstadoExpediente + "", i);
 
                                                     }
@@ -2175,7 +2176,7 @@
                                             }
 
                                         }
-                                    
+
                                 });
 
                             }
@@ -2375,7 +2376,7 @@
                             //if ($('#'+Descripcion+'').val().trim()== ""){
                             //    showNotification('top', 'right', 'No puedes Guardar una obseración en blanco', 2);
                             //    return;
-                            //} 
+                            //}
 
                             debugger;
                             var model = {
@@ -2421,27 +2422,27 @@
                         },
                         validarObservarExpModalidad: function (idExpediente, procedimientoId, numero,TablaAsmeId) {
 
-                             
+
                             debugger;
                             var DesModalidad=$('#DesModalidad' + numero).val();
-                     
+
                             if(DesModalidad == undefined){
                                 DesModalidad='';
                             }
 
                             var PreModalidad=$('#PreModalidad' + numero).val();
-                     
+
                             if(PreModalidad == undefined){
                                 PreModalidad='';
                             }
 
-                            
+
                             var CostoModalidad=$('#CostoModalidad' + numero).val();
-                     
+
                             if(CostoModalidad == undefined){
                                 CostoModalidad='';
                             }
-                             
+
 
                             var Descripcion = DesModalidad + ";:;" + $('#chekModalidad' + numero).prop('checked')+ ";:;" + PreModalidad + ";:;" + CostoModalidad;
                             //var Descripcion = $('#DesModalidad' + numero).val() + ";:;" + $('#chekModalidad' + numero).prop('checked')+ ";:;" + $('#PreModalidad' + numero ).val() + ";:;" + $('#CostoModalidad' + numero ).val();
@@ -2495,7 +2496,7 @@
 
 
                             //var Descripcion = $('#Nombre' + numero).val();
-                            var Descripcion = document.getElementById('Nombre'+numero+'').innerHTML 
+                            var Descripcion = document.getElementById('Nombre'+numero+'').innerHTML
                             var NombreCampo = 'Requisitos';
 
                             var model = {
@@ -2508,7 +2509,7 @@
                                 'filtro.Pantalla': 'Datos Generales',
                                 'filtro.Estado': '1',
                                 'filtro.RequisitoId': RequisitoId,
-                                
+
                             };
                             $.ajax({
                                 type: "POST",
@@ -2690,7 +2691,7 @@
                             rows += '<div id="'+nombdivdetalle+'">';
                             rows += '<label class="col-sm-2 col-xs-12 control-label" for="Objetivo">'+titulo+'</label>';
                             rows += '<div class="col-sm-'+numcol+' col-xs-12">';
-        
+
                             rows += sut.string.format('<td><label class="form-control" name="' + Descripcion1 + '"  id="' + Descripcion1 +'" style="border-color:green;background:#00a65a36;font-weight: 600;height: 100%;">{0}</label></td>', document.getElementById(''+dato+'').innerHTML );
                             rows += '</div>';
                             rows += '<br/>';
@@ -2751,8 +2752,8 @@
                             //rows += sut.string.format('<td style="width: 80%;"><input  style="border-color:green;background:#00a65a36;" type="text" id="DesModalidadD' + num + '"  value="{0}" class="form-control" readonly /></td>',descr , 'readonly');
 
 
- 
-                            
+
+
                             debugger;
                             rows += sut.string.format('<td style="width: 80%;">');
                             if(numeromod > 1){
@@ -2849,13 +2850,13 @@
 
                             debugger;
 
-                          
+
                             document.getElementById('divBaseLegal0'+num+'').style.visibility = "initial";
                             var tabla = $('#divBaseLegal0' + num + ' tbody');
                             debugger;
                             var NombreCampo = 'BaseLegal';
                             var rows = '';
-                         
+
 
                             rows += sut.string.format('<tr data-index="{0}" id="trdivBaseLegal0' + num + '">', num);
                             var asd=$('#BDescripcionACR' + num).val();
@@ -2998,10 +2999,10 @@
                             $('#aCancelarSustentarExp'+NombreCampo+'').css({ "display": "" });
 
                         },
-                        masivoObservarExp: function (expedienteId, datocampo,nombre1,nombre2) { 
+                        masivoObservarExp: function (expedienteId, datocampo,nombre1,nombre2) {
 
                             debugger;
-                              
+
                             if ($('#' + nombre2 + '').val().trim() == "") {
 
                                 showNotification('top', 'right', 'No puedes Guardar Masiva mente una obseración en blanco', 2);
@@ -3279,24 +3280,24 @@
 
                             debugger;
                             var DesModalidad=$('#DesModalidad' + numero).val();
-                     
+
                             if(DesModalidad == undefined){
                                 DesModalidad='';
                             }
 
                             var PreModalidad=$('#PreModalidad' + numero).val();
-                     
+
                             if(PreModalidad == undefined){
                                 PreModalidad='';
                             }
 
-                            
+
                             var CostoModalidad=$('#CostoModalidad' + numero).val();
-                     
+
                             if(CostoModalidad == undefined){
                                 CostoModalidad='';
                             }
-                             
+
 
                             var Descripcion = DesModalidad + ";:;" + $('#chekModalidad' + numero).prop('checked')+ ";:;" + PreModalidad + ";:;" + CostoModalidad;
 
@@ -3356,10 +3357,10 @@
 
 
                             //var Descripcion = $('#Nombre' + numero).val().trim();
-                            var Descripcion =  document.getElementById('Nombre'+numero+'').innerHTML 
+                            var Descripcion =  document.getElementById('Nombre'+numero+'').innerHTML
                             var NombreCampo = 'Requisitos';
 
-                            
+
                             debugger;
                             var model = {
                                 'filtro.ExpedienteId': idExpediente,
@@ -3369,9 +3370,9 @@
                                 'filtro.TipoEstado': '4',
                                 'filtro.NombreCampo': 'NombredelosRequisitos' + numero,
                                 'filtro.Pantalla': 'Datos Generales',
-                                'filtro.Estado': '1',                                
+                                'filtro.Estado': '1',
                                 'filtro.RequisitoId': RequisitoId,
-                                
+
                             };
 
 
@@ -3546,19 +3547,19 @@
 
                         comentario: "",
                         asignarCancelarObservarExp: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
-                     
-                            
+
+
                             debugger;
                             sut.editProcedimiento.AsignarObservarexp.CancelarObservacion1(idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo);
 
                         },
                         CancelarObservacion1: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
-                 
+
                             var descripcion=$('#' + Descripcion1 + '').val().trim();
 
                             if(descripcion!='')
                             {
-                                
+
                                 if (idOpcion == 1) {
                                     var model = {
                                         'filtro.ExpedienteId': idExpediente,
@@ -3599,7 +3600,7 @@
                             }
                         },
                         CancelarObservacion2: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
-              
+
                             var descripcion=$('#' + Descripcion2 + '').val().trim();
 
                             if(descripcion!='')
@@ -3653,7 +3654,7 @@
                             if(descripcion == undefined){
                                 descripcion='';
                             }
-                            
+
 
                             if(descripcion!='')
                             {
@@ -3913,7 +3914,7 @@
                         },
                         CancelarObservacion1Reconsideracion: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
                             var Descripcion = $('#CargoReconsideracion').val() + ";:;" + $('#UndOrgReconsideracion_Nombre').val() + ";:;" + $('#PzoReconPresent').val() + ";:;" + $('#PzoReconResol').val();
-                            
+
                             debugger;
                             if(Descripcion!=''){
 
@@ -3959,7 +3960,7 @@
                             }
                         },
                         CancelarObservacion2Reconsideracion: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
-                            
+
                             debugger;
                             var descripcion=$('#Reconsideracion2').val();
 
@@ -4016,7 +4017,7 @@
 
 
                             if(descripcion!='')
-                            { 
+                            {
 
                                 if (idOpcion == 1) {
                                     var model = {
@@ -4304,34 +4305,34 @@
                         },
 
                         GuardarObservarExp1Modalidad: function (idExpediente, procedimientoId, numero,TablaAsmeId) {
-                            
+
                             debugger;
                             var DesModalidad=$('#DesModalidad' + numero).val();
-                     
+
                             if(DesModalidad == undefined){
                                 DesModalidad='';
                             }
 
                             var PreModalidad=$('#PreModalidad' + numero).val();
-                     
+
                             if(PreModalidad == undefined){
                                 PreModalidad='';
                             }
 
-                            
+
                             var CostoModalidad=$('#CostoModalidad' + numero).val();
-                     
+
                             if(CostoModalidad == undefined){
                                 CostoModalidad='';
                             }
-                             
+
 
                             var Descripcion = DesModalidad + ";:;" + $('#chekModalidad' + numero).prop('checked')+ ";:;" + PreModalidad + ";:;" + CostoModalidad;
 
 
 
                             //var Descripcion = $('#DesModalidad' + numero).val() + ";" + $('#chekModalidad' + numero).prop('checked')+ ";" + $('#PreModalidad' + numero).val() + ";" + $('#CostoModalidad' + numero).val();
-                           
+
                             var NombreCampo = 'Modalidad';
 
                             var model = {
@@ -4436,7 +4437,7 @@
                                 'filtro.Pantalla': 'Datos Generales',
                                 'filtro.Estado': '1',
                                 'filtro.RequisitoId': RequisitoId,
-                                
+
                             };
 
                             $.ajax({
@@ -4517,8 +4518,8 @@
                             var Descripcion = $('#BNormaTipo' + numero).val() + ';:;' + $('#BNumero' + numero).val() + ';:;' + $('#BDescripcion' + numero).val() + ';:;' + $('#BFechaPublicacion' + numero).val() + ';:;' + $('#BArticulo' + numero).val();
 
                             //var Descripcion = $('#BNormaTipo' + numero).val() + ';:;' + $('#BNumero' + numero).val() + ';:;' + $('#BDescripcion' + numero).val() + ';:;' + $('#BFechaPublicacion' + numero).val() + ';:;' + $('#BArticulo' + numero).val();
-                          
-                            
+
+
                             var NombreCampo = 'BaseLegal';
 
                             var model = {
@@ -4608,24 +4609,24 @@
 
                             debugger;
                             var DesModalidad=$('#DesModalidad' + numero).val();
-                     
+
                             if(DesModalidad == undefined){
                                 DesModalidad='';
                             }
 
                             var PreModalidad=$('#PreModalidad' + numero).val();
-                     
+
                             if(PreModalidad == undefined){
                                 PreModalidad='';
                             }
 
-                            
+
                             var CostoModalidad=$('#CostoModalidad' + numero).val();
-                     
+
                             if(CostoModalidad == undefined){
                                 CostoModalidad='';
                             }
-                             
+
 
                             var Descripcion = DesModalidad + ";:;" + $('#chekModalidad' + numero).prop('checked')+ ";:;" + PreModalidad + ";:;" + CostoModalidad;
 
@@ -4679,24 +4680,24 @@
 
                             debugger;
                             var DesModalidad=$('#DesModalidad' + numero).val();
-                     
+
                             if(DesModalidad == undefined){
                                 DesModalidad='';
                             }
 
                             var PreModalidad=$('#PreModalidad' + numero).val();
-                     
+
                             if(PreModalidad == undefined){
                                 PreModalidad='';
                             }
 
-                            
+
                             var CostoModalidad=$('#CostoModalidad' + numero).val();
-                     
+
                             if(CostoModalidad == undefined){
                                 CostoModalidad='';
                             }
-                             
+
 
                             var Descripcion = DesModalidad + ";:;" + $('#chekModalidad' + numero).prop('checked')+ ";:;" + PreModalidad + ";:;" + CostoModalidad;
 
@@ -4750,24 +4751,24 @@
 
                             debugger;
                             var DesModalidad=$('#DesModalidad' + numero).val();
-                     
+
                             if(DesModalidad == undefined){
                                 DesModalidad='';
                             }
 
                             var PreModalidad=$('#PreModalidad' + numero).val();
-                     
+
                             if(PreModalidad == undefined){
                                 PreModalidad='';
                             }
 
-                            
+
                             var CostoModalidad=$('#CostoModalidad' + numero).val();
-                     
+
                             if(CostoModalidad == undefined){
                                 CostoModalidad='';
                             }
-                             
+
 
                             var Descripcion = DesModalidad + ";:;" + $('#chekModalidad' + numero).prop('checked')+ ";:;" + PreModalidad + ";:;" + CostoModalidad;
 
@@ -4839,7 +4840,7 @@
                             {
                                 debugger;
                                 $('#modal-ventana').modal('hide');
-                                 
+
                                 //visible
                                 $('#trModalidad' + numero + '').show();
 
@@ -4865,7 +4866,7 @@
                         },
                         CancelarObservacion1Requisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
                             debugger;
-            
+
                             debugger;
                             //var Descripcion = $('#Nombre' + numero).val().trim();
                             var Descripcion =  document.getElementById('Nombre' + numero).innerHTML;
@@ -4882,7 +4883,7 @@
                                     'filtro.Estado': '1',
                                     'filtro.RequisitoId': RequisitoId,
 
-                                    
+
                                 };
 
                                 $.ajax({
@@ -5022,7 +5023,7 @@
 
                             }else
                             {
-                            
+
                                 debugger;
                                 $('#modal-ventana').modal('hide');
 
@@ -5282,7 +5283,7 @@
                     },
 
                     textoobservacion: function (Descripcion1,Descripcion2,nombdiv,nombdivdetalle,titulo,campo1,campo2,numcol,estado,nomcampo) {
-                        debugger; 
+                        debugger;
                         var rows = '';
                         rows += '<div id="'+nombdivdetalle+'">';
                         rows += '<label class="col-sm-2 col-xs-12 control-label" for="Objetivo">'+titulo+' </label>';
@@ -5434,7 +5435,7 @@
 
 
 
-        
+
 
                         if (Des[1]=='false')
                         {
@@ -5808,11 +5809,11 @@
                         var href = $(e.target).attr('href');
                         sut.editProcedimiento.tab = href.substr(1, href.length - 1);
                     });
- 
+
 
 
                     if (sut.editProcedimiento.tab == '') {
-                        $('#edit-info-basica').addClass('active'); 
+                        $('#edit-info-basica').addClass('active');
                         $('a[href="#edit-info-basica"]').parent().addClass('active');
                     } else {
                         $('#' + sut.editProcedimiento.tab).addClass('active');
@@ -5968,5 +5969,5 @@
                 function canceladobotonessustento(NombreCampo) {
                     $('#aSustentarObservarExp' + NombreCampo + '').css({ "display": "none" });
                 }
-                    </script>
+    </script>
 }

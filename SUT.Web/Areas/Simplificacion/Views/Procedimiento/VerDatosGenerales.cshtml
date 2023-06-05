@@ -1662,11 +1662,11 @@
                                     <tr>
                                         <th style="width:100px;">
                                         </th>
-                                        <th style="width: 8%;">Artículo	</th>
-                                        <th style="width: 34.5%;">Denominación </th>
-                                        <th style="width: 17%;">Tipo de Norma</th>
-                                        <th style="width: 13%;">Número	</th>
-                                        <th style="width: 19%;">Fecha de Publicación</th>
+                                        <th style="width: 8%; text-align: center;">Artículo</th>
+                                        <th style="width: 34.5%; text-align: center;">Denominación </th>
+                                        <th style="width: 17%; text-align: center;">Tipo de Norma</th>
+                                        <th style="width: 13%; text-align: center;">Número	</th>
+                                        <th style="width: 19%; text-align: center;">Fecha de Publicación <p>del Diario El Peruano</th>
                                         @*<th style="width:100px;">Documento</th>*@
                                         <th style="width:60px;"></th>
                                     </tr>
@@ -1837,7 +1837,8 @@
     <script>
 
                 sut.editProcedimiento = {
-                    tab: '@Request.QueryString["tab"]',
+                    @*tab: '@Request.QueryString["tab"]',*@
+                    tab: '@ViewBag.Tabvalue',
                     esProcEstadar: @Html.Raw(Model.TipoProcedimiento == TipoProcedimiento.Estandar ? "true" : "false") ,
                     esCargaInicial: @MvcHtmlString.Create(ViewBag.EsCargaInicial ? "true" : "false") ,
                     esTupaEstandar: @MvcHtmlString.Create(ViewBag.EsTupaEstandar ? "true" : "false") ,
@@ -1846,7 +1847,7 @@
                         Calificaciones: @Html.Raw(ViewBag.calificaciones != null ? ViewBag.calificaciones : "[]"),
 
                     comboUndOrgCargos: function (index, id) {
-                       
+
                         var cb = sut.string.format('<select class="form-control" name="ProcedimientoCargos[{0}].TipoReconPresent" disabled >', index);
                         $.each(sut.editProcedimiento.tipoplazo, function (i, r) {
                             cb += sut.string.format('<option value="{0}" {2}>{1}</option>', r.Value, r.Text, r.Value == id ? 'selected' : '');
@@ -1863,7 +1864,7 @@
                         return cb;
                     },
                     comboUndOrgCargosApe: function (index, id) {
-                       
+
                         var cb = sut.string.format('<select class="form-control" name="ProcedimientoCargosApe[{0}].TipoApelPresent" disabled >', index);
                         $.each(sut.editProcedimiento.tipoplazo, function (i, r) {
                             cb += sut.string.format('<option value="{0}" {2}>{1}</option>', r.Value, r.Text, r.Value == id ? 'selected' : '');
@@ -1945,7 +1946,7 @@
 
 
             SiguientePA: (Expediente, ExplorarNum) => {
-               
+
                 $.ajax({
                     type: "GET",
                     url: '@Url.Content("~/Simplificacion/Procedimiento/SiguientePA")',
@@ -1956,7 +1957,7 @@
                         $('#modal-ventana').modal('show');
                     },
                     success: (data) => {
-                       
+
                         $('#modal-ventana').modal('hide');
 
                             if (data.estado == 0) {
@@ -1982,7 +1983,7 @@
             },
 
             AtrasPA: (Expediente, ExplorarNum) => {
-               
+
                 $.ajax({
                     type: "GET",
                     url: '@Url.Content("~/Simplificacion/Procedimiento/AtrasPA")',
@@ -1993,7 +1994,7 @@
                         $('#modal-ventana').modal('show');
                     },
                     success: (data) => {
-                          
+
                         $('#modal-ventana').modal('hide');
                             if (data.estado == 0) {
 
@@ -2047,7 +2048,7 @@
                         return cb;
                     },
                     visualizarSustento: function (evt, input) {
-                       
+
                         var key = window.Event ? evt.which : evt.keyCode;
                         var chark = String.fromCharCode(key);
                         var tempValue = input.value + chark;
@@ -2069,7 +2070,7 @@
 
                     },
                     visualizarSustentomodalidad: function (evt, input) {
-                       
+
                         var key = window.Event ? evt.which : evt.keyCode;
                         var chark = String.fromCharCode(key);
                         var tempValue = input.value + chark;
@@ -2091,7 +2092,7 @@
                                     $('#modal-ventana').modal('show');
                                 },
                                 success: (data) => {
-                                   
+
                                     $('#modal-ventana').modal('hide');
                                     if (data.estado == 0) {
                                         //showNotification('top', 'right', 'La Ficha se encuentra en estado "SIN ACCIÓN" ', 2);
@@ -2137,7 +2138,7 @@
                     },
 
                     visualizarSustentorequisitos: function (evt, input) {
-                       
+
                         var key = window.Event ? evt.which : evt.keyCode;
                         var chark = String.fromCharCode(key);
                         var tempValue = input.value + chark;
@@ -2149,7 +2150,7 @@
                     },
 
                     visualizarSustentobaselegal: function (evt, input) {
-                       
+
                         var key = window.Event ? evt.which : evt.keyCode;
                         var chark = String.fromCharCode(key);
                         var tempValue = input.value + chark;
@@ -2210,7 +2211,7 @@
                             comentario = $("#txtaObservarExp").val();
                         },
                         guardarObservarExp: function (idExpediente, procedimientoId) {
-                           
+
 
                             if ($('#txtaObservarExp').val().trim() == ""){
                                 showNotification('top', 'right', 'No puedes Guardar una obseración en blanco', 2);
@@ -2345,7 +2346,7 @@
                         },
                         add: function (data) {
 
-                           
+
                             $('#modal-ventana').modal('hide');
                             $.ajax({
                                 type: "GET",
@@ -2564,7 +2565,7 @@
                             });
                         },
                         setUndOrg: function (data) {
-                           
+
                             $('#modal-ventana-editar').modal('hide');
 
                             if (!$.isArray(data)) data = [data];
@@ -2940,7 +2941,7 @@
                         },
                         addReconsideracion: (indexReq, indexForm,TablaAsmeId,ProcedimientoId) => {
 
-                           
+
                             var tabla = $('#tablaReconsideracion1 tbody').eq(0);
 
 
@@ -3046,7 +3047,7 @@
                         },
                         initApelacion: function () {
 
-                           
+
                             var lista = @Html.Raw(ViewBag.ListaProcedimientoCargosApe != null ? ViewBag.ListaProcedimientoCargosApe : "[]");
                             var listaobservaciones = @Html.Raw(ViewBag.ListaObservacionCargosApe != null ? ViewBag.ListaObservacionCargosApe : "[]");
                             var tabla = $('#tablaApelacion1 tbody');
@@ -3501,7 +3502,7 @@
                     },
                     Modalidad : {
                         init: function () {
-                           
+
 
                             var lista = @Html.Raw(ViewBag.ListaModalidad != null ? ViewBag.ListaModalidad : "[]");
                             var listaobservaciones = @Html.Raw(ViewBag.ListaObservacion != null ? ViewBag.ListaObservacion : "[]");
@@ -3564,7 +3565,7 @@
                                     rows += '</td>';
                                     //rows += sut.string.format('<td><input type="text" name="TablaAsme[{0}].Codigo" value="{1}" class="form-control" readonly /></td>', i, r.Codigo);
 
-                                   
+
                                     rows += sut.string.format('<td>');
                                     if(lista.length > 1){
                                         var descr='';
@@ -3676,7 +3677,7 @@
                                                             $("#mensajeModalidad" + i).hide();
                                                         }
 
-                                                       
+
                                                         sut.editProcedimiento.textoobservacionModalidad("" + texto1 + "", "" + listaobservaciones[Mi].Descripcion + "", 4, "" + listaobservaciones[Mi].EstadoExpediente + "", i,lista.length);
                                                         //});
                                                     }
@@ -3752,7 +3753,7 @@
                                     //rows += sut.string.format('<td><input name="TablaAsme[{0}].Prestaciones" value="{1}" class="form-control" type="number" min="1" /></td>', i, 0);
                                 }
                             }
-                           
+
 
 
 
@@ -3831,7 +3832,7 @@
                             });
                         },
                         init: function () {
-                           
+
                             var lista = @Html.Raw(ViewBag.ListaRequisito != null ? ViewBag.ListaRequisito : "[]");
                             var tabla = $('#tblRequisito tbody');
 
@@ -3898,7 +3899,7 @@
                                         }
 
 
-                                       
+
                                         if(r.Titulo!="" &&  r.Titulo!=undefined || r.EditableTitulo== 1  ){
                                             rows += sut.string.format('<tr data-index="{0}">', i);
                                             rows += '<td colspan="3">';
@@ -4018,7 +4019,7 @@
                                                                 $("#mensajeRequisitos" + i).hide();
                                                             }
 
-                                                           
+
                                                             sut.editProcedimiento.textoobservacionRequisitos("" + texto1 + "", "" + listaObservacionRequisitos[Mi].Descripcion + "", 4, "" + listaObservacionRequisitos[Mi].EstadoExpediente + "", i);
                                                             //});
                                                         }
@@ -4476,7 +4477,7 @@
                                     rows += sut.string.format('<input type="hidden" id="BDescripcionACR' + i + '"  name="BaseLegal.BaseLegalNorma[{0}].DescripcionACR" value="{1}" />', i, r.DescripcionACR);
                                     rows += '</td>';
 
-                                   
+
                                     if (r.EstadoACR==2){
                                         rows += sut.string.format('<td colspan="6">{0}</td>', r.DescripcionACR);
                                         //$('#idagregarbaselegal').hide();
@@ -4557,7 +4558,7 @@
                                                             $("#mensajeBaseLegal" + i).hide();
                                                         }
 
-                                                       
+
                                                         sut.editProcedimiento.textoobservacionBaseLegal("" + texto1 + "", "" + listaObservacionBaseLegal[Mi].Descripcion + "", 4, "" + listaObservacionBaseLegal[Mi].EstadoExpediente + "", i);
                                                         //});
                                                     }
@@ -4784,7 +4785,7 @@
                             //    return;
                             //}
 
-                           
+
                             var model = {
                                 'filtro.ExpedienteId': idExpediente,
                                 'filtro.ProcedimientoId': procedimientoId,
@@ -4806,7 +4807,7 @@
                                     //$('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
                                     $('#aValidarObservarExp'+NombreCampo+'').css("display","none");
@@ -4829,7 +4830,7 @@
                         validarObservarExpModalidad: function (idExpediente, procedimientoId, numero,TablaAsmeId) {
 
 
-                           
+
                             var DesModalidad=$('#DesModalidad' + numero).val();
 
                             if(DesModalidad == undefined){
@@ -4876,7 +4877,7 @@
                                     //$('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
                                     $('#aValidarObservarExp' + NombreCampo + numero +'').css("display", "none");
@@ -4898,7 +4899,7 @@
                         },
 
                         validarObservarExpRequisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
-                           
+
 
 
                             //var Descripcion = $('#Nombre' + numero).val();
@@ -4928,7 +4929,7 @@
                                     //$('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
                                     $('#aValidarObservarExp' + NombreCampo + numero + '').css("display", "none");
@@ -4951,7 +4952,7 @@
 
                         validarObservarExpBaseLegal: function (idExpediente, procedimientoId, numero,BaseLegalId,BaseLegalNormaId) {
 
-                           
+
                             var Descripcion = $('#BNormaTipo' + numero).val() + ';:;' + $('#BNumero' + numero).val() + ';:;' + $('#BDescripcion' + numero).val() + ';:;' + $('#BFechaPublicacion' + numero).val() + ';:;' + $('#BArticulo' + numero).val();
                             var NombreCampo = 'BaseLegal';
 
@@ -4978,7 +4979,7 @@
                                     //$('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
                                     $('#aValidarObservarExp' + NombreCampo + numero + '').css("display", "none");
@@ -4999,7 +5000,7 @@
                             comentario = "";
                         },
                         validarObservarExpReconsideracion: function (idExpediente, procedimientoId, Descripcion, NombreCampo, Pantalla) {
-                           
+
                             //var Descripcion = $('#CargoReconsideracion').val() + ";:;" + $('#UndOrgReconsideracion_Nombre').val() + ";:;" + $('#PzoReconPresent').val() + ";:;" + $('#PzoReconResol').val();
                             var Descripcion = document.getElementById('CargoReconsideracion').innerHTML  + ";:;" + document.getElementById('UndOrgReconsideracion_Nombre').innerHTML + ";:;" + document.getElementById('PzoReconPresent').innerHTML + ";:;" + document.getElementById('PzoReconResol').innerHTML;
                             var model = {
@@ -5023,7 +5024,7 @@
                                     //$('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
                                     $('#aValidarObservarExp' + NombreCampo + '').css("display", "none");
@@ -5044,7 +5045,7 @@
                             comentario = "";
                         },
                         validarObservarExpApelacion: function (idExpediente, procedimientoId, Descripcion, NombreCampo, Pantalla) {
-                           
+
                             //var Descripcion = $('#CargoApelacion').val() + ";:;" + $('#UndOrgApelacion_Nombre').val() + ";:;" + $('#PzoApelPresent').val() + ";:;" + $('#PzoApelResol').val();
                             var Descripcion = document.getElementById('CargoApelacion').innerHTML  + ";:;" + document.getElementById('UndOrgApelacion_Nombre').innerHTML + ";:;" + document.getElementById('PzoApelPresent').innerHTML + ";:;" + document.getElementById('PzoApelResol').innerHTML;
                             var model = {
@@ -5068,7 +5069,7 @@
                                     //$('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
                                     $('#aValidarObservarExp' + NombreCampo + '').css("display", "none");
@@ -5090,7 +5091,7 @@
                         },
                         comentario: "",
                         observareditarExp: function (Descripcion1,Descripcion2,nombdiv,nombdivdetalle,NombreCampo,dato, titulo,numcol) {
-                           
+
                             debugger;
 
                             var nombre = document.getElementById('' + dato + '').innerHTML;
@@ -5141,7 +5142,7 @@
                         comentario: "",
                         observareditarExpModalidad: function (num, numeromod) {
                             var tabla = $('#divModalidad0' + num + ' tbody');
-                           
+
                             //var Descripcion = $('#DesModalidad' + num).val() + ";" + $('#chekModalidad' + num).val() + ";" + $('#PreModalidad' + num).val() + ";" + $('#CostoModalidad' + num).val();
                             var NombreCampo = 'Modalidad';
                             var rows = '';
@@ -5170,7 +5171,7 @@
 
 
 
-                           
+
                             rows += sut.string.format('<td style="width: 80%;">');
                             if(numeromod > 1){
                                 var descr='';
@@ -5228,9 +5229,9 @@
 
                         comentario: "",
                         observareditarExpRequisitos: function (num) {
-                           
+
                             var tabla = $('#divRequisitos0' + num + ' tbody');
-                           
+
                             var NombreCampo = 'Requisitos';
                             var rows = '';
 
@@ -5264,12 +5265,12 @@
                         comentario: "",
                         observareditarExpBaseLegal: function (num) {
 
-                           
+
 
 
                             document.getElementById('divBaseLegal0'+num+'').style.visibility = "initial";
                             var tabla = $('#divBaseLegal0' + num + ' tbody');
-                           
+
                             var NombreCampo = 'BaseLegal';
                             var rows = '';
 
@@ -5321,7 +5322,7 @@
                         },
                         comentario: "",
                         observareditarExpReconsideracion: function (Descripcion1, Descripcion2, nombdiv, nombdivdetalle, NombreCampo, dato, titulo, numcol) {
-                           
+
                             var rows = '';
                             rows += '<table class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;" id="' + nombdivdetalle + '">';
                             rows += '<tbody>';
@@ -5358,7 +5359,7 @@
                             comentario = $("#txtaObservarExp").val();
                         },
                         observareditarExpApelacion: function (Descripcion1, Descripcion2, nombdiv, nombdivdetalle, NombreCampo, dato, titulo, numcol) {
-                           
+
                             var rows = '';
                             rows += '<table class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;" id="' + nombdivdetalle + '">';
                             rows += '<tbody>';
@@ -5397,7 +5398,7 @@
 
                         sustentarObservarExp: function (Descripcion1,nombdiv,nombdivdetalle,NombreCampo,titulo,numcol) {
 
-                           
+
                             var rows = '';
                             rows += '<div id="'+nombdivdetalle+'">';
                             rows += '<label class="col-sm-2 col-xs-12 control-label" for="Objetivo">'+titulo+'</label>';
@@ -5414,14 +5415,14 @@
                         },
                         masivoObservarExp: function (expedienteId, datocampo,nombre1,nombre2) {
 
-                           
+
 
                             if ($('#' + nombre2 + '').val().trim() == "") {
 
                                 showNotification('top', 'right', 'No puedes Guardar Masiva mente una obseración en blanco', 2);
                                 return;
                             }
-                           
+
 
                             $.ajax({
                                 type: "GET",
@@ -5449,7 +5450,7 @@
 
                         GuardarObservarMasiva: function (data) {
 
-                           
+
                             var d = data;
                             for (i = 0; i < data.length; i++){
                                 var ProcedimientoId=data[i].ProcedimientoId;
@@ -5467,7 +5468,7 @@
 
                         GuardarObservarMasiva2: function (ProcedimientoId,condicion,texto1,texto2) {
 
-                           
+
 
 
                             var model = {
@@ -5503,7 +5504,7 @@
                             comentario = "";
                         },
                         GuardarObservarMasiva3: function ( ProcedimientoId,condicion,texto1,texto2) {
-                           
+
                             var model = {
                                 'filtro.ExpedienteId': @Model.ExpedienteId,
                                 'filtro.ProcedimientoId': ProcedimientoId,
@@ -5564,7 +5565,7 @@
                                     $('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
 
@@ -5614,7 +5615,7 @@
                                     //$('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
 
@@ -5664,7 +5665,7 @@
                                     //$('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
 
@@ -5691,7 +5692,7 @@
 
 
 
-                           
+
                             var DesModalidad=$('#DesModalidad' + numero).val();
 
                             if(DesModalidad == undefined){
@@ -5743,7 +5744,7 @@
                                     //$('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
 
@@ -5774,7 +5775,7 @@
                             var NombreCampo = 'Requisitos';
 
 
-                           
+
                             var model = {
                                 'filtro.ExpedienteId': idExpediente,
                                 'filtro.ProcedimientoId': procedimientoId,
@@ -5800,7 +5801,7 @@
                                     $('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
 
@@ -5852,7 +5853,7 @@
                                     $('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
 
@@ -5887,7 +5888,7 @@
                                 showNotification('top', 'right', 'No puedes Guardar una obseración en blanco', 2);
                                 return;
                             }
-                           
+
                             sut.editProcedimiento.AsignarObservarexp.GuardarObservarExp1(idExpediente,procedimientoId,Descripcion1,Descripcion2,NombreCampo,Pantalla);
                         },
 
@@ -5964,7 +5965,7 @@
                         asignarCancelarObservarExp: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
 
 
-                           
+
                             sut.editProcedimiento.AsignarObservarexp.CancelarObservacion1(idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo);
 
                         },
@@ -6065,7 +6066,7 @@
                             }
                         },
                         CancelarObservacion3: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
-                           
+
                             var descripcion=$('#' + nomsustento + '').val();
 
                             if(descripcion == undefined){
@@ -6100,7 +6101,7 @@
                                         //$('#modal-ventana').modal('show');
                                     },
                                     success: function (data) {
-                                       
+
                                         $('#modal-ventana').modal('hide');
 
                                         $('#' + nomcampo + '').show();
@@ -6136,7 +6137,7 @@
                             }
                             else
                             {
-                               
+
                                 $('#modal-ventana').modal('hide');
 
                                 $('#' + nomcampo + '').show();
@@ -6164,7 +6165,7 @@
                                 showNotification('top', 'right', 'No puedes Guardar una obseración en blanco', 2);
                                 return;
                             }
-                           
+
                             sut.editProcedimiento.AsignarObservarexp.GuardarObservarExp1Reconsideracion(idExpediente, procedimientoId, Descripcion1, Descripcion2, NombreCampo, Pantalla);
                         },
 
@@ -6247,7 +6248,7 @@
                                 showNotification('top', 'right', 'No puedes Guardar una obseración en blanco', 2);
                                 return;
                             }
-                           
+
                             sut.editProcedimiento.AsignarObservarexp.GuardarObservarExp1Apelacion(idExpediente, procedimientoId, Descripcion1, Descripcion2, NombreCampo, Pantalla);
                         },
 
@@ -6332,7 +6333,7 @@
                         CancelarObservacion1Reconsideracion: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
                             var Descripcion = $('#CargoReconsideracion').val() + ";:;" + $('#UndOrgReconsideracion_Nombre').val() + ";:;" + $('#PzoReconPresent').val() + ";:;" + $('#PzoReconResol').val();
 
-                           
+
                             if(Descripcion!=''){
 
 
@@ -6378,7 +6379,7 @@
                         },
                         CancelarObservacion2Reconsideracion: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
 
-                           
+
                             var descripcion=$('#Reconsideracion2').val();
 
                             if(descripcion.trim()!=''){
@@ -6425,7 +6426,7 @@
                         },
                         CancelarObservacion3Reconsideracion: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
 
-                           
+
                             var descripcion=$('#' + nomsustento + '').val();
 
                             if(descripcion == undefined){
@@ -6460,7 +6461,7 @@
                                         //$('#modal-ventana').modal('show');
                                     },
                                     success: function (data) {
-                                       
+
                                         $('#modal-ventana').modal('hide');
 
                                         $('#tablaReconsideracion1').show();
@@ -6494,7 +6495,7 @@
                                 comentario = "";
                             }else
                             {
-                               
+
                                 $('#modal-ventana').modal('hide');
 
                                 $('#tablaReconsideracion1').show();
@@ -6525,7 +6526,7 @@
                         CancelarObservacion1Apelacion: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
                             var Descripcion = $('#CargoApelacion').val() + ";:;" + $('#UndOrgApelacion_Nombre').val() + ";:;" + $('#PzoApelPresent').val() + ";:;" + $('#PzoApelResol').val();
 
-                           
+
                             if(Descripcion!='')
                             {
 
@@ -6569,7 +6570,7 @@
                             }
                         },
                         CancelarObservacion2Apelacion: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
-                           
+
                             var descripcion= $('#Apelacion2').val().trim();
 
 
@@ -6618,7 +6619,7 @@
                         },
                         CancelarObservacion3Apelacion: function (idExpediente, procedimientoId, idOpcion, Descripcion1, Descripcion2, NombreCampo, Pantalla, nombdivdetalle, nomsustento, divsustento, nomcampo) {
 
-                           
+
                             var descripcion=$('#' + nomsustento + '').val();
 
                             if(descripcion == undefined){
@@ -6654,7 +6655,7 @@
                                         //$('#modal-ventana').modal('show');
                                     },
                                     success: function (data) {
-                                       
+
                                         $('#modal-ventana').modal('hide');
 
                                         $('#tablaApelacion1').show();
@@ -6688,7 +6689,7 @@
                                 comentario = "";
                             }else
                             {
-                               
+
                                 $('#modal-ventana').modal('hide');
 
                                 $('#tablaApelacion1').show();
@@ -6717,13 +6718,13 @@
                                 showNotification('top', 'right', 'No puedes Guardar una obseración en blanco', 2);
                                 return;
                             }
-                           
+
                             sut.editProcedimiento.AsignarObservarexp.GuardarObservarExp1Modalidad(idExpediente, procedimientoId, numero,TablaAsmeId);
                         },
 
                         GuardarObservarExp1Modalidad: function (idExpediente, procedimientoId, numero,TablaAsmeId) {
 
-                           
+
                             var DesModalidad=$('#DesModalidad' + numero).val();
 
                             if(DesModalidad == undefined){
@@ -6834,7 +6835,7 @@
                                 showNotification('top', 'right', 'No puedes Guardar una obseración en blanco', 2);
                                 return;
                             }
-                           
+
                             sut.editProcedimiento.AsignarObservarexp.GuardarObservarExp1Requisitos(idExpediente, procedimientoId, numero,RequisitoId);
                         },
 
@@ -6926,12 +6927,12 @@
                                 showNotification('top', 'right', 'No puedes Guardar una obseración en blanco', 2);
                                 return;
                             }
-                           
+
                             sut.editProcedimiento.AsignarObservarexp.GuardarObservarExp1BaseLegal(idExpediente, procedimientoId, numero,BaseLegalId,BaseLegalNormaId);
                         },
 
                         GuardarObservarExp1BaseLegal: function (idExpediente, procedimientoId, numero,BaseLegalId,BaseLegalNormaId) {
-                           
+
                             var Descripcion = $('#BNormaTipo' + numero).val() + ';:;' + $('#BNumero' + numero).val() + ';:;' + $('#BDescripcion' + numero).val() + ';:;' + $('#BFechaPublicacion' + numero).val() + ';:;' + $('#BArticulo' + numero).val();
 
                             //var Descripcion = $('#BNormaTipo' + numero).val() + ';:;' + $('#BNumero' + numero).val() + ';:;' + $('#BDescripcion' + numero).val() + ';:;' + $('#BFechaPublicacion' + numero).val() + ';:;' + $('#BArticulo' + numero).val();
@@ -7024,7 +7025,7 @@
                         },
                         CancelarObservacion1Modalidad: function (idExpediente, procedimientoId, numero,TablaAsmeId) {
 
-                           
+
                             var DesModalidad=$('#DesModalidad' + numero).val();
 
                             if(DesModalidad == undefined){
@@ -7047,7 +7048,7 @@
 
                             var Descripcion = DesModalidad + ";:;" + $('#chekModalidad' + numero).prop('checked')+ ";:;" + PreModalidad + ";:;" + CostoModalidad;
 
-                           
+
                             if(Descripcion!='')
                             {
 
@@ -7095,7 +7096,7 @@
 
 
 
-                           
+
                             var DesModalidad=$('#DesModalidad' + numero).val();
 
                             if(DesModalidad == undefined){
@@ -7121,7 +7122,7 @@
                             //var Descripcion = $('#DesModalidad' + numero).val() + ";" + $('#chekModalidad' + numero).prop('checked')+ ";" + $('#PreModalidad' + numero).val() + ";" + $('#CostoModalidad' + numero).val();
 
 
-                           
+
                             if(Descripcion!='')
                             {
 
@@ -7166,7 +7167,7 @@
                         },
                         CancelarObservacion3Modalidad: function (idExpediente, procedimientoId, numero,TablaAsmeId) {
 
-                           
+
                             var DesModalidad=$('#DesModalidad' + numero).val();
 
                             if(DesModalidad == undefined){
@@ -7193,7 +7194,7 @@
                             var NombreCampo = 'Modalidad';
 
 
-                           
+
                             if(Descripcion!='')
                             {
 
@@ -7221,7 +7222,7 @@
                                         //$('#modal-ventana').modal('show');
                                     },
                                     success: function (data) {
-                                       
+
                                         $('#modal-ventana').modal('hide');
 
                                         //document.getElementById('#'+dato+'').style.visibility = "hidden";
@@ -7255,7 +7256,7 @@
 
                             }else
                             {
-                               
+
                                 $('#modal-ventana').modal('hide');
 
                                 //visible
@@ -7282,9 +7283,9 @@
 
                         },
                         CancelarObservacion1Requisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
-                           
 
-                           
+
+
                             //var Descripcion = $('#Nombre' + numero).val().trim();
                             var Descripcion =  document.getElementById('Nombre' + numero).innerHTML;
                             if(Descripcion.trim() != ''){
@@ -7332,7 +7333,7 @@
                         CancelarObservacion2Requisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
                             //var Descripcion = $('#Nombre' + numero).val().trim();
                             var Descripcion =  document.getElementById('Nombre' + numero).innerHTML;
-                           
+
                             if(Descripcion.trim() != ''){
                                 var model = {
                                     'filtro.ExpedienteId': idExpediente,
@@ -7376,7 +7377,7 @@
                         },
                         CancelarObservacion3Requisitos: function (idExpediente, procedimientoId, numero,RequisitoId) {
 
-                           
+
                             var Descripcion =  document.getElementById('Nombre' + numero).innerHTML;
                             //var Descripcion = $('#Nombre' + numero).val();
                             var NombreCampo = 'Requisitos';
@@ -7406,7 +7407,7 @@
                                         //$('#modal-ventana').modal('show');
                                     },
                                     success: function (data) {
-                                       
+
                                         $('#modal-ventana').modal('hide');
 
                                         //document.getElementById('#'+dato+'').style.visibility = "hidden";
@@ -7441,7 +7442,7 @@
                             }else
                             {
 
-                               
+
                                 $('#modal-ventana').modal('hide');
 
                                 //document.getElementById('#'+dato+'').style.visibility = "hidden";
@@ -7576,7 +7577,7 @@
                                     //$('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
                                     //document.getElementById('#'+dato+'').style.visibility = "hidden";
@@ -7673,7 +7674,7 @@
                                     $('#modal-ventana').modal('show');
                                 },
                                 success: function (data) {
-                                   
+
                                     $('#modal-ventana').modal('hide');
 
                                     $('#aSustentarObservarExp'+NombreCampo+'').css({ "display": "" });
@@ -7743,7 +7744,7 @@
 
                     textoobservacionReconsideracion: function (Descripcion1, Descripcion2, nombdiv, nombdivdetalle, titulo, campo1, campo2, numcol, estado, nomcampo) {
 
-                       
+
 
 
                         var Des = Descripcion1.split(";:;");
@@ -7793,7 +7794,7 @@
                     },
                     textoobservacionApelacion: function (Descripcion1, Descripcion2, nombdiv, nombdivdetalle, titulo, campo1, campo2, numcol, estado, nomcampo) {
 
-                       
+
 
 
                         var Des = Descripcion1.split(";:;");
@@ -7843,11 +7844,11 @@
 
                     },
                     textoobservacionModalidad: function (Descripcion, Descripcion2, estado, nomcampo, num,numeromod) {
-                       
+
 
                         var Des = Descripcion.split(";:;");
                         var tabla = $('#divModalidad0' + num + ' tbody');
-                       
+
                         //var Descripcion = $('#DesModalidad' + num).val() + ";" + $('#chekModalidad' + num).val() + ";" + $('#PreModalidad' + num).val() + ";" + $('#CostoModalidad' + num).val();
                         var NombreCampo = 'Modalidad';
                         var rows = '';
@@ -7859,7 +7860,7 @@
 
 
                         var desmodalidad=Des[0];
-                       
+
                         rows += sut.string.format('<td style="width: 80%;">');
                         if(numeromod > 1){
                             var descr='';
@@ -7948,11 +7949,11 @@
                     },
 
                     textoobservacionRequisitos: function (Descripcion, Descripcion2, estado, nomcampo, num) {
-                       
+
 
 
                         var tabla = $('#divRequisitos0' + num + ' tbody');
-                       
+
                         //var Descripcion = $('#DesRequisitos' + num).val() + ";" + $('#chekRequisitos' + num).val() + ";" + $('#PreRequisitos' + num).val() + ";" + $('#CostoRequisitos' + num).val();
                         var NombreCampo = 'Requisitos';
                         var rows = '';
@@ -8004,12 +8005,12 @@
 
                     },
                     textoobservacionBaseLegal: function (Descripcion, Descripcion2, estado, nomcampo, num) {
-                       
+
 
                         var Des = Descripcion.split(";:;");
                         document.getElementById('divBaseLegal0'+num+'').style.visibility = "initial";
                         var tabla = $('#divBaseLegal0' + num + ' tbody');
-                       
+
                         var NombreCampo = 'BaseLegal';
                         var rows = '';
 
@@ -8065,7 +8066,7 @@
                     },
                     textosustento: function (Descripcion1,nombdiv,nombdivdetalle,titulo,campo,numcol) {
 
-                       
+
                         var rows = '';
                         rows += '<div id="'+nombdivdetalle+'" class="form-group">';
                         rows += '<label class="col-sm-2 col-xs-12 control-label" for="Objetivo"> Sustento Observación</label>';
@@ -8078,7 +8079,7 @@
                     },
                     textosustentoReconsideracion: function (Descripcion1,nombdiv,nombdivdetalle,titulo,campo,numcol) {
 
-                       
+
                         var rows = '';
 
 
@@ -8100,7 +8101,7 @@
                     },
                     sustentarObservarExpApelacion: function (Descripcion1,nombdiv,nombdivdetalle,titulo,campo,numcol) {
 
-                       
+
                         var NombreCampo='Apelacion';
                         var rows = '';
                         rows += '<table class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px;" id="' + nombdivdetalle + '">';
@@ -8125,7 +8126,7 @@
 
 
                         var tabla = $('#divModalidad0' + num + ' tbody');
-                       
+
                         //var Descripcion = $('#DesModalidad' + num).val() + ";" + $('#chekModalidad' + num).val() + ";" + $('#PreModalidad' + num).val() + ";" + $('#CostoModalidad' + num).val();
                         var NombreCampo = 'Modalidad';
                         var rows = '';
@@ -8149,7 +8150,7 @@
 
 
                         var tabla = $('#divRequisitos0' + num + ' tbody');
-                       
+
                         //var Descripcion = $('#DesModalidad' + num).val() + ";" + $('#chekModalidad' + num).val() + ";" + $('#PreModalidad' + num).val() + ";" + $('#CostoModalidad' + num).val();
                         var NombreCampo = 'Requisitos';
                         var rows = '';
@@ -8174,7 +8175,7 @@
 
 
                         var tabla = $('#divBaseLegal0' + num + ' tbody');
-                       
+
                         //var Descripcion = $('#DesModalidad' + num).val() + ";" + $('#chekModalidad' + num).val() + ";" + $('#PreModalidad' + num).val() + ";" + $('#CostoModalidad' + num).val();
                         var NombreCampo = 'BaseLegal';
                         var rows = '';
@@ -8198,7 +8199,7 @@
                     Scroll: {
                         pos : 0,
                         init: () => {
-                           
+
                             //$('.menu-compensador').css('height', $('#divBotones').height());
                             //sut.editProcedimiento.Scroll.pos = $('#divBotones').offset().top;
                             //window.onscroll = sut.editProcedimiento.Scroll.ejecutar;
@@ -8299,7 +8300,7 @@
                     sut.editProcedimiento.Cargos.init();
                     sut.editProcedimiento.Cargos.initApelacion();
 
-                   
+
                     if('@Model.revision' == 1)
                     {
                         sut.editProcedimiento.Cargos.initOtros();
