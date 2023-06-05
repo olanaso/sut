@@ -2494,13 +2494,23 @@
                         @Html.HiddenFor(model => model.BaseLegal.BaseLegalId)
 
                         <div class="callout callout-warning" style="height: inherit;padding: inherit;display: block;">
-                            Agregar la base legal del procedimiento administrativo o servicio prestado en exclusividad
+
+                            <div style="display: inline-block; margin-right: 10px;">
+                                Agregar la base legal del procedimiento administrativo o servicio prestado en exclusividad.
+                            </div>
+                            <div style="color:#000; display: inline-block; margin-right: 10px; float:right">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne2" class="btn  btn-dark" title="Importación de Base Legal PA/SE">
+                                    <i class="fa fa-fw fa-cloud-upload"></i> Importación
+                                </a>
+
+                              
+                            </div>
+
+                           
                         </div>
                         <div class="card">
 
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne2" class="btn btn-default">
-                                <i class="fa fa-fw fa-cloud-upload"></i> Importación
-                            </a>
+                            
                             <div id="collapseOne2" class="panel-collapse collapse">
                                 <div class="card-body">
 
