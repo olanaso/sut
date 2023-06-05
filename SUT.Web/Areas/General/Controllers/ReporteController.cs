@@ -30,7 +30,7 @@ namespace Sut.Web.Areas.General.Controllers
         readonly string pathLinkarchivos = ConfigurationManager.AppSettings["Sut.PathLinkarchivos"].ToString();
         /*JJJMSP2*/
         readonly string pathlogoentidad = ConfigurationManager.AppSettings["Sut.PathLogosentidades"].ToString();
-        readonly string pathnomlogopcm = ConfigurationManager.AppSettings["Sut.PathNomLogoPcm"].ToString();
+        readonly string pathnomlogopcm = "";//ConfigurationManager.AppSettings["Sut.PathNomLogoPcm"].ToString();
         string estadoformulario = "";
         readonly Font fontsTituloNormal = FontFactory.GetFont("Arial", 8, Font.NORMAL);
         readonly Font fontsTituloNegrita = FontFactory.GetFont("Arial", 10, Font.BOLD);
@@ -2575,6 +2575,30 @@ namespace Sut.Web.Areas.General.Controllers
                 throw ex;
             }
         }
+
+        private void AdicionarLogoCaratula(Document Doc, long ExpedienteId)
+        {
+            var expediente = _expedienteService.GetOne(ExpedienteId);
+            var entidad = _entidadService.GetOne(expediente.EntidadId);
+            string nombreArchivo = entidad.Logoentidad;
+            string srutalogo = Path.Combine(pathlogoentidad, nombreArchivo); 
+            Image logo = Image.GetInstance(srutalogo);
+            logo.BorderWidth = 0;
+
+            // Determinar el tamaño de la página A4
+            Rectangle pageSize = PageSize.A4;
+            float pageWidth = pageSize.Width; // - Doc.LeftMargin - Doc.RightMargin;
+            float pageHeight = pageSize.Height; // - Doc.TopMargin - Doc.BottomMargin;
+            // Determinar la posición de la imagen en función del tamaño de la página
+            float imageWidth = logo.Width;
+            float imageHeight = logo.Height;
+            float imageX = (pageWidth/2) - (imageWidth/2);
+            float imageY = (pageHeight/2) - (imageHeight/2) + 280;
+
+            logo.SetAbsolutePosition(imageX, imageY);
+            Doc.Add(logo);
+        }
+        
         private void AdicionarCabecera(Document Doc, long ExpedienteId)
         {
             var expediente = _expedienteService.GetOne(ExpedienteId);
@@ -2657,6 +2681,7 @@ namespace Sut.Web.Areas.General.Controllers
             Cell celda;
 
             Doc.Open();
+            AdicionarLogoCaratula(Doc, ExpedienteId);
 
             tdatos.WidthPercentage = 100;
             tdatos.Border = 0;
@@ -2701,7 +2726,8 @@ namespace Sut.Web.Areas.General.Controllers
             celda.Add(fnChunk(" ", (int)Fuente.FuenteNormal));
             tlineablanco.AddCell(celda);
             Doc.Add(tlineablanco);
-
+            Doc.Add(tlineablanco);
+            
             celda = new Cell();
             celda.Border = 0;
             celda.BorderWidth = 0;
@@ -3019,7 +3045,7 @@ namespace Sut.Web.Areas.General.Controllers
             //var nomtitulo = "";
             var Denominacion = "";
             int i = 1;
-            int ii = 1;
+            //int ii = 1;
             pagcab = 4;
             pagcab2 = 4;
             MemoryStream stream = new MemoryStream();
@@ -3329,10 +3355,10 @@ namespace Sut.Web.Areas.General.Controllers
         private void GenerarIndiceConteo(long ExpedienteId, List<long> ProcedimientoIds)
         {
 
-            Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+            Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
             PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_indiceConteo.pdf", FileMode.Create));
             //PdfContentByte cb = writer.DirectContent;
-            AdicionarCabecera(Doc, ExpedienteId);
+            //AdicionarCabecera(Doc, ExpedienteId);
             Doc.Open();
 
 
@@ -3471,7 +3497,7 @@ namespace Sut.Web.Areas.General.Controllers
             //var nomtitulo = "";
             var Denominacion = "";
             int i = 1;
-            int ii = 1;
+            //int ii = 1;
             pagcab = 4;
             pagcab2 = 4;
             MemoryStream stream = new MemoryStream();
@@ -3780,10 +3806,10 @@ namespace Sut.Web.Areas.General.Controllers
         {
 
 
-            Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+            Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
             PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_indice.pdf", FileMode.Create));
             //PdfContentByte cb = writer.DirectContent;
-            AdicionarCabecera(Doc, ExpedienteId);
+            //AdicionarCabecera(Doc, ExpedienteId);
             Doc.Open();
 
 
@@ -3942,7 +3968,7 @@ namespace Sut.Web.Areas.General.Controllers
             //var nomtitulo = "";
             var Denominacion = "";
             int i = 1;
-            int ii = 1;
+            //int ii = 1;
 
 
 
@@ -4367,10 +4393,10 @@ namespace Sut.Web.Areas.General.Controllers
         {
 
 
-            Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+            Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
             PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_tituloProce.pdf", FileMode.Create));
             //PdfContentByte cb = writer.DirectContent;
-            AdicionarCabecera(Doc, ExpedienteId);
+            //AdicionarCabecera(Doc, ExpedienteId);
 
             Doc.Open();
 
@@ -4475,7 +4501,7 @@ namespace Sut.Web.Areas.General.Controllers
             IEnumerable<ExpedienteNorma> lstExp = _expedienteNormaService.GetAllLikePagin(en, 1, 100, ref totalRows).OrderBy(x => x.Fecha).OrderBy(x => x.ENUM_TIPO_NORMA_APROBACION);
 
             List<Enumerado> lstEnum = _enumeradoService.GetByTipo(TipoEnumerado.ENUM_TIPO_NORMA_APROBACION);
-            AdicionarCabecera(Doc, ExpedienteId);
+            //AdicionarCabecera(Doc, ExpedienteId);
             string cadena1 = "Texto Único de Procedimientos Administrativos - " + "\"" + entidad.Nombre.ToString() + "\"";
 
             Table tcab = new Table(1);
@@ -4489,25 +4515,25 @@ namespace Sut.Web.Areas.General.Controllers
             tcab.DefaultVerticalAlignment = Element.ALIGN_MIDDLE;
 
             //inicio
-            //Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
-            //Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
-            //Phrase p1 = new Phrase(chkHeader);
-            //HeaderFooter footer = new HeaderFooter(p1, false);
-            //footer.Border = Rectangle.NO_BORDER;
-            //footer.Alignment = Element.ALIGN_CENTER;
-            //footer.BorderColor = new Color(242, 242, 242);
-            //footer.BackgroundColor = new Color(242, 242, 242);
-            //Doc.Header = footer;
+            Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
+            Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
+            Phrase p1 = new Phrase(chkHeader);
+            HeaderFooter footer = new HeaderFooter(p1, false);
+            footer.Border = Rectangle.NO_BORDER;
+            footer.Alignment = Element.ALIGN_CENTER;
+            footer.BorderColor = new Color(242, 242, 242);
+            footer.BackgroundColor = new Color(242, 242, 242);
+            Doc.Header = footer;
             //fin
 
-            celda = new Cell();
-            celda.Border = 0;
-            celda.Leading = 10;
-            celda.BorderColor = new Color(242, 242, 242);
-            celda.BackgroundColor = new Color(242, 242, 242);
-            celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
-            tcab.AddCell(celda);
-            Doc.Add(tcab);
+            //celda = new Cell();
+            //celda.Border = 0;
+            //celda.Leading = 10;
+            //celda.BorderColor = new Color(242, 242, 242);
+            //celda.BackgroundColor = new Color(242, 242, 242);
+            //celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
+            //tcab.AddCell(celda);
+            //Doc.Add(tcab);
             //cuadro total de la hoaj
             RoundRectangle rr = new RoundRectangle();
 
@@ -6661,7 +6687,7 @@ namespace Sut.Web.Areas.General.Controllers
                     celda.Add(fnChunk("Autoridad competente", (int)Fuente.FuenteLetraNormal));
                     tdatos15.AddCell(celda);
 
-                    var autoridad2 = "";
+                    //var autoridad2 = "";
                     var autoridad = "";
                     var PzoReconPresent = "";
                     var PzoApelPresent = "";
@@ -8134,7 +8160,7 @@ namespace Sut.Web.Areas.General.Controllers
             //generacion de los reportes formato tupa por procedimento
             List<Dato> categorias = _datoService.GetByTipo(TipoDato.CategoriaProcedimiento);
             if (1 == 1) dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.CategoriaProcedimientoId != null ? x.CategoriaProcedimientoId.Value : 0).ToList().OrderBy(x => x.Numero);
-            else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
+            //else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
             int sededat = 0;
 
             int contpag = 0;
@@ -8149,10 +8175,10 @@ namespace Sut.Web.Areas.General.Controllers
                 {
 
 
-                    Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+                    Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
                     PdfWriter writer1 = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_P" + contpag + ".pdf", FileMode.Create));
                     //PdfContentByte cb = writer.DirectContent;
-                    AdicionarCabecera(Doc, ExpedienteId);
+                    //AdicionarCabecera(Doc, ExpedienteId);
 
                     Phrase obje = new Phrase(fnChunk("pág. ", (int)Fuente.FuenteCabFooter));
                     HeaderFooter footer = new HeaderFooter(obje, new Phrase(""));
@@ -8174,15 +8200,15 @@ namespace Sut.Web.Areas.General.Controllers
                     tcab.DefaultVerticalAlignment = Element.ALIGN_MIDDLE;
 
                     //inicio
-                    //Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
-                    //Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
-                    //Phrase p1 = new Phrase(chkHeader);
-                    //footer = new HeaderFooter(p1, false);
-                    //footer.Border = Rectangle.NO_BORDER;
-                    //footer.Alignment = Element.ALIGN_CENTER;
-                    //footer.BorderColor = new Color(242, 242, 242);
-                    //footer.BackgroundColor = new Color(242, 242, 242);
-                    //Doc.Header = footer;
+                    Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
+                    Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
+                    Phrase p1 = new Phrase(chkHeader);
+                    footer = new HeaderFooter(p1, false);
+                    footer.Border = Rectangle.NO_BORDER;
+                    footer.Alignment = Element.ALIGN_CENTER;
+                    footer.BorderColor = new Color(242, 242, 242);
+                    footer.BackgroundColor = new Color(242, 242, 242);
+                    Doc.Header = footer;
                     //fin
 
                     //cuadro total de la hoaj
@@ -8192,16 +8218,16 @@ namespace Sut.Web.Areas.General.Controllers
                     {
                         Doc.Open();
                     }
-                    celda = new Cell();
-                    celda.Border = 0;
-                    celda.BorderColor = new Color(242, 242, 242);
-                    celda.BackgroundColor = new Color(242, 242, 242);
-                    celda.Leading = 10;
-                    celda.BorderColor = new Color(242, 242, 242);
-                    celda.BackgroundColor = new Color(242, 242, 242);
-                    celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
-                    tcab.AddCell(celda);
-                    Doc.Add(tcab);
+                    //celda = new Cell();
+                    //celda.Border = 0;
+                    //celda.BorderColor = new Color(242, 242, 242);
+                    //celda.BackgroundColor = new Color(242, 242, 242);
+                    //celda.Leading = 10;
+                    //celda.BorderColor = new Color(242, 242, 242);
+                    //celda.BackgroundColor = new Color(242, 242, 242);
+                    //celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
+                    //tcab.AddCell(celda);
+                    //Doc.Add(tcab);
 
 
 
@@ -10344,7 +10370,7 @@ namespace Sut.Web.Areas.General.Controllers
                     celda.Add(fnChunk("Autoridad competente", (int)Fuente.FuenteLetraNormal));
                     tdatos15.AddCell(celda);
 
-                    var autoridad2 = "";
+                    //var autoridad2 = "";
                     var autoridad = "";
                     var PzoReconPresent = "";
                     var PzoApelPresent = "";
@@ -11826,11 +11852,11 @@ namespace Sut.Web.Areas.General.Controllers
                 {
 
 
-                    Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+                    Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
                     PdfWriter writer1 = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_P" + contpag + ".pdf", FileMode.Create));
                     //PdfContentByte cb = writer.DirectContent;
 
-                    AdicionarCabecera(Doc, ExpedienteId);
+                    //AdicionarCabecera(Doc, ExpedienteId);
 
                     //Phrase obje = new Phrase(fnChunk("", (int)Fuente.FuenteCabFooter));
                     //HeaderFooter footer = new HeaderFooter(obje, new Phrase(""));
@@ -11852,15 +11878,15 @@ namespace Sut.Web.Areas.General.Controllers
                     tcab.DefaultVerticalAlignment = Element.ALIGN_MIDDLE;
 
                     //inicio
-                    //Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
-                    //Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
-                    //Phrase p1 = new Phrase(chkHeader);
-                    //HeaderFooter footer = new HeaderFooter(p1, false);
-                    //footer.Border = Rectangle.NO_BORDER;
-                    //footer.Alignment = Element.ALIGN_CENTER;
-                    //footer.BorderColor = new Color(242, 242, 242);
-                    //footer.BackgroundColor = new Color(242, 242, 242);
-                    //Doc.Header = footer;
+                    Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
+                    Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
+                    Phrase p1 = new Phrase(chkHeader);
+                    HeaderFooter footer = new HeaderFooter(p1, false);
+                    footer.Border = Rectangle.NO_BORDER;
+                    footer.Alignment = Element.ALIGN_CENTER;
+                    footer.BorderColor = new Color(242, 242, 242);
+                    footer.BackgroundColor = new Color(242, 242, 242);
+                    Doc.Header = footer;
                     //fin
 
                     //cuadro total de la hoaj
@@ -11871,14 +11897,14 @@ namespace Sut.Web.Areas.General.Controllers
                         Doc.Open();
                     }
 
-                    celda = new Cell();
-                    celda.Border = 0;
-                    celda.BorderColor = new Color(242, 242, 242);
-                    celda.BackgroundColor = new Color(242, 242, 242);
-                    celda.Leading = 10;
-                    celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
-                    tcab.AddCell(celda);
-                    Doc.Add(tcab);
+                    //celda = new Cell();
+                    //celda.Border = 0;
+                    //celda.BorderColor = new Color(242, 242, 242);
+                    //celda.BackgroundColor = new Color(242, 242, 242);
+                    //celda.Leading = 10;
+                    //celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
+                    //tcab.AddCell(celda);
+                    //Doc.Add(tcab);
 
 
                     //--- NoSe,nose, ancho,alto
@@ -14020,7 +14046,7 @@ namespace Sut.Web.Areas.General.Controllers
                     celda.Add(fnChunk("Autoridad competente", (int)Fuente.FuenteLetraNormal));
                     tdatos15.AddCell(celda);
 
-                    var autoridad2 = "";
+                    //var autoridad2 = "";
                     var autoridad = "";
                     var PzoReconPresent = "";
                     var PzoApelPresent = "";
@@ -15526,10 +15552,10 @@ namespace Sut.Web.Areas.General.Controllers
 
 
 
-            Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+            Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
             PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_titulopresexc.pdf", FileMode.Create));
             //PdfContentByte cb = writer.DirectContent;
-            AdicionarCabecera(Doc, ExpedienteId);
+            //AdicionarCabecera(Doc, ExpedienteId);
             Doc.Open();
 
 
@@ -18031,7 +18057,7 @@ namespace Sut.Web.Areas.General.Controllers
                 //generacion de los reportes formato tupa por procedimento
                 List<Dato> categorias = _datoService.GetByTipo(TipoDato.CategoriaProcedimiento);
                 if (1 == 1) dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.CategoriaProcedimientoId != null ? x.CategoriaProcedimientoId.Value : 0).ToList().OrderBy(x => x.Numero);
-                else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
+                //else dataProc = dataProc.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.UndOrgResponsable.Nombre).ToList().OrderBy(x => x.Numero);
                 int sededat = 0;
                 int contpag = 0;
                 MemoryStream stream = new MemoryStream();
@@ -18056,10 +18082,10 @@ namespace Sut.Web.Areas.General.Controllers
                     if (tipo == "S")
                     {
 
-                        Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+                        Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
                         PdfWriter writer2 = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_S" + contpag + ".pdf", FileMode.Create));
                         //PdfContentByte cb = writer.DirectContent;
-                        AdicionarCabecera(Doc, ExpedienteId);
+                        //AdicionarCabecera(Doc, ExpedienteId);
 
 
                         //PdfContentByte cb = writer.DirectContent;
@@ -18086,15 +18112,15 @@ namespace Sut.Web.Areas.General.Controllers
                         tcab.DefaultVerticalAlignment = Element.ALIGN_MIDDLE;
 
                         //inicio
-                        //Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
-                        //Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
-                        //Phrase p1 = new Phrase(chkHeader);
-                        //footer = new HeaderFooter(p1, false);
-                        //footer.Border = Rectangle.NO_BORDER;
-                        //footer.Alignment = Element.ALIGN_CENTER;
-                        //footer.BorderColor = new Color(242, 242, 242);
-                        //footer.BackgroundColor = new Color(242, 242, 242);
-                        //Doc.Header = footer;
+                        Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
+                        Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
+                        Phrase p1 = new Phrase(chkHeader);
+                        footer = new HeaderFooter(p1, false);
+                        footer.Border = Rectangle.NO_BORDER;
+                        footer.Alignment = Element.ALIGN_CENTER;
+                        footer.BorderColor = new Color(242, 242, 242);
+                        footer.BackgroundColor = new Color(242, 242, 242);
+                        Doc.Header = footer;
                         //fin
 
                         //cuadro total de la hoaj
@@ -18105,15 +18131,15 @@ namespace Sut.Web.Areas.General.Controllers
                         {
                             Doc.Open();
                         }
-                        celda = new Cell();
-                        celda.Border = 0;
-                        celda.Leading = 10;
-                        celda.BorderColor = new Color(242, 242, 242);
-                        celda.BackgroundColor = new Color(242, 242, 242);
-                        celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
-                        tcab.AddCell(celda);
-                        Doc.Add(tcab);
-                        //Doc.Open();
+                        //celda = new Cell();
+                        //celda.Border = 0;
+                        //celda.Leading = 10;
+                        //celda.BorderColor = new Color(242, 242, 242);
+                        //celda.BackgroundColor = new Color(242, 242, 242);
+                        //celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
+                        //tcab.AddCell(celda);
+                        //Doc.Add(tcab);
+                        ////Doc.Open();
                         PdfContentByte cb = writer2.DirectContent;
                         cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
                         cb.Stroke();
@@ -18839,7 +18865,7 @@ namespace Sut.Web.Areas.General.Controllers
                         //Pago por derecho de Tramitación 
 
                         string tramite = "";
-                        string monto = "";
+                        //string monto = "";
                         cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
                         cb.Stroke();
                         for (int i = 0; i < proc.TablaAsme.Count(); i++)
@@ -19047,7 +19073,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     {
                                         if (proc.CodigoCorto == "PE123299E43" || proc.CodigoCorto == "PA128013BA" || proc.CodigoCorto == "PA19002B5F")
                                         {
-                                            tramite = tramite;
+                                            //tramite = tramite;
                                         }
                                         else
                                         {
@@ -20246,10 +20272,10 @@ namespace Sut.Web.Areas.General.Controllers
                     if (tipo == "S")
                     {
 
-                        Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+                        Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
                         PdfWriter writer2 = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_S" + contpag + ".pdf", FileMode.Create));
                         //PdfContentByte cb = writer.DirectContent;
-                        AdicionarCabecera(Doc, ExpedienteId);
+                        //AdicionarCabecera(Doc, ExpedienteId);
 
 
                         //PdfContentByte cb = writer.DirectContent;
@@ -20276,15 +20302,15 @@ namespace Sut.Web.Areas.General.Controllers
                         tcab.DefaultVerticalAlignment = Element.ALIGN_MIDDLE;
 
                         //inicio
-                        //Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
-                        //Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
-                        //Phrase p1 = new Phrase(chkHeader);
-                        //HeaderFooter footer = new HeaderFooter(p1, false);
-                        //footer.Border = Rectangle.NO_BORDER;
-                        //footer.Alignment = Element.ALIGN_CENTER;
-                        //footer.BorderColor = new Color(242, 242, 242);
-                        //footer.BackgroundColor = new Color(242, 242, 242);
-                        //Doc.Header = footer;
+                        Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
+                        Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
+                        Phrase p1 = new Phrase(chkHeader);
+                        HeaderFooter footer = new HeaderFooter(p1, false);
+                        footer.Border = Rectangle.NO_BORDER;
+                        footer.Alignment = Element.ALIGN_CENTER;
+                        footer.BorderColor = new Color(242, 242, 242);
+                        footer.BackgroundColor = new Color(242, 242, 242);
+                        Doc.Header = footer;
                         //fin
 
                         //cuadro total de la hoaj
@@ -20295,15 +20321,15 @@ namespace Sut.Web.Areas.General.Controllers
                         {
                             Doc.Open();
                         }
-                        celda = new Cell();
-                        celda.Border = 0;
-                        celda.Leading = 10;
-                        celda.BorderColor = new Color(242, 242, 242);
-                        celda.BackgroundColor = new Color(242, 242, 242);
-                        celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
-                        tcab.AddCell(celda);
-                        Doc.Add(tcab);
-                        //Doc.Open();
+                        //celda = new Cell();
+                        //celda.Border = 0;
+                        //celda.Leading = 10;
+                        //celda.BorderColor = new Color(242, 242, 242);
+                        //celda.BackgroundColor = new Color(242, 242, 242);
+                        //celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
+                        //tcab.AddCell(celda);
+                        //Doc.Add(tcab);
+                        ////Doc.Open();
                         PdfContentByte cb = writer2.DirectContent;
                         cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
                         cb.Stroke();
@@ -21231,7 +21257,7 @@ namespace Sut.Web.Areas.General.Controllers
                                     {
                                         if (proc.CodigoCorto == "PE123299E43" || proc.CodigoCorto == "PA128013BA" || proc.CodigoCorto == "PA19002B5F")
                                         {
-                                            tramite = tramite;
+                                            //tramite = tramite;
                                         }
                                         else
                                         {
@@ -22454,10 +22480,10 @@ namespace Sut.Web.Areas.General.Controllers
         {
 
 
-            Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+            Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
             PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_tituloform.pdf", FileMode.Create));
             //PdfContentByte cb = writer.DirectContent;
-            AdicionarCabecera(Doc, ExpedienteId);
+            //AdicionarCabecera(Doc, ExpedienteId);
             Doc.Open();
 
 
@@ -23051,10 +23077,10 @@ namespace Sut.Web.Areas.General.Controllers
         private void TituloSedesCompleto(long ExpedienteId, List<long> ProcedimientoIds, string nomtitulo)
         {
 
-            Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+            Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
             PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_tituloSede.pdf", FileMode.Create));
             //PdfContentByte cb = writer.DirectContent;
-            AdicionarCabecera(Doc, ExpedienteId);
+            //AdicionarCabecera(Doc, ExpedienteId);
             Doc.Open();
 
 
@@ -23325,9 +23351,9 @@ namespace Sut.Web.Areas.General.Controllers
         {
 
             pagcabhoja = pagcabhoja + pagcabCompleto + 2;
-            Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+            Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
             PdfWriter writer3 = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_Sedes.pdf", FileMode.Create));
-            AdicionarCabecera(Doc, ExpedienteId);
+            //AdicionarCabecera(Doc, ExpedienteId);
 
 
             //PdfContentByte cb = writer.DirectContent;
@@ -23351,15 +23377,15 @@ namespace Sut.Web.Areas.General.Controllers
             string cadena1 = "Texto Único de Procedimientos Administrativos - " + "\"" + entidad.Nombre.ToString() + "\"";
 
             //string cadena1 = "Texto Único de Procedimientos Administrativos - " + "\"" + entidad.Nombre.ToString() + "\"";
-            //Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
-            //Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
-            //Phrase p1 = new Phrase(chkHeader);
-            //HeaderFooter footer2 = new HeaderFooter(p1, false);
-            //footer2.Border = Rectangle.NO_BORDER;
-            //footer2.Alignment = Element.ALIGN_CENTER;
-            //footer2.BorderColor = new Color(242, 242, 242);
-            //footer2.BackgroundColor = new Color(242, 242, 242);
-            //Doc.Header = footer2;
+            Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
+            Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
+            Phrase p1 = new Phrase(chkHeader);
+            HeaderFooter footer2 = new HeaderFooter(p1, false);
+            footer2.Border = Rectangle.NO_BORDER;
+            footer2.Alignment = Element.ALIGN_CENTER;
+            footer2.BorderColor = new Color(242, 242, 242);
+            footer2.BackgroundColor = new Color(242, 242, 242);
+            Doc.Header = footer2;
             //fin
 
             //Doc.Open();
@@ -23425,14 +23451,14 @@ namespace Sut.Web.Areas.General.Controllers
             tcab.BorderWidth = 0;
             tcab.Padding = 2;
             tcab.DefaultHorizontalAlignment = Element.ALIGN_CENTER;
-            celda = new Cell();
-            celda.Border = 0;
-            celda.Leading = 10;
-            celda.BorderColor = new Color(242, 242, 242);
-            celda.BackgroundColor = new Color(242, 242, 242);
-            celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
-            tcab.AddCell(celda);
-            Doc.Add(tcab);
+            //celda = new Cell();
+            //celda.Border = 0;
+            //celda.Leading = 10;
+            //celda.BorderColor = new Color(242, 242, 242);
+            //celda.BackgroundColor = new Color(242, 242, 242);
+            //celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
+            //tcab.AddCell(celda);
+            //Doc.Add(tcab);
             celda = new Cell();
             celda.Border = 0;
             celda.BorderWidth = 0;
@@ -23562,9 +23588,9 @@ namespace Sut.Web.Areas.General.Controllers
         {
 
             pagcabhoja = pagcabhoja + pagcabCompleto + 2;
-            Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+            Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
             PdfWriter writer3 = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_Sedes.pdf", FileMode.Create));
-            AdicionarCabecera(Doc, ExpedienteId);
+            //AdicionarCabecera(Doc, ExpedienteId);
 
 
             ////PdfContentByte cb = writer.DirectContent;
@@ -23612,15 +23638,15 @@ namespace Sut.Web.Areas.General.Controllers
             tcab1.DefaultVerticalAlignment = Element.ALIGN_MIDDLE;
 
             //inicio
-            //Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
-            //Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
-            //Phrase p1 = new Phrase(chkHeader);
-            //HeaderFooter footer = new HeaderFooter(p1, false);
-            //footer.Border = Rectangle.NO_BORDER;
-            //footer.Alignment = Element.ALIGN_CENTER;
-            //footer.BorderColor = new Color(242, 242, 242);
-            //footer.BackgroundColor = new Color(242, 242, 242);
-            //Doc.Header = footer;
+            Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
+            Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
+            Phrase p1 = new Phrase(chkHeader);
+            HeaderFooter footer = new HeaderFooter(p1, false);
+            footer.Border = Rectangle.NO_BORDER;
+            footer.Alignment = Element.ALIGN_CENTER;
+            footer.BorderColor = new Color(242, 242, 242);
+            footer.BackgroundColor = new Color(242, 242, 242);
+            Doc.Header = footer;
             //fin
 
 
@@ -23674,14 +23700,14 @@ namespace Sut.Web.Areas.General.Controllers
             Table tlineablanco = new Table(1);
             Cell celda;
 
-            celda = new Cell();
-            celda.Border = 0;
-            celda.Leading = 10;
-            celda.BorderColor = new Color(242, 242, 242);
-            celda.BackgroundColor = new Color(242, 242, 242);
-            celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
-            tcab.AddCell(celda);
-            Doc.Add(tcab1);
+            //celda = new Cell();
+            //celda.Border = 0;
+            //celda.Leading = 10;
+            //celda.BorderColor = new Color(242, 242, 242);
+            //celda.BackgroundColor = new Color(242, 242, 242);
+            //celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
+            //tcab.AddCell(celda);
+            //Doc.Add(tcab1);
 
             tdatos.WidthPercentage = 100;
             tdatos.Border = 0;
@@ -23906,7 +23932,7 @@ namespace Sut.Web.Areas.General.Controllers
                     dataProc = _procedimientoService.GetByExpediente(ExpedienteId).ToList().Where(x => ProcedimientoIds.Contains(x.ProcedimientoId)).OrderBy(x => x.Numero);
                 }*/
 
-                Document Doc = new Document(PageSize.A4, 60, 43, 42, 43);
+                Document Doc = new Document(PageSize.A4, 60, 43, 58, 43);
 
                 PdfWriter writer = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_Inicio.pdf", FileMode.Create));
                 //Phrase obje = new Phrase(fnChunk("pág. ", (int)Fuente.FuenteCabFooter));
@@ -23928,7 +23954,7 @@ namespace Sut.Web.Areas.General.Controllers
                 //footer2.BackgroundColor = new Color(242, 242, 242);
                 //Doc.Header = footer2;
                 //fin
-                AdicionarCabecera(Doc, ExpedienteId);
+                //AdicionarCabecera(Doc, ExpedienteId);
 
 
                 //ocultar informacion cuando es individual
@@ -24024,9 +24050,9 @@ namespace Sut.Web.Areas.General.Controllers
                 {
                     Phrase obje = new Phrase(fnChunk("pág. ", (int)Fuente.FuenteCabFooter));
                     HeaderFooter footer = new HeaderFooter(obje, new Phrase(""));
-                    Document Doc3 = new Document(PageSize.A4, 60, 43, 42, 43);
+                    Document Doc3 = new Document(PageSize.A4, 60, 43, 58, 43);
                     PdfWriter.GetInstance(Doc3, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_Final.pdf", FileMode.Create));
-                    AdicionarCabecera(Doc3, ExpedienteId);
+                    //AdicionarCabecera(Doc3, ExpedienteId);
                     for (int i = 1; i < pagcab; i++)
                     {
                         Doc3.Open();
@@ -24080,7 +24106,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                 }
                 //Phrase obje = new Phrase(fnChunk("pág. ", (int)Fuente.FuenteCabFooter));
-                Document Doc2 = new Document(PageSize.A4, 60, 43, 60, 43);
+                Document Doc2 = new Document(PageSize.A4, 60, 43, 58, 43);
                 //HeaderFooter footer3 = new HeaderFooter(obje, new Phrase(""));
                 //footer3.Border = 0;
                 //footer3.BorderWidthTop = 1;
@@ -24188,7 +24214,7 @@ namespace Sut.Web.Areas.General.Controllers
                 //}
 
 
-                Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+                Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
 
                 PdfWriter writer = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_Inicio.pdf", FileMode.Create));
                 Phrase obje = new Phrase(fnChunk("pág. ", (int)Fuente.FuenteCabFooter));
@@ -24198,18 +24224,18 @@ namespace Sut.Web.Areas.General.Controllers
                 footer.Alignment = Element.ALIGN_RIGHT;
                 Doc.Footer = footer;
 
-                AdicionarCabecera(Doc, ExpedienteId);
+                //AdicionarCabecera(Doc, ExpedienteId);
                 //inicio
                 string cadena1 = "Texto Único de Procedimientos Administrativos - " + "\"" + entidad.Nombre.ToString() + "\"";
-                //Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
-                //Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
-                //Phrase p1 = new Phrase(chkHeader);
-                //HeaderFooter footer2 = new HeaderFooter(p1, false);
-                //footer2.Border = Rectangle.NO_BORDER;
-                //footer2.Alignment = Element.ALIGN_CENTER;
-                //footer2.BorderColor = new Color(242, 242, 242);
-                //footer2.BackgroundColor = new Color(242, 242, 242);
-                //Doc.Header = footer2;
+                Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
+                Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
+                Phrase p1 = new Phrase(chkHeader);
+                HeaderFooter footer2 = new HeaderFooter(p1, false);
+                footer2.Border = Rectangle.NO_BORDER;
+                footer2.Alignment = Element.ALIGN_CENTER;
+                footer2.BorderColor = new Color(242, 242, 242);
+                footer2.BackgroundColor = new Color(242, 242, 242);
+                Doc.Header = footer2;
                 //fin
 
                 Table tcab = new Table(1);
@@ -24239,14 +24265,14 @@ namespace Sut.Web.Areas.General.Controllers
                     Doc.Open();
 
                 }
-                celda = new Cell();
-                celda.Border = 0;
-                celda.Leading = 10;
-                celda.BorderColor = new Color(242, 242, 242);
-                celda.BackgroundColor = new Color(242, 242, 242);
-                celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
-                tcab.AddCell(celda);
-                Doc.Add(tcab);
+                //celda = new Cell();
+                //celda.Border = 0;
+                //celda.Leading = 10;
+                //celda.BorderColor = new Color(242, 242, 242);
+                //celda.BackgroundColor = new Color(242, 242, 242);
+                //celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
+                //tcab.AddCell(celda);
+                //Doc.Add(tcab);
 
                 var pageBorderRect = new Rectangle(Doc.PageSize);
 
@@ -24322,9 +24348,9 @@ namespace Sut.Web.Areas.General.Controllers
 
 
 
-                Document Doc3 = new Document(PageSize.A4, 60, 43, 42, 43);
+                Document Doc3 = new Document(PageSize.A4, 60, 43, 58, 43);
                 PdfWriter.GetInstance(Doc3, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_Final.pdf", FileMode.Create));
-                AdicionarCabecera(Doc3, ExpedienteId);
+                //AdicionarCabecera(Doc3, ExpedienteId);
                 for (int i = 1; i < pagcab; i++)
                 {
                     Doc3.Open();
@@ -24359,7 +24385,7 @@ namespace Sut.Web.Areas.General.Controllers
                 Doc3.Close();
 
 
-                Document Doc2 = new Document(PageSize.A4, 60, 43, 60, 43);
+                Document Doc2 = new Document(PageSize.A4, 60, 43, 58, 43);
                 HeaderFooter footer3 = new HeaderFooter(obje, new Phrase(""));
                 footer3.Border = 0;
                 footer3.BorderWidthTop = 1;
@@ -24441,7 +24467,7 @@ namespace Sut.Web.Areas.General.Controllers
                     dataProc = _procedimientoService.GetByExpediente(ExpedienteId).ToList().Where(x => ProcedimientoIds.Contains(x.ProcedimientoId)).OrderBy(x => x.Numero);
                 }
 
-                Document Doc = new Document(PageSize.A4, 60, 43, 42, 43);
+                Document Doc = new Document(PageSize.A4, 60, 43, 58, 43);
 
                 PdfWriter writer = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_Inicio.pdf", FileMode.Create));
 
@@ -24458,7 +24484,7 @@ namespace Sut.Web.Areas.General.Controllers
                 footer2.BackgroundColor = new Color(242, 242, 242);
                 Doc.Header = footer2;
                 //fin
-                AdicionarCabecera(Doc, ExpedienteId);
+                //AdicionarCabecera(Doc, ExpedienteId);
                 TituloProceAdmCompleto(ExpedienteId, ProcedimientoIds);
 
 
@@ -24503,7 +24529,7 @@ namespace Sut.Web.Areas.General.Controllers
                 GenerarSedesCompletoDiario(ExpedienteId, ProcedimientoIds);
 
 
-                Document Doc2 = new Document(PageSize.A4, 60, 43, 60, 43);
+                Document Doc2 = new Document(PageSize.A4, 60, 43, 58, 43);
 
                 GenerarFormDiario(Doc2, ExpedienteId, expediente.EntidadId, ProcedimientoIds, 0);
                 Doc2.Close();
@@ -24542,10 +24568,10 @@ namespace Sut.Web.Areas.General.Controllers
                 Informe objinforme = new Informe();
                 objinforme = _InformeService.GetOne(InformeId);
 
-                Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+                Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
 
                 PdfWriter writer = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + expediente.ExpedienteId + ".pdf", FileMode.Create));
-                AdicionarCabecera(Doc, expediente.ExpedienteId);
+                //AdicionarCabecera(Doc, expediente.ExpedienteId);
                 //Phrase obje = new Phrase(fnChunk("pág. ", (int)Fuente.FuenteCabFooter));
                 //HeaderFooter footer = new HeaderFooter(obje, new Phrase(""));
                 //footer.Border = 0;
@@ -24985,7 +25011,7 @@ namespace Sut.Web.Areas.General.Controllers
                     ProcedimientoIds[0] = Convert.ToInt32(proindivitual.ProcedimientoId);
 
 
-                    Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+                    Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
 
                     PdfWriter writer = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_Inicio.pdf", FileMode.Create));
                     Phrase obje = new Phrase(fnChunk("pág. ", (int)Fuente.FuenteCabFooter));
@@ -24994,19 +25020,19 @@ namespace Sut.Web.Areas.General.Controllers
                     //footer.BorderWidthTop = 1;
                     footer.Alignment = Element.ALIGN_RIGHT;
                     Doc.Footer = footer;
-                    AdicionarCabecera(Doc, ExpedienteId);
+                    //AdicionarCabecera(Doc, ExpedienteId);
 
                     //inicio
                     string cadena1 = "Texto Único de Procedimientos Administrativos - " + "\"" + entidad.Nombre.ToString() + "\"";
-                    //Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
-                    //Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
-                    //Phrase p1 = new Phrase(chkHeader);
-                    //HeaderFooter footer2 = new HeaderFooter(p1, false);
-                    //footer2.Border = Rectangle.NO_BORDER;
-                    //footer2.Alignment = Element.ALIGN_CENTER;
-                    //footer2.BorderColor = new Color(242, 242, 242);
-                    //footer2.BackgroundColor = new Color(242, 242, 242);
-                    //Doc.Header = footer2;
+                    Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
+                    Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
+                    Phrase p1 = new Phrase(chkHeader);
+                    HeaderFooter footer2 = new HeaderFooter(p1, false);
+                    footer2.Border = Rectangle.NO_BORDER;
+                    footer2.Alignment = Element.ALIGN_CENTER;
+                    footer2.BorderColor = new Color(242, 242, 242);
+                    footer2.BackgroundColor = new Color(242, 242, 242);
+                    Doc.Header = footer2;
                     //fin
 
                     //ocultar informacion cuando es individual 
@@ -25021,14 +25047,14 @@ namespace Sut.Web.Areas.General.Controllers
                     tcab.Padding = 2;
                     tcab.DefaultHorizontalAlignment = Element.ALIGN_CENTER;
 
-                    celda = new Cell();
-                    celda.Border = 0;
-                    celda.Leading = 10;
-                    celda.BorderColor = new Color(242, 242, 242);
-                    celda.BackgroundColor = new Color(242, 242, 242);
-                    celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
-                    tcab.AddCell(celda);
-                    Doc.Add(tcab);
+                    //celda = new Cell();
+                    //celda.Border = 0;
+                    //celda.Leading = 10;
+                    //celda.BorderColor = new Color(242, 242, 242);
+                    //celda.BackgroundColor = new Color(242, 242, 242);
+                    //celda.Add(fnChunk(cadena1, (int)Fuente.FuenteNegrita));
+                    //tcab.AddCell(celda);
+                    //Doc.Add(tcab);
 
                     var pageBorderRect = new Rectangle(Doc.PageSize);
 
@@ -25065,9 +25091,9 @@ namespace Sut.Web.Areas.General.Controllers
                     Doc.Close();
 
 
-                    Document Doc3 = new Document(PageSize.A4, 60, 43, 42, 43);
+                    Document Doc3 = new Document(PageSize.A4, 60, 43, 58, 43);
                     PdfWriter.GetInstance(Doc3, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_Final.pdf", FileMode.Create));
-                    AdicionarCabecera(Doc3, ExpedienteId);
+                    //AdicionarCabecera(Doc3, ExpedienteId);
                     for (int i = 1; i < pagcab; i++)
                     {
                         Doc3.Open();
@@ -25096,7 +25122,7 @@ namespace Sut.Web.Areas.General.Controllers
                     Doc3.Close();
 
 
-                    Document Doc2 = new Document(PageSize.A4, 60, 43, 60, 43);
+                    Document Doc2 = new Document(PageSize.A4, 60, 43, 58, 43);
                     HeaderFooter footer3 = new HeaderFooter(obje, new Phrase(""));
                     footer3.Border = 0;
                     footer3.BorderWidthTop = 1;
@@ -25247,7 +25273,7 @@ namespace Sut.Web.Areas.General.Controllers
                 var fecha = DateTime.Now.ToString("dd/MM/yyyy").Substring(0, 10).Replace("/", "");
                 var hora = DateTime.Now.ToShortTimeString().ToString().Replace(":", "");
 
-                Document Doc = new Document(PageSize.A4, 60, 43, 42, 52);
+                Document Doc = new Document(PageSize.A4, 60, 43, 58, 52);
                 //System.IO.Directory.CreateDirectory(Server.MapPath("..\\Documentos\\" + "TODOS")); 
 
                 PdfWriter writer = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ids[0] + fecha + "_Inicio.pdf", FileMode.Create));
@@ -25259,7 +25285,7 @@ namespace Sut.Web.Areas.General.Controllers
                 Doc.Footer = footer;
 
                 var procedimiento = _procedimientoService.GetOne(ids[0]);
-                AdicionarCabecera(Doc, procedimiento.ExpedienteId);
+                //AdicionarCabecera(Doc, procedimiento.ExpedienteId);
                 foreach (long id in ids)
                 {
                     GenerarProceFSLT(Doc, tipo, id, writer);
