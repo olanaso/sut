@@ -2581,22 +2581,25 @@ namespace Sut.Web.Areas.General.Controllers
             var expediente = _expedienteService.GetOne(ExpedienteId);
             var entidad = _entidadService.GetOne(expediente.EntidadId);
             string nombreArchivo = entidad.Logoentidad;
-            string srutalogo = Path.Combine(pathlogoentidad, nombreArchivo); 
-            Image logo = Image.GetInstance(srutalogo);
-            logo.BorderWidth = 0;
+            string srutalogo = Path.Combine(pathlogoentidad, nombreArchivo);
+            if (!string.IsNullOrEmpty(nombreArchivo) && System.IO.File.Exists(srutalogo))
+            {
+                Image logo = Image.GetInstance(srutalogo);
+                logo.BorderWidth = 0;
 
-            // Determinar el tamaño de la página A4
-            Rectangle pageSize = PageSize.A4;
-            float pageWidth = pageSize.Width; // - Doc.LeftMargin - Doc.RightMargin;
-            float pageHeight = pageSize.Height; // - Doc.TopMargin - Doc.BottomMargin;
-            // Determinar la posición de la imagen en función del tamaño de la página
-            float imageWidth = logo.Width;
-            float imageHeight = logo.Height;
-            float imageX = (pageWidth/2) - (imageWidth/2);
-            float imageY = (pageHeight/2) - (imageHeight/2) + 280;
+                // Determinar el tamaño de la página A4
+                Rectangle pageSize = PageSize.A4;
+                float pageWidth = pageSize.Width; // - Doc.LeftMargin - Doc.RightMargin;
+                float pageHeight = pageSize.Height; // - Doc.TopMargin - Doc.BottomMargin;
+                                                    // Determinar la posición de la imagen en función del tamaño de la página
+                float imageWidth = logo.Width;
+                float imageHeight = logo.Height;
+                float imageX = (pageWidth / 2) - (imageWidth / 2);
+                float imageY = (pageHeight / 2) - (imageHeight / 2) + 280;
 
-            logo.SetAbsolutePosition(imageX, imageY);
-            Doc.Add(logo);
+                logo.SetAbsolutePosition(imageX, imageY);
+                Doc.Add(logo);
+            }
         }
         
         private void AdicionarCabecera(Document Doc, long ExpedienteId)
