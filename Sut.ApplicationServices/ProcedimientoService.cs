@@ -1,4 +1,4 @@
-﻿using Sut.IApplicationServices;
+using Sut.IApplicationServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -317,7 +317,70 @@ namespace Sut.ApplicationServices
             }
         }
         /*Modificado por ESEO*/
+
         public List<Procedimiento> GetAllLikePagin(Procedimiento filtro, int pageIndex, int pageSize, ref int totalRows)
+        {
+            try
+            {
+                string denominacion = string.IsNullOrEmpty(filtro.Denominacion) ? string.Empty : filtro.Denominacion.ToUpper();
+                string codigoCorto = string.IsNullOrEmpty(filtro.CodigoCorto) ? string.Empty : filtro.CodigoCorto.ToUpper();
+                string nombreUndOrg = filtro.UndOrgResponsable?.Nombre != null ? filtro.UndOrgResponsable.Nombre.ToUpper() : string.Empty;
+
+                var query = _procedimientoRepository.GetByExpediente(filtro.ExpedienteId)
+                    .Where(x => x.Denominacion.ToUpper().Contains(denominacion))
+                    .Where(x => x.UndOrgResponsable.Nombre.ToUpper().Contains(nombreUndOrg))
+                    .Where(x => (short)x.Operacion != (filtro.FiltroOperacion > 0 ? filtro.FiltroOperacion : 3));
+
+                if (!string.IsNullOrEmpty(codigoCorto))
+                    query = query.Where(x => x.CodigoCorto != null && x.CodigoCorto.ToUpper().Contains(codigoCorto));
+
+                if (filtro.FiltroTipoProcedimiento > 0)
+                {
+                    switch (filtro.FiltroTipoProcedimiento)
+                    {
+                        case 4:
+                            query = query.Where(x => x.CodigoACR != "0");
+                            break;
+                        case 6:
+                            query = query.Where(x => x.CodigoACR == "0");
+                            break;
+                        default:
+                            query = query.Where(x => (short)x.TipoProcedimiento == filtro.FiltroTipoProcedimiento);
+                            break;
+                    }
+                }
+
+                if (filtro.CodigoACR != null)
+                    query = query.Where(x => x.CodigoACR == filtro.CodigoACR);
+
+                totalRows = query.Count();
+
+                switch (filtro.Expediente.OrdenPa)
+                {
+                    case TipoOrdenPa.Sistema:
+                        query = filtro.Ascendente == 1 ? query.OrderByDescending(x => x.Numero) : query.OrderBy(x => x.Numero);
+                        break;
+                    case TipoOrdenPa.UnidadOrganica:
+                        query = query.OrderBy(x => x.UndOrgResponsable.Nombre);
+                        break;
+                    case TipoOrdenPa.Bloque:
+                        query = query.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.Bloque);
+                        break;
+                    case TipoOrdenPa.UnidadOrganicaBloque:
+                        query = query.OrderBy(x => x.UndOrgResponsable.Nombre).ThenBy(x => x.Bloque);
+                        break;
+                }
+
+                return query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        public List<Procedimiento> GetAllLikePagin2(Procedimiento filtro, int pageIndex, int pageSize, ref int totalRows)
         {
             try
             {
@@ -388,6 +451,74 @@ namespace Sut.ApplicationServices
                     .ToList();
 
                 return result;
+
+                //var denominacion = string.IsNullOrEmpty(filtro.Denominacion) ? null : filtro.Denominacion.ToUpper();
+                //var codigoCorto = string.IsNullOrEmpty(filtro.CodigoCorto) ? null : filtro.CodigoCorto.ToUpper();
+                //var undOrgResponsableNombre = filtro.UndOrgResponsable?.Nombre != null ? filtro.UndOrgResponsable.Nombre.ToUpper() : null;
+
+                //IQueryable<Procedimiento> query = _procedimientoRepository.GetByExpediente(filtro.ExpedienteId).AsQueryable();
+
+                //// Ordenar
+                //switch (filtro.Expediente.OrdenPa)
+                //{
+                //    case TipoOrdenPa.Sistema:
+                //        query = filtro.Ascendente == 1 ? query.OrderByDescending(x => x.Numero) : query.OrderBy(x => x.Numero);
+                //        break;
+                //    case TipoOrdenPa.UnidadOrganica:
+                //        query = query.OrderBy(x => x.UndOrgResponsable.Nombre);
+                //        break;
+                //    case TipoOrdenPa.Bloque:
+                //        query = query.OrderBy(x => x.TipoProcedimiento).ThenBy(x => x.Bloque);
+                //        break;
+                //    case TipoOrdenPa.UnidadOrganicaBloque:
+                //        query = query.OrderBy(x => x.UndOrgResponsable.Nombre).ThenBy(x => x.Bloque);
+                //        break;
+                //}
+
+                //// Filtros
+                //query = query.Where(x => denominacion == null || x.Denominacion.ToUpper().Contains(denominacion));
+
+                //if (codigoCorto != null)
+                //{
+                //    query = query.Where(x => x.CodigoCorto != null && x.CodigoCorto.ToUpper().Contains(codigoCorto));
+                //}
+
+                //query = query.Where(x => filtro.FiltroOperacion > 0 ? (short)x.Operacion == filtro.FiltroOperacion : (short)x.Operacion != 3);
+
+                //if (undOrgResponsableNombre != null)
+                //{
+                //    query = query.Where(x => x.UndOrgResponsable.Nombre.ToUpper().Contains(undOrgResponsableNombre));
+                //}
+
+                //if (filtro.FiltroTipoProcedimiento > 0)
+                //{
+                //    if (filtro.FiltroTipoProcedimiento == 4)
+                //    {
+                //        query = query.Where(x => x.CodigoACR != "0");
+                //    }
+                //    else if (filtro.FiltroTipoProcedimiento == 6)
+                //    {
+                //        query = query.Where(x => x.CodigoACR == "0");
+                //    }
+                //    else
+                //    {
+                //        query = query.Where(x => (short)x.TipoProcedimiento == filtro.FiltroTipoProcedimiento);
+                //    }
+                //}
+
+                //if (filtro.CodigoACR != null)
+                //{
+                //    query = query.Where(x => x.CodigoACR == filtro.CodigoACR).OrderByDescending(x => x.ProcedimientoId);
+                //}
+
+                //// Total Rows
+                //totalRows = query.Count();
+
+                //// Result
+                //var result = query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+
+                //return result;
+
             }
             catch (Exception ex)
             {
