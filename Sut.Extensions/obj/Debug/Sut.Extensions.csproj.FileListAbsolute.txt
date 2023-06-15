@@ -93,6 +93,7 @@ C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensi
 C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CopyComplete
 C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.dll
 C:\GIT-PCM\SIS-094-SUT 230523\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.pdb
+<<<<<<< HEAD
 C:\GIT-PCM\ultimo\sut\Sut.Extensions\bin\Debug\Sut.Extensions.dll.config
 C:\GIT-PCM\ultimo\sut\Sut.Extensions\bin\Debug\Sut.Extensions.dll
 C:\GIT-PCM\ultimo\sut\Sut.Extensions\bin\Debug\Sut.Extensions.pdb
@@ -105,3 +106,17 @@ C:\GIT-PCM\ultimo\sut\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CoreCompile
 C:\GIT-PCM\ultimo\sut\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CopyComplete
 C:\GIT-PCM\ultimo\sut\Sut.Extensions\obj\Debug\Sut.Extensions.dll
 C:\GIT-PCM\ultimo\sut\Sut.Extensions\obj\Debug\Sut.Extensions.pdb
+=======
+C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Debug\Sut.Extensions.dll.config
+C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Debug\Sut.Extensions.dll
+C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Debug\Sut.Extensions.pdb
+C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Debug\EntityFramework.dll
+C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.dll
+C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Debug\EntityFramework.xml
+C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Debug\EntityFramework.SqlServer.xml
+C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.AssemblyReference.cache
+C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CoreCompileInputs.cache
+C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.csproj.CopyComplete
+C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.dll
+C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\obj\Debug\Sut.Extensions.pdb
+>>>>>>> 5e46d831d69379c9d5aa660c7c7b3f62ef5df3d8

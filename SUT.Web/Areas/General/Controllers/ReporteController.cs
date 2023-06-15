@@ -2003,7 +2003,7 @@ namespace Sut.Web.Areas.General.Controllers
                 };
                 var stream = new MemoryStream(rpt.DescargarExcel());
 
-               
+
                 return File(stream, rpt.mimeType, string.Format("{0}.{1}", "TablaASME", rpt.extension));
             }
             catch (Exception ex)
@@ -2595,13 +2595,13 @@ namespace Sut.Web.Areas.General.Controllers
                 float imageWidth = logo.Width;
                 float imageHeight = logo.Height;
                 float imageX = (pageWidth / 2) - (imageWidth / 2);
-                float imageY = (pageHeight / 2) - (imageHeight / 2) + 280;
+                float imageY = (pageHeight / 2) - (imageHeight / 2) + 240;
 
                 logo.SetAbsolutePosition(imageX, imageY);
                 Doc.Add(logo);
             }
         }
-        
+
         private void AdicionarCabecera(Document Doc, long ExpedienteId)
         {
             var expediente = _expedienteService.GetOne(ExpedienteId);
@@ -2725,23 +2725,23 @@ namespace Sut.Web.Areas.General.Controllers
             celda = new Cell();
             celda.Border = 0;
             celda.BorderWidth = 0;
-            celda.Leading = 16;
+            celda.Leading = 20;
             celda.Add(fnChunk(" ", (int)Fuente.FuenteNormal));
             tlineablanco.AddCell(celda);
             Doc.Add(tlineablanco);
             Doc.Add(tlineablanco);
-            
+
             celda = new Cell();
             celda.Border = 0;
             celda.BorderWidth = 0;
-            celda.Leading = 16;
+            celda.Leading = 10;
             celda.Add(fnChunk(cadena3, (int)Fuente.TituloNegrita));
             tdatos.AddCell(celda);
 
             celda = new Cell();
             celda.Border = 0;
             celda.BorderWidth = 0;
-            celda.Leading = 16;
+            celda.Leading = 8;
             celda.Add(fnChunk(cadena4, (int)Fuente.TituloNegrita));
             tdatos.AddCell(celda);
 
@@ -4595,21 +4595,21 @@ namespace Sut.Web.Areas.General.Controllers
                     tdatos41.Padding = 2;
                     tdatos41.DefaultHorizontalAlignment = Element.ALIGN_LEFT;
 
-                    celda = new Cell();
-                    celda.Border = 0;
-                    celda.BorderWidth = 0;
-                    celda.Leading = 20;
-                    celda.Colspan = 20;
-                    celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
-                    tdatos41.AddCell(celda);
+                    //celda = new Cell();
+                    //celda.Border = 0;
+                    //celda.BorderWidth = 0;
+                    //celda.Leading = 20;
+                    //celda.Colspan = 20;
+                    //celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
+                    //tdatos41.AddCell(celda);
 
-                    celda = new Cell();
-                    celda.Border = 0;
-                    celda.BorderWidth = 0;
-                    celda.Leading = 20;
-                    celda.Colspan = 20;
-                    celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
-                    tdatos41.AddCell(celda);
+                    //celda = new Cell();
+                    //celda.Border = 0;
+                    //celda.BorderWidth = 0;
+                    //celda.Leading = 20;
+                    //celda.Colspan = 20;
+                    //celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
+                    //tdatos41.AddCell(celda);
 
                     celda = new Cell();
                     celda.Border = 0;
@@ -6002,7 +6002,7 @@ namespace Sut.Web.Areas.General.Controllers
                     celda = new Cell();
                     celda.Border = 0;
                     celda.BorderWidth = 0;
-                    celda.Leading = 8;
+                    celda.Leading = 4;
                     celda.Colspan = 2;
                     celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
                     tdatos11.AddCell(celda);
@@ -6134,7 +6134,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     celdapdf = new PdfPCell(tdatossedes);
                     celdapdf.CellEvent = roundRectangleh;
-                    celdapdf.Border = PdfPCell.NO_BORDER;
+                    //celdapdf.Border = PdfPCell.NO_BORDER;
                     celdapdf.Padding = 8;
 
                     outertableh.AddCell(celdapdf);
@@ -8273,21 +8273,21 @@ namespace Sut.Web.Areas.General.Controllers
                     tdatos41.Padding = 2;
                     tdatos41.DefaultHorizontalAlignment = Element.ALIGN_LEFT;
 
-                    celda = new Cell();
-                    celda.Border = 0;
-                    celda.BorderWidth = 0;
-                    celda.Leading = 20;
-                    celda.Colspan = 20;
-                    celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
-                    tdatos41.AddCell(celda);
+                    //celda = new Cell();
+                    //celda.Border = 0;
+                    //celda.BorderWidth = 0;
+                    //celda.Leading = 20;
+                    //celda.Colspan = 20;
+                    //celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
+                    //tdatos41.AddCell(celda);
 
-                    celda = new Cell();
-                    celda.Border = 0;
-                    celda.BorderWidth = 0;
-                    celda.Leading = 20;
-                    celda.Colspan = 20;
-                    celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
-                    tdatos41.AddCell(celda);
+                    //celda = new Cell();
+                    //celda.Border = 0;
+                    //celda.BorderWidth = 0;
+                    //celda.Leading = 20;
+                    //celda.Colspan = 20;
+                    //celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
+                    //tdatos41.AddCell(celda);
 
                     celda = new Cell();
                     celda.Border = 0;
@@ -9687,7 +9687,7 @@ namespace Sut.Web.Areas.General.Controllers
                     celda = new Cell();
                     celda.Border = 0;
                     celda.BorderWidth = 0;
-                    celda.Leading = 8;
+                    celda.Leading = 4;
                     celda.Colspan = 2;
                     celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
                     tdatos11.AddCell(celda);
@@ -9819,7 +9819,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     celdapdf = new PdfPCell(tdatossedes);
                     celdapdf.CellEvent = roundRectangleh;
-                    celdapdf.Border = PdfPCell.NO_BORDER;
+                    //celdapdf.Border = PdfPCell.NO_BORDER;
                     celdapdf.Padding = 8;
 
                     outertableh.AddCell(celdapdf);
@@ -11949,21 +11949,21 @@ namespace Sut.Web.Areas.General.Controllers
                     tdatos41.Padding = 2;
                     tdatos41.DefaultHorizontalAlignment = Element.ALIGN_LEFT;
 
-                    celda = new Cell();
-                    celda.Border = 0;
-                    celda.BorderWidth = 0;
-                    celda.Leading = 20;
-                    celda.Colspan = 20;
-                    celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
-                    tdatos41.AddCell(celda);
+                    //celda = new Cell();
+                    //celda.Border = 0;
+                    //celda.BorderWidth = 0;
+                    //celda.Leading = 20;
+                    //celda.Colspan = 20;
+                    //celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
+                    //tdatos41.AddCell(celda);
 
-                    celda = new Cell();
-                    celda.Border = 0;
-                    celda.BorderWidth = 0;
-                    celda.Leading = 20;
-                    celda.Colspan = 20;
-                    celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
-                    tdatos41.AddCell(celda);
+                    //celda = new Cell();
+                    //celda.Border = 0;
+                    //celda.BorderWidth = 0;
+                    //celda.Leading = 20;
+                    //celda.Colspan = 20;
+                    //celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
+                    //tdatos41.AddCell(celda);
 
                     celda = new Cell();
                     celda.Border = 0;
@@ -13363,7 +13363,7 @@ namespace Sut.Web.Areas.General.Controllers
                     celda = new Cell();
                     celda.Border = 0;
                     celda.BorderWidth = 0;
-                    celda.Leading = 8;
+                    celda.Leading = 4;
                     celda.Colspan = 2;
                     celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
                     tdatos11.AddCell(celda);
@@ -13495,7 +13495,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     celdapdf = new PdfPCell(tdatossedes);
                     celdapdf.CellEvent = roundRectangleh;
-                    celdapdf.Border = PdfPCell.NO_BORDER;
+                    //celdapdf.Border = PdfPCell.NO_BORDER;
                     celdapdf.Padding = 8;
 
                     outertableh.AddCell(celdapdf);
@@ -17037,7 +17037,7 @@ namespace Sut.Web.Areas.General.Controllers
                         celda = new Cell();
                         celda.Border = 0;
                         celda.BorderWidth = 0;
-                        celda.Leading = 10;
+                        celda.Leading = 4;
                         celda.Colspan = 2;
                         celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
                         tdatos11.AddCell(celda);
@@ -17171,7 +17171,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                         celdapdf = new PdfPCell(tdatossedes);
                         celdapdf.CellEvent = roundRectangleh;
-                        celdapdf.Border = PdfPCell.NO_BORDER;
+                        //celdapdf.Border = PdfPCell.NO_BORDER;
                         celdapdf.Padding = 8;
 
                         outertableh.AddCell(celdapdf);
@@ -17991,7 +17991,7 @@ namespace Sut.Web.Areas.General.Controllers
                         cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
                         cb.Stroke();
 
-                        contpag = 1; 
+                        contpag = 1;
                         // Doc.NewPage();
 
                         cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
@@ -19434,7 +19434,7 @@ namespace Sut.Web.Areas.General.Controllers
                         celda = new Cell();
                         celda.Border = 0;
                         celda.BorderWidth = 0;
-                        celda.Leading = 10;
+                        celda.Leading = 4;
                         celda.Colspan = 2;
                         celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
                         tdatos11.AddCell(celda);
@@ -19518,7 +19518,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                         celdapdf = new PdfPCell(tdatossedes);
                         celdapdf.CellEvent = roundRectangleh;
-                        celdapdf.Border = PdfPCell.NO_BORDER;
+                        //celdapdf.Border = PdfPCell.NO_BORDER;
                         celdapdf.Padding = 8;
 
                         outertableh.AddCell(celdapdf);
@@ -21618,7 +21618,7 @@ namespace Sut.Web.Areas.General.Controllers
                         celda = new Cell();
                         celda.Border = 0;
                         celda.BorderWidth = 0;
-                        celda.Leading = 10;
+                        celda.Leading = 4;
                         celda.Colspan = 2;
                         celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
                         tdatos11.AddCell(celda);
@@ -21702,7 +21702,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                         celdapdf = new PdfPCell(tdatossedes);
                         celdapdf.CellEvent = roundRectangleh;
-                        celdapdf.Border = PdfPCell.NO_BORDER;
+                        //celdapdf.Border = PdfPCell.NO_BORDER;
                         celdapdf.Padding = 8;
 
                         outertableh.AddCell(celdapdf);
@@ -23023,15 +23023,15 @@ namespace Sut.Web.Areas.General.Controllers
 
             //inicio
             //string cadena1 = "Texto Único de Procedimientos Administrativos - " + "\"" + entidad.Nombre.ToString() + "\"";
-            //Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
-            //Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
-            //Phrase p1 = new Phrase(chkHeader);
-            //HeaderFooter footer2 = new HeaderFooter(p1, false);
-            //footer2.Border = Rectangle.NO_BORDER;
-            //footer2.Alignment = Element.ALIGN_CENTER;
-            //footer2.BorderColor = new Color(242, 242, 242);
-            //footer2.BackgroundColor = new Color(242, 242, 242);
-            //Doc.Header = footer2;
+            Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
+            Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
+            Phrase p1 = new Phrase(chkHeader);
+            HeaderFooter footer2 = new HeaderFooter(p1, false);
+            footer2.Border = Rectangle.NO_BORDER;
+            footer2.Alignment = Element.ALIGN_CENTER;
+            footer2.BorderColor = new Color(242, 242, 242);
+            footer2.BackgroundColor = new Color(242, 242, 242);
+            Doc.Header = footer2;
             //fin
 
             tdatos.WidthPercentage = 100;
@@ -23120,15 +23120,15 @@ namespace Sut.Web.Areas.General.Controllers
 
             //inicio
             //string cadena1 = "Texto Único de Procedimientos Administrativos - " + "\"" + entidad.Nombre.ToString() + "\"";
-            //Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
-            //Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
-            //Phrase p1 = new Phrase(chkHeader);
-            //HeaderFooter footer2 = new HeaderFooter(p1, false);
-            //footer2.Border = Rectangle.NO_BORDER;
-            //footer2.Alignment = Element.ALIGN_CENTER;
-            //footer2.BorderColor = new Color(242, 242, 242);
-            //footer2.BackgroundColor = new Color(242, 242, 242);
-            //Doc.Header = footer2;
+            Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
+            Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
+            Phrase p1 = new Phrase(chkHeader);
+            HeaderFooter footer2 = new HeaderFooter(p1, false);
+            footer2.Border = Rectangle.NO_BORDER;
+            footer2.Alignment = Element.ALIGN_CENTER;
+            footer2.BorderColor = new Color(242, 242, 242);
+            footer2.BackgroundColor = new Color(242, 242, 242);
+            Doc.Header = footer2;
             //fin
 
             tdatos.WidthPercentage = 100;
@@ -23269,13 +23269,13 @@ namespace Sut.Web.Areas.General.Controllers
                             item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
                             item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
                             )
-                            : (item.Sede.TipoTurno == "C" ? 
+                            : (item.Sede.TipoTurno == "C" ?
                         string.Format("{0} {1} {2} {3} {4} de {5} a {6}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
                                 item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
                                 item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
                                 item.Sede.CorridoHorIni == null ? "-" : item.Sede.CorridoHorIni.Value.ToString("HH:mm"),
                                 item.Sede.CorridoHorFin == null ? "-" : item.Sede.CorridoHorFin.Value.ToString("HH:mm"))
-                        :string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                        : string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
                                 item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
                                 item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
                                 item.Sede.Turno1HorIni == null ? "-" : item.Sede.Turno1HorIni.Value.ToString("HH:mm"),
@@ -23449,11 +23449,11 @@ namespace Sut.Web.Areas.General.Controllers
             tdatos.Padding = 4;
             tdatos.DefaultHorizontalAlignment = Element.ALIGN_CENTER;
 
-            tcab.WidthPercentage = 100;
-            tcab.Border = 0;
-            tcab.BorderWidth = 0;
-            tcab.Padding = 2;
-            tcab.DefaultHorizontalAlignment = Element.ALIGN_CENTER;
+            //tcab.WidthPercentage = 100;
+            //tcab.Border = 0;
+            //tcab.BorderWidth = 0;
+            //tcab.Padding = 2;
+            //tcab.DefaultHorizontalAlignment = Element.ALIGN_CENTER;
             //celda = new Cell();
             //celda.Border = 0;
             //celda.Leading = 10;
@@ -23947,15 +23947,15 @@ namespace Sut.Web.Areas.General.Controllers
 
                 //inicio
                 string cadena1 = "Texto Único de Procedimientos Administrativos - " + "\"" + entidad.Nombre.ToString() + "\"";
-                //Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
-                //Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
-                //Phrase p1 = new Phrase(chkHeader);
-                //HeaderFooter footer2 = new HeaderFooter(p1, false);
-                //footer2.Border = Rectangle.NO_BORDER;
-                //footer2.Alignment = Element.ALIGN_CENTER;
-                //footer2.BorderColor = new Color(242, 242, 242);
-                //footer2.BackgroundColor = new Color(242, 242, 242);
-                //Doc.Header = footer2;
+                Font fontHeaderFooter = FontFactory.GetFont("Arial", 8f, Font.BOLD);
+                Chunk chkHeader = new Chunk(cadena1, fontHeaderFooter);
+                Phrase p1 = new Phrase(chkHeader);
+                HeaderFooter footer2 = new HeaderFooter(p1, false);
+                footer2.Border = Rectangle.NO_BORDER;
+                footer2.Alignment = Element.ALIGN_CENTER;
+                footer2.BorderColor = new Color(242, 242, 242);
+                footer2.BackgroundColor = new Color(242, 242, 242);
+                Doc.Header = footer2;
                 //fin
                 //AdicionarCabecera(Doc, ExpedienteId);
 
@@ -23994,6 +23994,7 @@ namespace Sut.Web.Areas.General.Controllers
                 //cb.RoundRectangle(50f, 40f, 495f, 752f, 3f);
                 //cb.Stroke();
 
+                string ls_tipopro= "V";
                 //if (ProcedimientoId != 0)
                 if (ProcedimientoIds[0] != 0)
                 {
@@ -24004,26 +24005,37 @@ namespace Sut.Web.Areas.General.Controllers
                         if (proc2.TipoProcedimiento == TipoProcedimiento.Servicio || proc2.TipoProcedimiento == TipoProcedimiento.EstandarServicio)
                         {
                             GenerarPresExc(Doc, ExpedienteId, procedimientoidproc, writer);
-                            if (estadoformulario != "")
-                            {
-                                TituloForm(Doc, ExpedienteId, procedimientoidproc, "FORMULARIOS");
-                                Doc.NewPage();
-                            }
-                            IndiceConteo(ExpedienteId, ProcedimientoIds, "S");
-                            //Doc.Close();
+                            //if (estadoformulario != "")
+                            //{
+                            //    TituloForm(Doc, ExpedienteId, procedimientoidproc, "FORMULARIOS");
+                            //    Doc.NewPage();
+                            //}
+                            //IndiceConteo(ExpedienteId, ProcedimientoIds, "S");
+                            ////Doc.Close();
+                            ls_tipopro = "S";
                         }
                         else
                         {
                             GenerarProceAdm(Doc, ExpedienteId, procedimientoidproc, writer);
-                            if (estadoformulario != "")
-                            {
-                                TituloForm(Doc, ExpedienteId, procedimientoidproc, "FORMULARIOS");
-                                Doc.NewPage();
-                            }
-                            IndiceConteo(ExpedienteId, procedimientoidproc, "P");
-                            //Doc.Close();
+                            //if (estadoformulario != "")
+                            //{
+                            //    TituloForm(Doc, ExpedienteId, procedimientoidproc, "FORMULARIOS");
+                            //    Doc.NewPage();
+                            //}
+                            //IndiceConteo(ExpedienteId, procedimientoidproc, "P");
+                            ////Doc.Close();
+                            ls_tipopro = "P";
                         }
                     }
+                    List<long> proced2 = new List<long>();
+                    proced2.Add(ProcedimientoIds[0]);
+                    if (estadoformulario != "")
+                    {
+                        Doc.NewPage();
+                        TituloForm(Doc, ExpedienteId, proced2, "FORMULARIOS");
+                        Doc.NewPage();
+                    }
+                    IndiceConteo(ExpedienteId, ProcedimientoIds, ls_tipopro);
                     Doc.Close();
                 }
                 else
@@ -24064,18 +24076,18 @@ namespace Sut.Web.Areas.General.Controllers
 
                     //footer.Border = 0;
                     //footer.BorderWidthTop = 1;
-                    footer.Alignment = Element.ALIGN_RIGHT;
-                    Doc.Footer = footer;
+                    //footer.Alignment = Element.ALIGN_RIGHT;
+                    //Doc.Footer = footer;
                     ////footer.Border = 0;
                     ////footer.BorderWidthTop = 1;
                     ////footer.Alignment = Element.ALIGN_CENTER;
                     ////Doc3.Footer = footer;
                     //inicio 
-                    //footer2.Border = Rectangle.NO_BORDER;
-                    //footer2.Alignment = Element.ALIGN_CENTER;
-                    //footer2.BorderColor = new Color(242, 242, 242);
-                    //footer2.BackgroundColor = new Color(242, 242, 242);
-                    //Doc3.Header = footer2;
+                    footer2.Border = Rectangle.NO_BORDER;
+                    footer2.Alignment = Element.ALIGN_CENTER;
+                    footer2.BorderColor = new Color(242, 242, 242);
+                    footer2.BackgroundColor = new Color(242, 242, 242);
+                    Doc3.Header = footer2;
                     //fin
 
                     //if (ProcedimientoId != 0)
@@ -24241,14 +24253,14 @@ namespace Sut.Web.Areas.General.Controllers
                 Doc.Header = footer2;
                 //fin
 
-                Table tcab = new Table(1);
-                Cell celda;
+                //Table tcab = new Table(1);
+                //Cell celda;
 
-                tcab.WidthPercentage = 100;
-                tcab.Border = 0;
-                tcab.BorderWidth = 0;
-                tcab.Padding = 2;
-                tcab.DefaultHorizontalAlignment = Element.ALIGN_CENTER;
+                //tcab.WidthPercentage = 100;
+                //tcab.Border = 0;
+                //tcab.BorderWidth = 0;
+                //tcab.Padding = 2;
+                //tcab.DefaultHorizontalAlignment = Element.ALIGN_CENTER;
 
                 //ocultar informacion cuando es individual
                 if (ProcedimientoIds[0] == 0)
@@ -24364,11 +24376,11 @@ namespace Sut.Web.Areas.General.Controllers
                 footer.Alignment = Element.ALIGN_CENTER;
                 Doc3.Footer = footer;
                 //inicio 
-                //footer2.Border = Rectangle.NO_BORDER;
-                //footer2.Alignment = Element.ALIGN_CENTER;
-                //footer2.BorderColor = new Color(242, 242, 242);
-                //footer2.BackgroundColor = new Color(242, 242, 242);
-                //Doc3.Header = footer2;
+                footer2.Border = Rectangle.NO_BORDER;
+                footer2.Alignment = Element.ALIGN_CENTER;
+                footer2.BorderColor = new Color(242, 242, 242);
+                footer2.BackgroundColor = new Color(242, 242, 242);
+                Doc3.Header = footer2;
                 //fin
                 if (ProcedimientoIds[0] != 0)
                 {
@@ -25041,14 +25053,14 @@ namespace Sut.Web.Areas.General.Controllers
                     //ocultar informacion cuando es individual 
                     Doc.Open();
 
-                    Table tcab = new Table(1);
-                    Cell celda;
+                    //Table tcab = new Table(1);
+                    //Cell celda;
 
-                    tcab.WidthPercentage = 100;
-                    tcab.Border = 0;
-                    tcab.BorderWidth = 0;
-                    tcab.Padding = 2;
-                    tcab.DefaultHorizontalAlignment = Element.ALIGN_CENTER;
+                    //tcab.WidthPercentage = 100;
+                    //tcab.Border = 0;
+                    //tcab.BorderWidth = 0;
+                    //tcab.Padding = 2;
+                    //tcab.DefaultHorizontalAlignment = Element.ALIGN_CENTER;
 
                     //celda = new Cell();
                     //celda.Border = 0;
@@ -25287,7 +25299,7 @@ namespace Sut.Web.Areas.General.Controllers
                 footer.Alignment = Element.ALIGN_RIGHT;
                 Doc.Footer = footer;
 
-                var procedimiento = _procedimientoService.GetOne(ids[0]);
+                //var procedimiento = _procedimientoService.GetOne(ids[0]);
                 //AdicionarCabecera(Doc, procedimiento.ExpedienteId);
                 foreach (long id in ids)
                 {
