@@ -147,8 +147,9 @@ namespace Sut.Repositories.Procedimientos
         //Add ESEO
         public static readonly string ListarDashboard = "Listar_Dashboard";
         public static readonly string ListarActividadesFechas = "Listar_ActividadesFechas";
-		//JJJMSP2 INI
-		public static readonly string paSutProcedimientoComparar = "paSUT_Procedimiento_Comparar";
+        public static readonly string Actualizar_RolUsuario = "Actualizar_RolUsuario";
+        //JJJMSP2 INI
+        public static readonly string paSutProcedimientoComparar = "paSUT_Procedimiento_Comparar";
         #endregion
 
         #region Parametros

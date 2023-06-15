@@ -54,7 +54,20 @@
         <div class="form-group">
             <label class="control-label col-sm-3 col-xs-12">Perfil:</label>
             <div class="col-sm-9 col-xs-12">
-                @Html.DropDownListFor(model => model.Rol, ViewBag.ListaRol as List<SelectListItem>, new { @class = "form-control"})
+
+                <select class="form-control multiple-autocomplete" data-val="true"  id="Rol" multiple="" name="Rol">
+                  
+                    @foreach (var md in (ViewBag.ListaRol as List<SelectListItem>))
+                    {
+                        <option value="@md.Value.ToString()" selected="@md.Selected">
+                            @md.Text
+                        </option>
+                    }
+
+                </select>
+
+               
+
             </div>
         </div>
 
@@ -62,7 +75,7 @@
         <div class="form-group">
             <label class="control-label col-sm-3 col-xs-12">Asignar Entidades:</label>
             <div class="col-sm-9 col-xs-12">
-                @Html.DropDownListFor(model => model.AsigEntidad, ViewBag.asignarentidades as List<SelectListItem>, new { @class = "form-control", @disabled = "True" })
+                @Html.DropDownListFor(model => model.AsigEntidad, ViewBag.asignarentidades as List<SelectListItem>, new {  @class = "form-control", @disabled = "True" })
             </div>
         </div>
 
@@ -120,8 +133,6 @@
 
 <script>
 
-
-
     @*function password_check() {
       pass = document.getElementById("password").value;
       console.log(pass);
@@ -154,14 +165,14 @@
         }
         else
         {
-            document.getElementById("AsigEntidad").disabled = true; 
+            document.getElementById("AsigEntidad").disabled = true;
         }
    /*     alert(e);*/
 
 
-    }); 
+    });
 
- 
+
 
     sut.editarUsuario = {
 
@@ -173,9 +184,9 @@
 
             var entidad = $('select[name="EntidadId"]').val();
             var entidadtext = $('select[name="EntidadId"] option:selected').text();
-            var rol = $('select[name="Rol"]').val();
+            var rol = $('#Rol').val();
 
-            if (rol==7)
+            if (rol.includes(7))
             {
                 if (entidad !=4105 && entidad != 18497 && entidadtext.indexOf("MINISTERIO") == -1)
                 {
@@ -183,14 +194,14 @@
                     return;
                 }
 
-            }else if (rol==8)
+            } else if (rol.includes(8))
             {
                 if (entidad !=4105 && entidad != 18497 && entidad != 20553)
                 {
                     showNotification('top', 'right', 'El Rol Entidad Fiscalizadora no puede ser asigando para esta entidad', 2);
                     return;
                 }
-            } else if (rol==6)
+            } else if (rol.includes(6))
             {
                 if ( entidadtext.indexOf("PROVINCIAL") == -1) {
 
@@ -198,9 +209,10 @@
                     return;
                 }
             }
-
-            if ($("#form-modal-editar").valid()) {
+            let validd = $("#form-modal-editar").valid();
+            if (validd) {
                 var model = $('#form-modal-editar').serialize();
+                delete model.Rol;
                 console.log(model);
                 $.ajax({
                     type: "POST",
@@ -363,8 +375,8 @@
             $('input[name="NroDocumento"]').val($('select[name$="MiembroEquipoId"] option:selected').data('doc'));
         });
 
-        $.validator.addMethod("selRol", $.validator.methods.min,
-            $.validator.format("Debe seleccionar un Rol"));
+        //$.validator.addMethod("selRol", $.validator.methods.min,
+        //    $.validator.format("Debe seleccionar un Rol"));
 
         $.validator.addMethod("selEntidad", $.validator.methods.min,
             $.validator.format("Debe seleccionar una Entidad"));
@@ -400,9 +412,7 @@
                 NroDocumento: {
                     required: true
                 },
-                Rol: {
-                    selRol: 1
-                },
+                
                 EntidadId: {
                     selEntidad: 1
                 },
@@ -419,6 +429,68 @@
             }
         });
     });
+
+    //Administracion de los roles
+
+
+
+    var multipleAutocomplete = $('.multiple-autocomplete').select2(
+        {
+            width: '400px' // Ancho personalizado
+        });
+   // multipleAutocomplete.width('300px');
+
+    multipleAutocomplete.on('select2:select', function (e) {
+        var id = e.params.data.id;  // obtén el id de la opción seleccionada
+        const usuario = {
+            iosp: 1,
+            RolId: id,
+            UsuarioId: @ViewBag.usuarioselect.UsuarioId,
+            EntidadId: @ViewBag.usuarioselect.EntidadId
+        };
+
+        sut.msg.confirm("¿Desea agregar un Rol al usuario?", () => {
+            saveRolUsuario(usuario);
+        });
+       
+    });
+
+    multipleAutocomplete.on('select2:unselect', function (e) {
+
+        let id = e.params.data.id;  // obtén el id de la opción deseleccionada
+
+        const usuario = {
+            iosp: 2,
+            RolId: id,
+            UsuarioId: @ViewBag.usuarioselect.UsuarioId,
+            EntidadId: @ViewBag.usuarioselect.EntidadId
+        };
+        sut.msg.confirm("¿Desea eliminar el Rol al usuario?", () => {
+            saveRolUsuario(usuario);
+        });
+    });
+
+
+    function saveRolUsuario(usuario) {
+         $.ajax({
+                type: "POST",
+                //url: "/Seguridad/Miembro/GetByEntidad",
+                url: '@Url.Content("~/Seguridad/Usuario/SaveRoles")',
+                data: usuario,
+                dataType: 'json',
+                beforeSend: function () {
+                },
+                complete: function () {
+                },
+                success: function (result) {
+                  // alert('Se guardo correctamente la informacion')
+                },
+                error: function (result) {
+                    sut.error.show('msgEditar', result.responseText);
+                }
+            });
+    }
+
 
 </script>
 

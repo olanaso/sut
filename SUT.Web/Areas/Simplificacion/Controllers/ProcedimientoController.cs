@@ -5212,6 +5212,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 model.UndOrgPresentDocumentacion = null;
                 model.TipoAtencion = null;
                 model.Editado = true;
+                model.FecModificacion = DateTime.Now;
 
                 _procedimientoService.Save(model);
 

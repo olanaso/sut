@@ -19,5 +19,7 @@ namespace Sut.IApplicationServices
         void Delete(long UsuarioId);
         List<Usuario> GetByEntidad(long EntidadId);
         List<UsuarioRol> GetByEntidadROL(long EntidadId);
+
+        void SaveRoles(Usuario obj);
     }
 }

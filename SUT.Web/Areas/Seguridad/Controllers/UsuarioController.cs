@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Ajax.Utilities;
+using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
+using Newtonsoft.Json;
+using Sut.ApplicationServices;
 using Sut.Entities;
 using Sut.IApplicationServices;
 using Sut.Log;
@@ -27,6 +30,8 @@ namespace Sut.Web.Areas.Seguridad.Controllers
         private readonly IRolMenuService _rolMenuService;
 
         Auditoria objauditoria = new Auditoria();
+        private object iosp;
+
         public UsuarioController(IEntidadService entidadService,
                                 IUsuarioService usuarioService, IAuditoriaService AuditoriaService,
                                 IMiembroEquipoService miembroEquipoService,
@@ -548,15 +553,48 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                 //listaRol.Insert(0, new SelectListItem() { Value = "0", Text = " - SELECCIONAR -" });
                 //ViewBag.ListaRol = listaRol;
 
+                /*Selccion para llamar los roles del usuario seleccionado*/
+                //listando los reoles del usuario al cual se esta modificando los datos
+
+                //Obtenienddo el usuario selecionado en la fila
+                Usuario ousuario = _usuarioService.GetOne(id);
+                ViewBag.usuarioselect = ousuario;
+
+                //obteniendo los roles del usuario seleccionado
+                List<UsuarioRol> usurol = _usuariorolService.GetByUsuarioRol(id);
+                int valroles = 0;
+                List<Roles> lroles = new List<Roles>();
+                foreach (UsuarioRol roles in usurol)
+                {
+
+                    if ((short)roles.Rol != valroles)
+                    {
+                        string valor = Convert.ToString((short)roles.Rol);
+                        Roles oRoles = new Roles();
+                        oRoles.Descripcion = valor;
+                        oRoles.RolId = (short)roles.Rol;
+                        lroles.Add(oRoles);
+
+
+                    }
+
+
+                }
+                /**/
+
                 List<Roles> listaRol = _rolesService.GetAll();
 
-                listaRol.Insert(0, new Roles() { RolId = 0, Descripcion = " - SELECCIONAR - " });
-                ViewBag.ListaRol = listaRol.Select(x => new SelectListItem()
+                //listaRol.Insert(0, new Roles() { RolId = 0, Descripcion = " - SELECCIONAR - " });
+                 var rolesusuario = listaRol.Select(roles => new SelectListItem()
                 {
-                    Value = x.RolId.ToString(),
-                    Text = x.Descripcion
+                    Value = roles.RolId.ToString(),
+                    Text = roles.Descripcion,
+                    Selected = lroles.Distinct().Any(rolUsua => rolUsua.RolId == roles.RolId)
+
                 })
                   .ToList();
+
+                ViewBag.ListaRol = rolesusuario;
 
 
 
@@ -1117,6 +1155,24 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                 ModelState.AddModelError("", ex.Message);
             }
             return View();
+        }
+
+        [AutorizacionRol(Roles = "Administrador")]
+        [HttpPost]
+        public ActionResult SaveRoles(int iosp, int RolId, int UsuarioId , int EntidadId)
+        {
+            // Construir el objeto que se va a devolver
+            Usuario pUsuario=new Usuario();
+            pUsuario.iosp = iosp;
+            pUsuario.RolId = RolId;
+            pUsuario.UsuarioId = UsuarioId;
+            pUsuario.EntidadId = EntidadId;
+
+            _usuarioService.SaveRoles(pUsuario);
+          
+
+            // Devolver el objeto en formato JSON utilizando la clase JsonResult
+            return Json(pUsuario, JsonRequestBehavior.AllowGet);
         }
     }
 }

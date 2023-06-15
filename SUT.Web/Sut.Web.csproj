@@ -512,7 +512,6 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
-    <Content Include="HtmlPage1.html" />
     <Content Include="js\daypilot\daypilot-all.min.js" />
     <Content Include="plugins\bootstrap-slider\bootstrap-slider.js" />
     <Content Include="plugins\bootstrap-slider\slider.css" />
@@ -1670,6 +1669,8 @@
     <Content Include="Scripts\js-cookie.js" />
     <Content Include="Scripts\notify.js" />
     <Content Include="Scripts\notify.min.js" />
+    <Content Include="Scripts\select2\select2.css" />
+    <Content Include="Scripts\select2\select2.js" />
     <Content Include="Scripts\sut.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
     <Content Include="Scripts\jquery-2.2.3.min.js" />

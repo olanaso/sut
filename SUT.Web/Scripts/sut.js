@@ -1469,6 +1469,89 @@ max-height: 500px;
         //});
     }
 
+
+    , subirExcelArray: function (file) {
+
+
+        return new Promise((resolve, reject) => {
+
+            // fileInput.addEventListener('change', (event) => {
+            //const file = event.target.files[0]; // el primer archivo
+
+            console.log('Archivo seleccionado:', file.name);
+
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+
+                const data = new Uint8Array(e.target.result);
+
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                // Leer la primera hoja de cálculo
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+                // Convertir los datos a un arreglo de objetos
+                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+
+                for (let i = 0; i < jsonData.length; i++) {
+                    // Iterar a través de todas las celdas en la fila actual
+                    for (let j = 0; j < jsonData[i].length; j++) {
+                        // Si la celda actual es null, reemplazarla por una cadena vacía
+                        if (jsonData[i][j] === null || jsonData[i][j] === '' || jsonData[i][j] === undefined) {
+                            jsonData[i][j] = '';
+                        }
+                    }
+                }
+
+                // Buscar la longitud del array más largo
+                let maxLength = 0;
+                for (let i = 0; i < jsonData.length; i++) {
+                    if (jsonData[i].length > maxLength) {
+                        maxLength = jsonData[i].length;
+                    }
+                }
+
+                for (let i = 0; i < jsonData.length; i++) {
+                    while (jsonData[i].length < maxLength) {
+                        jsonData[i].push('');
+                    }
+                }
+
+
+               let jsonData2 = jsonData.filter(row => row.some(element => element !== ''))
+
+                if (jsonData.length == 0) {
+
+                    this.msg.msgError2("Archivo Vacio", `El archivo no tiene ningúna fila registrada.`)
+                    return;
+                }
+                else {
+                    return resolve(jsonData2);
+                }
+
+
+
+
+                //console.log(jsonData)
+
+                // Imprimir los datos
+
+            };
+
+            reader.onerror = (e) => {
+                // Rechazar la promesa con el error
+                reject(e);
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
+
+
+        //});
+    }
+
 };
 
 

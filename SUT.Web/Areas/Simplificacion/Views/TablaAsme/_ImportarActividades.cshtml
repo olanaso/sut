@@ -4,8 +4,8 @@
     <div class="modal-content">
         <div class="modal-header">
             @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>*@
+                    <span aria-hidden="true">&times;</span>
+                </button>*@
             <h4 class="modal-title">Seleccionar Archivo Excel para importación</h4>
         </div>
 
@@ -18,41 +18,43 @@
                         @Html.TextBox("fileExcel", "", new { @id = "fileExcel", @type = "file", @class = "form-control", @accept = "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })
                     </div>
                     <div class="col-sm-3 col-xs-12">
-                        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> Importar</button>
+                        <button type="submit" class="btn btn-primary btn-sm"></button>
                     </div>
                 </div>
                 <div id="msgEditar"></div>
             }
+
+            <button type="button" id="btnimportExceltablaasme" class="btn btn-primary btn-sm"><i class="fa fa-save"></i> Importar</button>
             @*<hr />
-            <p>*@
-                @*Para la importación descargue la plantilla <a href="/Content/importacionASME.xlsx")">Aquí</a>.*@
-                @*Para la importación descargue la plantilla <a href="@Url.Content("~/Content/importacionASME.xlsx")">Aquí</a>.*@
-                @*Para la importación descargue la plantilla <a href="@Url.Content("~/General/Reporte/TablaAsmeFormato")?TablaAsmeId=@ViewBag.TablaAsmeId" target="_blank"> Aquí </a>.*@
+                <p>*@
+            @*Para la importación descargue la plantilla <a href="/Content/importacionASME.xlsx")">Aquí</a>.*@
+            @*Para la importación descargue la plantilla <a href="@Url.Content("~/Content/importacionASME.xlsx")">Aquí</a>.*@
+            @*Para la importación descargue la plantilla <a href="@Url.Content("~/General/Reporte/TablaAsmeFormato")?TablaAsmeId=@ViewBag.TablaAsmeId" target="_blank"> Aquí </a>.*@
 
             @*</p>
-            <hr />*@
-            <div style="height: 600px; overflow-y: scroll;" >
+                <hr />*@
+            <div style="height: 600px; overflow-y: scroll;">
                 <strong>Considerar como Unidades Orgánicas a las siguientes equivalencias:</strong>
                 <ul id="ulUndOrganicas" class="list-group"></ul>
                 <br />
                 @*<strong>Considerar como Tipo de Actividad:</strong>
-                <ul class="list-group">
-                    <li class="list-group-item">Operacion</li>
-                    <li class="list-group-item">Revision</li>
-                    <li class="list-group-item">Traslado</li>
-                    <li class="list-group-item">Espera</li>
-                    <li class="list-group-item">Archivo</li>
-                </ul>
-                <br />
-                <strong>Considerar como Tipo de Valor:</strong>
-                <ul class="list-group">
-                    <li class="list-group-item">VA</li>
-                    <li class="list-group-item">Control</li>
-                    <li class="list-group-item">SVA</li>
-                </ul>*@
+                    <ul class="list-group">
+                        <li class="list-group-item">Operacion</li>
+                        <li class="list-group-item">Revision</li>
+                        <li class="list-group-item">Traslado</li>
+                        <li class="list-group-item">Espera</li>
+                        <li class="list-group-item">Archivo</li>
+                    </ul>
+                    <br />
+                    <strong>Considerar como Tipo de Valor:</strong>
+                    <ul class="list-group">
+                        <li class="list-group-item">VA</li>
+                        <li class="list-group-item">Control</li>
+                        <li class="list-group-item">SVA</li>
+                    </ul>*@
             </div>
             <div class="modal-footer">
-                 
+
                 <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
             </div>
         </div>
@@ -81,7 +83,7 @@
             model.append("tablaAsmeId", @ViewBag.TablaAsmeId);
             let validacion = $("#form-modal").valid()
 
-            if (validacion) { 
+            if (validacion) {
 
 
                 $.ajax({
@@ -159,6 +161,86 @@
 
             }
         });
+    });
+
+
+    document.getElementById('fileExcel').addEventListener('change', function () {
+        var file = this.files[0];
+        if (file) {
+            document.getElementById('btnimportarbaselegal').disabled = false;
+        } else {
+            document.getElementById('btnimportarbaselegal').disabled = true;
+        }
+    });
+
+    document.getElementById('btnimportExceltablaasme').addEventListener('click', async function () {
+
+        //var output = document.getElementById('output');
+        var file = document.getElementById('fileExcel').files[0];
+        if (file) {
+
+            let result = await sut.subirExcelArray(file)
+            console.log(result)
+
+             $.ajax({
+                    type: "POST",
+                    url: '@Url.Content("~/Simplificacion/TablaAsme/ImportarActividades2")',
+                 data: { fileExcel: JSON.stringify(result), tablaAsmeId: @ViewBag.TablaAsmeId, user: { /* Objeto usuario */ } },
+
+
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    complete: () => {
+
+                        sut.wait.removeProgress('.modal-footer');
+                        $('#form-modal button').eq(0).removeAttr("disabled");
+                    },
+                    success: (result) => {
+
+                        console.log(result)
+
+                        $('#modal-ventana').modal('hide');
+
+                        //console.log(result);
+                        //if (result.valid) sut.Asme.addImportAct(result.data);
+                        if (result.mensaje != undefined) {
+                            sut.error.clientErrorShow('mensajes', result.mensaje);
+                            var texto = "";
+                            for (var i = 0; i < result.mensaje.length; i++) {
+                                texto = result.mensaje[i] + '\n' + texto;
+                            }
+
+                            //sut.msg.msgUsuario(texto, 'Error al cargar el archivo');
+                            sut.msg.msgError2('Advertencia', texto)
+                        }
+                        if (result.valid) location.reload();
+
+
+                    },
+                    error: (result) => {
+
+                        $('#modal-ventana').modal('hide');
+                        //sut.wait.removeProgress('.modal-footer');
+                        //$('#form-modal button').eq(0).removeAttr("disabled");
+                        //sut.error.show('msgEditar', result.responseText);
+                        let error = result.responseJSON.error;
+                        let lista = result.responseJSON.lista.join('<br>');
+
+
+                        sut.msg.msgError2('Error', error + '<br>' + lista);
+                        //showNotification('top', 'right', result.responseText, 3);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+             });
+
+
+        } else {
+            showNotification('top', 'right', "No se seleccionó ningún archivo", 3);
+        }
     });
 
 </script>

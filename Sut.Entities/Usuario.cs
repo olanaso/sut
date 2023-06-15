@@ -10,6 +10,10 @@ namespace Sut.Entities
 {
     public class Usuario
     {
+
+        [NotMapped]
+        public int iosp;
+
         [Key]
         public long UsuarioId { get; set; }
 
@@ -21,6 +25,9 @@ namespace Sut.Entities
         public string Clave { get; set; }
 
         public Rol Rol { get; set; }
+
+        [NotMapped]
+        public int RolId;
         public EstadoUsuario Estado { get; set; }
 
         [ForeignKey("MiembroEquipo")]
@@ -35,7 +42,9 @@ namespace Sut.Entities
         public int Ayuda { get; set; }
         public int ActivarCorreo { get; set; }
 
-   
+      
+       
+
         public AsignarEntidades AsigEntidad { get; set; }
          
 

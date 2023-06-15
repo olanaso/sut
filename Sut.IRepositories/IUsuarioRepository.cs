@@ -17,6 +17,7 @@ namespace Sut.IRepositories
         Usuario GetOnecompleto(long UsuarioId);
         
         new void Save(Usuario obj);
+        new void SaveRoles(Usuario obj);
         new List<Usuario> GetAll();
         List<Usuario> GetByEntidad(long EntidadId);
         List<UsuarioRol> GetByEntidadROL(long EntidadId);

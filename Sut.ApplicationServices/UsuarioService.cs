@@ -233,6 +233,19 @@ namespace Sut.ApplicationServices
             }
         }
 
+        public void SaveRoles(Usuario obj)
+        {
+            try
+            {
+                _usuarioRepository.SaveRoles(obj);
+               
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public void Delete(long UsuarioId)
         {
             try
