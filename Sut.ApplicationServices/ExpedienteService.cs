@@ -1,10 +1,13 @@
-﻿using Sut.Entities;
+﻿using Dapper;
+using Sut.Entities;
 using Sut.IApplicationServices;
 using Sut.IDomainServices;
 using Sut.IRepositories;
+using Sut.Repositories.Configuracion;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace Sut.ApplicationServices
@@ -1160,7 +1163,29 @@ namespace Sut.ApplicationServices
                 obj.OrdenPa = estado;
 
                 _expedienteRepository.SaveOnlyExpediente(obj);
+                //Llamar a un procedimieto de ordenacion de acuerdo al orden PA
                 _unitOfWork.SaveChanges();
+
+                using (var conexion = Conexion.GetConexionSUT())//_connectionFactory?.GetConnectionSUT)
+                {
+                    var parameters = new DynamicParameters();
+
+
+                 
+                    parameters.Add("@OrdenPa", (int)estado);
+                    parameters.Add("@ExpedienteId", ExpedienteId);
+                  
+
+                    var _idAuditoria = conexion.Query<int>(
+                                            "sut.Ordenar_Procedimiento",
+                                            parameters,
+                                            commandTimeout: 0,
+                                            commandType: CommandType.StoredProcedure);
+
+                   
+                }
+
+               
             }
             catch (Exception ex)
             {

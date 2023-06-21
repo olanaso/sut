@@ -326,13 +326,19 @@ namespace Sut.ApplicationServices
                 string codigoCorto = string.IsNullOrEmpty(filtro.CodigoCorto) ? string.Empty : filtro.CodigoCorto.ToUpper();
                 string nombreUndOrg = filtro.UndOrgResponsable?.Nombre != null ? filtro.UndOrgResponsable.Nombre.ToUpper() : string.Empty;
 
-                var query = _procedimientoRepository.GetByExpediente(filtro.ExpedienteId)
+               /* var query = _procedimientoRepository.GetByExpediente(filtro.ExpedienteId)
                     .Where(x => x.Denominacion.ToUpper().Contains(denominacion))
                     .Where(x => x.UndOrgResponsable.Nombre.ToUpper().Contains(nombreUndOrg))
-                    .Where(x => (short)x.Operacion != (filtro.FiltroOperacion > 0 ? filtro.FiltroOperacion : 3));
+                    .Where(x => (short)x.Operacion != (filtro.FiltroOperacion > 0 ? filtro.FiltroOperacion : 3));*/
+
+                var query = _procedimientoRepository.GetByExpediente(filtro.ExpedienteId)
+                  .Where(x => x.Denominacion.IndexOf(denominacion, StringComparison.OrdinalIgnoreCase) >= 0 &&
+                x.UndOrgResponsable.Nombre.IndexOf(nombreUndOrg, StringComparison.OrdinalIgnoreCase) >= 0 &&
+                (short)x.Operacion != (filtro.FiltroOperacion > 0 ? filtro.FiltroOperacion : 3));
 
                 if (!string.IsNullOrEmpty(codigoCorto))
-                    query = query.Where(x => x.CodigoCorto != null && x.CodigoCorto.ToUpper().Contains(codigoCorto));
+                    /*query = query.Where(x => x.CodigoCorto != null && x.CodigoCorto.ToUpper().Contains(codigoCorto));*/
+                    query = query.Where(x => x.CodigoCorto?.IndexOf(codigoCorto, StringComparison.OrdinalIgnoreCase) >= 0);
 
                 if (filtro.FiltroTipoProcedimiento > 0)
                 {

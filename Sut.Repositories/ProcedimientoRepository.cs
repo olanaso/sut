@@ -85,15 +85,15 @@ namespace Sut.Repositories
                 SutContext ctx = Context.GetContext() as SutContext;
 
                 return ctx.Procedimiento
-                        .FirstOrDefault(x => x.ExpedienteId == ExpedienteId && x.Codigo== codigo && x.Estado != 3);
-                         
+                        .FirstOrDefault(x => x.ExpedienteId == ExpedienteId && x.Codigo == codigo && x.Estado != 3);
+
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        
+
         public List<Procedimiento> duplicadocodigo()
         {
             try
@@ -147,7 +147,7 @@ namespace Sut.Repositories
                 throw ex;
             }
         }
-        public string Denominacion (long ProcedimientoId)
+        public string Denominacion(long ProcedimientoId)
         {
             try
             {
@@ -161,13 +161,68 @@ namespace Sut.Repositories
             }
         }
 
+        public List<Procedimiento> GetByExpediente2(long ExpedienteId)
+        {
+            try
+            {
+                SutContext ctx = Context.GetContext() as SutContext;
+                //var lst2 = ctx.Procedimiento.Where(x => x.ExpedienteId == ExpedienteId && x.Estado != 3);
+
+                List<Procedimiento> listpro = new List<Procedimiento>();
+
+                //
+                var procedimientos = ctx.Procedimiento.Where(x => x.ExpedienteId == ExpedienteId && x.Estado != 3);
+
+
+
+                var list = ctx.Procedimiento
+                         //.Include("Asignacion")
+                         .Include("UndOrgResponsable")
+                         .Include("UndOrgReconsideracion")
+                         .Include("UndOrgApelacion")
+                         .Include(x => x.ProcedimientoDatoAdicional)
+                          .Include("ProcedimientoDatoAdicional")
+                         .Include("TablaAsme")
+                         .Include(x => x.ProcedimientoSede)
+                         .Include(x => x.Requisito)
+                         .Include("Requisito.RequisitoFormulario")
+                         .Include("ProcedimientoSede.UndOrgRecepcionDocumentos")
+                         .Where(x => x.ExpedienteId == ExpedienteId && x.Estado != 3);
+
+
+
+                return ctx.Procedimiento
+                        //.Include("Asignacion")
+                        .Include("UndOrgResponsable")
+                        .Include("UndOrgReconsideracion")
+                        .Include("UndOrgApelacion")
+                        .Include(x => x.ProcedimientoDatoAdicional)
+                         .Include("ProcedimientoDatoAdicional")
+                        .Include("TablaAsme")
+                        .Include(x => x.ProcedimientoSede)
+                        .Include(x => x.Requisito)
+                        .Include("Requisito.RequisitoFormulario")
+                        .Include("ProcedimientoSede.UndOrgRecepcionDocumentos")
+                        .Where(x => x.ExpedienteId == ExpedienteId && x.Estado != 3)
+                        //.OrderBy(x => x.Numero)
+                        .ToList();
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public List<Procedimiento> GetByExpediente(long ExpedienteId)
         {
             try
             {
                 SutContext ctx = Context.GetContext() as SutContext;
 
-                var list = ctx.Procedimiento
+                /*
+                   var list = ctx.Procedimiento
                         .Include("Asignacion")
                         .Include("UndOrgResponsable")
                         .Include("UndOrgReconsideracion")
@@ -196,6 +251,101 @@ namespace Sut.Repositories
                         .Where(x => x.ExpedienteId == ExpedienteId && x.Estado!=3  )
                         //.OrderBy(x => x.Numero)
                         .ToList();
+                 */
+
+                // Obtén los procedimientos
+                var procedimientos = ctx.Procedimiento
+                                        .Where(x => x.ExpedienteId == ExpedienteId && x.Estado != 3)
+                                        .ToList();
+
+                // Obtén los IDs
+                var responsablesIds = procedimientos.Select(p => p.UndOrgResponsableId).ToList();
+                var reconsideracionIds = procedimientos.Select(p => p.UndOrgReconsideracionId).ToList();
+                var apelacionIds = procedimientos.Select(p => p.UndOrgApelacionId).ToList();
+
+                // Obtén los UndOrgResponsable
+                var undOrgResponsables = ctx.UnidadOrganica
+                                            .Where(x => responsablesIds.Contains(x.UnidadOrganicaId))
+                                            .ToList();
+
+                // Obtén los UndOrgReconsideracion
+                var undOrgReconsideraciones = ctx.UnidadOrganica
+                                                .Where(x => reconsideracionIds.Contains(x.UnidadOrganicaId))
+                                                .ToList();
+
+                // Obtén los UndOrgApelacion
+                var undOrgApelacions = ctx.UnidadOrganica
+                                          .Where(x => apelacionIds.Contains(x.UnidadOrganicaId))
+                                          .ToList();
+
+
+                // Obtén los ProcedimientoDatoAdicional
+                var procedimientoIds = procedimientos.Select(p => p.ProcedimientoId).ToList();
+
+                var procedimientoDatoAdicionals = ctx.ProcedimientoDatoAdicional
+                                                      .Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                                      .ToList();
+
+                // Obtén los TablaAsme
+                var tablaAsmes = ctx.TablaAsme
+                                     .Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                     .ToList();
+
+
+                // Obtén los ProcedimientoSede
+                var procedimientoSedes = ctx.ProcedimientoSede
+                                           .Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                           .ToList();
+
+                // Obtén los Requisito
+                var requisitos = ctx.Requisito
+                                     .Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                     .ToList();
+
+                var requisitosIds = requisitos.Select(p => p.RequisitoId).ToList();
+
+                // Obtén los RequisitoFormulario
+                var requisitoFormularios = ctx.RequisitoFormulario
+                                             .Where(x => requisitosIds.Contains(x.RequisitoId))
+                                             .ToList();
+
+
+                //Vinculando los requisitos con requisito formulario
+                foreach (var requisito in requisitos)
+                {
+                    requisito.RequisitoFormulario = requisitoFormularios.Where(x => x.RequisitoId == requisito.RequisitoId).ToList();
+                }
+
+
+
+                // Luego, realiza un 'join' manual en la aplicación para combinar los resultados:
+                foreach (var procedimiento in procedimientos)
+                {
+                    //Cargando Unidad organica
+                    procedimiento.UndOrgResponsable = (UnidadOrganica)undOrgResponsables.FirstOrDefault(x => x.UnidadOrganicaId == procedimiento.UndOrgResponsableId);
+                    //Cargando UndOrgReconsideracion
+                    procedimiento.UndOrgReconsideracion = (UnidadOrganica)undOrgReconsideraciones.FirstOrDefault(x => x.UnidadOrganicaId == procedimiento.UndOrgReconsideracionId);
+                    //Cargando UndOrgReconsideracion
+                    procedimiento.UndOrgApelacion = (UnidadOrganica)undOrgApelacions.FirstOrDefault(x => x.UnidadOrganicaId == procedimiento.UndOrgApelacionId);
+                    //Cargando ProcedimientoDatoAdicional
+                    procedimiento.ProcedimientoDatoAdicional = (List<ProcedimientoDatoAdicional>)procedimientoDatoAdicionals.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+                    //Cargando Tabla asme
+                    procedimiento.TablaAsme = (List<TablaAsme>)tablaAsmes.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+                    //Cargando ProcedimientoSede
+                    procedimiento.ProcedimientoSede = (List<ProcedimientoSede>)procedimientoSedes.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+                    //Carga requisitos
+                    procedimiento.Requisito = (List<Requisito>)requisitos.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+
+                }
+
+                // Ahora 'procedimientos' debería tener todos los datos cargados manualmente
+
+
+
+
+                return procedimientos;
+
+
             }
             catch (Exception ex)
             {
@@ -250,7 +400,7 @@ namespace Sut.Repositories
                         .Include(x => x.Requisito)
                         .Include("Requisito.RequisitoFormulario")
                         .Include("ProcedimientoSede.UndOrgRecepcionDocumentos")
-                        .Where(x => x.ExpedienteId == ExpedienteId && x.Estado != 3 && x.CodigoCorto != null )
+                        .Where(x => x.ExpedienteId == ExpedienteId && x.Estado != 3 && x.CodigoCorto != null)
                         //.OrderBy(x => x.Numero)
                         .ToList();
             }
@@ -264,23 +414,130 @@ namespace Sut.Repositories
         {
             try
             {
-                SutContext ctx = Context.GetContext() as SutContext; 
+                SutContext ctx = Context.GetContext() as SutContext;
 
-                return ctx.Procedimiento
+               /* var lista = ctx.Procedimiento
                         .Include("Asignacion")
                         .Include("UndOrgResponsable")
                         .Include("UndOrgReconsideracion")
                         .Include("UndOrgApelacion")
                         .Include(x => x.ProcedimientoDatoAdicional)
-                         .Include("ProcedimientoDatoAdicional")
+                        .Include("ProcedimientoDatoAdicional")
                         .Include("TablaAsme")
                         .Include(x => x.ProcedimientoSede)
                         .Include(x => x.Requisito)
                         .Include("Requisito.RequisitoFormulario")
                         .Include("ProcedimientoSede.UndOrgRecepcionDocumentos")
-                        .Where(x => x.ExpedienteId == ExpedienteId && x.Estado != 3 && x.Operacion!= OperacionExpediente.Eliminacion && x.CodigoCorto != null)
+                        .Where(x => x.ExpedienteId == ExpedienteId && x.Estado != 3 && x.Operacion != OperacionExpediente.Eliminacion && x.CodigoCorto != null)
                         .OrderBy(x => x.Numero)
-                        .ToList();
+                        .ToList();*/
+
+
+
+                // Obtén los procedimientos
+                var procedimientos = ctx.Procedimiento
+                                        .Where(x => x.ExpedienteId == ExpedienteId && x.Estado != 3 && x.Operacion != OperacionExpediente.Eliminacion && x.CodigoCorto != null)
+                                        .OrderBy(x => x.Numero)
+                                        .ToList();
+
+                // Obtén los ProcedimientoDatoAdicional
+                var procedimientoIds = procedimientos.Select(p => p.ProcedimientoId).ToList();
+
+                //Listado de asignaciones
+                var Asignaciones = ctx.Asignacion.Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                                            .ToList();
+
+                // Obtén los IDs
+                var responsablesIds = procedimientos.Select(p => p.UndOrgResponsableId).ToList();
+                var reconsideracionIds = procedimientos.Select(p => p.UndOrgReconsideracionId).ToList();
+                var apelacionIds = procedimientos.Select(p => p.UndOrgApelacionId).ToList();
+
+                // Obtén los UndOrgResponsable
+                var undOrgResponsables = ctx.UnidadOrganica
+                                            .Where(x => responsablesIds.Contains(x.UnidadOrganicaId))
+                                            .ToList();
+
+                // Obtén los UndOrgReconsideracion
+                var undOrgReconsideraciones = ctx.UnidadOrganica
+                                                .Where(x => reconsideracionIds.Contains(x.UnidadOrganicaId))
+                                                .ToList();
+
+                // Obtén los UndOrgApelacion
+                var undOrgApelacions = ctx.UnidadOrganica
+                                          .Where(x => apelacionIds.Contains(x.UnidadOrganicaId))
+                                          .ToList();
+
+
+                // Obtén los ProcedimientoDatoAdicional
+
+
+                var procedimientoDatoAdicionals = ctx.ProcedimientoDatoAdicional
+                                                      .Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                                      .ToList();
+
+                // Obtén los TablaAsme
+                var tablaAsmes = ctx.TablaAsme
+                                     .Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                     .ToList();
+
+
+                // Obtén los ProcedimientoSede
+                var procedimientoSedes = ctx.ProcedimientoSede
+                                           .Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                           .ToList();
+
+                // Obtén los Requisito
+                var requisitos = ctx.Requisito
+                                     .Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                     .ToList();
+
+                var requisitosIds = requisitos.Select(p => p.RequisitoId).ToList();
+
+                // Obtén los RequisitoFormulario
+                var requisitoFormularios = ctx.RequisitoFormulario
+                                             .Where(x => requisitosIds.Contains(x.RequisitoId))
+                                             .ToList();
+
+
+                //Vinculando los requisitos con requisito formulario
+                foreach (var requisito in requisitos)
+                {
+                    requisito.RequisitoFormulario = requisitoFormularios.Where(x => x.RequisitoId == requisito.RequisitoId).ToList();
+                }
+
+
+
+                // Luego, realiza un 'join' manual en la aplicación para combinar los resultados:
+                foreach (var procedimiento in procedimientos)
+                {
+                    //Cargando Unidad organica
+                    procedimiento.UndOrgResponsable = (UnidadOrganica)undOrgResponsables.FirstOrDefault(x => x.UnidadOrganicaId == procedimiento.UndOrgResponsableId);
+                    //Cargando UndOrgReconsideracion
+                    procedimiento.UndOrgReconsideracion = (UnidadOrganica)undOrgReconsideraciones.FirstOrDefault(x => x.UnidadOrganicaId == procedimiento.UndOrgReconsideracionId);
+                    //Cargando UndOrgReconsideracion
+                    procedimiento.UndOrgApelacion = (UnidadOrganica)undOrgApelacions.FirstOrDefault(x => x.UnidadOrganicaId == procedimiento.UndOrgApelacionId);
+                    //Cargando ProcedimientoDatoAdicional
+                    procedimiento.ProcedimientoDatoAdicional = (List<ProcedimientoDatoAdicional>)procedimientoDatoAdicionals.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+                    //Cargando Tabla asme
+                    procedimiento.Asignacion = (List<Asignacion>)Asignaciones.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+                    //Cargando Tabla asme
+                    procedimiento.TablaAsme = (List<TablaAsme>)tablaAsmes.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+                    //Cargando ProcedimientoSede
+                    procedimiento.ProcedimientoSede = (List<ProcedimientoSede>)procedimientoSedes.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+                    //Carga requisitos
+                    procedimiento.Requisito = (List<Requisito>)requisitos.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+
+                }
+
+                // Ahora 'procedimientos' debería tener todos los datos cargados manualmente
+
+
+
+
+                return procedimientos;
+
+
+
             }
             catch (Exception ex)
             {
@@ -295,7 +552,7 @@ namespace Sut.Repositories
             {
                 SutContext ctx = Context.GetContext() as SutContext;
 
-                return ctx.Procedimiento
+               /* return ctx.Procedimiento
                         .Include("Asignacion")
                         .Include("UndOrgResponsable")
                         .Include("UndOrgReconsideracion")
@@ -307,8 +564,105 @@ namespace Sut.Repositories
                         .Include(x => x.Requisito)
                         .Include("Requisito.RequisitoFormulario")
                         .Include("ProcedimientoSede.UndOrgRecepcionDocumentos")
-                        .Where(x => x.ExpedienteId == ExpedienteId && x.Estado == 3 || x.Operacion == OperacionExpediente.Eliminacion )                    
-                        .ToList();
+                        .Where(x => x.ExpedienteId == ExpedienteId && x.Estado == 3 || x.Operacion == OperacionExpediente.Eliminacion)
+                        .ToList();*/
+
+
+                // Obtén los procedimientos
+                var procedimientos = ctx.Procedimiento
+                                        .Where(x => x.ExpedienteId == ExpedienteId && x.Estado == 3 || x.Operacion == OperacionExpediente.Eliminacion)
+                                        .ToList();
+
+                // Obtén los ProcedimientoDatoAdicional
+                var procedimientoIds = procedimientos.Select(p => p.ProcedimientoId).ToList();
+
+                //Listado de asignaciones
+                var Asignaciones = ctx.Asignacion.Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                                            .ToList();
+
+                // Obtén los IDs
+                var responsablesIds = procedimientos.Select(p => p.UndOrgResponsableId).ToList();
+                var reconsideracionIds = procedimientos.Select(p => p.UndOrgReconsideracionId).ToList();
+                var apelacionIds = procedimientos.Select(p => p.UndOrgApelacionId).ToList();
+
+                // Obtén los UndOrgResponsable
+                var undOrgResponsables = ctx.UnidadOrganica
+                                            .Where(x => responsablesIds.Contains(x.UnidadOrganicaId))
+                                            .ToList();
+
+                // Obtén los UndOrgReconsideracion
+                var undOrgReconsideraciones = ctx.UnidadOrganica
+                                                .Where(x => reconsideracionIds.Contains(x.UnidadOrganicaId))
+                                                .ToList();
+
+                // Obtén los UndOrgApelacion
+                var undOrgApelacions = ctx.UnidadOrganica
+                                          .Where(x => apelacionIds.Contains(x.UnidadOrganicaId))
+                                          .ToList();
+
+
+                // Obtén los ProcedimientoDatoAdicional
+
+
+                var procedimientoDatoAdicionals = ctx.ProcedimientoDatoAdicional
+                                                      .Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                                      .ToList();
+
+                // Obtén los TablaAsme
+                var tablaAsmes = ctx.TablaAsme
+                                     .Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                     .ToList();
+
+
+                // Obtén los ProcedimientoSede
+                var procedimientoSedes = ctx.ProcedimientoSede
+                                           .Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                           .ToList();
+
+                // Obtén los Requisito
+                var requisitos = ctx.Requisito
+                                     .Where(x => procedimientoIds.Contains(x.ProcedimientoId))
+                                     .ToList();
+
+                var requisitosIds = requisitos.Select(p => p.RequisitoId).ToList();
+
+                // Obtén los RequisitoFormulario
+                var requisitoFormularios = ctx.RequisitoFormulario
+                                             .Where(x => requisitosIds.Contains(x.RequisitoId))
+                                             .ToList();
+
+
+                //Vinculando los requisitos con requisito formulario
+                foreach (var requisito in requisitos)
+                {
+                    requisito.RequisitoFormulario = requisitoFormularios.Where(x => x.RequisitoId == requisito.RequisitoId).ToList();
+                }
+
+
+
+                // Luego, realiza un 'join' manual en la aplicación para combinar los resultados:
+                foreach (var procedimiento in procedimientos)
+                {
+                    //Cargando Unidad organica
+                    procedimiento.UndOrgResponsable = (UnidadOrganica)undOrgResponsables.FirstOrDefault(x => x.UnidadOrganicaId == procedimiento.UndOrgResponsableId);
+                    //Cargando UndOrgReconsideracion
+                    procedimiento.UndOrgReconsideracion = (UnidadOrganica)undOrgReconsideraciones.FirstOrDefault(x => x.UnidadOrganicaId == procedimiento.UndOrgReconsideracionId);
+                    //Cargando UndOrgReconsideracion
+                    procedimiento.UndOrgApelacion = (UnidadOrganica)undOrgApelacions.FirstOrDefault(x => x.UnidadOrganicaId == procedimiento.UndOrgApelacionId);
+                    //Cargando ProcedimientoDatoAdicional
+                    procedimiento.ProcedimientoDatoAdicional = (List<ProcedimientoDatoAdicional>)procedimientoDatoAdicionals.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+                    //Cargando Tabla asme
+                    procedimiento.Asignacion = (List<Asignacion>)Asignaciones.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+                    //Cargando Tabla asme
+                    procedimiento.TablaAsme = (List<TablaAsme>)tablaAsmes.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+                    //Cargando ProcedimientoSede
+                    procedimiento.ProcedimientoSede = (List<ProcedimientoSede>)procedimientoSedes.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+                    //Carga requisitos
+                    procedimiento.Requisito = (List<Requisito>)requisitos.Where(x => x.ProcedimientoId == procedimiento.ProcedimientoId).ToList();
+
+                }
+                return procedimientos;
+                // Ahora 'procedimientos' debería tener todos los datos cargados manualmente
             }
             catch (Exception ex)
             {
@@ -351,8 +705,8 @@ namespace Sut.Repositories
             {
                 SutContext ctx = Context.GetContext() as SutContext;
 
-                return ctx.TablaAsme  
-                        .Include(x => x.Procedimiento) 
+                return ctx.TablaAsme
+                        .Include(x => x.Procedimiento)
                         .Where(x => x.Procedimiento.ExpedienteId == ExpedienteId && x.Procedimiento.Estado != 3 && x.Procedimiento.Operacion != OperacionExpediente.Eliminacion && x.Procedimiento.Operacion != OperacionExpediente.Ninguna && x.TablaAsmeId != tablaAsmeId && x.Actividad.Count() != 0)
                         .ToList();
             }
@@ -402,16 +756,17 @@ namespace Sut.Repositories
                             });
 
                         var oldDatoAdicional = ctx.ProcedimientoDatoAdicional.Where(x => x.ProcedimientoId == obj.ProcedimientoId);
-                        if (obj.ProcedimientoDatoAdicional != null) {
+                        if (obj.ProcedimientoDatoAdicional != null)
+                        {
                             string sc = "1";
-                        foreach (ProcedimientoDatoAdicional da in obj.ProcedimientoDatoAdicional)
-                            ctx.Entry(da).State = oldDatoAdicional.Count(x => x.MetaDatoId == da.MetaDatoId) > 0 ? EntityState.Modified : EntityState.Added;
+                            foreach (ProcedimientoDatoAdicional da in obj.ProcedimientoDatoAdicional)
+                                ctx.Entry(da).State = oldDatoAdicional.Count(x => x.MetaDatoId == da.MetaDatoId) > 0 ? EntityState.Modified : EntityState.Added;
 
-                        oldDatoAdicional.ToList()
-                            .ForEach(x =>
-                            {
-                                if (ctx.Entry(x).State == EntityState.Unchanged) ctx.Entry(x).State = EntityState.Deleted;
-                            });
+                            oldDatoAdicional.ToList()
+                                .ForEach(x =>
+                                {
+                                    if (ctx.Entry(x).State == EntityState.Unchanged) ctx.Entry(x).State = EntityState.Deleted;
+                                });
                         }
                         var oldReq = ctx.Requisito
                                         .Include(x => x.RequisitoFormulario)
@@ -455,10 +810,10 @@ namespace Sut.Repositories
                         var oldTabla = ctx.TablaAsme.Where(x => x.ProcedimientoId == obj.ProcedimientoId);
                         //AsNoTracking().Where(x => x.ProcedimientoId == obj.ProcedimientoId);
                         foreach (TablaAsme tabla in obj.TablaAsme)
-                         
+
                             ctx.Entry(tabla).State = oldTabla.Count(x => x.TablaAsmeId == tabla.TablaAsmeId) > 0 ? EntityState.Modified : EntityState.Added;
-                           
-                        
+
+
                         oldTabla.ToList()
                                .ForEach(x =>
                                {
@@ -470,35 +825,35 @@ namespace Sut.Repositories
                         if (obj.ProcedimientoCargos != null)
                         {
                             var oldTablaCargo = ctx.ProcedimientoCargos.Where(x => x.ProcedimientoId == obj.ProcedimientoId);
-                
-                        //AsNoTracking().Where(x => x.ProcedimientoId == obj.ProcedimientoId);
-                        foreach (ProcedimientoCargos tablacargos in obj.ProcedimientoCargos)
 
-                            ctx.Entry(tablacargos).State = oldTablaCargo.Count(x => x.ProcedimientoCargosID == tablacargos.ProcedimientoCargosID) > 0 ? EntityState.Modified : EntityState.Added;
+                            //AsNoTracking().Where(x => x.ProcedimientoId == obj.ProcedimientoId);
+                            foreach (ProcedimientoCargos tablacargos in obj.ProcedimientoCargos)
+
+                                ctx.Entry(tablacargos).State = oldTablaCargo.Count(x => x.ProcedimientoCargosID == tablacargos.ProcedimientoCargosID) > 0 ? EntityState.Modified : EntityState.Added;
 
 
-                        oldTablaCargo.ToList()
-                               .ForEach(x =>
-                               {
-                                   if (ctx.Entry(x).State == EntityState.Unchanged) ctx.Entry(x).State = EntityState.Deleted;
-                               });
+                            oldTablaCargo.ToList()
+                                   .ForEach(x =>
+                                   {
+                                       if (ctx.Entry(x).State == EntityState.Unchanged) ctx.Entry(x).State = EntityState.Deleted;
+                                   });
                         }
                         /***cargosape***/
                         if (obj.ProcedimientoCargosApe != null)
                         {
                             var oldTablaCargoApe = ctx.ProcedimientoCargosApe.Where(x => x.ProcedimientoId == obj.ProcedimientoId);
-                   
-                        //AsNoTracking().Where(x => x.ProcedimientoId == obj.ProcedimientoId);
-                        foreach (ProcedimientoCargosApe tablacargosApe in obj.ProcedimientoCargosApe)
 
-                            ctx.Entry(tablacargosApe).State = oldTablaCargoApe.Count(x => x.ProcedimientoCargosApeID == tablacargosApe.ProcedimientoCargosApeID) > 0 ? EntityState.Modified : EntityState.Added;
+                            //AsNoTracking().Where(x => x.ProcedimientoId == obj.ProcedimientoId);
+                            foreach (ProcedimientoCargosApe tablacargosApe in obj.ProcedimientoCargosApe)
+
+                                ctx.Entry(tablacargosApe).State = oldTablaCargoApe.Count(x => x.ProcedimientoCargosApeID == tablacargosApe.ProcedimientoCargosApeID) > 0 ? EntityState.Modified : EntityState.Added;
 
 
-                        oldTablaCargoApe.ToList()
-                               .ForEach(x =>
-                               {
-                                   if (ctx.Entry(x).State == EntityState.Unchanged) ctx.Entry(x).State = EntityState.Deleted;
-                               });
+                            oldTablaCargoApe.ToList()
+                                   .ForEach(x =>
+                                   {
+                                       if (ctx.Entry(x).State == EntityState.Unchanged) ctx.Entry(x).State = EntityState.Deleted;
+                                   });
                         }
                         /***Fin cargos***/
 
@@ -572,7 +927,7 @@ namespace Sut.Repositories
                 if (!obj.Es_Copia)
                     if (obj.ProcedimientoId > 0)
                     {
-                       
+
                         var oldTabla = ctx.TablaAsme.Where(x => x.ProcedimientoId == obj.ProcedimientoId);
                         foreach (TablaAsme tabla in obj.TablaAsme)
 
@@ -584,9 +939,9 @@ namespace Sut.Repositories
                                {
                                    if (ctx.Entry(x).State == EntityState.Unchanged) ctx.Entry(x).State = EntityState.Deleted;
                                });
-                        
+
                     }
-                
+
 
                 if (obj.ProcedimientoId > 0)
                 {
@@ -671,14 +1026,15 @@ namespace Sut.Repositories
 
                     var oldDatoAdicional = ctx.ProcedimientoDatoAdicional.Where(x => x.ProcedimientoId == obj.ProcedimientoId);
 
-                    if (oldDatoAdicional.Count() != 0) {
-                    foreach (ProcedimientoDatoAdicional da in obj.ProcedimientoDatoAdicional)
-                        ctx.Entry(da).State = EntityState.Added;
-                    oldDatoAdicional.ToList()
-                        .ForEach(x =>
-                        {
-                            if (ctx.Entry(x).State == EntityState.Unchanged) ctx.Entry(x).State = EntityState.Deleted;
-                        });
+                    if (oldDatoAdicional.Count() != 0)
+                    {
+                        foreach (ProcedimientoDatoAdicional da in obj.ProcedimientoDatoAdicional)
+                            ctx.Entry(da).State = EntityState.Added;
+                        oldDatoAdicional.ToList()
+                            .ForEach(x =>
+                            {
+                                if (ctx.Entry(x).State == EntityState.Unchanged) ctx.Entry(x).State = EntityState.Deleted;
+                            });
                     }
 
 
@@ -974,7 +1330,7 @@ namespace Sut.Repositories
                         pDestino.Telefono = pOrigen.Telefono;
                         pDestino.Anexo = pOrigen.Anexo;
                         pDestino.Correo = pOrigen.Correo;
-                        pDestino.EsGratuito = pOrigen.EsGratuito; 
+                        pDestino.EsGratuito = pOrigen.EsGratuito;
                     }
                     if (lstCopia.Contains(DatoCopia.Todo) || lstCopia.Contains(DatoCopia.InfoBasica))
                     {
@@ -1001,7 +1357,7 @@ namespace Sut.Repositories
 
                             TablaAsme tabla = pOrigen.TablaAsme[i];
 
-                            if (tabla.Codigo== null)
+                            if (tabla.Codigo == null)
                             {
                                 tabla.Codigo = "-";
                             }
@@ -1069,7 +1425,7 @@ namespace Sut.Repositories
                                     Actividad = lstAct,
                                     AsmeActual = tabla.AsmeActual,
                                     PctSubvencion = tabla.PctSubvencion,
-                                    UITID = tabla.UITID 
+                                    UITID = tabla.UITID
 
                                 });
 
@@ -1183,7 +1539,7 @@ namespace Sut.Repositories
 
                             int idx = pDestino.Requisito.Count();
                             pDestino.Requisito[idx - 1].RequisitoFormulario = new List<RequisitoFormulario>();
-                            
+
 
                             if (pOrigen.Requisito[i].RequisitoFormulario != null)
                             {
@@ -1196,13 +1552,13 @@ namespace Sut.Repositories
                                         rf.Url = pOrigen.Requisito[i].RequisitoFormulario[x].Url;
                                         rf.ArchivoAdjuntoId = pOrigen.Requisito[i].RequisitoFormulario[x].ArchivoAdjuntoId;
                                         rf.FormularioId = pOrigen.Requisito[i].RequisitoFormulario[x].FormularioId;
-                                        pDestino.Requisito[idx-1].RequisitoFormulario.Add(rf);
+                                        pDestino.Requisito[idx - 1].RequisitoFormulario.Add(rf);
                                     }
                                 }
                             }
                         }
 
-                      
+
                         pDestino.Requisito.ForEach(x =>
                         {
                             x.ProcedimientoId = pDestino.ProcedimientoId;
@@ -1962,45 +2318,45 @@ namespace Sut.Repositories
 
         public List<string> CopiarDatosProcedimientoTablaASME(long ProcedimientoOrigenId, long ProcedimientoDestinoId, long TablaAsmeIdSeleccionado, long TablaAsmeIdCopiar)
         {
-           
-                List<string> mensajes = new List<string>();
-                try
+
+            List<string> mensajes = new List<string>();
+            try
+            {
+                SutContext ctx = Context.GetContext() as SutContext;
+                Procedimiento pOrigen = GetNoTracking(new List<long>() { ProcedimientoOrigenId }).First();
+                Procedimiento pDestino = GetOneTablaAsme(ProcedimientoDestinoId);
+
+                int valor = 0;
+                for (int i = 0; i < pOrigen.TablaAsme.Count(); i++)
                 {
-                    SutContext ctx = Context.GetContext() as SutContext;
-                    Procedimiento pOrigen = GetNoTracking(new List<long>() { ProcedimientoOrigenId }).First();
-                    Procedimiento pDestino = GetOneTablaAsme(ProcedimientoDestinoId); 
-
-                    int valor = 0;
-                    for (int i = 0; i < pOrigen.TablaAsme.Count(); i++)
+                    TablaAsme tabla = pOrigen.TablaAsme[i];
+                    if (tabla.TablaAsmeId == TablaAsmeIdCopiar)
                     {
-                        TablaAsme tabla = pOrigen.TablaAsme[i];
-                        if (tabla.TablaAsmeId == TablaAsmeIdCopiar)
-                        {
-                            pDestino.TablaAsme[0].TablaAsmeId = TablaAsmeIdSeleccionado;
-                            pDestino.TablaAsme[0].Actividad = new List<Actividad>();
+                        pDestino.TablaAsme[0].TablaAsmeId = TablaAsmeIdSeleccionado;
+                        pDestino.TablaAsme[0].Actividad = new List<Actividad>();
 
-                            if (tabla.Actividad != null)
+                        if (tabla.Actividad != null)
+                        {
+                            foreach (Actividad a in tabla.Actividad)
                             {
-                                foreach (Actividad a in tabla.Actividad)
+                                pDestino.TablaAsme[0].Actividad.Add(new Actividad()
                                 {
-                                    pDestino.TablaAsme[0].Actividad.Add(new Actividad()
+                                    Descripcion = a.Descripcion,
+                                    Duracion = a.Duracion,
+                                    Orden = a.Orden,
+                                    TipoActividad = a.TipoActividad,
+                                    TipoValor = a.TipoValor,
+                                    UnidadOrganicaId = a.UnidadOrganicaId,
+                                    ActividadRecurso = a.ActividadRecurso == null ? new List<ActividadRecurso>() : a.ActividadRecurso.Select(x => new ActividadRecurso()
                                     {
-                                        Descripcion = a.Descripcion,
-                                        Duracion = a.Duracion,
-                                        Orden = a.Orden,
-                                        TipoActividad = a.TipoActividad,
-                                        TipoValor = a.TipoValor,
-                                        UnidadOrganicaId = a.UnidadOrganicaId,
-                                        ActividadRecurso = a.ActividadRecurso == null ? new List<ActividadRecurso>() : a.ActividadRecurso.Select(x => new ActividadRecurso()
-                                        {
-                                            Cantidad = x.Cantidad,
-                                            RecursoId = x.RecursoId
-                                        }).ToList()
-                                    });
-                                }
+                                        Cantidad = x.Cantidad,
+                                        RecursoId = x.RecursoId
+                                    }).ToList()
+                                });
                             }
-                            valor = i;
                         }
+                        valor = i;
+                    }
                     ctx.Entry(pDestino.TablaAsme[0]).State = EntityState.Modified;
                 }
 
@@ -2015,11 +2371,11 @@ namespace Sut.Repositories
                 ctx.Entry(pDestino).State = EntityState.Modified;
             }
             catch (Exception ex)
-                {
-                    _log.Error(ex);
-                    mensajes.Add(ex.Message);
-                }
-                return mensajes;
+            {
+                _log.Error(ex);
+                mensajes.Add(ex.Message);
+            }
+            return mensajes;
         }
 
         private void DisplayTrackedEntities()
@@ -2078,12 +2434,12 @@ namespace Sut.Repositories
                 return ctx.Procedimiento
                         .Include(x => x.ProcedimientoSede)
                         .Include(x => x.NotaCiudadano)
-                        .Include(x=> x.ProcedimientoDatoAdicional)
-                        .Include(x=> x.ProcedimientoSede)
+                        .Include(x => x.ProcedimientoDatoAdicional)
+                        .Include(x => x.ProcedimientoSede)
                         .Include(x => x.ProcedimientoCategoria)
                         .Include("ProcedimientoSede.UndOrgRecepcionDocumentos")
-                        .Include(x=> x.NotaCiudadano)
-                        .Include(x=> x.PasoSeguir)
+                        .Include(x => x.NotaCiudadano)
+                        .Include(x => x.PasoSeguir)
                         .Include("TablaAsme.Actividad.ActividadRecurso")
                         .Include("TablaAsme.TablaAsmeReproduccion")
                         .Include("BaseLegal.BaseLegalNorma")
@@ -2100,7 +2456,7 @@ namespace Sut.Repositories
                 throw ex;
             }
         }
- 
+
 
         public List<Procedimiento> GetNoTracking(List<long> ids)
         {
@@ -2134,20 +2490,20 @@ namespace Sut.Repositories
             try
             {
                 SutContext ctx = Context.GetContext() as SutContext;
-                
+
                 var t = (Int32)tipo;
-                    
-              var asda =  ctx.Procedimiento
-                         .Include("Expediente.Entidad")
-                         .Where(x => (Int32)x.Tupa.TipoTupa == t
-                                 && x.Tupa.EstadoTupa == EstadoTupa.Vigente && x.Estado != 3 && x.Operacion != OperacionExpediente.Eliminacion)
-                         .OrderBy(x => x.Expediente.Entidad.Nombre)
-                         .ThenBy(x => x.Denominacion);
+
+                var asda = ctx.Procedimiento
+                           .Include("Expediente.Entidad")
+                           .Where(x => (Int32)x.Tupa.TipoTupa == t
+                                   && x.Tupa.EstadoTupa == EstadoTupa.Vigente && x.Estado != 3 && x.Operacion != OperacionExpediente.Eliminacion)
+                           .OrderBy(x => x.Expediente.Entidad.Nombre)
+                           .ThenBy(x => x.Denominacion);
 
                 return ctx.Procedimiento
-                        .Include("Expediente.Entidad") 
+                        .Include("Expediente.Entidad")
                         .Where(x => (Int32)x.Tupa.TipoTupa == t
-                                && x.Tupa.EstadoTupa == EstadoTupa.Vigente && x.Estado!=3 && x.Operacion!=OperacionExpediente.Eliminacion )
+                                && x.Tupa.EstadoTupa == EstadoTupa.Vigente && x.Estado != 3 && x.Operacion != OperacionExpediente.Eliminacion)
                         .OrderBy(x => x.Expediente.Entidad.Nombre)
                         .ThenBy(x => x.Denominacion)
                         .ToList();
@@ -2166,12 +2522,12 @@ namespace Sut.Repositories
 
                 var t = (Int32)tipo;
 
-                
+
 
                 return ctx.Procedimiento
                         .Include("Expediente.Entidad")
                         .Where(x => (Int32)x.Tupa.TipoTupa == t
-                                && x.Tupa.EstadoTupa == EstadoTupa.Vigente && x.Estado != 3 && x.Operacion != OperacionExpediente.Eliminacion && x.TipoProcedimiento == TipoProcedimiento.Estandar )
+                                && x.Tupa.EstadoTupa == EstadoTupa.Vigente && x.Estado != 3 && x.Operacion != OperacionExpediente.Eliminacion && x.TipoProcedimiento == TipoProcedimiento.Estandar)
                         .OrderBy(x => x.Expediente.Entidad.Nombre)
                         .ThenBy(x => x.Denominacion)
                         .ToList();
@@ -2192,7 +2548,7 @@ namespace Sut.Repositories
                 return ctx.Procedimiento
                         .Include("Expediente.Entidad")
                         .Where(x => x.Expediente.Entidad.EntidadId == tipo
-                               && (x.Expediente.EstadoExpediente == EstadoExpediente.Anulado  || x.Expediente.EstadoExpediente == EstadoExpediente.Publicado || x.Expediente.EstadoExpediente == EstadoExpediente.EnProceso && x.ExpedienteId!= expedienteId )
+                               && (x.Expediente.EstadoExpediente == EstadoExpediente.Anulado || x.Expediente.EstadoExpediente == EstadoExpediente.Publicado || x.Expediente.EstadoExpediente == EstadoExpediente.EnProceso && x.ExpedienteId != expedienteId)
                                 )
                         .OrderBy(x => x.Expediente.Entidad.Nombre)
                         .ToList();
@@ -2237,7 +2593,7 @@ namespace Sut.Repositories
             }
         }
 
-        public List<Procedimiento> GetByTipoTupaxid(TipoTupa tipo,long ExpedienteId)
+        public List<Procedimiento> GetByTipoTupaxid(TipoTupa tipo, long ExpedienteId)
         {
             try
             {
@@ -2249,7 +2605,7 @@ namespace Sut.Repositories
                 return ctx.Procedimiento
                         .Include("Expediente.Entidad")
                         .Where(x => (Int32)x.Tupa.TipoTupa == t && x.ExpedienteId == ExpedienteId
-                                && x.Tupa.EstadoTupa == EstadoTupa.Vigente && x.Estado != 3 && x.Operacion != OperacionExpediente.Eliminacion )
+                                && x.Tupa.EstadoTupa == EstadoTupa.Vigente && x.Estado != 3 && x.Operacion != OperacionExpediente.Eliminacion)
                         .OrderBy(x => x.Expediente.Entidad.Nombre)
                         .ThenBy(x => x.Denominacion)
                         .ToList();
@@ -2304,7 +2660,7 @@ namespace Sut.Repositories
                 throw ex;
             }
         }
-        
+
 
         public List<string> ImportarProcedimientoACREXANTE(Procedimiento obj, long EntidadId)
         {
@@ -2343,7 +2699,7 @@ namespace Sut.Repositories
                 SutContext ctx = Context.GetContext() as SutContext;
 
                 var expedientes = ctx.Expediente.Where(x => x.EntidadId == EntidadId);
-                var exp = expedientes.SingleOrDefault(x =>  x.TipoExpediente != TipoExpediente.CargaInicial && (x.EstadoExpediente == EstadoExpediente.EnProceso || x.EstadoExpediente == EstadoExpediente.Observado ));
+                var exp = expedientes.SingleOrDefault(x => x.TipoExpediente != TipoExpediente.CargaInicial && (x.EstadoExpediente == EstadoExpediente.EnProceso || x.EstadoExpediente == EstadoExpediente.Observado));
 
                 if (exp == null) mensajes.Add("0");
                 else
