@@ -46,7 +46,8 @@
         </div>
     </div>
     <div class="box-footer">
-        <a href="javascript:sut.Miembro.listar(1)" class="btn btn-success  pull-right"><i class="fa fa-ambulance"></i> Comparar Expedientes</a>
+        <a href="javascript:sut.Miembro.exportar(1)" class="btn btn-success pull-right" style="margin-right: 10px;"><i class="fa fa-file-excel-o"></i> Exportar Resultado</a>
+        <a href="javascript:sut.Miembro.listar(1)" class="btn btn-success  pull-right"  style="margin-right: 10px;"><i class="fa fa-ambulance"></i> Comparar Expedientes</a>
     </div>
 </div>
 
@@ -62,21 +63,23 @@
                        data-paginator="paginator">
                     <thead>
                         <tr>
-                            <th colspan="6" align="center" style="background-color: #CCCC;">Expediente Base</th>
-                            <th colspan="5" align="center" style="background-color: #AAA;">Expediente a  Comparar</th>
+                            <th colspan="6" align="center" style="background-color: #CCCC;">Expediente Base:
+                             <span id="ExpedienteBase1" style="width: 450px; background-color: transparent; border: 0px; outline: none; box-shadow: none; webkit-box-shadow: none; -moz-box-shadow: none; cursor: default;"></span></th>
+                            <th colspan="5" align="center" style="background-color: #AAA;">Expediente a Comparar:  
+                             <span id="ExpedienteCompara1" style="width: 450px; background-color: transparent; border: 0px; outline: none; box-shadow: none; webkit-box-shadow: none; -moz-box-shadow: none; cursor: default;"></span></th>
                         </tr>
                         <tr>
-                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 4px;" class="colAction">Nro</th>
-                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 40px;">Codigo</th>
-                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 400px;">Denominacion</th>
-                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Plazo Atención</th>
-                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Nro Requisitos</th>
-                            <th rowspan="2" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Tiempo Total</th>
-                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 40px;">Codigo</th>
-                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 400px;">Denominacion</th>
-                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Plazo Atención</th>
-                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Nro Requisitos</th>
-                            <th rowspan="2" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Tiempo Total</th>
+                            <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 4px;" class="colAction">Nro</th>
+                            <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 40px;">Codigo</th>
+                            <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 400px;">Denominacion</th>
+                            <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Plazo Atención</th>
+                            <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Nro Requisitos</th>
+                            <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Tiempo Total</th>
+                            <th rowspan="1" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 40px;">Codigo</th>
+                            <th rowspan="1" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 400px;">Denominacion</th>
+                            <th rowspan="1" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Plazo Atención</th>
+                            <th rowspan="1" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Nro Requisitos</th>
+                            <th rowspan="1" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Tiempo Total</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -133,8 +136,8 @@
 
 @section Script {
     <script>
-    sut.Miembro = {
-        listar: (page) => {
+        sut.Miembro = {
+            listar: (page) => {
                 table = $('#tblLista');
                 var model = {
                     'filtro.entidadid': $('#cbFilterEntidad1').val(),
@@ -157,15 +160,13 @@
                         table.data('page', page);
                         table.data('totalrows', data.totalRows);
                         sut.Miembro.generar(data.lista);
-                        if (data.totalRows == 0)  $('#tblLista tbody').append("<tr><td colspan='11' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        if (data.totalRows == 0) $('#tblLista tbody').append("<tr><td colspan='11' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
 
                         debugger;
-                        if (data.totalRows < 2)
-                        {
+                        if (data.totalRows < 2) {
                             $('#mensaje2').hide();
                             $('#mensaje1').show();
-                        }else
-                        {
+                        } else {
                             $('#mensaje2').show();
                             $('#mensaje1').hide();
                         }
@@ -177,8 +178,8 @@
                         203: () => { window.location.reload(); }
                     }
                 });
-        },
-        generar: (lista) => {
+            },
+            generar: (lista) => {
                 var table = $('#tblLista');
                 var tabla = table.children('tbody');
                 tabla.children('tr').remove();
@@ -240,11 +241,71 @@
                 });
                 sut.pagination.update(table);
                 tabla.append(rows);
-        },
-        salidaop: function (expediente) {
-            $(location).attr('href', expediente);
-        },
-        salir: function (expediente) {
+            },
+            salidaop: function (expediente) {
+                $(location).attr('href', expediente);
+            },
+
+            exportar: function (page) {
+                var table = document.getElementById("tblLista");
+                if (table.rows.length > 2) {
+                    // Crear un nuevo libro de Excel
+                    var workbook = XLSX.utils.book_new();
+
+                    // Crear una nueva hoja de Excel
+                    var worksheet = XLSX.utils.table_to_sheet(table);
+
+                    // Ajustar el índice de las filas y columnas
+                    XLSX.utils.sheet_add_aoa(worksheet, [], { origin: -1 });
+
+                    // Recorrer las celdas de la hoja y corregir el desplazamiento
+                    var range = XLSX.utils.decode_range(worksheet["!ref"]);
+                    for (var R = range.s.r; R <= range.e.r; ++R) {
+                        for (var C = range.s.c; C <= range.e.c; ++C) {
+                            var cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+                            var cell = worksheet[cellAddress];
+
+                            if (cell && cell.t === "s") {
+                                // Corregir el desplazamiento de las filas
+                                if (cell.v === "Nombre de la columna") {
+                                    cell.v = worksheet[XLSX.utils.encode_cell({ r: R - 1, c: C })].v;
+                                }
+
+                                // Corregir el desplazamiento del primer registro
+                                if (cell.v === "1") {
+                                    cell.v = worksheet[XLSX.utils.encode_cell({ r: R + 1, c: C })].v;
+                                }
+                            }
+                        }
+                    }
+
+                    // Agregar la hoja al libro
+                    XLSX.utils.book_append_sheet(workbook, worksheet, "Datos");
+
+                    // Generar el archivo de Excel
+                    var excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+
+                    // Convertir el archivo de Excel a un objeto Blob
+                    var blob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+
+                    // Crear una URL para descargar el archivo de Excel
+                    var url = URL.createObjectURL(blob);
+
+                    // Crear un enlace y simular un clic para iniciar la descarga
+                    var link = document.createElement("a");
+                    link.href = url;
+                    link.download = "data_comparada.xlsx";
+                    link.click();
+
+                    // Liberar la URL
+                    URL.revokeObjectURL(url);
+                    showNotification('top', 'right', 'Descarga exitosa!', 1);
+                } else {
+                    showNotification('top', 'right', 'La tabla de comparación está vacía', 2);
+                }
+            },
+
+            salir: function (expediente) {
                 $.ajax({
                     type: "POST",
                     url: '@Url.Content("~/Simplificacion/Expediente/Lista")',
@@ -253,7 +314,6 @@
                     beforeSend: function () {
                     },
                     success: function (data) {
-
                         $(location).attr('href', expediente);
                     },
                     error: function (result) {
@@ -261,8 +321,8 @@
                         sut.error.show('mensajes', result.responseText);
                     }
                 });
-        },
-    };
+            },
+        };
 
         $(document).ready(function () {
             $("#submit").one('click', function (event) {
@@ -286,7 +346,6 @@
 
             });
             $('#cbFilterEntidad1').on('change', (e) => {
-                debugger;
                 $.ajax({
                     type: "POST",
                     url: '@Url.Content("~/Simplificacion/Expediente/GetExpedientesEntidadGrid")',
@@ -307,6 +366,13 @@
                         $.each(result.data, (i, r) => {
                             sel.append($('<option></option>').attr('value', r.ExpedienteId).html(r.Codigo));
                         });
+                        // Obtener referencias a los elementos <span>
+                        var expedienteComparaElemento = document.getElementById("ExpedienteCompara1");
+                        var expedienteBaseElemento = document.getElementById("ExpedienteBase1");
+                        // Asignar valores a los elementos <span>
+                        expedienteComparaElemento.textContent = "";
+                        expedienteBaseElemento.textContent = "";
+                        $('#tblLista tr').slice(2).remove();
                     },
                     error: function (result) {
                         sut.error.show('msgEditar', result.responseText);
@@ -314,10 +380,25 @@
                 });
             });
 
+            $('#cbFilterExpediente2').on('change', (e) => {
+                var selectedText = $(e.target).find('option:selected').text();
+                // Obtener referencias a los elementos <span>
+                var expedienteComparaElemento = document.getElementById("ExpedienteCompara1");
+                // Asignar valores a los elementos <span>
+                expedienteComparaElemento.textContent = selectedText;
+                $('#tblLista tr').slice(2).remove();
+            });
 
-            debugger;
+            $('#cbFilterExpediente1').on('change', (e) => {
+                var selectedText = $(e.target).find('option:selected').text();
+                // Obtener referencias a los elementos <span>
+                var expedienteBaseElemento = document.getElementById("ExpedienteBase1");
+                // Asignar valores a los elementos <span>
+                expedienteBaseElemento.textContent = selectedText;
+                $('#tblLista tr').slice(2).remove();
+            });
+
             $(".modalMinimize").on("click", function(){
-                debugger;
                 $modalCon = $(this).closest(".mymodal").attr("id");
                 $apnData = $(this).closest(".mymodal");
                 $modal = "#" + $modalCon;
@@ -339,7 +420,6 @@
                     });
                 };
             });
-
         });
     </script>
 }
