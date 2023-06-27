@@ -4603,13 +4603,13 @@ namespace Sut.Web.Areas.General.Controllers
                     //celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
                     //tdatos41.AddCell(celda);
 
-                    //celda = new Cell();
-                    //celda.Border = 0;
-                    //celda.BorderWidth = 0;
-                    //celda.Leading = 20;
-                    //celda.Colspan = 20;
-                    //celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
-                    //tdatos41.AddCell(celda);
+                    celda = new Cell();
+                    celda.Border = 0;
+                    celda.BorderWidth = 0;
+                    celda.Leading = 20;
+                    celda.Colspan = 20;
+                    celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
+                    tdatos41.AddCell(celda);
 
                     celda = new Cell();
                     celda.Border = 0;
@@ -6060,27 +6060,25 @@ namespace Sut.Web.Areas.General.Controllers
                     //tablesedes.AddCell(cellsedes);
                     //Doc.Add(tablesedes);
 
-                    /*
+                    /****************************************************/
+                    /* BLOQUEADO Y CAMBIADO
                     PdfPCell celdasede;
-                    PdfPCell celdapdf;
-                    IPdfPCellEvent roundRectangleh = new RoundedBorder85();
+                    IPdfPCellEvent roundRectangleh = new RoundRectangle4();
                     PdfPTable outertableh = new PdfPTable(1);
 
                     outertableh.WidthPercentage = 100;
 
-                    //PdfPTable tdatossedes = new PdfPTable(2);
-                    Table tdatossedes = new Table(2);
-                    int[] widthssedes = new int[2];
-                    widthssedes[0] = 60;
-                    widthssedes[1] = 100;
-                    tdatossedes.SetWidths(widthssedes);
+                    PdfPTable tdatossedesq = new PdfPTable(2);
+                    int[] widthssedesq = new int[2];
+                    widthssedesq[0] = 70;
+                    widthssedesq[1] = 100;
+                    tdatossedesq.SetWidths(widthssedesq);
 
-                    tdatossedes.WidthPercentage = 100;
-                    //tdatossedes.Border = 0;
+                    tdatossedesq.WidthPercentage = 100;
+                    tdatossedesq.DefaultCell.Border = PdfPCell.BOX;
                     //tdatossedes.BorderWidth = 0;
                     //tdatossedes.Padding = 2;
-                    //tdatossedes.HorizontalAlignment = Element.ALIGN_LEFT;
-                    tdatossedes.DefaultHorizontalAlignment = Element.ALIGN_LEFT;
+                    tdatossedesq.HorizontalAlignment = Element.ALIGN_LEFT;
 
                     foreach (var item in dataSede.Where(x => x.ProcedimientoId == proc.ProcedimientoId))
                     {
@@ -6118,47 +6116,66 @@ namespace Sut.Web.Areas.General.Controllers
                                : "");
 
 
-                        //celdasede = new PdfPCell();
-                        celdasede = new Cell();
-                        //celdasede.Border = PdfPCell.NO_BORDER;
-                        celdasede.Border = 0;
-                        //celdasede.Leading = 10; 
-                        //celdasede.HorizontalAlignment = Element.ALIGN_JUSTIFIED;
-                        //celdasede.AddElement(fnChunk(item.Sede.Nombre, (int)Fuente.FuenteLetraNormal));
-                        celdasede.Add(fnChunk(item.Sede.Nombre, (int)Fuente.FuenteLetraNormal));
-                        tdatossedes.AddCell(celdasede);
 
-                        //celdasede = new PdfPCell();
-                        celdasede = new Cell();
-                        //celdasede.Border = PdfPCell.NO_BORDER;
-                        celdasede.Border = 0;
+                        /*PdfPCell cellcanales2 = new PdfPCell()
+                        {
+                            CellEvent = rr,
+                            Padding = 8,
+                            BorderWidth = 0,
+                            Phrase = new Phrase(0, item.Sede.Nombre, f),
+                        };
+                        tdatossedesq.AddCell(cellcanales2);
+
+                        PdfPCell cellcanales3 = new PdfPCell()
+                        {
+                            CellEvent = rr,
+                            Padding = 8,
+                            BorderWidth = 0,
+                            Phrase = new Phrase(0, horario, f),
+                        };
+                        tdatossedesq.AddCell(cellcanales3);* /
+                        
+                        
+                        celdasede = new PdfPCell();
+                        celdasede.CellEvent = rr;
+                        celdasede.Border = PdfPCell.NO_BORDER;
+                        //celdasede.Leading = 10; 
+                        celdasede.HorizontalAlignment = Element.ALIGN_JUSTIFIED;
+                        celdasede.AddElement(fnChunk(item.Sede.Nombre, (int)Fuente.FuenteLetraNormal));
+                        tdatossedesq.AddCell(celdasede);
+
+                        celdasede = new PdfPCell();
+                        celdasede.CellEvent = rr;
+                        celdasede.Border = PdfPCell.NO_BORDER;
                         //celda.Leading = 10; 
-                        //celdasede.HorizontalAlignment = Element.ALIGN_JUSTIFIED;
-                        //celdasede.AddElement(fnChunk(horario, (int)Fuente.FuenteLetraNormal));
-                        celdasede.Add(fnChunk(horario, (int)Fuente.FuenteLetraNormal));
-                        tdatossedes.AddCell(celdasede);
+                        celdasede.HorizontalAlignment = Element.ALIGN_JUSTIFIED;
+                        celdasede.AddElement(fnChunk(horario, (int)Fuente.FuenteLetraNormal));
+                        tdatossedesq.AddCell(celdasede);
 
                     }
 
-                    celdapdf = new PdfPCell(tdatossedes);
+                    Doc.Add(tdatossedesq);
+                    /*celdapdf = new PdfPCell(tdatossedes);
                     celdapdf.CellEvent = roundRectangleh;
-                    //celdapdf.Border = PdfPCell.NO_BORDER;
+                    celdapdf.Border = PdfPCell.NO_BORDER;
                     celdapdf.Padding = 8;
 
                     outertableh.AddCell(celdapdf);
-                    Doc.Add(outertableh);
-                    */
+                    Doc.Add(outertableh);*/
+                    /****************************************************/
 
                     /******INICIO JJJMSP2 *******/
-
                     Table tdatossedes = new Table(2);
                     int[] widthssedes = new int[2];
                     widthssedes[0] = 70;
                     widthssedes[1] = 100;
                     tdatossedes.SetWidths(widthssedes);
 
-                    tdatossedes.WidthPercentage = 100;
-                    //tdatossedes.Border = 0;
+                    tdatossedes.WidthPercentage = 99;
+                    tdatossedes.BorderWidthBottom = 0.2f;
+                    tdatossedes.BorderWidthTop = 0.2f;
+                    tdatossedes.BorderWidthLeft = 0.2f;
+                    tdatossedes.BorderWidthRight = 0.2f;
                     //tdatossedes.BorderWidth = 0;  
                     //tdatossedes.Padding = 2;
                     //tdatossedes.HorizontalAlignment = Element.ALIGN_LEFT;
@@ -6216,6 +6233,13 @@ namespace Sut.Web.Areas.General.Controllers
                         tdatossedes.AddCell(celda);
                         
                     }
+                    celda = new Cell();
+                    celda.Border = 0;
+                    celda.BorderWidth = 0;
+                    celda.Leading = 10;
+                    celda.Colspan = 1;
+                    celda.Add(fnChunk(".   ", (int)Fuente.FuenteLetraNormal));
+                    tdatossedes.AddCell(celda);
                     Doc.Add(tdatossedes);
                     /******FINAL JJJMSP2 ********/
 
@@ -27648,7 +27672,7 @@ namespace Sut.Web.Areas.General.Controllers
                 PdfContentByte cb = canvas[PdfPTable.LINECANVAS];
                 cb.RoundRectangle(
                   55f,
-                  49f,
+                  40f,
                   500f,
                   737f,
                   3f // change to adjust how "round" corner is displayed
@@ -27665,6 +27689,38 @@ namespace Sut.Web.Areas.General.Controllers
             }
         }
 
+        public class RoundedCornersTableEvent : IPdfPTableEvent
+        {
+            public void TableLayout(PdfPTable table, float[][] widths, float[] heights, int headerRows, int rowStart, PdfContentByte[] canvases)
+            {
+                PdfContentByte canvas = canvases[PdfPTable.LINECANVAS];
+                float[] leftBorder = widths[0];
+                float[] rightBorder = widths[widths.Length - 1];
+                float top = heights[0];
+                float bottom = heights[heights.Length - 1];
+                float radius = 5f; // Ajusta el valor para el radio de las puntas redondeadas
+
+                // Esquina superior izquierda
+                canvas.RoundRectangle(
+                    leftBorder[0] - radius, top, radius, radius, radius);
+                canvas.Stroke();
+
+                // Esquina superior derecha
+                canvas.RoundRectangle(
+                    rightBorder[0], top, radius, radius, radius);
+                canvas.Stroke();
+
+                // Esquina inferior izquierda
+                canvas.RoundRectangle(
+                    leftBorder[0] - radius, bottom - radius, radius, radius, radius);
+                canvas.Stroke();
+
+                // Esquina inferior derecha
+                canvas.RoundRectangle(
+                    rightBorder[0], bottom - radius, radius, radius, radius);
+                canvas.Stroke();
+            }
+        }
         public class RoundRectangle : IPdfPCellEvent
         {
             public void CellLayout(
