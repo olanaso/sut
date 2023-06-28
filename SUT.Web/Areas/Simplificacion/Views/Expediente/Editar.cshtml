@@ -9,7 +9,7 @@
     Sut.Security.UsuarioInfo userrptSTLCompleto = ViewBag.UsuariorptSTLCompleto as Sut.Security.UsuarioInfo;
 
     ViewBag.Icon = "fa fa-file-text-o";
-    ViewBag.Title = "Expediente " + Model.Codigo;
+    ViewBag.Title = "Expediente " + Model.Codigo + " - " + Model.Entidad.Provincia.Departamento.Nombre + " - " + Model.Entidad.Provincia.Nombre + " - " + Model.Entidad.Nombre;
     ViewBag.Descripcion = "";
 
     Sut.Entities.ExpedienteNorma Norma = ViewBag.expedientenorma as Sut.Entities.ExpedienteNorma; }
