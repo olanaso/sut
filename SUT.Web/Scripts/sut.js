@@ -140,7 +140,7 @@
       visibility: hidden;
       max-width: 50%;
       margin: auto;
-      background-color: red;
+      background-color: #fff;
       color: #fff;
       text-align: center;
       border-radius: 2px;

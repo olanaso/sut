@@ -361,10 +361,12 @@ namespace Sut.ApplicationServices
 
                 totalRows = query.Count();
 
-                switch (filtro.Expediente.OrdenPa)
+                query = filtro.Ascendente == 1 ? query.OrderBy(x => x.Numero) : query.OrderBy(x => x.Numero);
+
+               /* switch (filtro.Expediente.OrdenPa)
                 {
                     case TipoOrdenPa.Sistema:
-                        query = filtro.Ascendente == 1 ? query.OrderByDescending(x => x.Numero) : query.OrderBy(x => x.Numero);
+                        query = filtro.Ascendente == 1 ? query.OrderBy(x => x.Numero) : query.OrderBy(x => x.Numero);
                         break;
                     case TipoOrdenPa.UnidadOrganica:
                         query = query.OrderBy(x => x.UndOrgResponsable.Nombre);
@@ -375,7 +377,7 @@ namespace Sut.ApplicationServices
                     case TipoOrdenPa.UnidadOrganicaBloque:
                         query = query.OrderBy(x => x.UndOrgResponsable.Nombre).ThenBy(x => x.Bloque);
                         break;
-                }
+                }*/
 
                 return query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
             }
