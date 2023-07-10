@@ -4554,7 +4554,7 @@ namespace Sut.Web.Areas.General.Controllers
             foreach (Procedimiento proc in dataProc)
             {
                 proc.TablaAsme = proc.TablaAsme.OrderBy(x => x.TablaAsmeId).ToList();
-                cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                 cb.Stroke();
                 string tipo = proc.TipoProcedimiento == TipoProcedimiento.Servicio ? "S" : "P";
                 if (tipo == "P" && proc.TipoProcedimiento != TipoProcedimiento.EstandarServicio)
@@ -4603,13 +4603,13 @@ namespace Sut.Web.Areas.General.Controllers
                     //celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
                     //tdatos41.AddCell(celda);
 
-                    //celda = new Cell();
-                    //celda.Border = 0;
-                    //celda.BorderWidth = 0;
-                    //celda.Leading = 20;
-                    //celda.Colspan = 20;
-                    //celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
-                    //tdatos41.AddCell(celda);
+                    celda = new Cell();
+                    celda.Border = 0;
+                    celda.BorderWidth = 0;
+                    celda.Leading = 20;
+                    celda.Colspan = 20;
+                    celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
+                    tdatos41.AddCell(celda);
 
                     celda = new Cell();
                     celda.Border = 0;
@@ -5286,7 +5286,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     //Pago por derecho de Tramitación 
 
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
                     string tramite = "";
 
@@ -6060,25 +6060,25 @@ namespace Sut.Web.Areas.General.Controllers
                     //tablesedes.AddCell(cellsedes);
                     //Doc.Add(tablesedes);
 
+                    /****************************************************/
+                    /* BLOQUEADO Y CAMBIADO
                     PdfPCell celdasede;
-                    PdfPCell celdapdf;
-                    IPdfPCellEvent roundRectangleh = new RoundedBorder85();
+                    IPdfPCellEvent roundRectangleh = new RoundRectangle4();
                     PdfPTable outertableh = new PdfPTable(1);
 
                     outertableh.WidthPercentage = 100;
 
-                    PdfPTable tdatossedes = new PdfPTable(2);
-                    int[] widthssedes = new int[2];
-                    widthssedes[0] = 60;
-                    widthssedes[1] = 100;
-                    tdatossedes.SetWidths(widthssedes);
+                    PdfPTable tdatossedesq = new PdfPTable(2);
+                    int[] widthssedesq = new int[2];
+                    widthssedesq[0] = 70;
+                    widthssedesq[1] = 100;
+                    tdatossedesq.SetWidths(widthssedesq);
 
-                    tdatossedes.WidthPercentage = 100;
-                    //tdatossedes.Border = 0;
+                    tdatossedesq.WidthPercentage = 100;
+                    tdatossedesq.DefaultCell.Border = PdfPCell.BOX;
                     //tdatossedes.BorderWidth = 0;
                     //tdatossedes.Padding = 2;
-                    tdatossedes.HorizontalAlignment = Element.ALIGN_LEFT;
-
+                    tdatossedesq.HorizontalAlignment = Element.ALIGN_LEFT;
 
                     foreach (var item in dataSede.Where(x => x.ProcedimientoId == proc.ProcedimientoId))
                     {
@@ -6116,30 +6116,132 @@ namespace Sut.Web.Areas.General.Controllers
                                : "");
 
 
+
+                        /*PdfPCell cellcanales2 = new PdfPCell()
+                        {
+                            CellEvent = rr,
+                            Padding = 8,
+                            BorderWidth = 0,
+                            Phrase = new Phrase(0, item.Sede.Nombre, f),
+                        };
+                        tdatossedesq.AddCell(cellcanales2);
+
+                        PdfPCell cellcanales3 = new PdfPCell()
+                        {
+                            CellEvent = rr,
+                            Padding = 8,
+                            BorderWidth = 0,
+                            Phrase = new Phrase(0, horario, f),
+                        };
+                        tdatossedesq.AddCell(cellcanales3);* /
+                        
+                        
                         celdasede = new PdfPCell();
+                        celdasede.CellEvent = rr;
                         celdasede.Border = PdfPCell.NO_BORDER;
                         //celdasede.Leading = 10; 
                         celdasede.HorizontalAlignment = Element.ALIGN_JUSTIFIED;
                         celdasede.AddElement(fnChunk(item.Sede.Nombre, (int)Fuente.FuenteLetraNormal));
-                        tdatossedes.AddCell(celdasede);
+                        tdatossedesq.AddCell(celdasede);
 
                         celdasede = new PdfPCell();
+                        celdasede.CellEvent = rr;
                         celdasede.Border = PdfPCell.NO_BORDER;
                         //celda.Leading = 10; 
                         celdasede.HorizontalAlignment = Element.ALIGN_JUSTIFIED;
                         celdasede.AddElement(fnChunk(horario, (int)Fuente.FuenteLetraNormal));
-                        tdatossedes.AddCell(celdasede);
+                        tdatossedesq.AddCell(celdasede);
 
                     }
 
-                    celdapdf = new PdfPCell(tdatossedes);
+                    Doc.Add(tdatossedesq);
+                    /*celdapdf = new PdfPCell(tdatossedes);
                     celdapdf.CellEvent = roundRectangleh;
-                    //celdapdf.Border = PdfPCell.NO_BORDER;
+                    celdapdf.Border = PdfPCell.NO_BORDER;
                     celdapdf.Padding = 8;
 
                     outertableh.AddCell(celdapdf);
-                    Doc.Add(outertableh);
+                    Doc.Add(outertableh);*/
+                    /****************************************************/
 
+                    /******INICIO JJJMSP2 *******/
+                    Table tdatossedes = new Table(2);
+                    int[] widthssedes = new int[2];
+                    widthssedes[0] = 70;
+                    widthssedes[1] = 100;
+                    tdatossedes.SetWidths(widthssedes);
+
+                    tdatossedes.WidthPercentage = 99;
+                    tdatossedes.BorderWidthBottom = 0.2f;
+                    tdatossedes.BorderWidthTop = 0.2f;
+                    tdatossedes.BorderWidthLeft = 0.2f;
+                    tdatossedes.BorderWidthRight = 0.2f;
+                    //tdatossedes.BorderWidth = 0;  
+                    //tdatossedes.Padding = 2;
+                    //tdatossedes.HorizontalAlignment = Element.ALIGN_LEFT;
+                    tdatossedes.DefaultHorizontalAlignment = Element.ALIGN_LEFT;
+                    
+                    foreach (var item in dataSede.Where(x => x.ProcedimientoId == proc.ProcedimientoId))
+                    {
+                        var horario = (item.Sede.EsLunesViernes ? (item.Sede.TipoTurno == "C" ?
+                       string.Format("Lunes a Viernes de {0} a {1}. ",
+                               item.Sede.CorridoHorIni == null ? "-" : item.Sede.CorridoHorIni.Value.ToString("HH:mm"),
+                               item.Sede.CorridoHorFin == null ? "-" : item.Sede.CorridoHorFin.Value.ToString("HH:mm"))
+                       : string.Format("Lunes a Viernes de {0} a {1} y de {2} a {3}. ",
+                               item.Sede.Turno1HorIni == null ? "-" : item.Sede.Turno1HorIni.Value.ToString("HH:mm"),
+                               item.Sede.Turno1HorFin == null ? "-" : item.Sede.Turno1HorFin.Value.ToString("HH:mm"),
+                               item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
+                               item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
+                               )
+                               : (item.Sede.TipoTurno == "C" ?
+                        string.Format("{0} {1} {2} {3} {4} de {5} a {6}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.CorridoHorIni == null ? "-" : item.Sede.CorridoHorIni.Value.ToString("HH:mm"),
+                                item.Sede.CorridoHorFin == null ? "-" : item.Sede.CorridoHorFin.Value.ToString("HH:mm"))
+                        : string.Format("{0} {1} {2} {3} {4} de {5} a {6} y de {7} a {8}. ", item.Sede.EsLunes == true ? "Lunes, " : "",
+                                item.Sede.EsMartes == true ? "Martes, " : "", item.Sede.EsMiercoles == true ? "Miercoles, " : "",
+                                item.Sede.EsJueves == true ? "Jueves, " : "", item.Sede.EsViernes == true ? "Viernes" : "",
+                                item.Sede.Turno1HorIni == null ? "-" : item.Sede.Turno1HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno1HorFin == null ? "-" : item.Sede.Turno1HorFin.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorIni == null ? "-" : item.Sede.Turno2HorIni.Value.ToString("HH:mm"),
+                                item.Sede.Turno2HorFin == null ? "-" : item.Sede.Turno2HorFin.Value.ToString("HH:mm"))
+                                )) +
+                            (item.Sede.EsSabado ? string.Format("Sábados de {0} a {1}. ",
+                               item.Sede.SabadoHorIni == null ? "-" : item.Sede.SabadoHorIni.Value.ToString("HH:mm"),
+                               item.Sede.SabadoHorFin == null ? "-" : item.Sede.SabadoHorFin.Value.ToString("HH:mm"))
+                               : "") +
+                                (item.Sede.EsDomingo ? string.Format("Domingos de {0} a {1}. ",
+                               item.Sede.DomingoHorIni == null ? "-" : item.Sede.DomingoHorIni.Value.ToString("HH:mm"),
+                               item.Sede.DomingoHorFin == null ? "-" : item.Sede.DomingoHorFin.Value.ToString("HH:mm"))
+                               : "");
+
+                        celda = new Cell();
+                        celda.Border = 0;
+                        celda.BorderWidth = 0;
+                        celda.Leading = 10;
+                        celda.Colspan = 1;
+                        celda.Add(fnChunk("   " + item.Sede.Nombre, (int)Fuente.FuenteLetraNormal));
+                        tdatossedes.AddCell(celda);
+
+                        celda = new Cell();
+                        celda.Border = 0;
+                        celda.BorderWidth = 0;
+                        celda.Leading = 10;
+                        celda.Colspan = 1;
+                        celda.Add(fnChunk(horario, (int)Fuente.FuenteLetraNormal));
+                        tdatossedes.AddCell(celda);
+                        
+                    }
+                    celda = new Cell();
+                    celda.Border = 0;
+                    celda.BorderWidth = 0;
+                    celda.Leading = 10;
+                    celda.Colspan = 1;
+                    celda.Add(fnChunk(".   ", (int)Fuente.FuenteLetraNormal));
+                    tdatossedes.AddCell(celda);
+                    Doc.Add(tdatossedes);
+                    /******FINAL JJJMSP2 ********/
 
                     //inicio
                     Table tdatos12 = new Table(2);
@@ -6153,8 +6255,6 @@ namespace Sut.Web.Areas.General.Controllers
                     tdatos12.BorderWidth = 0;
                     tdatos12.Padding = 2;
                     tdatos12.DefaultHorizontalAlignment = Element.ALIGN_LEFT;
-
-
 
                     celda = new Cell();
                     celda.Border = 0;
@@ -6232,7 +6332,7 @@ namespace Sut.Web.Areas.General.Controllers
                                 if (item.UnidadOrganica == null)
                                 {
                                     idsede.Add("No existe dentro de la sede: " + item.Sede.Nombre.ToString() + " Revisar");
-                                }
+                                } 
                                 else
                                 {
                                     idsede.Add(item.UnidadOrganica.Nombre);
@@ -7877,7 +7977,7 @@ namespace Sut.Web.Areas.General.Controllers
                     celda.Add(fnChunk("Fecha Publicación", (int)Fuente.FuenteNegrita));
                     tdatos4.AddCell(celda);
 
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
                     int sedebase = 0;
@@ -8085,16 +8185,16 @@ namespace Sut.Web.Areas.General.Controllers
                     }
                     Doc.Add(tdatos4);
 
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
                     contpag = 1;
                     //Doc.NewPage();
 
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
                 }
-                cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                 cb.Stroke();
             }
             //fin grupo
@@ -8236,7 +8336,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     //--- NoSe,nose, ancho,alto
                     PdfContentByte cb = writer1.DirectContent;
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
                     //Doc.Open();
@@ -8705,7 +8805,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     Doc.Add(tdatos7);
 
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
                     string Formulario = "";
                     string FormularionNombre = "";
@@ -8776,7 +8876,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     tableformulario.AddCell(cellformulario);
                     Doc.Add(tableformulario);
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
                     //inicio
@@ -8969,7 +9069,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     string tramite = "";
 
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
                     for (int i = 0; i < proc.TablaAsme.Count(); i++)
                     {
@@ -11764,18 +11864,18 @@ namespace Sut.Web.Areas.General.Controllers
                         sedebase = sedebase++;
 
                     }
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
                     Doc.Add(tdatos4);
 
                     // los costados, ancho, alto, curva
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
 
 
                     Doc.Close();
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
 
@@ -11912,7 +12012,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     //--- NoSe,nose, ancho,alto
                     PdfContentByte cb = writer1.DirectContent;
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
                     //Doc.Open();
@@ -12381,7 +12481,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     Doc.Add(tdatos7);
 
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
                     string Formulario = "";
                     string FormularionNombre = "";
@@ -12452,7 +12552,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     tableformulario.AddCell(cellformulario);
                     Doc.Add(tableformulario);
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
                     //inicio
@@ -12645,7 +12745,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     string tramite = "";
 
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
                     for (int i = 0; i < proc.TablaAsme.Count(); i++)
                     {
@@ -15440,18 +15540,18 @@ namespace Sut.Web.Areas.General.Controllers
                         sedebase = sedebase++;
 
                     }
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
                     Doc.Add(tdatos4);
 
                     // los costados, ancho, alto, curva
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
 
 
                     Doc.Close();
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
 
@@ -15695,7 +15795,7 @@ namespace Sut.Web.Areas.General.Controllers
                         Doc.NewPage();
                     }
                     proc.TablaAsme = proc.TablaAsme.OrderBy(x => x.TablaAsmeId).ToList();
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
                     string tipo = "E";
@@ -17988,13 +18088,13 @@ namespace Sut.Web.Areas.General.Controllers
 
                         Doc.Add(tdatos4);
 
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
 
                         contpag = 1;
                         // Doc.NewPage();
 
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
                     }
                 }
@@ -18144,7 +18244,7 @@ namespace Sut.Web.Areas.General.Controllers
                         //Doc.Add(tcab);
                         ////Doc.Open();
                         PdfContentByte cb = writer2.DirectContent;
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
 
                         Table tdatos41 = new Table(20);
@@ -18385,7 +18485,7 @@ namespace Sut.Web.Areas.General.Controllers
                         celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
                         tdatos5.AddCell(celda);
                         Doc.Add(tdatos5);
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
                         //fin
                         string Generales = "";
@@ -18605,7 +18705,7 @@ namespace Sut.Web.Areas.General.Controllers
                         tdatos7.AddCell(celda);
 
                         Doc.Add(tdatos7);
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
                         string Formulario = "";
                         string FormularionNombre = "";
@@ -18869,7 +18969,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                         string tramite = "";
                         //string monto = "";
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
                         for (int i = 0; i < proc.TablaAsme.Count(); i++)
                         {
@@ -20172,12 +20272,12 @@ namespace Sut.Web.Areas.General.Controllers
 
                         //pagcabhoja = pagcabhoja + writer.PageNumber;
 
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
 
                         Doc.Close();
                         //contpag = contpag++; 
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
 
 
@@ -20334,7 +20434,7 @@ namespace Sut.Web.Areas.General.Controllers
                         //Doc.Add(tcab);
                         ////Doc.Open();
                         PdfContentByte cb = writer2.DirectContent;
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
 
                         Table tdatos41 = new Table(20);
@@ -20575,7 +20675,7 @@ namespace Sut.Web.Areas.General.Controllers
                         celda.Add(fnChunk("", (int)Fuente.FuenteNegrita));
                         tdatos5.AddCell(celda);
                         Doc.Add(tdatos5);
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
                         //fin
                         string Generales = "";
@@ -20795,7 +20895,7 @@ namespace Sut.Web.Areas.General.Controllers
                         tdatos7.AddCell(celda);
 
                         Doc.Add(tdatos7);
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
                         string Formulario = "";
                         string FormularionNombre = "";
@@ -21059,7 +21159,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                         string tramite = "";
                         //string monto = "";
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
                         for (int i = 0; i < proc.TablaAsme.Count(); i++)
                         {
@@ -22368,12 +22468,12 @@ namespace Sut.Web.Areas.General.Controllers
 
                         //pagcabhoja = pagcabhoja + writer.PageNumber;
 
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
 
                         Doc.Close();
                         //contpag = contpag++; 
-                        cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                        cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                         cb.Stroke();
 
 
@@ -23214,8 +23314,8 @@ namespace Sut.Web.Areas.General.Controllers
 
             string cadena1 = "Texto Único de Procedimientos Administrativos - " + "\"" + entidad.Nombre.ToString() + "\"";
             //string cadena2 = "SECCIÓN N° 4: SEDES DE ATENCIÓN";
-
-
+            //Doc.Open();
+            
             Table tcab = new Table(1);
             Table tdatos = new Table(3);
             Table tlineablanco = new Table(1);
@@ -23394,7 +23494,7 @@ namespace Sut.Web.Areas.General.Controllers
             //Doc.Open();
             PdfContentByte cb = writer3.DirectContent;
             // los costados, ancho, alto, curva
-            cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+            cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
             cb.Stroke();
 
             List<ItemIndice> lstIndice = new List<ItemIndice>();
@@ -23487,7 +23587,7 @@ namespace Sut.Web.Areas.General.Controllers
             var nombresede = "";
 
 
-            cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+            cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
             cb.Stroke();
             foreach (var item in dataSede.OrderBy(x => x.SedeId).Where(x => x.Procedimiento.Estado != 3))
             {
@@ -23580,10 +23680,10 @@ namespace Sut.Web.Areas.General.Controllers
             tdatos.AddCell(celda);
 
             Doc.Add(tdatos);
-            cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+            cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
             cb.Stroke();
             Doc.Close();
-            cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+            cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
             cb.Stroke();
 
         }
@@ -23656,7 +23756,7 @@ namespace Sut.Web.Areas.General.Controllers
             //Doc.Open();
             PdfContentByte cb = writer3.DirectContent;
             // los costados, ancho, alto, curva
-            cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+            cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
             cb.Stroke();
 
             List<ItemIndice> lstIndice = new List<ItemIndice>();
@@ -23745,7 +23845,7 @@ namespace Sut.Web.Areas.General.Controllers
             var nombresede = "";
 
 
-            cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+            cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
             cb.Stroke();
             foreach (var item in dataSede.OrderBy(x => x.SedeId).Where(x => x.Procedimiento.Estado != 3))
             {
@@ -23838,10 +23938,10 @@ namespace Sut.Web.Areas.General.Controllers
             tdatos.AddCell(celda);
 
             Doc.Add(tdatos);
-            cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+            cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
             cb.Stroke();
             Doc.Close();
-            cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+            cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
             cb.Stroke();
 
         }
@@ -24066,13 +24166,12 @@ namespace Sut.Web.Areas.General.Controllers
                     Phrase obje = new Phrase(fnChunk("pág. ", (int)Fuente.FuenteCabFooter));
                     HeaderFooter footer = new HeaderFooter(obje, new Phrase(""));
                     Document Doc3 = new Document(PageSize.A4, 60, 43, 58, 43);
-                    PdfWriter.GetInstance(Doc3, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_Final.pdf", FileMode.Create));
+                    PdfWriter writer4 = PdfWriter.GetInstance(Doc3, new FileStream(@pathdocumentos + "Archivo" + ExpedienteId + "_Final.pdf", FileMode.Create));
                     //AdicionarCabecera(Doc3, ExpedienteId);
                     for (int i = 1; i < pagcab; i++)
                     {
                         Doc3.Open();
                     }
-
 
                     //footer.Border = 0;
                     //footer.BorderWidthTop = 1;
@@ -24083,6 +24182,10 @@ namespace Sut.Web.Areas.General.Controllers
                     ////footer.Alignment = Element.ALIGN_CENTER;
                     ////Doc3.Footer = footer;
                     //inicio 
+                    PdfContentByte cb = writer4.DirectContent;
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
+                    cb.Stroke(); 
+                    
                     footer2.Border = Rectangle.NO_BORDER;
                     footer2.Alignment = Element.ALIGN_CENTER;
                     footer2.BorderColor = new Color(242, 242, 242);
@@ -24100,14 +24203,12 @@ namespace Sut.Web.Areas.General.Controllers
                         TituloSedes(Doc3, ExpedienteId, ProcedimientoIds, "SECCIÓN N° 4: SEDES DE ATENCIÓN");
                     }
                     Doc3.NewPage();
-
-                    //cb.RoundRectangle(50f, 40f, 495f, 752f, 3f);
-                    //cb.Stroke();
-
+                    // los costados, ancho, alto, curva
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
+                    cb.Stroke();
                     GenerarSedes(Doc3, ExpedienteId, ProcedimientoIds);
                     Doc3.NewPage();
                     Doc3.Close();
-
                 }
                 else
                 {
@@ -24300,7 +24401,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                 PdfContentByte cb = writer.DirectContent;
                 // los costados, ancho, alto, curva
-                cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                 cb.Stroke();
 
                 if (ProcedimientoIds[0] != 0)
@@ -24349,7 +24450,7 @@ namespace Sut.Web.Areas.General.Controllers
                     Doc.NewPage();
 
 
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
                     GenerarPresExc(Doc, ExpedienteId, ProcedimientoIds, writer);
@@ -24392,7 +24493,7 @@ namespace Sut.Web.Areas.General.Controllers
                 }
                 Doc3.NewPage();
 
-                cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                 cb.Stroke();
 
                 GenerarSedes(Doc3, ExpedienteId, ProcedimientoIds);
@@ -24408,7 +24509,7 @@ namespace Sut.Web.Areas.General.Controllers
                 Doc2.Footer = footer3;
 
 
-                cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                 cb.Stroke();
 
                 if (estadoformulario != "")
@@ -25082,7 +25183,7 @@ namespace Sut.Web.Areas.General.Controllers
 
                     PdfContentByte cb = writer.DirectContent;
                     // los costados, ancho, alto, curva
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
 
@@ -25094,7 +25195,7 @@ namespace Sut.Web.Areas.General.Controllers
                     Doc.NewPage();
 
 
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
                     GenerarPresExc(Doc, ExpedienteId, ProcedimientoIds, writer);
@@ -25129,7 +25230,7 @@ namespace Sut.Web.Areas.General.Controllers
                     TituloSedes(Doc3, ExpedienteId, ProcedimientoIds, "SECCIÓN N° 4: SEDES DE ATENCIÓN");
                     Doc3.NewPage();
 
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
                     GenerarSedes(Doc3, ExpedienteId, ProcedimientoIds);
@@ -25145,7 +25246,7 @@ namespace Sut.Web.Areas.General.Controllers
                     Doc2.Footer = footer3;
 
 
-                    cb.RoundRectangle(55f, 49f, 500f, 727f, 3f);
+                    cb.RoundRectangle(55f, 40f, 500f, 737f, 3f);
                     cb.Stroke();
 
                     if (estadoformulario != "")
@@ -25292,12 +25393,15 @@ namespace Sut.Web.Areas.General.Controllers
                 //System.IO.Directory.CreateDirectory(Server.MapPath("..\\Documentos\\" + "TODOS")); 
 
                 PdfWriter writer = PdfWriter.GetInstance(Doc, new FileStream(@pathdocumentos + "Archivo" + ids[0] + fecha + "_Inicio.pdf", FileMode.Create));
-                Phrase obje = new Phrase(fnChunk("pág. ", (int)Fuente.FuenteCabFooter));
-                HeaderFooter footer = new HeaderFooter(obje, new Phrase(""));
-                footer.Border = 0;
-                //footer.BorderWidthTop = 1;
-                footer.Alignment = Element.ALIGN_RIGHT;
-                Doc.Footer = footer;
+                if (ids[0] == 0)
+                {
+                    Phrase obje = new Phrase(fnChunk("pág. ", (int)Fuente.FuenteCabFooter));
+                    HeaderFooter footer = new HeaderFooter(obje, new Phrase(""));
+                    footer.Border = 0;
+                    //footer.BorderWidthTop = 1;
+                    footer.Alignment = Element.ALIGN_RIGHT;
+                    Doc.Footer = footer;
+                }
 
                 //var procedimiento = _procedimientoService.GetOne(ids[0]);
                 //AdicionarCabecera(Doc, procedimiento.ExpedienteId);
@@ -27568,9 +27672,9 @@ namespace Sut.Web.Areas.General.Controllers
                 PdfContentByte cb = canvas[PdfPTable.LINECANVAS];
                 cb.RoundRectangle(
                   55f,
-                  49f,
+                  40f,
                   500f,
-                  727f,
+                  737f,
                   3f // change to adjust how "round" corner is displayed
 
                 //55f,
@@ -27585,8 +27689,38 @@ namespace Sut.Web.Areas.General.Controllers
             }
         }
 
+        public class RoundedCornersTableEvent : IPdfPTableEvent
+        {
+            public void TableLayout(PdfPTable table, float[][] widths, float[] heights, int headerRows, int rowStart, PdfContentByte[] canvases)
+            {
+                PdfContentByte canvas = canvases[PdfPTable.LINECANVAS];
+                float[] leftBorder = widths[0];
+                float[] rightBorder = widths[widths.Length - 1];
+                float top = heights[0];
+                float bottom = heights[heights.Length - 1];
+                float radius = 5f; // Ajusta el valor para el radio de las puntas redondeadas
 
+                // Esquina superior izquierda
+                canvas.RoundRectangle(
+                    leftBorder[0] - radius, top, radius, radius, radius);
+                canvas.Stroke();
 
+                // Esquina superior derecha
+                canvas.RoundRectangle(
+                    rightBorder[0], top, radius, radius, radius);
+                canvas.Stroke();
+
+                // Esquina inferior izquierda
+                canvas.RoundRectangle(
+                    leftBorder[0] - radius, bottom - radius, radius, radius, radius);
+                canvas.Stroke();
+
+                // Esquina inferior derecha
+                canvas.RoundRectangle(
+                    rightBorder[0], bottom - radius, radius, radius, radius);
+                canvas.Stroke();
+            }
+        }
         public class RoundRectangle : IPdfPCellEvent
         {
             public void CellLayout(

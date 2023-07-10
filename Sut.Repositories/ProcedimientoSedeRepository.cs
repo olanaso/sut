@@ -21,6 +21,7 @@ namespace Sut.Repositories
 
                 return ctx.ProcedimientoSede
                         .Include("Sede")
+                        .Include("UndOrgRecepcionDocumentos")
                         .Where(x => x.Procedimiento.ExpedienteId == ExpedienteId && x.Procedimiento.Estado != 3 && x.Procedimiento.Operacion != OperacionExpediente.Eliminacion)
                         .ToList();
             }

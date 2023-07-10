@@ -40,6 +40,8 @@ namespace Sut.Repositories
 
                 return ctx.Expediente
                         .Include(x => x.Entidad)
+                        .Include(x => x.Entidad.Provincia)
+                        .Include(x => x.Entidad.Provincia.Departamento)
                         .SingleOrDefault(x => x.ExpedienteId == ExpedienteId);
             }
             catch (Exception ex)

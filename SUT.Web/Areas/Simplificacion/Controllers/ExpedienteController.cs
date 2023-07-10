@@ -103,11 +103,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
         public string GetAllLikePaginRptActividad(Expediente filtro, int pageIndex, int pageSize, long usuarioId, UsuarioInfo user)
         {
             int totalRows = 0;
-         
-
             List<Expediente> lista = _expedienteService.GetAllLikePaginRptActividad(filtro, pageIndex, pageSize, ref totalRows);
-
-
             return JsonConvert.SerializeObject(new
             {
                 lista = lista.Select(x => new
@@ -124,50 +120,72 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                     campo10 = x.campo10,
                     campo11 = x.campo11,
                     campo12 = x.campo12,
-
-                    //Nombre = x.Nombre,
-                    //Codigo = x.Codigo,
-                    //Acronimo = x.Acronimo,
-                    ////NivelGobierno = x.NivelGobierno.Nombre,
-                    ////Sector = x.Sector.Nombre,
-                    ////Provincia = x.Provincia == null ? "" : x.Provincia.Nombre,
-                    ////Departamento = x.Provincia == null ? "" : x.Provincia.Departamento.Nombre,  
-                    //NivelGobierno = x.NivelGobiernodes,
-                    //Sector = x.Sectordes,
-                    //Provincia = x.Provinciades == null ? "" : x.Provinciades,
-                    //Departamento = x.Departamentodes == null ? "" : x.Departamentodes,
-                    //Estado = x.Estado == Respuesta.Si ? "Activo" : "Inactivo",
                 }),
                 totalRows = totalRows,
             });
-
         }
         /*JJJMSP2*/
         public ActionResult ListaComparar(UsuarioInfo user)
         {
             List<Expediente> listaexpedientesCompara = _expedienteService.GetByEntidad(user.EntidadId);
             listaexpedientesCompara = listaexpedientesCompara.OrderByDescending(x => x.Codigo).ToList();
-            listaexpedientesCompara.Insert(0, new Expediente() { ExpedienteId = 0, Codigo = " - Seleccionar - " });
-            ViewBag.listaexpedientesCompara = listaexpedientesCompara.Select(x => new SelectListItem()
+            listaexpedientesCompara.Insert(0, new Expediente() { ExpedienteId = 0, Codigo = " Seleccionar Expediente " });
+            ViewBag.listaexpedientesCompara = listaexpedientesCompara.Select((x, i) => new SelectListItem()
             {
                 Value = x.ExpedienteId.ToString(),
-                Text = x.Codigo
+                Text = i.ToString("00") + "  -  " + x.Codigo + "  -  " + GetTipoExpedienteText((int)x.TipoExpediente) + "  -  " + GetEstadoExpedienteText((int)x.EstadoExpediente)
             })
            .ToList();
 
             List<Entidad> listaentidades = _entidadService.GetAll();
             listaentidades = listaentidades.OrderByDescending(x => x.Codigo).ToList();
-            listaentidades.Insert(0, new Entidad() { EntidadId = 0, Nombre = " - Seleccionar - " });
-            ViewBag.listaentidades = listaentidades.Select(x => new SelectListItem()
+            listaentidades.Insert(0, new Entidad() { EntidadId = 0, Nombre = " Seleccionar Entidad - " });
+            ViewBag.listaentidades = listaentidades.Select((x, i) => new SelectListItem()
             {
                 Value = x.EntidadId.ToString(),
-                Text = x.Nombre
+                Text = i.ToString("00") + "  -  " + x.Nombre
             })
            .ToList();
 
             UsuarioInfo model = new UsuarioInfo();
             model = user;
             return View(model);
+        }
+
+        private string GetTipoExpedienteText(int tipoexpediente)
+        {
+            switch (tipoexpediente)
+            {
+                case 1:
+                    return "C. INICIAL ";
+                case 2:
+                    return "E. REGULAR";
+                default:
+                    return "Tipo Expediente";
+            }
+        }
+
+        private string GetEstadoExpedienteText(int estadoexpediente)
+        {
+            switch (estadoexpediente)
+            {
+                case 1:
+                    return "EN PROCESO";
+                case 2:
+                    return "PRESENTADO";
+                case 3:
+                    return "APROBADO";
+                case 4:
+                    return "OBSERVADO";
+                case 5:
+                    return "ANULADO";
+                case 6:
+                    return "SUBSANADO";
+                case 7:
+                    return "PUBLICADO";
+                default:
+                    return "Estado Expediente";
+            }
         }
 
         public string GetProcedimientoCompararAll(CompararPA filtro, int pageIndex, int pageSize, UsuarioInfo user)
@@ -214,8 +232,8 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
             {
                 List<Expediente> listaexpedientesCompara = _expedienteService.GetByEntidad(id);
                 listaexpedientesCompara = listaexpedientesCompara.OrderByDescending(x => x.Codigo).ToList();
-                listaexpedientesCompara.Insert(0, new Expediente() { ExpedienteId = 0, Codigo = " - Seleccionar - " });
-                return Json(new { data = listaexpedientesCompara.Select(x => new { ExpedienteId = x.ExpedienteId, Codigo = x.Codigo }).ToList() }, JsonRequestBehavior.AllowGet);
+                listaexpedientesCompara.Insert(0, new Expediente() { ExpedienteId = 0, Codigo = " Seleccionar Expediente " });
+                return Json(new { data = listaexpedientesCompara.Select((x, i) => new { ExpedienteId = x.ExpedienteId, Codigo = i.ToString("00") + "  -  " + x.Codigo + "  -  " + GetTipoExpedienteText((int)x.TipoExpediente) + "  -  " + GetEstadoExpedienteText((int)x.EstadoExpediente) }).ToList() }, JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception ex)
@@ -229,8 +247,6 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
         /*JJJMSP2 INI*/
         public ActionResult Lista(UsuarioInfo user)
         {
-
-
 
             /*Inicio Cargar roles - Acceso*/
             List<RolMenu> listarolmenu = _rolMenuService.GetByRolMenuid(Convert.ToInt32(user.Rol), 20);
@@ -262,10 +278,6 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
 
             UsuarioInfo model = new UsuarioInfo();
             model = user;
-
-
-
-
 
             ViewBag.publicarEstado = new List<SelectListItem>()
                 {
@@ -320,12 +332,10 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
             })
            .ToList();
 
-
             return View(model);
         }
         public ActionResult ListaConfigurar(UsuarioInfo user)
         {
-
             UsuarioInfo model = new UsuarioInfo();
             model = user;
             return View(model);
@@ -335,21 +345,15 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
         {
             try
             {
-
                 ViewBag.Usuario = user;
 
                 ViewBag.UsuarioID = id;
 
-
                 Expediente model = _expedienteService.GetOne(id);
-
 
                 ViewBag.NOMBRE = model.Entidad.Nombre;
 
-
                 string viewName = string.Empty;
-
-
 
                 List<MetaDato> listaGobierno = _metaDatoService.GetByParent(43);
                 listaGobierno = listaGobierno.OrderBy(x => x.Nombre).ToList();
@@ -386,17 +390,12 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 })
                .ToList();
 
-
-
                 ViewBag.publicarTipo = new List<SelectListItem>()
                 {
                     new SelectListItem() { Text = " - Seleccionar - ", Value = "0" },
                     new SelectListItem() { Text = "Reporte De Duración De Actividades", Value = "1" },
                     new SelectListItem() { Text = "Reporte De Recursos Asignados A Actividades", Value = "2" }, 
                 };
-
-
-
 
                 List<Provincia> listaProvincia = new List<Provincia>();
                 listaProvincia = listaProvincia.OrderBy(x => x.Nombre).ToList();
@@ -409,9 +408,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 })
                .ToList();
 
-
                 viewName = "_ListaReporte";
-
 
                 return View(viewName, model);
             }
