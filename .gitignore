@@ -2,4 +2,41 @@
 # Este archivo .gitignore ha sido creado automáticamente por Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/SUT
+# Directorios generados por Visual Studio
+obj/
+bin/
+
+# Archivos de copia de seguridad
+*~
+
+# Archivos de caché
+*.cache
+
+# Archivos temporales
+*.tmp
+
+# Archivos de registro
+*.log
+
+# Carpeta de dependencias de NuGet
+packages/
+
+# Archivos generados por el compilador
+*.dll
+*.exe
+*.pdb
+
+# Carpeta de publicación
+publish/
+
+# Archivos de configuración local
+*.config.user
+
+# Archivos de respaldo
+*.bak
+
+# Archivos generados por herramientas
+.vs/
+_UpgradeReport_Files/
+Backup*/
+

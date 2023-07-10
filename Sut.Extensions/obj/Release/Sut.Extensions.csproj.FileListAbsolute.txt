@@ -57,15 +57,3 @@ C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\obj\Release\Sut.Extensions.csproj.CoreComp
 C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\obj\Release\Sut.Extensions.csproj.CopyComplete
 C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\obj\Release\Sut.Extensions.dll
 C:\GIT-PCM\SIS-094-SUT\Sut.Extensions\obj\Release\Sut.Extensions.pdb
-C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Release\Sut.Extensions.dll.config
-C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Release\Sut.Extensions.dll
-C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Release\Sut.Extensions.pdb
-C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Release\EntityFramework.dll
-C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Release\EntityFramework.SqlServer.dll
-C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Release\EntityFramework.xml
-C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\bin\Release\EntityFramework.SqlServer.xml
-C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\obj\Release\Sut.Extensions.csproj.AssemblyReference.cache
-C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\obj\Release\Sut.Extensions.csproj.CoreCompileInputs.cache
-C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\obj\Release\Sut.Extensions.csproj.CopyComplete
-C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\obj\Release\Sut.Extensions.dll
-C:\GIT-PCM\SIS-094-SUTEE\Sut.Extensions\obj\Release\Sut.Extensions.pdb
