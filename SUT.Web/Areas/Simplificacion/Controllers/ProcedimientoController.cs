@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using iTextSharp.text.pdf.codec.wmf;
+using Newtonsoft.Json;
 using Sut.Entities;
 using Sut.Extensions;
 using Sut.IApplicationServices;
@@ -626,7 +627,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
             return true;
         }
 
-
+   
         //definir infor/*m*/acion
         [HttpPost]
         public bool guardarcategoria(long idexp, long idpro, List<elemento2> orden, UsuarioInfo user)

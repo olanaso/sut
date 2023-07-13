@@ -137,6 +137,8 @@
                 </ul>
             }
         </div>
+
+        
         <div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;z-index: 5;">
             @if (!Model.SustCostosTerminado)
             {
@@ -211,6 +213,13 @@
 <div id="boxLista" class="box box-danger">
     <div class="box-header with-border">
         <h3 class="box-title">Resumen de Costos</h3>
+        <div class="btn-group pull-right">
+            <div style="color:#000; display: inline-block; margin-right: 10px; right:3px">
+                <input id="chkactivar_resumecostos" type="checkbox" /> Activar todos / Desactivar todos
+
+
+            </div>
+        </div>
     </div>
     <div class="box-body">
         <div class="table-responsive">
@@ -354,6 +363,24 @@
 }
 @section Script {
     <script>
+        //showNotification('top', 'right', data.mensaje, 2);
+        function showNotification(other1, other2,mensaje,title ) {
+
+            sut.msg.msgError2('Lista de errores', `<div id="errror-container"> <table id="error-table">
+                                    <tbody>
+                                        <tr>
+                                            <th>Mensaje de Error</th>
+                                            <th>Detalle</th>
+                                        </tr>
+                                <tr><td><div class="error-cell">
+                                <svg class="svg-icon" style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path d="M512 853.333333a341.333333 341.333333 0 1 1 341.333333-341.333333 341.333333 341.333333 0 0 1-341.333333 341.333333z m0-768a426.666667 426.666667 0 1 0 426.666667 426.666667A426.666667 426.666667 0 0 0 512 85.333333z m110.506667 256L512 451.84 401.493333 341.333333 341.333333 401.493333 451.84 512 341.333333 622.506667 401.493333 682.666667 512 572.16 622.506667 682.666667 682.666667 622.506667 572.16 512 682.666667 401.493333z" fill="red"></path></svg>
+                                Error ${(1)}</div>
+                                </td><td> ${mensaje}</td></tr>
+                          </tbody></table></div>
+
+                                `)
+
+        }
 
         sut.Resumen = {
 
@@ -384,7 +411,6 @@
                     success: function (data) {
                         sut.wait.removeOverlay('#boxLista');
                         //$('#modal-ventana').modal('hide');
-                        debugger;
                         if(data.valid) {
 
                             sut.msg.success(data.mensaje, function () {
@@ -392,10 +418,12 @@
                             });
 
                         } else {
-                            debugger;
+                          
                             if(data.mensaje!= undefined){
                                // sut.error.clientErrorShow('mensajes', data.mensaje);
                                 showNotification('top', 'right', data.mensaje, 2);
+                              
+                               
 
                                 //sut.msg.alerta2(data.mensaje, function () {
 
@@ -404,6 +432,8 @@
 
                             if(data.mensaje4!= undefined){
                                 showNotification('top', 'right', data.mensaje4, 2);
+
+                               
                             }
                         }
                     },
@@ -411,6 +441,9 @@
                         $('#modal-ventana').modal('hide');
 
                         showNotification('top', 'right', [data.responseText], 2);
+
+                        
+
                         //sut.error.clientErrorShow('mensajes', [data.responseText]);
                     }
                 });
@@ -1736,6 +1769,22 @@
                 }
             }
         };
+
+        $('#chkactivar_resumecostos').on('click', function (e) {
+            if ($(this).is(':checked')) {
+                $('.btn_guardar_derch_tramitacion').each(function () {
+                    if (!$(this).is(':checked')) {
+                        $(this).trigger('click');
+                    }
+                });
+            } else {
+                $('.btn_guardar_derch_tramitacion').each(function () {
+                    if ($(this).is(':checked')) {
+                        $(this).trigger('click');
+                    }
+                });
+            }
+        })
 
     </script>
 }

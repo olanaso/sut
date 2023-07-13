@@ -321,16 +321,16 @@
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                     <li>
-                        <a href="#edit-info-basica" data-toggle="tab" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Información Básica</a>
+                        <a class="tabdata" id="tab1" href="#edit-info-basica" data-toggle="tab" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Información Básica</a>
                     </li>
                     <li>
-                        <a href="#edit-modalidades" data-toggle="tab" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-table"></i> Modalidad de Atención</a>
+                        <a class="tabdata" id="tab2" href="#edit-modalidades" data-toggle="tab" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-table"></i> Modalidad de Atención</a>
                     </li>
                     <li>
-                        <a href="#edit-requisitos" data-toggle="tab" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-copy"></i> Requisitos</a>
+                        <a class="tabdata" id="tab3" href="#edit-requisitos" data-toggle="tab" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-copy"></i> Requisitos</a>
                     </li>
                     <li>
-                        <a href="#edit-base-legal" data-toggle="tab" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-legal"></i> Base Legal del PA/SE</a>
+                        <a  class="tabdata" id="tab4" href="#edit-base-legal" data-toggle="tab" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-legal"></i> Base Legal del PA/SE</a>
                     </li>
                 </ul>
                 <div class="tab-content ">
@@ -7890,7 +7890,17 @@
         });
 
 
-
+        setTimeout(function (e) {
+            $('#' + localStorage.getItem('lastTab')).click();
+        }, 200)
+       
+        // Seleccionamos todos los elementos con la clase 'tabdata'
+        $(".tabdata").click(function () {
+            // Cuando haces clic en un tab, guardamos su id en el localStorage.
+            var tabId = $(this).attr('id');
+            localStorage.setItem('lastTab', tabId);
+            console.log(tabId)
+        });
 
 
 
