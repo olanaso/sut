@@ -31,8 +31,11 @@ namespace Sut.Web
             {
                 languageSession = context.Session["lang"] != null ? context.Session["lang"].ToString() : "es";
             }
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageSession);
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(languageSession);
+            //ADD ESEO
+            CultureInfo ci = new CultureInfo(languageSession);
+            ci.NumberFormat.NumberDecimalSeparator = ".";
+            Thread.CurrentThread.CurrentUICulture = ci;
+            Thread.CurrentThread.CurrentCulture = ci;
         }
 
         protected void Application_EndRequest(object sender, EventArgs e)

@@ -1,4 +1,5 @@
 ﻿@using Sut.Entities
+@using System.Globalization;
 @model List<RecursoCosto>
 @{
     Expediente exp = ViewBag.Expediente as Expediente;
@@ -164,7 +165,7 @@
                                 @Html.HiddenFor(model => model[i].RecursoCostoId)
                                 @Html.HiddenFor(model => model[i].RecursoId)
                                 @Html.HiddenFor(model => model[i].UnidadOrganicaId)
-                                @Html.TextBoxFor(model => model[i].CostoAnual, new { @class = "form-control input-sm", @min = 0, Value = Model[i].CostoAnual.ToString("0.00"), @required = true }) 
+                                @Html.TextBoxFor(model => model[i].CostoAnual, new { @class = "form-control input-sm", @min = 0, Value = Model[i].CostoAnual.ToString("0.00", CultureInfo.InvariantCulture), @required = true }) 
                             </td>
                             <td><span>0</span></td>
                             <td><span>0</span></td>
