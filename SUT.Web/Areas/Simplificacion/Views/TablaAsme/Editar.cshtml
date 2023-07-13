@@ -1421,8 +1421,7 @@
                     if ($('#tableOculto tbody tr').size() == 0) {
                         $('#tableOculto tbody').append($('tr#trTablaAsme' + index + '#trDetalle'));
                     }
-                    else
-                    {
+
                         $('#tblAsme tbody tr#trTablaAsme' + index + '.success').removeClass('success');
 
 
@@ -1458,7 +1457,6 @@
                         } else {
                             showNotification('top', 'right', 'Marco la Opción espera.', 2);
                         }
-                    }
                 },
                 load: function (id,Nro,Actividad,UnidadOrganizacion,Duracion) {
                     $('#hidActividadId').val(id);
