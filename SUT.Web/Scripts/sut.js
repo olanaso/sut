@@ -141,7 +141,7 @@
       max-width: 50%;
       margin: auto;
       background-color: #fff;
-      color: #fff;
+    
       text-align: center;
       border-radius: 2px;
       padding: 16px;
@@ -152,7 +152,8 @@
       transform: translate(-50%, -50%);
       font-size: 17px;
 max-height: 500px;  
-    overflow-y: auto; 
+    overflow-y: auto;
+box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 
 
     }
@@ -174,6 +175,35 @@ max-height: 500px;
     #toastMessage {
       margin-top: 10px;
     }
+ #errror-container table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+   #errror-container th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+font-size:12px;
+    }
+    
+   #errror-container th {
+      background-color: #f2f2f2;
+    }
+    
+   #errror-container .error-cell {
+      display: flex;
+      align-items: center;
+      color:red;
+    }
+    
+   #errror-container .error-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+      fill: #ff0000;
+    }
+
            `;
 
             var head = document.head || document.getElementsByTagName('head')[0];
