@@ -557,8 +557,6 @@
                         sut.error.show('mensajes', result.responseText);
                     }
                 });
-
-
             },
             aplicarfiltro : function(){
                 sut.Asme.init();
@@ -578,36 +576,32 @@
                 $("#CancelarOrdenar").css({ "display": "none" });
             },
 
-
-                    generarorden : function(idExpediente){
-                        $.ajax({
-                            type: "POST",
-                            //url: '/Simplificacion/Expediente/EditarExpediente',
-                            url: '@Url.Content("~/Simplificacion/procedimiento/GenerarNumeroPA")',
-                            data: { id: idExpediente},
-                            cache: false,
-                            beforeSend: function () {
-                                sut.wait.modal('ventana-container');
-                                $('#modal-ventana').modal('show');
-                            },
-                            success: function (data) {
-                                debugger;
-                                if(data=="False")
-                                {
-
-                                    showNotification('top', 'right', 'No Existe Información', 2);
-                                    return;
-                                }
-                                window.location.reload();
-                            },
-                            error: function (result) {
-                                $('#modal-ventana').modal('hide');
-                                sut.error.show('mensajes', result.responseText);
-                            }
-                        });
-                    },
-
-
+            generarorden : function(idExpediente){
+                 $.ajax({
+                      type: "POST",
+                      //url: '/Simplificacion/Expediente/EditarExpediente',
+                      url: '@Url.Content("~/Simplificacion/procedimiento/GenerarNumeroPA")',
+                      data: { id: idExpediente},
+                      cache: false,
+                      beforeSend: function () {
+                           sut.wait.modal('ventana-container');
+                           $('#modal-ventana').modal('show');
+                      },
+                      success: function (data) {
+                          debugger;
+                          if(data=="False")
+                          {
+                               showNotification('top', 'right', 'No Existe Información', 2);
+                               return;
+                           }
+                           window.location.reload();
+                       },
+                      error: function (result) {
+                           $('#modal-ventana').modal('hide');
+                           sut.error.show('mensajes', result.responseText);
+                      }
+                 });
+            },
 
             editarorden: function (TablaAsmeId){
                         $.ajax({
@@ -621,16 +615,13 @@
                                 $('#modal-ventana').modal('show');
                             },
                             success: function (data) {
-
                                 debugger;
                                 if(data=="False")
                                 {
                                     showNotification('top', 'right', 'No Existe Información', 2);
                                     return;
                                 }
-
                                 window.location.reload();
-
                             },
                             error: function (result) {
                                 $('#modal-ventana').modal('hide');
@@ -665,33 +656,40 @@
 
 
 
-                    guardareditarorden : function(idExpediente){
+             guardareditarorden: function(idExpediente){
                         debugger;
-                        var inputs = $('#tblAsme tbody tr td input:text');
+                        var inputs = $('#tblAsme tbody tr td input:text[name^="Actividad"]');
                         var data = [];
-                        if (inputs.length > 0) {
-                            $.each(inputs, function (i, r) {
-                                var ver = r.parentNode.className;
 
-                                if (ver == "colNro") {
-                                var v = $(r).val().split('|');
-                                    data.push({ orden: v[0], Codigo: v[1] });
+                        if (inputs.length > 0) {
+                            inputs.each(function (i, input) {
+                                var ver = input.parentNode.className;
+                                if (ver === "colNro") {
+                                    var orden = $(input).val();
+                                    var actividadId = $(input).siblings('input:hidden').val();
+                                    var obj = { Orden: orden, ActividadId: actividadId };
+                                    data.push(obj);
+                                    //showNotification('top', 'right', orden + ' - ' + actividadId, 2);
                                 }
                             });
+                            //showNotification('top', 'right', JSON.stringify(data), 2);
                         }
-
+                        
+                        var model = $('#form-asme').serialize();
                         $.ajax({
                             type: "POST",
-                            //url: '/Simplificacion/Expediente/EditarExpediente',
-                            url: '@Url.Content("~/Simplificacion/TablaAsme/guardareditarorden")',
-                            data: { id: idExpediente, orden: data,tipoorder:1},
-                            cache: false,
+                            //url: '/Simplificacion/TablaAsme/guardareditarorden',
+                            //url: ' Url.Content("~/Simplificacion/TablaAsme/guardareditarorden")',
+                            //data: { id: idExpediente, orden: data, tipoorder:1},
+                            //cache: false,
+                            url: '@Url.Content("~/Simplificacion/TablaAsme/GuardarTablaAsme")',
+                            data: model,
+                            dataType: 'json',
                             beforeSend: function () {
                                 sut.wait.modal('ventana-container');
                                 $('#modal-ventana').modal('show');
                             },
                             success: function (data) {
-
                                 debugger;
                                 if(data=="False")
                                 {
@@ -705,8 +703,7 @@
                                 sut.error.show('mensajes', result.responseText);
                             }
                         });
-                    },
-
+              },
 
 
             importAct: () => {
@@ -865,7 +862,7 @@
                 {
                     row += '<td class="colNro" >';
                     row += sut.string.format('<input type="text" class="form-control"  style="width: 50px;" name="Actividad[{0}].Orden" value="{1}" />', i, act.Orden);
-                    row += sut.string.format('<input type="hidden" name="Actividad[{0}].ActividadId" value="{1}" />', i, act.ActividadId);
+                    row += sut.string.format('<input type="hidden" class="form-control" name="Actividad[{0}].ActividadId" value="{1}" />', i, act.ActividadId);
                     row += '</td>';
                 }
                 else
@@ -1028,8 +1025,8 @@
 
                         if (!valid) showNotification('top', 'right', 'Debe seleccionar una Unidad Orgánica para cada Actividad.', 2);
 
-                    }  
-                     
+                    }
+
 
 
                     if ($('#form-asme').valid() && valid) {
@@ -1046,7 +1043,7 @@
 
                         //alert(parseInt(texto));
                         var model = $('#form-asme').serialize();
-                     
+
 
                         $.ajax({
                             type: 'POST',
@@ -1422,43 +1419,45 @@
 
                     debugger;
                     if ($('#tableOculto tbody tr').size() == 0) {
-                        $('#tableOculto tbody').append($('tr#trTablaAsme'+index+'#trDetalle'));
+                        $('#tableOculto tbody').append($('tr#trTablaAsme' + index + '#trDetalle'));
                     }
-
-                    $('#tblAsme tbody tr#trTablaAsme'+index+'.success').removeClass('success');
-
-
-
-                    var tr = $('#tblAsme tbody tr#trTablaAsme'+index).eq(0);
-                    //debugger;
-                    //if ($('#tableOculto tbody tr').size() == 0) {
-                    //    $('#tableOculto tbody').append($('tr#trDetalle'));
-                    //}
-
-                    //$('#tblAsme tbody tr.success').removeClass('success');
-
-                    //var tr = $('#tblAsme tbody tr').eq(index);
-
-                    //var id = Number(tr.find('input[name$="ActividadId"]').val());
-
-                    var id = Number(actividad);
-                    var rbEspera = tr.find('input[name$="TipoActividad"]').eq(3);
-
-                    var Nro = tr.find('input[name$="Orden"]').val();
-                    var Actividad = tr.find('input[name$="Descripcion"]').val();
-                    var UnidadOrganizacion = $(tr).find('select[name$="UnidadOrganicaId"] option:selected').text();
-                    var Duracion =$(tr).find('input[name$="Duracion"]').val();
+                    else
+                    {
+                        $('#tblAsme tbody tr#trTablaAsme' + index + '.success').removeClass('success');
 
 
-                    if(id==0){
-                        showNotification('top', 'right', 'Debe guardar la información para poder reconocer la fila.', 2);
-                    }
-                    else if (id > 0 && !rbEspera.is(':checked')) {
-                        tr.addClass('success');
-                        $('tr#trDetalle').insertAfter(tr);
-                        sut.Asme.Recurso.load(id,Nro,Actividad,UnidadOrganizacion,Duracion);
-                    }else{
-                        showNotification('top', 'right', 'Marco la Opción espera.', 2);
+
+                        var tr = $('#tblAsme tbody tr#trTablaAsme' + index).eq(0);
+                        //debugger;
+                        //if ($('#tableOculto tbody tr').size() == 0) {
+                        //    $('#tableOculto tbody').append($('tr#trDetalle'));
+                        //}
+
+                        //$('#tblAsme tbody tr.success').removeClass('success');
+
+                        //var tr = $('#tblAsme tbody tr').eq(index);
+
+                        //var id = Number(tr.find('input[name$="ActividadId"]').val());
+
+                        var id = Number(actividad);
+                        var rbEspera = tr.find('input[name$="TipoActividad"]').eq(3);
+
+                        var Nro = tr.find('input[name$="Orden"]').val();
+                        var Actividad = tr.find('input[name$="Descripcion"]').val();
+                        var UnidadOrganizacion = $(tr).find('select[name$="UnidadOrganicaId"] option:selected').text();
+                        var Duracion = $(tr).find('input[name$="Duracion"]').val();
+
+
+                        if (id == 0) {
+                            showNotification('top', 'right', 'Debe guardar la información para poder reconocer la fila.', 2);
+                        }
+                        else if (id > 0 && !rbEspera.is(':checked')) {
+                            tr.addClass('success');
+                            $('tr#trDetalle').insertAfter(tr);
+                            sut.Asme.Recurso.load(id, Nro, Actividad, UnidadOrganizacion, Duracion);
+                        } else {
+                            showNotification('top', 'right', 'Marco la Opción espera.', 2);
+                        }
                     }
                 },
                 load: function (id,Nro,Actividad,UnidadOrganizacion,Duracion) {
@@ -1547,7 +1546,7 @@
                     });
                 },
                 openAddRecursoplantilla: function () {
-                  
+
 
 
                     $.ajax({

@@ -11,6 +11,7 @@ namespace Sut.Security
 {
     public class Filtros
     {
+        public TipoProcedimiento TipoProcedimiento { get; set; }
         public CalificacionProcedimiento Clasificacion { get; set; }
         public FiltrosOrdenar Prestacionesanuales { get; set; }
         public FiltrosOrdenar PrestacionesCosto { get; set; }

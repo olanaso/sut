@@ -370,41 +370,41 @@ else
             </div>
 
         }
-                <div class="col-sm-12 col-xs-12" id="idFiltros">
-                    <br />
-                    <label class="col-sm-3 col-xs-3 control-label">Calificación :</label>
-                    <div class="col-sm-3 col-xs-3">
-                        @Html.DropDownListFor(model => @fil.Clasificacion, ViewBag.Calificacion as List<SelectListItem>, new { @class = "form-control " })
-                    </div>
-
-                    <label class="col-sm-2 col-xs-2 control-label">Prestaciones anuales :</label>
-                    <div class="col-sm-2 col-xs-2">
-                        @Html.DropDownListFor(model => @fil.Prestacionesanuales, ViewBag.OrdenarPrestacionesanuales as List<SelectListItem>, new { @class = "form-control " })
-                    </div>
-
-                    <label class="col-sm-3 col-xs-3 control-label">Derecho Tramitación :</label>
-                    <div class="col-sm-3 col-xs-3">
-                        @Html.DropDownListFor(model => @fil.PrestacionesCosto, ViewBag.OrdenarPrestacionesCosto as List<SelectListItem>, new { @class = "form-control " })
-                    </div>
-
-                    <label class="col-sm-2 col-xs-2 control-label">Duracion :</label>
-                    <div class="col-sm-2 col-xs-2">
-                        @Html.DropDownListFor(model => @fil.Duracion, ViewBag.OrdenarDuracion as List<SelectListItem>, new { @class = "form-control " })
-                    </div>
-
-                    <label class="col-sm-3 col-xs-3 control-label">Plazo Atencion :</label>
-                    <div class="col-sm-3 col-xs-3">
-                        @Html.DropDownListFor(model => @fil.PlazoAtencion, ViewBag.OrdenarPlazoAtencion as List<SelectListItem>, new { @class = "form-control " })
-                    </div>
-
-                    <label class="col-sm-2 col-xs-2 control-label">Requisitos :</label>
-                    <div class="col-sm-2 col-xs-2">
-                        @Html.DropDownListFor(model => @fil.Requisitos, ViewBag.OrdenarRequisitos as List<SelectListItem>, new { @class = "form-control " })
-                    </div>
-
-                    <a class="btn btn-facebook" id="aplicarfiltro" href="javascript:sut.Procedimiento.aplicarfiltro()"><i class="fa fa-filter"></i> Aplicar</a>
-
+            <div class="col-sm-12 col-xs-12" id="idFiltros">
+                <br />
+                <label class="col-sm-3 col-xs-3 control-label">Calificación :</label>
+                <div class="col-sm-3 col-xs-3">
+                    @Html.DropDownListFor(model => @fil.Clasificacion, ViewBag.Calificacion as List<SelectListItem>, new { @class = "form-control " })
                 </div>
+
+                <label class="col-sm-2 col-xs-2 control-label">Prestaciones anuales :</label>
+                <div class="col-sm-2 col-xs-2">
+                    @Html.DropDownListFor(model => @fil.Prestacionesanuales, ViewBag.OrdenarPrestacionesanuales as List<SelectListItem>, new { @class = "form-control " })
+                </div>
+
+                <label class="col-sm-3 col-xs-3 control-label">Derecho Tramitación :</label>
+                <div class="col-sm-3 col-xs-3">
+                    @Html.DropDownListFor(model => @fil.PrestacionesCosto, ViewBag.OrdenarPrestacionesCosto as List<SelectListItem>, new { @class = "form-control " })
+                </div>
+
+                @*<label class="col-sm-2 col-xs-2 control-label">Duracion :</label>
+                <div class="col-sm-2 col-xs-2">
+                    @Html.DropDownListFor(model => @fil.Duracion, ViewBag.OrdenarDuracion as List<SelectListItem>, new { @class = "form-control " })
+                </div>*@
+
+                <label class="col-sm-2 col-xs-2 control-label">Requisitos :</label>
+                <div class="col-sm-2 col-xs-2">
+                    @Html.DropDownListFor(model => @fil.Requisitos, ViewBag.OrdenarRequisitos as List<SelectListItem>, new { @class = "form-control " })
+                </div>
+
+                <label class="col-sm-3 col-xs-3 control-label">Plazo Atencion :</label>
+                <div class="col-sm-3 col-xs-3">
+                    @Html.DropDownListFor(model => @fil.PlazoAtencion, ViewBag.OrdenarPlazoAtencion as List<SelectListItem>, new { @class = "form-control " })
+                </div>
+
+                <a class="btn btn-facebook" id="aplicarfiltro" href="javascript:sut.Procedimiento.aplicarfiltro()"><i class="fa fa-filter"></i> Aplicar</a>
+
+            </div>
             if (@fil != null)
             {
                 if (@fil.estado != "1")
@@ -580,9 +580,9 @@ else
                                         <option value="1">PROC. ADMINISTRATIVO</option>
                                         <option value="2">SERVICIO EXCLUSIVO</option>
                                         <option value="3">PROC. ESTÁNDAR</option>
-                                        <option value="4">SERV. ESTÁNDAR</option>
-                                        <option value="5">ACR</option>
-                                        <option value="6">NO ACR</option>
+                                        <option value="5">SERV. ESTÁNDAR</option>
+                                        <option value="6">ACR</option>
+                                        <option value="7">NO ACR</option>
                                     </select>
                                 </td>
                                 <td></td>
@@ -1035,13 +1035,9 @@ else
 
             },
             filtro: function () {
-
-
-
                 $("#idFiltros").show();
                 $("#quitarfiltro").show();
                 $("#filtro").hide();
-
             },
 
             init:function () {
@@ -1088,6 +1084,7 @@ else
                     return;
                 }
                 var model = {
+                    /*'filtros.TipoProcedimiento': [1,2,3],*/
                     'filtros.Clasificacion':  $('#fil_Clasificacion').val(),
                     'filtros.Prestacionesanuales': $('#fil_Prestacionesanuales').val(),
                     'filtros.PrestacionesCosto': $('#fil_PrestacionesCosto').val(),

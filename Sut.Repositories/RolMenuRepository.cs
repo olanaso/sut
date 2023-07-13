@@ -27,6 +27,7 @@ namespace Sut.Repositories
 
                 return ctx.RolMenu 
                         .Where(x => x.RolId == rolId)
+                        .OrderBy(x => x.Orden)
                         .ToList();
             }
             catch (Exception ex)

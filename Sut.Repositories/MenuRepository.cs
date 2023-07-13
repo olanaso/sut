@@ -45,6 +45,7 @@ namespace Sut.Repositories
 
                 return ctx.Menu
                            .Where(x => x.Orden != 0)
+                           .OrderBy(x => x.Orden)
                         .ToList();
             }
             catch (Exception ex)

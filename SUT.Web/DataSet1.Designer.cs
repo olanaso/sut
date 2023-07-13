@@ -9367,6 +9367,8 @@ namespace Sut.Web {
             
             private global::System.Data.DataColumn columnDescripcion;
             
+            private global::System.Data.DataColumn columnUnidadOrganicaResponsable;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public ResumenDataTable() {
@@ -9514,6 +9516,14 @@ namespace Sut.Web {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public global::System.Data.DataColumn UnidadOrganicaResponsableColumn {
+                get {
+                    return this.columnUnidadOrganicaResponsable;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -9549,7 +9559,7 @@ namespace Sut.Web {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
-            public ResumenRow AddResumenRow(long TablaAsmeId, long ProcedimientoId, string CodProcedimiento, string NomProcedimiento, int Prestaciones, decimal Personal, decimal MatFungible, decimal ServIdentificable, decimal MatNoFungible, decimal SerTerceros, decimal Depreciacion, decimal Fijo, decimal CostoUnitatio, string Descripcion) {
+            public ResumenRow AddResumenRow(long TablaAsmeId, long ProcedimientoId, string CodProcedimiento, string NomProcedimiento, int Prestaciones, decimal Personal, decimal MatFungible, decimal ServIdentificable, decimal MatNoFungible, decimal SerTerceros, decimal Depreciacion, decimal Fijo, decimal CostoUnitatio, string Descripcion, string UnidadOrganicaResponsable) {
                 ResumenRow rowResumenRow = ((ResumenRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         TablaAsmeId,
@@ -9565,7 +9575,8 @@ namespace Sut.Web {
                         Depreciacion,
                         Fijo,
                         CostoUnitatio,
-                        Descripcion};
+                        Descripcion,
+                        UnidadOrganicaResponsable};
                 rowResumenRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowResumenRow);
                 return rowResumenRow;
@@ -9609,6 +9620,7 @@ namespace Sut.Web {
                 this.columnFijo = base.Columns["Fijo"];
                 this.columnCostoUnitatio = base.Columns["CostoUnitatio"];
                 this.columnDescripcion = base.Columns["Descripcion"];
+                this.columnUnidadOrganicaResponsable = base.Columns["UnidadOrganicaResponsable"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -9642,6 +9654,8 @@ namespace Sut.Web {
                 base.Columns.Add(this.columnCostoUnitatio);
                 this.columnDescripcion = new global::System.Data.DataColumn("Descripcion", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnDescripcion);
+                this.columnUnidadOrganicaResponsable = new global::System.Data.DataColumn("UnidadOrganicaResponsable", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnUnidadOrganicaResponsable);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnTablaAsmeId}, true));
                 this.columnTablaAsmeId.AllowDBNull = false;
@@ -22458,6 +22472,23 @@ namespace Sut.Web {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public string UnidadOrganicaResponsable {
+                get {
+                    try {
+                        return ((string)(this[this.tableResumen.UnidadOrganicaResponsableColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("El valor de la columna \'UnidadOrganicaResponsable\' de la tabla \'Resumen\' es DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableResumen.UnidadOrganicaResponsableColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public bool IsProcedimientoIdNull() {
                 return this.IsNull(this.tableResumen.ProcedimientoIdColumn);
             }
@@ -22610,6 +22641,18 @@ namespace Sut.Web {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
             public void SetDescripcionNull() {
                 this[this.tableResumen.DescripcionColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public bool IsUnidadOrganicaResponsableNull() {
+                return this.IsNull(this.tableResumen.UnidadOrganicaResponsableColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "16.0.0.0")]
+            public void SetUnidadOrganicaResponsableNull() {
+                this[this.tableResumen.UnidadOrganicaResponsableColumn] = global::System.Convert.DBNull;
             }
         }
         

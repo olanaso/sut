@@ -291,7 +291,6 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
         }
 
 
-
         [HttpPost]
         public bool guardareditarorden(long id, List<elemento> orden, int tipoorder, UsuarioInfo user)
         {
@@ -322,8 +321,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
             }
             return true;
         }
-
-
+       
         public ActionResult VerObs(long id, long entidadid, UsuarioInfo user)
         {
             try
@@ -477,6 +475,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 if (model.Actividad != null)
                 {
                     int valor = 1;
+                    model.Actividad = model.Actividad.OrderBy(a => a.Orden).ToList();
                     foreach (Actividad item in model.Actividad)
                     {
 
@@ -1044,8 +1043,8 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                 {
                                     if (!EsNumeroEntero(product[h].ToString().Trim()))
                                     {
-                                        lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la actividad. {0} de la Cabecera <b>" + lstCabecera[h] + "</b>", string.Join(",", act.Orden.ToString())));
-
+                                        //lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la actividad. {0} de la Cabecera <b>" + lstCabecera[h] + "</b>", string.Join(",", act.Orden.ToString())));
+                                        lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la actividad. {0} de la Cabecera <b>. Columna {1}. <b>{2}</b>", act.Orden, h, lstCabecera[h]));
                                     }
                                 }
                                 //validando que sea numero
@@ -1058,7 +1057,8 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                     }
                                     else
                                     {
-                                        lista.Add(string.Format("Debe contener un <b>X</b>. en la fila {0} de la actividad <b>" + lstCabecera[l] + "</b>", string.Join(",", act.Orden.ToString())));
+                                        //lista.Add(string.Format("Debe contener un <b>X</b>. en la fila {0} de la actividad. Columna {0}. <b>" + lstCabecera[l] + "</b>", string.Join(",", act.Orden.ToString()), string.Join(",", l)));
+                                        lista.Add(string.Format("Debe contener un <b>X</b> en la fila {0} de la actividad. Columna {1}. <b>{2}</b>", act.Orden, l, lstCabecera[l]));
                                     }
                                 }
 
@@ -1380,43 +1380,50 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                         lista.Add(string.Format("Debe asignar una actividad en la fila. {0}", string.Join(",", act.Orden.ToString())));
                                     }
 
+                                    /*****************************************************************/
+                                    //El (product[2].ToString().Trim() != "") se pierde al concatenarse la columna B y C del excel
+                                    /*****************************************************************/
 
-                                    if (product[2].ToString().Trim() != "")
+                                    if (EsNumeroEntero(product[3].ToString().Trim()))  //(product[2].ToString().Trim() != "")
                                     {
-                                        if (unidad_organica.Any(x => x.Numero.ToString().Trim() == product[2].ToString().Trim()))
+                                        if (unidad_organica.Any(x => x.Numero.ToString().Trim() == product[3].ToString().Trim()))
                                         {
-                                            act.UnidadOrganicaId = unidad_organica.First(x => x.Numero.ToString().Trim() == product[2].ToString().Trim()).UnidadOrganicaId;
+                                            act.UnidadOrganicaId = unidad_organica.First(x => x.Numero.ToString().Trim() == product[3].ToString().Trim()).UnidadOrganicaId;
                                         }
                                         else
                                         {
-                                            lista.Add(string.Format("No existe la unidad organica {0} ", string.Join(",", "'" + product[2].ToString().Trim() + "'" + "en la fila." + act.Orden.ToString())));
+                                            //lista.Add(string.Format("No existe la unidad organica {0} ", string.Join(",", "'" + product[2].ToString().Trim() + "'" + "en la fila." + act.Orden.ToString())));
+                                            lista.Add(string.Format("No existe la unidad organica {0}. Columna {1}. valor: {2}. Cabecera <b>{3}</b>", act.Orden, 3, product[3].ToString().Trim(), lstCabecera[2]));
                                         }
                                     }
                                     else
                                     {
-                                        lista.Add(string.Format("Debe asignar una unidad organica en la fila. {0}", string.Join(",", act.Orden.ToString())));
+                                        //lista.Add(string.Format("Debe asignar una unidad organica en la fila. {0}", string.Join(",", act.Orden.ToString())));
+                                        lista.Add(string.Format("Debe asignar una unidad organica en la fila {0}. Columna {1}. valor: {2}. Cabecera <b>{3}</b>", act.Orden, 3, product[3].ToString().Trim(), lstCabecera[2]));
                                     }
 
-                                    if (!EsNumeroEntero(product[3].ToString().Trim())) // product[3].ToString().Trim() == "" || product[3].ToString() == "0")
+                                    if (!EsNumeroEntero(product[4].ToString().Trim())) // product[3].ToString().Trim() == "" || product[3].ToString() == "0")
                                     {
-                                        lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la fila. {0} de la Cabecera <b>" + lstCabecera[3] + "</b>", string.Join(",", act.Orden.ToString())));
+                                        //lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la fila. {0} de la Cabecera <b>" + lstCabecera[3] + "</b>", string.Join(",", act.Orden.ToString())));
+                                        lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la fila {0}. Columna {1}. de la Cabecera <b>{2}</b>", act.Orden, 4, lstCabecera[3]));
                                     }
                                     else
                                     {
-                                        act.Duracion = Convert.ToDecimal(product[3].ToString().Trim());
+                                        act.Duracion = Convert.ToDecimal(product[4].ToString().Trim());
                                     }
 
                                     //validando que sea numero 
-                                    for (var h = 4; h <= 23; h++)
+                                    for (var h = 5; h <= 24; h++)
                                     {
                                         if (!EsNumeroEntero(product[h].ToString().Trim()))
                                         {
-                                            lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la actividad. {0} de la Cabecera <b>" + lstCabecera[h] + "</b>", string.Join(",", act.Orden.ToString())));
-
+                                            //lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la actividad. {0} de la Cabecera <b>" + lstCabecera[h] + "</b>", string.Join(",", act.Orden.ToString())));
+                                            lista.Add(string.Format("Debe asignar una duracion mayor a 0 en la actividad. {0} Columna {1}. de la Cabecera <b>{2}</b>", act.Orden, h-1, lstCabecera[h-1]));
                                         }
                                     }
-                                    //validando que sea numero
-                                    for (var l = 24; l <= 45; l++)
+                                    //validando que no sea numero
+                                    //for (var l = 24; l <= 45; l++)
+                                    for (var l = 25; l <= 46; l++)
                                     {
                                         var input = product[l].ToString().Trim();
                                         if (string.IsNullOrEmpty(input) || input.ToLower() == "x")
@@ -1425,30 +1432,32 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                         }
                                         else
                                         {
-                                            lista.Add(string.Format("Debe contener un <b>X</b>. en la fila {0} de la actividad <b>" + lstCabecera[l] + "</b>", string.Join(",", act.Orden.ToString())));
+                                            //lista.Add(string.Format("Debe contener un <b>X</b>. en la fila {0} de la actividad <b>" + lstCabecera[l] + "</b>", string.Join(",", act.Orden.ToString())));
+                                            lista.Add(string.Format("Debe contener un <b>X</b>. en la fila {0} de la actividad. Columna {1}. valor actual: {2}. Cabecera <b>{3}</b>", act.Orden, l-1, product[l].ToString().Trim(), lstCabecera[l-1]));
                                         }
                                     }
 
                                     //validando marcado columna unica tipo actividad
                                     var column = -1;
                                     var activado = false;
-                                    for (var k = 41; k <= 45; k++)
-                                    {
-                                        var input = product[k].ToString().Trim();
+                                    //for (var k = 41; k <= 45; k++)
+                                    for (var k = 42; k <= 46; k++)
+                                        {
+                                            var input = product[k].ToString().Trim();
                                         if (input.ToLower() == "x")
                                         {
                                             if (!activado)
                                             {
-
-
                                                 column = k;
                                                 activado = true;
+                                                //lista.Add(string.Format("TIPO DE ACTIVIDAD, marcado {0}. Columna {1}. valor <b>{2}</b>", act.Orden, k, product[k].ToString().Trim()));
                                             }
                                             else
                                             {
-                                                if (column != k)
+                                                if (column != k )
                                                 {
-                                                    lista.Add(string.Format("Revisar la sección TIPO DE ACTIVIDAD,las actividades deben ser clasificadas solo con un tipo de actividad.", string.Join(",", act.Orden.ToString())));
+                                                    //lista.Add(string.Format("Revisar la sección TIPO DE ACTIVIDAD, las actividades deben ser clasificadas solo con un tipo de actividad.", string.Join(",", act.Orden.ToString())));
+                                                    lista.Add(string.Format("Revisar la sección TIPO DE ACTIVIDAD, las actividades deben ser clasificadas solo con un tipo de actividad {0}. Columna {1}. valor <b>{2}</b>", act.Orden, k--, product[k].ToString().Trim()));
                                                 }
                                             }
                                         }
@@ -1459,7 +1468,8 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                     //validando marcado columna unica tipo valor
                                     column = -1;
                                     activado = false;
-                                    for (var l = 46; l <= 48; l++)
+                                    //for (var l = 46; l <= 48; l++)
+                                    for (var l = 47; l <= 49; l++)
                                     {
                                         var input = product[l].ToString().Trim();
                                         if (input.ToLower() == "x")
@@ -1482,32 +1492,30 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
 
                                     }
 
-
-
+                                    //lista.Add(string.Format("Fila {0}, primera parte sin obervaciones previas {1}", contador, act.Orden));
                                     for (var r = 4; r < lstCabecera.Count() - 8; r++)
                                     {
                                         //if (product[r].ToString().Replace("0", "").Trim() != "")
-                                        string numerodecimal=product[r].ToString().Trim();
+                                        string numerodecimal=product[r+1].ToString().Trim();
                                         decimal result;
                                         bool isValidDecimal = decimal.TryParse(numerodecimal, out result);
-
                                         if (isValidDecimal )
                                         {
                                             ActividadRecurso actrecursos = new ActividadRecurso();
                                             if (tipos_recursos.Any(x => x.Nombre.ToUpper() == lstCabecera[r].ToUpper()))
                                                 actrecursos.RecursoId = tipos_recursos.First(x => x.Nombre.ToUpper().Trim() == lstCabecera[r].ToUpper().Trim()).RecursoId;
-
+                                            
                                             var tiporecurso = tipos_recursos.First(x => x.Nombre.ToUpper().Trim() == lstCabecera[r].ToUpper().Trim()).TipoRecurso;
-
-
+                                            
                                             if (tiporecurso == TipoRecurso.MaterialNoFungible || tiporecurso == TipoRecurso.ServicioTerceros || tiporecurso == TipoRecurso.Depreciacion || tiporecurso == TipoRecurso.Fijos)
                                             {
                                                 actrecursos.Cantidad = Convert.ToDecimal(0);
                                             }
                                             else
                                             {
-                                                actrecursos.Cantidad = Convert.ToDecimal(product[r].ToString().Trim());
+                                                actrecursos.Cantidad = Convert.ToDecimal(product[r+1].ToString().Trim());
                                             }
+                                            
                                             actrecursos.UserCreacion = user.NroDocumento.ToString().Trim();
                                             actrecursos.UserModificacion = user.NroDocumento.ToString().Trim();
                                             actrecursos.FecCreacion = DateTime.Now;
@@ -1518,6 +1526,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
 
                                         IndexTipo = r;
                                     }
+                                    //lista.Add(string.Format("Fila {0}, segunda parte sin obervaciones previas {1}", contador, act.Orden));
 
                                     act.ActividadRecurso = lstactrecursos.Select(x => new ActividadRecurso()
                                     {
@@ -1530,11 +1539,12 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                         FecModificacion = x.FecModificacion
 
                                     }).ToList();
+                                    //lista.Add(string.Format("Fila {0}, TERCERA parte sin obervaciones previas {1}", contador, act.Orden));
 
                                     for (var ar = IndexTipo + 1; ar < lstCabecera.Count() - 3; ar++)
                                     {
-                                        string ver = product[ar].ToString().Trim();
-                                        if (product[ar].ToString().Trim() != "")
+                                        string ver = product[ar+1].ToString().Trim();
+                                        if (product[ar+1].ToString().Trim() != "")
                                         {
                                             if (tipos_act.Any(x => x.Nombre.ToUpper().Trim() == lstCabecera[ar].Replace('ó', 'o').ToUpper().Trim()))
                                                 act.TipoActividad = (TipoActividad)(tipos_act.First(x => x.Nombre.ToUpper().Trim() == lstCabecera[ar].Replace('ó', 'o').ToUpper().Trim()).MetaDatoId);
@@ -1542,11 +1552,12 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                         Indexvalor = ar;
 
                                     }
+                                    //lista.Add(string.Format("Fila {0}, CUARTA parte sin obervaciones previas {1}", contador, act.Orden));
 
                                     for (var valor = Indexvalor + 1; valor < lstCabecera.Count(); valor++)
                                     {
-                                        string ver = product[valor].ToString().Trim();
-                                        if (product[valor].ToString().Trim() != "")
+                                        string ver = product[valor+1].ToString().Trim();
+                                        if (product[valor+1].ToString().Trim() != "")
                                         {
                                             if (tipos_valor.Any(x => x.Nombre.ToUpper().Trim() == lstCabecera[valor].ToUpper().Trim()))
                                                 act.TipoValor = (TipoValor)(tipos_valor.First(x => x.Nombre.ToUpper().Trim() == lstCabecera[valor].ToUpper().Trim()).MetaDatoId);
@@ -1559,6 +1570,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
 
 
                                     lstact.Add(act);
+                                    //lista.Add(string.Format("Fila {0}, QUINTA parte sin obervaciones previas {1}", contador, act.Orden));
 
                                 }
                             }
@@ -1566,7 +1578,6 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                         }
                     }
                 }
-
 
 
                 if (lista.Count() > 0)

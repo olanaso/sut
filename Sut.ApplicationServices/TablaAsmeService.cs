@@ -151,7 +151,7 @@ namespace Sut.ApplicationServices
 
                 var data = query.Where(x => x.Procedimiento.Codigo.ToUpper().Contains((string.IsNullOrEmpty(filtro.Procedimiento.Codigo) ? x.Procedimiento.Codigo : filtro.Procedimiento.Codigo).ToUpper())
                                             && x.Procedimiento.Denominacion.ToUpper().Contains((string.IsNullOrEmpty(filtro.Procedimiento.Denominacion) ? x.Procedimiento.Denominacion : filtro.Procedimiento.Denominacion).ToUpper()))
-                            .OrderBy(x => x.Procedimiento.Numero);
+                            .OrderBy(x => x.Procedimiento.UndOrgResponsable.Nombre);
 
                 totalRows = data.Count();
                 var result = data.Skip((pageIndex - 1) * pageSize)

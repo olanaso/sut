@@ -644,11 +644,11 @@ namespace Sut.ApplicationServices
 
                 if (filtro.FiltroTipoProcedimiento > 0)
                 {
-                    if (filtro.FiltroTipoProcedimiento == 4)
+                    if (filtro.FiltroTipoProcedimiento == 6)
                     {
                         data = data.Where(x => x.CodigoACR != "0");
                     }
-                    else if (filtro.FiltroTipoProcedimiento == 5)
+                    else if (filtro.FiltroTipoProcedimiento == 7)
                     {
                         data = data.Where(x => x.CodigoACR == "0");
                     }
