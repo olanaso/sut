@@ -3311,7 +3311,7 @@
                         </SortExpression>
                       </SortExpressions>
                       <TablixHeader>
-                        <Size>11.1085cm</Size>
+                        <Size>14.13614cm</Size>
                         <CellContents>
                           <Textbox Name="Descripcion">
                             <CanGrow>true</CanGrow>
@@ -3377,7 +3377,7 @@
                             </SortExpression>
                           </SortExpressions>
                           <TablixHeader>
-                            <Size>18.13438cm</Size>
+                            <Size>7.28532cm</Size>
                             <CellContents>
                               <Textbox Name="UnidadOrganica1">
                                 <CanGrow>true</CanGrow>
@@ -3492,7 +3492,7 @@
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
-                    <Size>30.18184cm</Size>
+                    <Size>22.36042cm</Size>
                     <CellContents>
                       <Textbox Name="Textbox70">
                         <CanGrow>true</CanGrow>
@@ -3601,7 +3601,7 @@
             <DataSetName>dsDataASME</DataSetName>
             <Top>5.26203cm</Top>
             <Height>6.43104cm</Height>
-            <Width>38.98892cm</Width>
+            <Width>31.1675cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>

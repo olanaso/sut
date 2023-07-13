@@ -54,9 +54,15 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
         {
 
             /*Inicio Cargar roles - Acceso*/
-            List<RolMenu> listarolmenu = _rolMenuService.GetByRolMenuid(Convert.ToInt32(user.Rol), 27);
-            user.rolmenu = listarolmenu.ToList();
+            //List<RolMenu> listarolmenu = _rolMenuService.GetByRolMenuid(Convert.ToInt32(user.Rol), 27);
+            //user.rolmenu = listarolmenu.ToList();
             /*Fin Cargar roles  - Acceso*/
+            /***** Inicio ACTIVAR DERECHO DE TRAMITE ****/
+            List<RolMenu> listarolmenu = new List<RolMenu>();
+            listarolmenu.AddRange(_rolMenuService.GetByRolMenuid(Convert.ToInt32(user.Rol), 27));
+            listarolmenu.AddRange(_rolMenuService.GetByRolMenuid(Convert.ToInt32(user.Rol), 58));
+            user.rolmenu = listarolmenu;
+            /***** FIN ACTIVAR DERECHO DE TRAMITE ****/
 
             ViewBag.Usuario = user;
             Expediente model = _expedienteService.GetOne(id);
@@ -151,6 +157,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
 
                         TablaAsmeId = x.TablaAsmeId,
                         Codigo = x.Codigo,
+                        UndOrganicaResponsableNombre = x.Procedimiento.UndOrgResponsable.Nombre,
                         Descripcion = string.Format("{0} {1}", x.Procedimiento.Denominacion,
                                 x.Descripcion != "-" || string.IsNullOrEmpty(x.Descripcion) ? "- " + x.Descripcion : ""),
                         Prestaciones = x.Prestaciones,

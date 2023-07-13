@@ -235,7 +235,8 @@
                         <tr>
                             <th>#</th>
                             @*<th>Código</th>*@
-                            <th style="width: 50%;">Denominación</th>
+                            <th style="width: 20%;">Und. Organica Responsable</th>
+                            <th style="width: 80%;">Denominación</th>
                             <th rowspan="2">Cant. de Prest. Anuales</th>
                             <th colspan="7">Costos Unitarios por Prestación (S/)</th>
                             <th rowspan="2">Costo Unitario</th>
@@ -336,7 +337,8 @@
             }
 
             #tblResumen tbody tr td:nth-child(2),
-            #tblResumen tbody tr td:nth-child(3) {
+            #tblResumen tbody tr td:nth-child(3),
+            #tblResumen tbody tr td:nth-child(4) {
                 text-align: left !important;
             }
 
@@ -618,6 +620,8 @@
                     rows += sut.string.format('<td>{0}</td>', ++numero);
                     //rows += sut.string.format('<td><input id="Codigo{2}" type="hidden" value="{1}" />{0}</td>', r.Codigo, r.TablaAsmeId, i);
                     rows += sut.string.format('<input id="Codigo{2}" name="[{2}].TablaAsmeId"  type="hidden" name="[{0}].Codigo"  value="{1}" />', r.Codigo, r.TablaAsmeId, i);
+                    /** JJJMSP3 INI: UndOrganicaResponsable **/
+                    rows += sut.string.format('<td><input id="UndOrganicaResponsable{1}" name="[{0}].UndOrganicaResponsable" type="hidden" value="{0}" />{0}</td>', r.UndOrganicaResponsableNombre, i);
                     rows += sut.string.format('<td><input id="Descripcion{1}" name="[{0}].Descripcion" type="hidden" value="{0}" />{0}</td>', r.Descripcion, i);
                     rows += sut.string.format('<td><input id="Prestaciones{1}" type="hidden" value="{0}" />{0}</td>', r.Prestaciones, i);
                     rows += sut.string.format('<td><input id="Personal{1}" type="hidden" value="{0}" />{0}</td>', sut.format.decimal(r.Personal), i);
@@ -658,8 +662,14 @@
                         {
                             rows += sut.string.format('<td><input id="DerechoTramitacion{0}"  name="[{0}].DerechoTramitacion" type="number" class="form-control no-spinners" value="{1}" {2} /> </td>', i, sut.format.decimalEspecialdos(sut.format.decimalEspecialTrunc(r.DerechoTramitacion)), r.EsSubvencion ? '' : 'readonly');
                             rows += '<td><span style="display:none" class="label label-danger"><i class="fa fa-pencil-square-o"></i><span></td>';
-                            rows += sut.string.format('<td><input class="btn_guardar_derch_tramitacion" id="Check{0}" name="[{0}].Check" type="checkbox" {1} /><input name="[{0}].EsSubvencion" type="hidden" value="{2}" disabled/></td>', i, r.EsSubvencion ? 'checked' : '', r.EsSubvencion);
-
+                            //rows += sut.string.format('<td><input class="btn_guardar_derch_tramitacion" id="Check{0}" name="[{0}].Check" type="checkbox" {1} /><input name="[{0}].EsSubvencion" type="hidden" value="{2}" disabled/></td>', i, r.EsSubvencion ? 'checked' : '', r.EsSubvencion);
+                            /** JJJMSP3 INI: rolmenu[1]=58**/
+                            if ("@user.rolmenu[1].Ver" == "True") {
+                                rows += sut.string.format('<td><input class="btn_guardar_derch_tramitacion" id="Check{0}" name="[{0}].Check" type="checkbox" {1} /><input name="[{0}].EsSubvencion" type="hidden" value="{2}" disabled/></td>', i, r.EsSubvencion ? 'checked' : '', r.EsSubvencion);
+                            }
+                            else {
+                                rows += sut.string.format('<td><input class="btn_guardar_derch_tramitacion" id="Check{0}" name="[{0}].Check" type="checkbox" {1} disabled /><input name="[{0}].EsSubvencion" type="hidden" value="{2}" disabled/></td>', i, r.EsSubvencion ? 'checked' : '', r.EsSubvencion);
+                            }/** JJJMSP3 FIN**/
                         }
                     }
 

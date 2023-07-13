@@ -4308,6 +4308,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
             Filtros model = new Filtros();
             try
             {
+                //model.TipoProcedimiento = filtros.TipoProcedimiento;
                 model.Clasificacion = filtros.Clasificacion;
                 model.Prestacionesanuales = filtros.Prestacionesanuales;
                 model.PrestacionesCosto = filtros.PrestacionesCosto;

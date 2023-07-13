@@ -2210,6 +2210,7 @@ namespace Sut.Web.Areas.General.Controllers
                     dr["TablaAsmeId"] = data[i].TablaAsmeId;
                     dr["ProcedimientoId"] = data[i].ProcedimientoId;
                     dr["CodProcedimiento"] = data[i].Procedimiento.CodigoCorto;
+                    dr["UnidadOrganicaResponsable"] = data[i].Procedimiento.UndOrgResponsable.Nombre;
                     dr["NomProcedimiento"] = data[i].Procedimiento.Denominacion + " - " + data[i].Descripcion;
                     dr["Prestaciones"] = data[i].Prestaciones;
                     dr["Personal"] = data[i].Personal;
@@ -30070,8 +30071,9 @@ namespace Sut.Web.Areas.General.Controllers
 
                 cuadro.Add("Resumen", new Dictionary<string, CuadroCalculo>());
 
-                sheet.Table.Columns.Add(new WorksheetColumn() { Width = 90 });
                 sheet.Table.Columns.Add(new WorksheetColumn() { Width = 60 });
+                sheet.Table.Columns.Add(new WorksheetColumn() { Width = 90 });
+                sheet.Table.Columns.Add(new WorksheetColumn() { Width = 120 });
                 sheet.Table.Columns.Add(new WorksheetColumn() { Width = 400 });
                 sheet.Table.Columns.Add(new WorksheetColumn() { Width = 96 });
                 sheet.Table.Columns.Add(new WorksheetColumn() { Width = 80 });
@@ -30090,20 +30092,21 @@ namespace Sut.Web.Areas.General.Controllers
                 row = sheet.Table.Rows.Add();
                 row = sheet.Table.Rows.Add();
                 row = sheet.Table.Rows.Add();
-                row.Cells.Add(new WorksheetCell("Cod. TABLAASME", "Cabecera_Celeste") { MergeDown = 1 });
-                row.Cells.Add(new WorksheetCell("Cod.", "Cabecera_Celeste") { MergeDown = 1 });
+                row.Cells.Add(new WorksheetCell("COD. TABLAASME", "Cabecera_Celeste") { MergeDown = 1 });
+                row.Cells.Add(new WorksheetCell("COD.", "Cabecera_Celeste") { MergeDown = 1 });
+                row.Cells.Add(new WorksheetCell("UND. ORGANICA RESPONSABLE", "Cabecera_Celeste") { MergeDown = 1 });
                 row.Cells.Add(new WorksheetCell("PROCEDIMIENTO ADMINISTRATIVO", "Cabecera_Celeste") { MergeDown = 1 });
                 row.Cells.Add(new WorksheetCell("CANT. DE PRESTACIONES ANUALES", "Cabecera_Celeste") { MergeDown = 1 });
                 row.Cells.Add(new WorksheetCell("COSTOS UNITARIOS POR PRESTACION (S/)", "Cabecera_Celeste") { MergeAcross = 6 });
                 row.Cells.Add(new WorksheetCell("COSTO UNITARIO", "Cabecera_Celeste") { MergeDown = 1 });
                 row = sheet.Table.Rows.Add();
-                row.Cells.Add(new WorksheetCell("PERSONAL", "Cabecera_Celeste") { Index = 5 });
-                row.Cells.Add(new WorksheetCell("MATERIAL FUNGIBLE", "Cabecera_Celeste") { Index = 6 });
-                row.Cells.Add(new WorksheetCell("SERVICIOS IDENTIFICABLES", "Cabecera_Celeste") { Index = 7 });
-                row.Cells.Add(new WorksheetCell("MATERIAL NO FUNGIBLE", "Cabecera_Celeste") { Index = 8 });
-                row.Cells.Add(new WorksheetCell("SERVICIO DE TERCEROS", "Cabecera_Celeste") { Index = 9 });
-                row.Cells.Add(new WorksheetCell("DEPRECIACION Y AMORTIZACION", "Cabecera_Celeste") { Index = 10 });
-                row.Cells.Add(new WorksheetCell("FIJOS", "Cabecera_Celeste") { Index = 11 });
+                row.Cells.Add(new WorksheetCell("PERSONAL", "Cabecera_Celeste") { Index = 6 });
+                row.Cells.Add(new WorksheetCell("MATERIAL FUNGIBLE", "Cabecera_Celeste") { Index = 7 });
+                row.Cells.Add(new WorksheetCell("SERVICIOS IDENTIFICABLES", "Cabecera_Celeste") { Index = 8 });
+                row.Cells.Add(new WorksheetCell("MATERIAL NO FUNGIBLE", "Cabecera_Celeste") { Index = 9 });
+                row.Cells.Add(new WorksheetCell("SERVICIO DE TERCEROS", "Cabecera_Celeste") { Index = 10 });
+                row.Cells.Add(new WorksheetCell("DEPRECIACION Y AMORTIZACION", "Cabecera_Celeste") { Index = 11 });
+                row.Cells.Add(new WorksheetCell("FIJOS", "Cabecera_Celeste") { Index = 12 });
 
                 //ABC_TA_RESUMENList listaResumen = RuleResumen.Listar(id_entidad, id_archivo);
                 //foreach (ABC_TA_RESUMEN rec in listaResumen)
@@ -30114,6 +30117,7 @@ namespace Sut.Web.Areas.General.Controllers
                     row = sheet.Table.Rows.Add();
                     row.Cells.Add(new WorksheetCell(rec.TablaAsmeId.ToString(), "Default_Font8_Borde"));
                     row.Cells.Add(new WorksheetCell(rec.Procedimiento.CodigoCorto.ToString() + "-" + rec.TablaAsmeId.ToString(), "Default_Font8_Borde"));
+                    row.Cells.Add(new WorksheetCell(rec.Procedimiento.UndOrgResponsable.Nombre.ToString(), "Default_Font8_Borde"));
                     row.Cells.Add(new WorksheetCell(rec.Procedimiento.Denominacion, "Default_Font8_Borde"));
                     row.Cells.Add(new WorksheetCell(rec.Prestaciones.ToString(), DataType.Number, "Default_Font10_Borde"));
 

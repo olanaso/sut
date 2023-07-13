@@ -213,15 +213,17 @@ namespace Sut.Repositories
 
                 var listo = ctx.TablaAsme
                         .Include(x => x.Procedimiento)
+                        .Include(x => x.Procedimiento.UndOrgResponsable)
                         .Where(x => x.Procedimiento.ExpedienteId == ExpedienteId
                             && x.Procedimiento.Operacion != OperacionExpediente.Eliminacion && x.Procedimiento.Estado != 3)
-                            .OrderBy(x => x.Procedimiento.Codigo);
+                            .OrderBy(x => x.Procedimiento.UndOrgResponsable.Nombre);
 
                 return ctx.TablaAsme
                         .Include(x => x.Procedimiento)
+                        .Include(x => x.Procedimiento.UndOrgResponsable)
                         .Where(x => x.Procedimiento.ExpedienteId == ExpedienteId
                             && x.Procedimiento.Operacion != OperacionExpediente.Eliminacion && x.Procedimiento.Estado != 3)
-                            .OrderBy(x=>x.Procedimiento.Codigo)
+                            .OrderBy(x=> x.Procedimiento.UndOrgResponsable.Nombre)
                         .ToList();
             }
             catch (Exception ex)
