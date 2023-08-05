@@ -11,87 +11,217 @@
 
 }
 
-
-<div class="box box-danger">
-    <div class="box-header with-border">
-        <h3 class="box-title"> <i class="fa fa-fw fa-filter"></i>   Filtros <i class="fa fa-fw fa-info-circle" data-toggle="tooltip" title="El filtro permite al usuario seleccionar valores específicos para una o varias columnas y filtrar los datos en consecuencia"></i>:  </h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
-        </div>
-    </div>
-
-    <div class="box-body">
-
-        <div class="col-sm-12 col-xs-12">
-
-
-
-            <div class="col-sm-2 col-xs-3">
-                <label class="labelFilter">Tipo: </label>
-                <i class="fa fa-fw fa-info-circle" data-toggle="tooltip" title="Lista de las Entidades del Estado como: Municipalidades, Gobiernos Regionales, Ministerio y otros.">
-                </i>
-                @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.publicarEstadoTipo as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
-            </div>
-
-            <div class="col-sm-2 col-xs-3">
-                <label>Estado:<i class="fa fa-fw fa-info-circle" data-toggle="tooltip" title="Lista de las Entidades del Estado como: Municipalidades, Gobiernos Regionales, Ministerio y otros."></i> </label>
-                @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.publicarEstado as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
-            </div>
-
-            <div class="col-sm-2 col-xs-3">
-                <label>Entidad <i class="fa fa-fw fa-info-circle" data-toggle="tooltip" title="Lista de las Entidades del Estado como: Municipalidades, Gobiernos Regionales, Ministerio y otros."></i> </label>
-                @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.ListaEntidades as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
-            </div>
-            <div class="col-sm-2 col-xs-3">
-                <label>Gobierno </label>
-                @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.ListaGobierno as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
-            </div>
-            <div class="col-sm-2 col-xs-3">
-                <label>Sector </label>
-                @Html.DropDownListFor(model => model.SectorId, ViewBag.ListaSector as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
+<div class="col-sm-12 col-xs-12">
+    <div class="box box-danger">
+        <div class="box-header with-border">
+            <h3 class="box-title"> <i class="fa fa-fw fa-filter"></i>   Filtros <i class="fa fa-fw fa-info-circle" data-toggle="tooltip" title="El filtro permite al usuario seleccionar valores específicos para una o varias columnas y filtrar los datos en consecuencia"></i>:  </h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
             </div>
         </div>
 
-        <div class="col-sm-12 col-xs-12">
-            <div class="col-sm-2 col-xs-3">
-                <label>Región:  </label>
-                @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.ListaDepartamento as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
-            </div>
-            <div class="col-sm-2 col-xs-3">
-                <label>Provincia:  </label>
-                @Html.DropDownListFor(model => model.SectorId, ViewBag.ListaProvincia as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%" })
+        <div class="box-body">
+
+
+
+            <div class="col-sm-12 col-xs-12" id="filter">
+                <div class="col-sm-2 col-xs-3">
+                    <label>Región: <span id="lblRegion" style="color:blueviolet"></span> </label>
+                    @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.ListaDepartamento as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%", id = "drpregion" })
+                </div>
+                <div class="col-sm-2 col-xs-3">
+                    <label>Provincia: <span id="lblProvincia" style="color:blueviolet"></span> </label>
+                    @Html.DropDownListFor(model => model.ProvinciaId, ViewBag.ListaProvincia as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%", id = "drpprovincia" })
+                </div>
+
+                <div class="col-sm-4 col-xs-4">
+                    <label>Nivel de Gobierno:  <span id="lblGobierno" style="color:blueviolet"></span> </label>
+                    @Html.DropDownListFor(model => model.NivelGobiernoId, ViewBag.ListaGobierno as List<SelectListItem>, new { @class = "form-control selectfilter", @style = "width: 100%", id = "drpnivelgobierno" })
+                </div>
+
             </div>
 
-            <div class="col-sm-2 col-xs-3">
-                <label>Fecha Inicio: </label>
-                @Html.TextBoxFor(model => model.Descripcion, "{0:yyyy-MM-dd}", new { @class = "form-control input-sm selectfilter", @type = "date", @id = "fechainicio" })
+            <div class="col-sm-12 col-xs-12" id="filterf"  style="display: none">
+                <div class="col-sm-2 col-xs-3">
+                    <label>Región: </label>
+                    <select class="form-control " id="drpregionf" style="width: 100%">
+
+                        <option value="0">SELECCIONADO</option>
+                    </select>
+                </div>
+                <div class="col-sm-2 col-xs-3">
+                    <label>Provincia: </label>
+                    <select class="form-control " id="drpprovinciaf" style="width: 100%">
+                        <option value="0">SELECCIONADO</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-2 col-xs-3">
+                    <label>Nivel de Gobierno: </label>
+                    <select class="form-control " id="drpnivelgobiernof" style="width: 100%">
+
+                        <option value="0">SELECCIONADO</option>
+                    </select>
+                </div>
+
             </div>
 
-            <div class="col-sm-2 col-xs-3">
-                <label>Fecha Fin </label>
-                @Html.TextBoxFor(model => model.Descripcion, "{0:yyyy-MM-dd}", new { @class = "form-control input-sm selectfilter", @type = "date", @id = "fechafin" })
+
+            <div class="col-sm-12 col-xs-12">
+                <div class="col-sm-1 col-xs-3">
+                    <br />
+
+                    <button id="btnfiltrar" type="button" class="btn btn-block btn-danger btn-lg"> Filtrar</button>
+
+
+                </div>
             </div>
+
+
+
 
         </div>
 
-
-        <div class="col-sm-12 col-xs-12">
-            <div class="col-sm-1 col-xs-3">
-                <br />
-
-                <button type="button" class="btn btn-block btn-danger btn-lg"> Filtrar</button>
-
-            </div>
+        <div class="box-footer">
+            Elige un filtro para poder genenerar las graficas
         </div>
-
-
-
-
-    </div>
-
-    <div class="box-footer">
-        Elige un filtro para poder genenerar las graficas
     </div>
 </div>
+<script>
+    const drpregion = document.getElementById('drpregion');
+    const drpprovincia = document.getElementById('drpprovincia');
+    const drpnivelgobierno = document.getElementById('drpnivelgobierno');
+    const drpregionf = document.getElementById('drpregionf');
+    const drpprovinciaf = document.getElementById('drpprovinciaf');
+    const drpnivelgobiernof = document.getElementById('drpnivelgobiernof');
+    const btnFiltrar = document.getElementById('btnfiltrar');
+
+    //drpregionf.addEventListener('click', function (e) {
+       
+    //    document.getElementById('filter').style.display = 'inline'
+    //    document.getElementById('filterf').style.display = 'none'
+    //})
+    //drpprovinciaf.addEventListener('click', function (e) {
+    //    document.getElementById('filter').style.display = 'inline'
+    //    document.getElementById('filterf').style.display = 'none'
+    //})
+    //drpnivelgobiernof.addEventListener('click', function (e) {
+    //    document.getElementById('filter').style.display = 'inline'
+    //    document.getElementById('filterf').style.display = 'none'
+    //})
+
+
+    //pone los datos 
+    const currentURL = window.location.href;
+    var { region, provincia, nivelgob } = obtenerParametrosURL(currentURL);
+    
+    document.getElementById('lblRegion').textContent = region;
+    document.getElementById('lblProvincia').textContent = provincia;
+    document.getElementById('lblGobierno').textContent = nivelgob;
+
+    drpregionf.options[drpregionf.selectedIndex].text = region
+    drpprovinciaf.options[drpprovinciaf.selectedIndex].text = provincia
+    drpnivelgobiernof.options[drpnivelgobiernof.selectedIndex].text = nivelgob
+
+
+
+
+    // Add event listener for 'change' event
+    drpregion.addEventListener('change', function (e) {
+        // Get the selected value
+        const selectedValue = e.target.value;
+
+
+       // eventoParametro()
+
+
+        // Display the selected value using an alert
+        let drpProvincia = document.getElementById("drpprovincia");
+        let opcion = null;
+        fetch(`ListarProvincia?departamentoId=${selectedValue}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle the data returned from the server
+            
+                drpProvincia.innerHTML = "";
+                opcion = document.createElement("option");
+                opcion.value = 0;
+                opcion.text = 'TODOS';
+                drpProvincia.appendChild(opcion);
+                for (let i = 0; i < data.length; i++) {
+                    opcion = document.createElement("option");
+                    opcion.value = data[i].ProvinciaId;
+                    opcion.text = data[i].Nombre;
+                    drpProvincia.appendChild(opcion);
+                }
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle any errors that occurred during the fetch
+                console.error('Fetch error:', error);
+            });
+
+
+    });
+
+    btnFiltrar.addEventListener('click', function (e) {
+        eventoParametro()
+    })
+
+    function eventoParametro() {
+        const selectedTextRegion = drpregion.options[drpregion.selectedIndex].text;
+        const selectedTextProvincia = drpprovincia.options[drpprovincia.selectedIndex].text;
+        const selectedTextNivelgobierno = drpnivelgobierno.options[drpnivelgobierno.selectedIndex].text;
+        agregarParametrosALaURL(selectedTextRegion, selectedTextProvincia, selectedTextNivelgobierno)
+    }
+
+
+    function agregarParametrosALaURL(region,provincia,nivelgob) {
+        // Obtener la URL actual
+        const currentURL = window.location.href;
+
+        // Crear un objeto URL
+        const urlObject = new URL(currentURL);
+
+        // Agregar parámetros al objeto URL
+        urlObject.searchParams.set('region', region);
+        urlObject.searchParams.set('provincia', provincia);
+        urlObject.searchParams.set('nivelgob', nivelgob);
+
+        // Obtener la URL actualizada
+        const updatedURL = urlObject.href;
+
+        // Redireccionar a la URL actualizada (opcional)
+        window.location.href = updatedURL;
+    }
+
+    function obtenerParametrosURL(url) {
+        const urlObj = new URL(url);
+        const parametros = urlObj.searchParams;
+        const parametrosObj = {};
+
+        // Recorre los parámetros y los agrega al objeto parametrosObj
+        for (const [clave, valor] of parametros.entries()) {
+            if (!parametrosObj.hasOwnProperty(clave)) {
+                parametrosObj[clave] = valor;
+            } else {
+                // Si el parámetro ya existe, lo convierte en un array y agrega el valor actual
+                if (!Array.isArray(parametrosObj[clave])) {
+                    parametrosObj[clave] = [parametrosObj[clave]];
+                }
+                parametrosObj[clave].push(valor);
+            }
+        }
+
+        return parametrosObj;
+    }
+
+
+</script>
 

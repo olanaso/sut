@@ -44,5 +44,53 @@ namespace Sut.ApplicationServices
                 throw ex;
             }
         }
+
+        public Dashboard RegistrarVideo(Dashboard dashboard)
+        {
+            try
+            {
+                return _DashboardRepository.RegistrarVideo(dashboard);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public Dashboard ListarVideo(Dashboard dashboard)
+        {
+            try
+            {
+                return _DashboardRepository.ListarVideo(dashboard);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public Dashboard EditarVideo(Dashboard dashboard)
+        {
+            try
+            {
+                return _DashboardRepository.EditarVideo(dashboard);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public Dashboard EliminarVideo(Dashboard dashboard)
+        {
+            try
+            {
+                return _DashboardRepository.EliminarVideo(dashboard);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

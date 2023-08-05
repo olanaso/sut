@@ -6,7 +6,7 @@
 
 
     ViewBag.Icon = "fa fa-bar-chart";
-    ViewBag.Title = "Dashboard ";
+    ViewBag.Title = "Administrador de videos ";
     ViewBag.Descripcion = "";
 
 }
@@ -24,21 +24,33 @@
 
 
 
-@Html.Partial("_Totales")
+
+@Html.Partial("_Filtros")
 <div class="row">
+    <div class="col-sm-12">
+        <h2 class="page-header">Filtros</h2>
+    </div>
+    <div class="col-sm-12">
+      
+
+            @Html.Partial("_Totales")
+       
+    </div>
+
     <div class="col-sm-12">
         <h2 class="page-header">Expedientes</h2>
     </div>
     <div class="col-sm-12">
         <div class="row">
             @Html.Partial("_Tabla1")
-            @Html.Partial("_Grafico1")
+
+            @Html.Partial("_Grafico3")
         </div>
     </div>
     <div class="col-sm-12">
         <div class="row">
 
-            @Html.Partial("_Grafico3")
+            @Html.Partial("_Grafico1")
             @Html.Partial("_Grafico4")
             @Html.Partial("_Tabla3")
 
@@ -68,6 +80,16 @@
         </div>
     </div>
 
+    <div class="col-sm-12">
+        <h2 class="page-header">Mapa</h2>
+    </div>
+    <div class="col-sm-12">
+        <div class="row">
+            @Html.Partial("_Mapa")
+
+        </div>
+    </div>
+
 
 </div>
 
@@ -80,8 +102,8 @@
                 </button>
                 <h4 class="modal-title">Cargando ...</h4>
             </div>
-           
-           
+
+
         </div>
 
     </div>
@@ -89,77 +111,82 @@
 </div>
 
 
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/series-label.js"></script>
-        <script src="https://code.highcharts.com/modules/exporting.js"></script>
-        <script src="https://code.highcharts.com/modules/export-data.js"></script>
-        <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-        <script src="https://adminlte.io/themes/AdminLTE/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://adminlte.io/themes/AdminLTE/bower_components/jquery/dist/jquery.min.js"></script>
 
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-        <script type="text/javascript" src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-        <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-        <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
-        <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
-        <script src="https://adminlte.io/themes/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
 
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
+<script src="https://adminlte.io/themes/AdminLTE/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 
 
 
-        @section Style {
-            <style type="text/css">
-                table thead tr th {
-                    text-align: center;
-                    vertical-align: middle !important;
-                }
 
-                table td {
-                    vertical-align: middle !important;
-                }
 
-                table tfoot .pagination {
-                    margin: 5px 0px;
-                }
-
-                fieldset.scheduler-border {
-                    border: 1px groove #ddd !important;
-                    padding: 0 1.4em 0 1.4em !important;
-                    margin: 0 0 1.5em 0 !important;
-                    -webkit-box-shadow: 0px 0px 0px 0px #000;
-                    box-shadow: 0px 0px 0px 0px #000;
-                }
-
-                .scheduler-border legend {
-                    font-size: 1.2em !important;
-                    font-weight: bold !important;
-                    text-align: left !important;
-                    width: auto !important;
-                    margin-bottom: 0px !important;
-                    padding: 0px !important;
-                    border-bottom: none;
-                }
-
-                .selectfilter {
-                    border-radius: 0px !important;
-                }
-            </style>
+@section Style {
+    <style type="text/css">
+        table thead tr th {
+            text-align: center;
+            vertical-align: middle !important;
         }
 
-        @*Importando a los scripts para la implementacion del dashboard*@
-        <script src="~/Scripts/Areas/Simplificacion/Dashboard/Dashboard.js"></script>
-        <script src="~/Scripts/Areas/Simplificacion/Dashboard/Grafico1.js"></script>
-        <script src="~/Scripts/Areas/Simplificacion/Dashboard/Grafico2.js"></script>
-        <script src="~/Scripts/Areas/Simplificacion/Dashboard/Grafico3.js"></script>
-        <script src="~/Scripts/Areas/Simplificacion/Dashboard/Grafico4.js"></script>
-        <script src="~/Scripts/Areas/Simplificacion/Dashboard/Grafico5.js"></script>
-        <script src="~/Scripts/Areas/Simplificacion/Dashboard/Pie1.js"></script>
-        <script src="~/Scripts/Areas/Simplificacion/Dashboard/Tabla1.js"></script>
-        <script src="~/Scripts/Areas/Simplificacion/Dashboard/Tabla2.js"></script>
-        <script src="~/Scripts/Areas/Simplificacion/Dashboard/Tabla3.js"></script>
-        <script src="~/Scripts/Areas/Simplificacion/Dashboard/Tabla4.js"></script>
+        table td {
+            vertical-align: middle !important;
+        }
+
+        table tfoot .pagination {
+            margin: 5px 0px;
+        }
+
+        fieldset.scheduler-border {
+            border: 1px groove #ddd !important;
+            padding: 0 1.4em 0 1.4em !important;
+            margin: 0 0 1.5em 0 !important;
+            -webkit-box-shadow: 0px 0px 0px 0px #000;
+            box-shadow: 0px 0px 0px 0px #000;
+        }
+
+        .scheduler-border legend {
+            font-size: 1.2em !important;
+            font-weight: bold !important;
+            text-align: left !important;
+            width: auto !important;
+            margin-bottom: 0px !important;
+            padding: 0px !important;
+            border-bottom: none;
+        }
+
+        .selectfilter {
+            border-radius: 0px !important;
+        }
+    </style>
+}
+
+@*Importando a los scripts para la implementacion del dashboard*@
+<script src="~/Scripts/Areas/Simplificacion/Dashboard/Dashboard.js"></script>
+<script src="~/Scripts/Areas/Simplificacion/Dashboard/Grafico1.js"></script>
+<script src="~/Scripts/Areas/Simplificacion/Dashboard/Grafico2.js"></script>
+<script src="~/Scripts/Areas/Simplificacion/Dashboard/Grafico3.js"></script>
+<script src="~/Scripts/Areas/Simplificacion/Dashboard/Grafico4.js"></script>
+<script src="~/Scripts/Areas/Simplificacion/Dashboard/Grafico5.js"></script>
+<script src="~/Scripts/Areas/Simplificacion/Dashboard/Pie1.js"></script>
+<script src="~/Scripts/Areas/Simplificacion/Dashboard/Tabla1.js"></script>
+<script src="~/Scripts/Areas/Simplificacion/Dashboard/Tabla2.js"></script>
+<script src="~/Scripts/Areas/Simplificacion/Dashboard/Tabla3.js"></script>
+<script src="~/Scripts/Areas/Simplificacion/Dashboard/Tabla4.js"></script>
+<script src="~/Scripts/Areas/Simplificacion/Dashboard/Mapa.js"></script>
 
 

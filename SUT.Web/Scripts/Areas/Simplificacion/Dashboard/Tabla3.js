@@ -48,8 +48,11 @@ let miTabla =$('#tabla3').DataTable({
 })
 
 
+//const currentURL = window.location.href;
+//var { region, provincia, nivelgob } = obtenerParametrosURL(currentURL);
+
 $.ajax({
-    url: 'ObtenerDatosJson?iopsp=7',
+    url: `ObtenerDatosJson?iopsp=7&parameter1=${region}&parameter2=${provincia}&parameter3=${nivelgob}`,
     type: 'GET',
     success: function (response) {
         // Hacer algo con la respuesta

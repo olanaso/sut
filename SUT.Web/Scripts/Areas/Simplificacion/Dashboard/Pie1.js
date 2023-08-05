@@ -1,6 +1,9 @@
 ﻿
+//const currentURL = window.location.href;
+//var { region, provincia, nivelgob } = obtenerParametrosURL(currentURL);
+
 $.ajax({
-    url: 'ObtenerDatosJson?iopsp=8',
+    url: `ObtenerDatosJson?iopsp=8&parameter1=${region}&parameter2=${provincia}&parameter3=${nivelgob}`,
     type: 'GET',
     success: function (response) {
         // Hacer algo con la respuesta
@@ -60,7 +63,8 @@ function crearPie1(result) {
 
 
 $.ajax({
-    url: 'ObtenerDatosJson?iopsp=9',
+    url: `ObtenerDatosJson?iopsp=9&parameter1=${region}&parameter2=${provincia}&parameter3=${nivelgob}`,
+
     type: 'GET',
     success: function (response) {
         // Hacer algo con la respuesta

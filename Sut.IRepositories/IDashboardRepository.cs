@@ -13,6 +13,11 @@ namespace Sut.IRepositories
         
         Dashboard getDashboard(Dashboard dashboard);
         Dashboard getDashboardCalendario(Dashboard dashboard);
+        Dashboard RegistrarVideo(Dashboard dashboard);
+        Dashboard ListarVideo(Dashboard dashboard);
+        Dashboard EditarVideo(Dashboard dashboard);
+        Dashboard EliminarVideo(Dashboard dashboard);
+
 
     }
 }

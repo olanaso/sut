@@ -10,9 +10,9 @@ using System.Web.Mvc;
 namespace Sut.Web.Areas.Simplificacion.Controllers
 {
     [Authorize]
-    public class DashboardController : Controller
+    public class VideoController : Controller
     {
-        private readonly ILogService<DashboardController> _log;
+        private readonly ILogService<VideoController> _log;
         private readonly IExpedienteService _expedienteService;
         private readonly ITupaService _tupaService;
         private readonly IExpedienteNormaService _expedienteNormaService;
@@ -37,13 +37,12 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
         private readonly IUsuarioService _usuarioService;
         private readonly IReporteService reporteService;
         private readonly IDepartamentoService _departamentoService;
-        private readonly IProvinciaService _provinciaService;
 
         private readonly IDashboardService _dashboardService;
 
         Dashboard objdashboard = new Dashboard();
 
-        public DashboardController(IExpedienteService expedienteService,
+        public VideoController(IExpedienteService expedienteService,
                                     ITupaService tupaService,
                                     IExpedienteNormaService expedienteNormaService,
                                     IMetaDatoService metaDatoService,
@@ -63,12 +62,11 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                                     IInformeService informeService,
                                     IInformeDocumentosService informeDocumentosService,
                                      IDepartamentoService departamentoService,
-                                       IProvinciaService provinciaService,
                                      IDashboardService dashboardService
 
             )
         {
-            _log = new LogService<DashboardController>();
+            _log = new LogService<VideoController>();
             _expedienteService = expedienteService;
             _tupaService = tupaService;
             _expedienteNormaService = expedienteNormaService;
@@ -90,7 +88,6 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
             _InformeService = informeService;
             _IInformeDocumentosService = informeDocumentosService;
             _departamentoService = departamentoService;
-            _provinciaService = provinciaService;
             _dashboardService = dashboardService;
         }
 
@@ -156,18 +153,18 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
 
             List<Entidad> listaEntidades = _entidadService.GetAll();
             listaEntidades = listaEntidades.OrderBy(x => x.Acronimo).ToList();
-            listaEntidades.Insert(0, new Entidad() { EntidadId = 0, Nombre = "TODOS" });
+            listaEntidades.Insert(0, new Entidad() { EntidadId = 0, Nombre = " - TODOS - " });
             ViewBag.ListaEntidades = listaEntidades.Select(x => new SelectListItem() { Value = x.EntidadId.ToString(), Text = x.Nombre }).ToList();
 
             List<Departamento> listaDepartamento = _departamentoService.GetAll();
             listaDepartamento = listaDepartamento.OrderBy(x => x.Nombre).ToList();
-            listaDepartamento.Insert(0, new Departamento() { DepartamentoId = 0, Nombre = "TODOS" });
+            listaDepartamento.Insert(0, new Departamento() { DepartamentoId = 0, Nombre = " - TODOS - " });
             ViewBag.ListaDepartamento = listaDepartamento.Select(x => new SelectListItem() { Value = x.DepartamentoId.ToString(), Text = x.Nombre }).ToList();
 
 
             List<Provincia> listaProvincia = new List<Provincia>();
             listaProvincia = listaProvincia.OrderBy(x => x.Nombre).ToList();
-            listaProvincia.Insert(0, new Provincia() { ProvinciaId = 0, Nombre = "TODOS" });
+            listaProvincia.Insert(0, new Provincia() { ProvinciaId = 0, Nombre = " - TODOS - " });
             ViewBag.ListaProvincia = listaProvincia.Select(x => new SelectListItem() { Value = x.ProvinciaId.ToString(), Text = x.Nombre }).ToList();
 
 
@@ -177,7 +174,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
             model = user;
 
             List<MetaDato> listaGobierno = _metaDatoService.GetByParent(43);
-            listaGobierno.Insert(0, new MetaDato() { MetaDatoId = 0, Nombre = "TODOS" });
+            listaGobierno.Insert(0, new MetaDato() { MetaDatoId = 0, Nombre = " - SELECCIONAR - " });
             ViewBag.ListaGobierno = listaGobierno.Select(x => new SelectListItem() { Value = x.MetaDatoId.ToString(), Text = x.Nombre }).ToList();
 
             List<MetaDato> listaSector = _metaDatoService.GetByParent(47);
@@ -209,39 +206,47 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
             return View();
         }
 
-        [HttpGet]
-        public ActionResult ListarProvincia(int departamentoId)
-        {
-            // Construir el objeto que se va a devolver
-            List<Provincia> listaProvincia = _provinciaService.GetByDepartamento(departamentoId);
-            return Json(listaProvincia, JsonRequestBehavior.AllowGet);
-        }
 
-        [HttpGet]
-        public ActionResult ObtenerDatosJson(string iopsp, string parameter1, string parameter2, string parameter3)
+       
+
+        [HttpPost]
+        public ActionResult RegistrarVideo(Dashboard model)
         {
             // Construir el objeto que se va a devolver
-            Dashboard odashboard = new Dashboard();
-            odashboard.iOpSp = int.Parse(iopsp);
-            odashboard.parameter1 = parameter1;
-            odashboard.parameter2 = parameter2;
-            odashboard.parameter3 = parameter3;
-            Dashboard result = _dashboardService.getDashboard(odashboard);
+            model.iOpSp = 1;
+            Dashboard result = _dashboardService.RegistrarVideo(model);
             int longitud = result.result.Length;
 
 
             // Devolver el objeto en formato JSON utilizando la clase JsonResult
             return Json(result, JsonRequestBehavior.AllowGet);
         }
-
 
         [HttpGet]
-        public ActionResult ObtenerDatosCaldarioJson(string iopsp)
+        public ActionResult ListarVideo(Dashboard model)
         {
-            // Construir el objeto que se va a devolver
-            Dashboard odashboard = new Dashboard();
-            odashboard.iOpSp = int.Parse(iopsp);
-            Dashboard result = _dashboardService.getDashboardCalendario(odashboard);
+            model.iOpSp = 5;
+            Dashboard result = _dashboardService.ListarVideo(model);
+            int longitud = result.result.Length;
+            // Devolver el objeto en formato JSON utilizando la clase JsonResult
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult ListarVideoPath(Dashboard model)
+        {
+            model.iOpSp =4;
+            Dashboard result = _dashboardService.ListarVideo(model);
+            int longitud = result.result.Length;
+            // Devolver el objeto en formato JSON utilizando la clase JsonResult
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult EditarVideo(Dashboard model)
+        {
+            model.iOpSp = 2;
+            Dashboard result = _dashboardService.EditarVideo(model);
             int longitud = result.result.Length;
 
 
@@ -250,86 +255,12 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
         }
 
         [HttpPost]
-        public ActionResult RegistrarVideo(string iopsp, string parameter1, string parameter2, string parameter3, string parameter4, string parameter5, string parameter6, string parameter7)
+            
+        public ActionResult EliminarVideo(Dashboard model)
         {
-            // Construir el objeto que se va a devolver
-            Dashboard odashboard = new Dashboard();
-            odashboard.iOpSp = int.Parse(iopsp);
-            odashboard.parameter1 = parameter1;
-            odashboard.parameter2 = parameter2;
-            odashboard.parameter3 = parameter3;
-            odashboard.parameter4 = parameter4;
-            odashboard.parameter5 = parameter5;
-            odashboard.parameter6 = parameter6;
-            odashboard.parameter7 = parameter7;
-
-            Dashboard result = _dashboardService.RegistrarVideo(odashboard);
+            model.iOpSp = 3;
+            Dashboard result = _dashboardService.EliminarVideo(model);
             int longitud = result.result.Length;
-
-
-            // Devolver el objeto en formato JSON utilizando la clase JsonResult
-            return Json(result, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        public ActionResult ListarVideo(string iopsp, string parameter1, string parameter2, string parameter3, string parameter4, string parameter5, string parameter6, string parameter7)
-        {
-            // Construir el objeto que se va a devolver
-            Dashboard odashboard = new Dashboard();
-            odashboard.iOpSp = int.Parse(iopsp);
-            odashboard.parameter1 = parameter1;
-            odashboard.parameter2 = parameter2;
-            odashboard.parameter3 = parameter3;
-            odashboard.parameter4 = parameter4;
-            odashboard.parameter5 = parameter5;
-            odashboard.parameter6 = parameter6;
-            odashboard.parameter7 = parameter7;
-            Dashboard result = _dashboardService.ListarVideo(odashboard);
-            int longitud = result.result.Length;
-
-
-            // Devolver el objeto en formato JSON utilizando la clase JsonResult
-            return Json(result, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        public ActionResult EditarVideo(string iopsp, string parameter1, string parameter2, string parameter3, string parameter4, string parameter5, string parameter6, string parameter7)
-        {
-            // Construir el objeto que se va a devolver
-            Dashboard odashboard = new Dashboard();
-            odashboard.iOpSp = int.Parse(iopsp);
-            odashboard.parameter1 = parameter1;
-            odashboard.parameter2 = parameter2;
-            odashboard.parameter3 = parameter3;
-            odashboard.parameter4 = parameter4;
-            odashboard.parameter5 = parameter5;
-            odashboard.parameter6 = parameter6;
-            odashboard.parameter7 = parameter7;
-            Dashboard result = _dashboardService.EditarVideo(odashboard);
-            int longitud = result.result.Length;
-
-
-            // Devolver el objeto en formato JSON utilizando la clase JsonResult
-            return Json(result, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpPost]
-        public ActionResult EliminarVideo(string iopsp, string parameter1, string parameter2, string parameter3, string parameter4, string parameter5, string parameter6, string parameter7)
-        {
-            // Construir el objeto que se va a devolver
-            Dashboard odashboard = new Dashboard();
-            odashboard.iOpSp = int.Parse(iopsp);
-            odashboard.parameter1 = parameter1;
-            odashboard.parameter2 = parameter2;
-            odashboard.parameter3 = parameter3;
-            odashboard.parameter4 = parameter4;
-            odashboard.parameter5 = parameter5;
-            odashboard.parameter6 = parameter6;
-            odashboard.parameter7 = parameter7;
-            Dashboard result = _dashboardService.EliminarVideo(odashboard);
-            int longitud = result.result.Length;
-
-
             // Devolver el objeto en formato JSON utilizando la clase JsonResult
             return Json(result, JsonRequestBehavior.AllowGet);
         }
