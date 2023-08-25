@@ -42,6 +42,7 @@ namespace Sut.IApplicationServices
         List<Expediente> PresentadosGetAllLikePagin(Expediente filtro, int pageIndex, int pageSize, ref int totalRows);
         List<Expediente> GetAllLikePaginRptActividad(Expediente filtro, int pageIndex, int pageSize, ref int totalRows);
         List<Expediente> GetAllLikePaginRptActividadRPT(Expediente filtro);
+        List<Expediente> GetByExpedienteCompara(long EntidadId);
         Dictionary<string, int> GetEstadisticas(long ExpedienteId);
         Dictionary<string, int> GetEstadisticasconteo(Procedimiento filtro);
         void Save(Expediente obj); 
@@ -57,7 +58,7 @@ namespace Sut.IApplicationServices
         void activarpublicado(long ExpedienteId, int estado);
 
         void activarinfcondicion(long ExpedienteId, TipoOrdenPa estado);
-
+        void activarLogoQR(long ExpedienteId, string logoqr);
         void ActivarSolicitudWord(long expedienteId);
         void activarpublicadoexp(long ExpedienteId, int estado);
         void activaImportarPAEliminados(long ExpedienteId, int estado);

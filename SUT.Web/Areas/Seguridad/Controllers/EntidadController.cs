@@ -371,7 +371,7 @@ namespace Sut.Web.Areas.Seguridad.Controllers
 
 
         //[AutorizacionRol(Roles = "Administrador")]
-        public ActionResult Editar(long id)
+        public ActionResult Editar(long id, int vertodo)
         {
             try
             {
@@ -449,7 +449,7 @@ namespace Sut.Web.Areas.Seguridad.Controllers
 
                 listaProvincia.Insert(0, new Provincia() { ProvinciaId = 0, Nombre = " - SELECCIONAR - " });
                 ViewBag.ListaProvincia = listaProvincia.Select(x => new SelectListItem() { Value = x.ProvinciaId.ToString(), Text = x.Nombre }).ToList();
-
+                ViewBag.vertodo = vertodo;
                 return PartialView("_Editar", item);
             }
             catch (Exception ex)
@@ -854,6 +854,8 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                 string nombreArchivo = entidadid +"_"+ Path.GetFileName(logoFile.FileName);
                 string filePath = Path.Combine(pathlogoentidad, nombreArchivo);
                 logoFile.SaveAs(filePath);
+                string rutaImagenDestino = Server.MapPath("~/dist/img/Logosentidades/") + nombreArchivo;
+                System.IO.File.Copy(filePath, rutaImagenDestino, true);
                 return Json(new { success = true, message = nombreArchivo });
             }
             return Json(new { success = false, message = "No se seleccionó ningún archivo" });

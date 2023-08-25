@@ -11,9 +11,10 @@
 
         @using (Html.BeginForm("Guardar", "Seguridad/Entidad", FormMethod.Post, new { @id = "form-modal-editar" }))
         {
-            @Html.HiddenFor(model => model.EntidadId)
             
+           
     <div class="modal-body form-horizontal">
+        @if (ViewBag.vertodo == 1) { 
         <div class="form-group">
             <label class="control-label col-sm-3 col-xs-12">Nivel de Gobierno:</label>
             <div class="col-sm-9 col-xs-12">
@@ -64,42 +65,62 @@
                 @Html.DropDownListFor(model => model.Estado, ViewBag.publicar as List<SelectListItem>, new { @class = "form-control input-sm" })
             </div>
         </div>
-
         <div class="form-group">
             <label class="control-label col-sm-3 col-xs-12"> Nivel </label>
             <div class="col-sm-9 col-xs-12">
                 @Html.DropDownListFor(model => model.CodPadre, ViewBag.listapadre as List<SelectListItem>, new { @class = "form-control input-sm" })
             </div>
         </div>
-
         <div class="form-group">
             <label class="control-label col-sm-3 col-xs-12">Activar Expediente </label>
             <div class="col-sm-9 col-xs-12">
                 @Html.DropDownListFor(model => model.ActivarExpediente, ViewBag.NuevoExpediente as List<SelectListItem>, new { @class = "form-control input-sm" })
             </div>
         </div>
-
-
         <div class="form-group">
             <label class="control-label col-sm-3 col-xs-12">Activar MultiUsuario </label>
             <div class="col-sm-9 col-xs-12">
                 @Html.DropDownListFor(model => model.ActivarMultiUsuario, ViewBag.MultiUsuario as List<SelectListItem>, new { @class = "form-control input-sm" })
             </div>
         </div>
-
         <div class="form-group">
             <label class="control-label col-sm-3 col-xs-12">Bandejas </label>
             <div class="col-sm-9 col-xs-12">
                 @Html.DropDownListFor(model => model.Bandeja, ViewBag.lstBandeja as List<SelectListItem>, new { @class = "form-control input-sm" })
             </div>
         </div>
+        }
+        else
+        {
+            @Html.HiddenFor(model => model.NivelGobiernoId);
+            @Html.HiddenFor(model => model.SectorId);
+            @Html.HiddenFor(model => model.DepartamentoId);
+            @Html.HiddenFor(model => model.ProvinciaId);
+            @Html.HiddenFor(model => model.Codigo);
+            @Html.HiddenFor(model => model.Estado);
+            @Html.HiddenFor(model => model.CodPadre);
+            @Html.HiddenFor(model => model.ActivarExpediente);
+            @Html.HiddenFor(model => model.ActivarMultiUsuario);
+            @Html.HiddenFor(model => model.Bandeja);
+            @Html.HiddenFor(model => model.Acronimo);
+            @Html.HiddenFor(model => model.Nombre);
+            //@Html.HiddenFor(model => model.Logoentidad);
+            @Html.HiddenFor(model => model.EntidadId);
+        <div class="form-group text-center">
+            <label class="control-label col-sm-3 col-xs-12">Logo Entidad Almacenado:</label>
+            <div class="col-sm-9 col-xs-12">
+                <img src="~/dist/img/Logosentidades/@Model.Logoentidad" alt="Imagen de entidad" width="215" height="215" class="img-responsive center-block"/>
+            </div>
+        </div>
+        }
         @*JJJMSP2 INI*@
         <div class="form-group">
             <label class="control-label col-sm-3 col-xs-12">Logo Entidad:</label>
             <div class="col-sm-9 col-xs-12">
                 @Html.TextBoxFor(model => model.Logoentidad, new { @class = "form-control input-sm", @readonly = "readonly", id = "Logoentidad" })
-                <input type="file" id="fileInput" class="form-control input-sm" accept="image/*" onchange="sut.editarEntidad.subirelogo()">
+                <input type="file" id="fileInput" class="form-control input-sm" accept="image/*">
                 <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarEntidad.subirlogo()"><i class="fa fa-save"></i> Subir Imagen</button>
+                <p> (Tamaño max < = 02 MB, Forma: 215 px / 215 px) </p>
             </div>
         </div>
         @*JJJMSP2 FIN*@
@@ -123,50 +144,56 @@
 <script>
 
     sut.editarEntidad = {
-
         /*JJJMSP2 INI*/
-        subirelogo: () => {
-            var fileInput = document.getElementById("fileInput");
-            var logoEntidadInput = document.getElementById("Logoentidad");
-
-            // Obtener el archivo seleccionado
-            var file = fileInput.files[0];
-            // Obtener la ruta o el nombre del archivo
-            var filePath = file ? file.name : "";
-            // Establecer el valor en el campo Logoentidad
-            logoEntidadInput.value = ""; //filePath;
-        },
-
         subirlogo: () => {
             var fileInput = document.getElementById("fileInput");
             var logoEntidadInput = document.getElementById("Logoentidad");
             var file = fileInput.files[0]; // Obtener el archivo seleccionado
-
+            sut.error.show('msgEditar', "");
             if (file) {
-                var formData = new FormData();
-                formData.append("logoFile", file);
-                formData.append("entidadid", @Model.EntidadId);
-                $.ajax({
-                    url: "@Url.Content("~/Seguridad/Entidad/SubirLogoEntidad")",
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (data) {
-                        //console.log("Se guardo archivo.");
-                        if (data.success) {
-                            var rutaLogo = data.message;
-                            logoEntidadInput.value = rutaLogo;
-                            //console.log("Se guardo logoentidad.");
-                        } else {
-                            console.log("No cargo archivo.");
-                        }
-                    },
-                    error: function (data) {
-                        sut.wait.removeProgress('.modal-footer');
-                        sut.error.show('msgsubir', result.responseText);
+                var maxFileSize = 2 * 1024 * 1024; // 2MB en bytes
+                if (file.size > maxFileSize) {
+                    console.log("El archivo es demasiado grande. El tamaño máximo permitido es 2MB.");
+                    //sut.error.show('msgEditar', ".  El archivo es demasiado grande. El tamaño máximo permitido es 2MB.");
+                    showNotification('top', 'right', 'El archivo es demasiado grande. El tamaño máximo permitido es 2MB.', 2);
+                    return;
+                }
+
+                // Validar las dimensiones de la imagen (215x215 píxeles)
+                var image = new Image();
+                image.src = window.URL.createObjectURL(file);
+
+                image.onload = function () {
+                    if (image.width !== 215 || image.height !== 215) {
+                        console.log("La imagen debe tener un tamaño de 215 x 215 píxeles.");
+                        sut.error.show('msgEditar', ".  La imagen debe tener un tamaño de 215x215 píxeles.");
+                        return;
                     }
-                });
+                    var formData = new FormData();
+                    formData.append("logoFile", file);
+                    formData.append("entidadid", @Model.EntidadId);
+                    $.ajax({
+                        url: "@Url.Content("~/Seguridad/Entidad/SubirLogoEntidad")",
+                        type: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            //console.log("Se guardo archivo.");
+                            if (data.success) {
+                                var rutaLogo = data.message;
+                                logoEntidadInput.value = rutaLogo;
+                                //console.log("Se guardo logoentidad.");
+                            } else {
+                                console.log("No cargo archivo.");
+                            }
+                        },
+                        error: function (data) {
+                            sut.wait.removeProgress('.modal-footer');
+                            sut.error.show('msgsubir', result.responseText);
+                        }
+                    });
+                }
             } else {
                 // No se seleccionó ningún archivo
                 console.log("No se seleccionó ningún archivo.");

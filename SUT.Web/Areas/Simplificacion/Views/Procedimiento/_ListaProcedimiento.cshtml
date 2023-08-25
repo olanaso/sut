@@ -791,17 +791,13 @@
                                 <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-download"></i> Descargar <span class="caret"></span></a>
                                 <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                                     <li><a href="javascript:sut.Procedimientame.ReporteFilter(@exp.ExpedienteId,1)">Reporte Tupa</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="javascript:sut.Procedimientame.ReporteFilter(@exp.ExpedienteId,2)">Reporte Tupa - PA Seleccionados</a></li>
-
+                                    
                                     @if (exp.TipoExpediente != TipoExpediente.CargaInicial)
                                     {
                                         if (userrptSTLCompleto.rolmenu[0].Ver == true)
                                         {
                                             <li class="divider"></li>
                                             <li><a href="javascript:sut.Procedimientame.ReporteFilter(@exp.ExpedienteId,3)">Reporte STL</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="javascript:sut.Procedimientame.ReporteFilter(@exp.ExpedienteId,4)">Reporte STL - PA Seleccionados</a></li>
                                         }
                                     }
                                     @if (userrptTupaCompleto.rolmenu[0].Ver == true && exp.TipoExpediente != TipoExpediente.CargaInicial && userrptSTLCompleto.rolmenu[0].Ver == true)

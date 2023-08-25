@@ -35,7 +35,6 @@ namespace Sut.Entities
         public bool EsViernes { get; set; }
         public bool EsSabado { get; set; }
         public bool EsDomingo { get; set; }
-
         public int Tipogrupo { get; set; }
 
         [MaxLength(1)]

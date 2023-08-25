@@ -80,6 +80,19 @@ namespace Sut.ApplicationServices
                 throw ex;
             }
         }
+
+        public List<Expediente> GetByExpedienteCompara(long EntidadId)
+        {
+            try
+            {
+                return _expedienteRepository.GetByExpedienteCompara(EntidadId);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        
         public List<Procedimiento> GetByEstados(long ExpedienteId)
         {
             try
@@ -550,15 +563,15 @@ namespace Sut.ApplicationServices
         {
             try
             {
-                List<Procedimiento> query = _expedienteRepository.GetAllLikePaginTodoConfigurarProce();
+                List<Procedimiento> query = _expedienteRepository.GetAllLikePaginTodoConfigurarProce(filtro);
 
-                var data = query.Where(x => x.Expediente.Codigo.ToUpper().Contains((string.IsNullOrEmpty(filtro.Expediente.Codigo) ? x.Expediente.Codigo : filtro.Expediente.Codigo).ToUpper())
-                && x.Expediente.Entidad.Nombre.ToUpper().Contains((string.IsNullOrEmpty(filtro.Expediente.Entidad.Nombre) ? x.Expediente.Entidad.Nombre : filtro.Expediente.Entidad.Nombre).ToUpper())
+                /*var data = query.Where(x => x.Expediente.Codigo.ToUpper().Contains((string.IsNullOrEmpty(filtro.Expediente.Codigo) ? x.Expediente.Codigo : filtro.Expediente.Codigo).ToUpper())
+                && (x.Expediente.Entidad.EntidadId == Convert.ToInt32(filtro.Expediente.Entidad.EntidadId))
                 && x.CodigoCorto.ToUpper().Contains((string.IsNullOrEmpty(filtro.CodigoCorto) ? x.CodigoCorto : filtro.CodigoCorto).ToUpper())
                 && x.Denominacion.ToUpper().Contains((string.IsNullOrEmpty(filtro.Denominacion) ? x.Denominacion : filtro.Denominacion).ToUpper())
                 )
-                            .OrderByDescending(x => x.ProcedimientoId);
-
+                            .OrderByDescending(x => x.ProcedimientoId);*/
+                var data = query;
                 totalRows = data.Count();
                 var result = data.Skip((pageIndex - 1) * pageSize)
                                 .Take(pageSize)
@@ -1158,40 +1171,44 @@ namespace Sut.ApplicationServices
         {
             try
             {
-
                 Expediente obj = _expedienteRepository.GetOne(x => x.ExpedienteId == ExpedienteId);
                 obj.OrdenPa = estado;
-
                 _expedienteRepository.SaveOnlyExpediente(obj);
                 //Llamar a un procedimieto de ordenacion de acuerdo al orden PA
                 _unitOfWork.SaveChanges();
-
                 using (var conexion = Conexion.GetConexionSUT())//_connectionFactory?.GetConnectionSUT)
                 {
                     var parameters = new DynamicParameters();
-
-
-                 
                     parameters.Add("@OrdenPa", (int)estado);
                     parameters.Add("@ExpedienteId", ExpedienteId);
-                  
-
                     var _idAuditoria = conexion.Query<int>(
                                             "sut.Ordenar_Procedimiento",
                                             parameters,
                                             commandTimeout: 0,
                                             commandType: CommandType.StoredProcedure);
-
-                   
                 }
-
-               
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
+        public void activarLogoQR(long ExpedienteId, string logoqr)
+        {
+            try
+            {
+                Expediente obj = _expedienteRepository.GetOne(x => x.ExpedienteId == ExpedienteId);
+                obj.LogoQR = logoqr;
+                _expedienteRepository.SaveOnlyExpediente(obj);
+                //Llamar a un procedimieto de ordenacion de acuerdo al orden PA
+                _unitOfWork.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public void ActivarSolicitudWord(long expedienteId)
         {
             try
@@ -1369,14 +1386,21 @@ namespace Sut.ApplicationServices
         {
             try
             {
-                 
                 Expediente obj = _expedienteRepository.GetOne(ExpedienteId);
+                if (obj.EstadoExpediente != EstadoExpediente.Anulado)
+                {
+                    obj.FecPublicacion = null;
+                    obj.FecAnulacion = null;
+                    obj.EstadoExpediente = (EstadoExpediente)obj.EstadoUltimo;  //estado; JJJM SP2
+                }
+                if (obj.EstadoExpediente == EstadoExpediente.Anulado)
+                {
+                    obj.FecPublicacion = null;
+                    obj.FecAnulacion = DateTime.Now;
+                    obj.EstadoExpediente = (EstadoExpediente)obj.EstadoUltimo; //JJJM SP2;
+                }
 
-                obj.FecPublicacion = null;
-                obj.FecAnulacion = null;
-                obj.EstadoExpediente = estado;
-                 
-                    Tupa vigente = _tupaRepository.GetOne(x => x.EntidadId == obj.EntidadId && x.EstadoTupa == EstadoTupa.Vigente);
+                Tupa vigente = _tupaRepository.GetOne(x => x.EntidadId == obj.EntidadId && x.EstadoTupa == EstadoTupa.Vigente);
 
                     Tupa oTupa = new Tupa()
                     {

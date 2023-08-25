@@ -23,8 +23,7 @@ namespace Sut.IRepositories
 
         List<Entidad> lista_entidadesAsignado(long pExpedienteId, long pEntidadId);
         List<Entidad> lista_entidadesAsignadoActividad(long pCalendarioActividadesId);
-
-
+        List<Entidad> SearchEntidadesNombre(string term);
         int MaxCorrelativo();
     }
 }

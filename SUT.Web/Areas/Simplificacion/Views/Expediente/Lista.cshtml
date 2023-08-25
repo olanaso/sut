@@ -82,7 +82,7 @@ else
                                         <th rowspan="2" style="vertical-align: middle !important;">Entidad</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Departamento</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Provincia</th>
-                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Modificación</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
                                         <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
                                         <th>Ratificador</th>
@@ -108,7 +108,7 @@ else
                                         <th rowspan="2" style="vertical-align: middle !important;"></th>
                                         <th>Expediente</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Tipo</th>
-                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Modificación</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
                                         <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
                                         <th colspan="3">Entidad Fiscalizadora</th>
@@ -132,7 +132,7 @@ else
                                         <th rowspan="2" style="vertical-align: middle !important;"></th>
                                         <th>Expediente</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Tipo</th>
-                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Modificación</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
                                         <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
                                         <th>Ratificador</th>
@@ -165,7 +165,7 @@ else
                                         <th rowspan="2" style="vertical-align: middle !important;">Entidad</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Departamento</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Provincia</th>
-                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Modificación</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
                                         <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
                                         <th colspan="3">Evaluador</th>
@@ -193,7 +193,7 @@ else
                                         <th rowspan="2" style="vertical-align: middle !important;"></th>
                                         <th>Expediente</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Tipo</th>
-                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Modificación</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
                                         <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
                                         <th colspan="3">Evaluador</th>
@@ -228,7 +228,7 @@ else
                                         <th rowspan="2" style="vertical-align: middle !important;">Entidad</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Departamento</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Provincia</th>
-                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th rowspan="2" style="vertical-align: middle !important;">Fecha Modificación</th>
                                         <th rowspan="2" style="vertical-align: middle !important;">Estado</th>
                                         <th rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
                                         <th colspan="3">Entidad Fiscalizadora</th>
@@ -256,7 +256,7 @@ else
                                         <th style="vertical-align: middle !important;">Entidad</th>
                                         <th style="vertical-align: middle !important;">Departamento</th>
                                         <th style="vertical-align: middle !important;">Provincia</th>
-                                        <th style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th style="vertical-align: middle !important;">Fecha Modificación</th>
                                         <th style="vertical-align: middle !important;">PublicarCIU</th>
                                         <th style="vertical-align: middle !important;">Estado</th>
                                         <th colspan="2" rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
@@ -306,7 +306,7 @@ else
                                         <th style="vertical-align: middle !important;">Entidad</th>
                                         <th style="vertical-align: middle !important;">Departamento</th>
                                         <th style="vertical-align: middle !important;">Provincia</th>
-                                        <th style="vertical-align: middle !important;">Fecha Creación</th>
+                                        <th style="vertical-align: middle !important;">Fecha Modificación</th>
                                         <th style="vertical-align: middle !important;">PublicarCIU</th>
                                         <th style="vertical-align: middle !important;">Estado</th>
                                         <th colspan="2" rowspan="2" style="vertical-align: middle !important;background:#dd4b392e ">Acciones</th>
@@ -972,11 +972,11 @@ else
 
                             rows += '<td style="text-align: center; background:#dd4b392e ">';
                             rows += '<div class="btn-group" >';
-                            if( nombre !="usuariolocador")
+                            if (i == 0 && (r.EstadoExpediente == 7 || r.EstadoExpediente == 5) && nombre !="usuariolocador")
                             {
-                                rows += sut.string.format('<a class="btn btn-dropbox btn-xs" data-placement="left" title="Volver a Proceso" href="javascript:sut.Expediente.despublicarcargainicial({0})" title="Despublicar Expediente" ><i class="fa fa-history"></i></a>', r.ExpedienteId);
+                                rows += sut.string.format('<a class="btn btn-dropbox btn-xs" data-placement="left" title="Volver estado anterior" href="javascript:sut.Expediente.despublicarcargainicial({0})" title="Despublicar Expediente" ><i class="fa fa-history"></i></a>', r.ExpedienteId);
                             }
-
+                            
                             if(r.GenerarPDF==0 && r.EstadoExpediente == 7 && nombre !="usuariolocador")
                             {
                                 rows += sut.string.format('<a class="btn btn-danger btn-xs" data-placement="left" title="Generar Tupa individual" href="javascript:sut.Expediente.generartupaindividual({0})" title="Generar Tupa" ><i class="fa fa-book"></i></a>', r.ExpedienteId);
@@ -1165,7 +1165,7 @@ else
 
             despublicarcargainicial: (id) => {
 
-                sut.msg.confirm('Si des publica el expediente, este pasará a ser un expediente en proceso y por lo tanto ya no sera un TUPA Vigente.', () => {
+                sut.msg.confirm('Si extorna la publicación o anulación del expediente, este pasará a su estado anterior o ultimo estado vigente registrado.', () => {
                     $.ajax({
                         @*url: "/Simplificacion/Expediente/Publicar/@Model.ExpedienteId",*@
                         url: '@Url.Content("~/Simplificacion/Expediente/DesPublicarCargaInicial")',
@@ -1187,7 +1187,7 @@ else
                             }
                             else
                             {
-                                showNotification('top', 'right', 'No se podra despublicar ya que cuenta con un expediente regular o el expediente no es el último creado.', 2);
+                                showNotification('top', 'right', 'No se podra extornar verifique si hay un expediente regular o el expediente no es el último creado.', 2);
                             }
                         },
                         error: function (data) {
@@ -1265,8 +1265,8 @@ else
 
                     //JJJMSP2
                     rows += '<div class="btn-group" >';
-                    if (i == 1 && (r.EstadoExpediente == "5") && ('@Model.Rol'== 1 || '@Model.Rol'== 2) ) {
-                        rows += sut.string.format('<a class="btn btn-dropbox btn-xs" data-placement="left" title="Volver a Proceso" href="javascript:sut.Expediente.despublicarcargainicial({0})" title="Despublicar Expediente" ><i class="fa fa-history"></i></a>', r.ExpedienteId);
+                    if (i == 0 && (r.EstadoExpediente == "5" || r.EstadoExpediente == "7") && ('@Model.Rol'== 1 || '@Model.Rol'== 2) ) {
+                        rows += sut.string.format('<a class="btn btn-dropbox btn-xs" data-placement="left" title="Volver estado anterior" href="javascript:sut.Expediente.despublicarcargainicial({0})" title="Despublicar Expediente" ><i class="fa fa-history"></i></a>', r.ExpedienteId);
                     }
                     rows += '</div>';
                     //JJJMSP2

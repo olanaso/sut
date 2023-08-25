@@ -2142,7 +2142,7 @@
                                                         @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].MetaDatoId)
                                                         @*@Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar })*@
 
-                                                        @if (Model.ProcedimientoDatoAdicional[i].MetaDatoId == 3 && Model.ChkAtencionTlf == false)
+                                                        @if (Model.ProcedimientoDatoAdicional[i].MetaDatoId == 3 && Model.ActivarAtencionTlf == 0)
                                                         {
                                                             @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled " })
                                                         }
@@ -2155,7 +2155,7 @@
 
 
         <td>@Html.TextBoxFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true })</td>*@
-                                                    @if (Model.ProcedimientoDatoAdicional[i].MetaDatoId == 3 && Model.ChkAtencionTlf == false)
+                                                    @if (Model.ProcedimientoDatoAdicional[i].MetaDatoId == 3 && Model.ActivarAtencionTlf == 0)
                                                     {
                                                         <td> </td>
                                                         <td>@Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true })</td>
@@ -2212,7 +2212,7 @@
                                                         }
                                                         else
                                                         {
-                                                            @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled " })
+                                                            @Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled" })
                                                         }
                                                     </td>
                                                     <td>@Model.ProcedimientoDatoAdicional[i].MetaDato.Nombre</td>
@@ -2563,7 +2563,7 @@
                                         <th style="width: 34.5%; text-align: center;">Denominación </th>
                                         <th style="width: 17%; text-align: center;">Tipo de Norma </th>
                                         <th style="width: 13%; text-align: center;">Número </th>
-                                        <th style="width: 19%; text-align: center;">Fecha de Publicación <p>del Diario El Peruano</th>
+                                        <th style="width: 19%; text-align: center;">Fecha de Publicación</th>
                                         @*<th style="width:100px;">Documento</th>*@
                                         <th style="width:60px;"></th>
                                         <th style="width:60px;"></th>
@@ -4605,7 +4605,7 @@
                             /// agregar reproducción Inicio
 
                             //trabajarlo urgente
-                            if (r.EsGratuito === true) {
+                            if (r.EsGratuito === true || r.EsGratuito === false) {
                                 rows += sut.string.format('<tr><td colspan="4"><table data-formtable={0} class="table table-condensed table-bordered">',i);
                                 rows += '<thead><tr><th style="width:50px;"></th><th style="width:40px;">';
                                 if ("@user.rolmenu[0].Agregar" == "True"){
@@ -7637,30 +7637,17 @@
                     });
                 };
             });
-
-
-
-
-
-
-
-
-
-
-
         });
 
         function OcutarReproduccion(id) {
-
-
-            if ($('#'+id).is(':checked') == true) {
-                $('#Div'+id).show();
+            var divElement = $('#Div' + id);
+            if ($('#' + id).is(':checked') === false) {
+                divElement.show();
             }
             else {
-
-                $('#Div'+id).hide();
+                divElement.hide();
             }
-
+            sut.editProcedimiento.camposNoRequerido();
         }
 
         function reFresh() {

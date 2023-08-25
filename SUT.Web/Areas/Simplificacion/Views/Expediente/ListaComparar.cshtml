@@ -47,7 +47,7 @@
     </div>
     <div class="box-footer">
         <a href="javascript:sut.Miembro.exportar(1)" class="btn btn-success pull-right" style="margin-right: 10px;"><i class="fa fa-file-excel-o"></i> Exportar Resultado</a>
-        <a href="javascript:sut.Miembro.listar(1)" class="btn btn-success  pull-right"  style="margin-right: 10px;"><i class="fa fa-ambulance"></i> Comparar Expedientes</a>
+        <a href="javascript:sut.Miembro.listar(1)" class="btn btn-success  pull-right" style="margin-right: 10px;"><i class="fa fa-ambulance"></i> Comparar Expedientes</a>
     </div>
 </div>
 
@@ -63,23 +63,27 @@
                        data-paginator="paginator">
                     <thead>
                         <tr>
-                            <th colspan="6" align="center" style="background-color: #CCCC;">Expediente Base:
-                             <span id="ExpedienteBase1" style="width: 450px; background-color: transparent; border: 0px; outline: none; box-shadow: none; webkit-box-shadow: none; -moz-box-shadow: none; cursor: default;"></span></th>
-                            <th colspan="5" align="center" style="background-color: #AAA;">Expediente a Comparar:  
-                             <span id="ExpedienteCompara1" style="width: 450px; background-color: transparent; border: 0px; outline: none; box-shadow: none; webkit-box-shadow: none; -moz-box-shadow: none; cursor: default;"></span></th>
+                            <th colspan="6" align="center" style="background-color: #CCCC;">
+                                Expediente Base:
+                                <span id="ExpedienteBase1" style="width: 450px; background-color: transparent; border: 0px; outline: none; box-shadow: none; webkit-box-shadow: none; -moz-box-shadow: none; cursor: default;"></span>
+                            </th>
+                            <th colspan="5" align="center" style="background-color: #AAA;">
+                                Expediente a Comparar:
+                                <span id="ExpedienteCompara1" style="width: 450px; background-color: transparent; border: 0px; outline: none; box-shadow: none; webkit-box-shadow: none; -moz-box-shadow: none; cursor: default;"></span>
+                            </th>
                         </tr>
                         <tr>
                             <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 4px;" class="colAction">Nro</th>
                             <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 40px;">Codigo</th>
                             <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 400px;">Denominacion</th>
-                            <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Plazo Atención</th>
+                            <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Plazo Atención (días)</th>
                             <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Nro Requisitos</th>
-                            <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Tiempo Total</th>
+                            <th rowspan="1" style="background-color: #CCCC; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Tiempo Total (minutos)</th>
                             <th rowspan="1" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 40px;">Codigo</th>
                             <th rowspan="1" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle !important; width: 400px;">Denominacion</th>
-                            <th rowspan="1" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Plazo Atención</th>
+                            <th rowspan="1" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Plazo Atención (días)</th>
                             <th rowspan="1" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Nro Requisitos</th>
-                            <th rowspan="1" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Tiempo Total</th>
+                            <th rowspan="1" style="background-color: #AAA; margin: 0.5rem; padding: 1rem; vertical-align: middle; width: 50px;">Tiempo Total (minutos)</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -135,6 +139,8 @@
     var entidadid = $('#miembroContainer').data('entidadid');*@
 
 @section Script {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
     <script>
         sut.Miembro = {
             listar: (page) => {
@@ -172,10 +178,10 @@
                         }
                     },
                     error: (data) => {
-                        sut.error.show('mensajes', data.responseText);
+                            sut.error.show('mensajes', data.responseText);
                     },
                     statusCode: {
-                        203: () => { window.location.reload(); }
+                            203: () => { window.location.reload(); }
                     }
                 });
             },
@@ -325,6 +331,27 @@
         };
 
         $(document).ready(function () {
+             // Inicializar select2 en los dropdowns deseados
+            $('#cbFilterEntidad1').select2({
+                placeholder: "Buscar entidad...",
+                minimumInputLength: 2, // Mínimo de caracteres para activar la búsqueda
+                ajax: {
+                    url: '@Url.Content("~/Simplificacion/Expediente/GetBuscaEntidadNombre")', // URL para obtener los resultados
+                    dataType: 'json',
+                    delay: 250, // Retardo en milisegundos para activar la búsqueda después de escribir
+                    data: function (params) {
+                        return {
+                            term: params.term // Término de búsqueda ingresado por el usuario
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                        results: data // Resultados obtenidos de la búsqueda
+                        };
+                    },
+                    cache: true // Habilitar la caché de resultados para evitar múltiples solicitudes
+                }
+            });
             $("#submit").one('click', function (event) {
                 event.preventDefault();
                 alert("Eventoclicked");

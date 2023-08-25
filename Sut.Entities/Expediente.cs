@@ -218,7 +218,10 @@ namespace Sut.Entities
 
         [NotMapped]
         public int ptiporeporte { get; set; }
-        
+
+        public string LogoQR { get; set; }
+
+        public int EstadoUltimo { get; set; }
 
     }
 }

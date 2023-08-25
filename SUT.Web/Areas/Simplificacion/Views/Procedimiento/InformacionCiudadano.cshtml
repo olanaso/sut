@@ -298,7 +298,7 @@
                                                             @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].MetaDatoId)
 
                                                             @*@Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar })*@
-                                                            @if ((Model.ProcedimientoDatoAdicional[i].MetaDatoId) == 3 && Model.ChkAtencionTlf == false)
+                                                            @if ((Model.ProcedimientoDatoAdicional[i].MetaDatoId) == 3 && Model.ActivarAtencionTlf == 0)
                                                             {
                                                                 @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled" })
                                                             }
@@ -309,7 +309,7 @@
 
                                                         </td>
 
-                                                        @if ((Model.ProcedimientoDatoAdicional[i].MetaDatoId) == 3 && Model.ChkAtencionTlf == false)
+                                                        @if ((Model.ProcedimientoDatoAdicional[i].MetaDatoId) == 3 && Model.ActivarAtencionTlf == 0)
                                                         {
                                                             <td> </td>
                                                             <td>@Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true })</td>
@@ -332,7 +332,7 @@
                                                             @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].MetaDatoId)
                                                             @*@Html.CheckBoxFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @disabled = "disabled " })*@
 
-                                                            @if ((Model.ProcedimientoDatoAdicional[i].MetaDatoId) == 3 && Model.ChkAtencionTlf == false)
+                                                            @if ((Model.ProcedimientoDatoAdicional[i].MetaDatoId) == 3 && Model.ActivarAtencionTlf == 0)
                                                             {
                                                                 @Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].Checked, new { @disabled = "disabled" })
                                                             }
@@ -342,7 +342,7 @@
                                                             }
                                                         </td>
 
-                                                        @if ((Model.ProcedimientoDatoAdicional[i].MetaDatoId) == 3 && Model.ChkAtencionTlf == false)
+                                                        @if ((Model.ProcedimientoDatoAdicional[i].MetaDatoId) == 3 && Model.ActivarAtencionTlf == 0)
                                                         {
                                                             <td> </td>
                                                             <td>@Html.HiddenFor(model => model.ProcedimientoDatoAdicional[i].Comentario, new { @class = "form-control input-sm", @style = "scroll-behavior: smooth;resize:vertical;", @placeholder = Model.ProcedimientoDatoAdicional[i].MetaDato.Texto01, @oficinaAutocompletar = Model.ProcedimientoDatoAdicional[i].MetaDato.OficinasAutocompletar, @norequired = true, @readonly = "readonly" })</td>

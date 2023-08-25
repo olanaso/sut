@@ -111,7 +111,21 @@ namespace Sut.Repositories
             }
         }
 
-        
+        public List<Entidad> SearchEntidadesNombre(string term)
+        {
+            try
+            {
+                SutContext ctx = Context.GetContext() as SutContext;
+
+                return ctx.Entidad
+                        .Where(x => x.Nombre.Contains(term))
+                        .ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
 
         public new Entidad GetOne(System.Linq.Expressions.Expression<Func<Entidad, bool>> predicate)

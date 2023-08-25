@@ -1,123 +1,117 @@
 ﻿@model List<Sut.Entities.Sede>
-@{
+@{  
     ViewBag.Title = "Sedes";
     ViewBag.Descripcion = "Registro de sedes de atención de la entidad";
     var activar = "active";
-    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
-}
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo; }
 
 <div class="callout callout-warning" style="display: inherit;height: inherit; padding: inherit;">
     En esta sección debe registrar el listado completo de sedes o centros en las cuales se atienden los procedimientos administrativos y  servicios prestados en exclusividad.
 </div>
-
 <div id="mensajes"></div>
 
 <div class="nav-tabs-custom">
 
     <ul class="nav nav-tabs">
         @if (@ViewBag.TipoSede == 1)
-        { 
-                <li class="@activar">  
-                        <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.Sede.visualizar(0)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Sedes</a> 
-                </li> 
-        }
+        {
+            <li class="@activar">
+                <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.Sede.visualizar(0)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Sedes</a>
+            </li> }
         else
         {
             <li>
                 <a href="#edit-info-basica" data-toggle="tab" onclick="javascript:sut.Sede.visualizar(0)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Sedes</a>
             </li>
-        }
+            }
 
         @if (@ViewBag.TipoSede == 2)
-        { 
-                <li class="@activar"> 
-                        <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.Sede.visualizar(1)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Agrupados</a> 
-                </li> 
-        }
+        {
+            <li class="@activar">
+                <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.Sede.visualizar(1)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Agrupados</a>
+            </li> }
         else
         {
             <li>
                 <a href="#edit-info-basica1" data-toggle="tab" onclick="javascript:sut.Sede.visualizar(1)" aria-expanded="false" style="border-radius: 10px;"><i class="fa fa-file"></i> Agrupados</a>
             </li>
-        } 
-      
+        }
+
     </ul>
 </div>
-
-
-
 
 <div class="row">
 
     @if (ViewBag.TipoSede == 1)
     {
-        <div class="col-xs-12">
-            <div id="boxLista" class="box box-danger">
-                <div class="box-body">
-                    @if (@user.Ayuda == 1)
+<div class="col-xs-12">
+    <div id="boxLista" class="box box-danger">
+        <div class="box-body">
+            @if (@user.Ayuda == 1)
+            {
+                 <a class="btn btn-success pulsesut-button" href="javascript:sut.Sede.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>
+                 <a class="btn btn-success pulsesut-button" href="javascript:sut.Sede.editarlogo('@ViewBag.EntidadId')"><i class="fa fa-paint-brush"></i> Logo Entidad</a> 
+            }
+            else
+            {
+                    if (@user.rolmenu[0].Nuevo == true)
                     {
-
-                        <a class="btn btn-success pulsesut-button" href="javascript:sut.Sede.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>
+                        <a class="btn btn-success" href="javascript:sut.Sede.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>
+                        <a class="btn btn-success pulsesut-button" href="javascript:sut.Sede.editarlogo('@ViewBag.EntidadId')"><i class="fa fa-paint-brush"></i> Logo Entidad</a>
                     }
-                    else
-                    {
-                        if (@user.rolmenu[0].Nuevo == true)
-                        {
-                            <a class="btn btn-success" href="javascript:sut.Sede.editar(0)"><i class="fa fa-plus"></i> Nuevo</a>
-                        }
-                    }
+            }
 
-                    <br />
-                    <div class="table-responsive">
-                        <table id="tblLista" class="table table-bordered table-striped table-hover"
-                               data-pagesize="20"
-                               data-page="1"
-                               data-totalrows="0"
-                               data-function="sut.Sede.listar"
-                               data-paginator="paginator">
-                            <thead>
-                                <tr>
-                                    <th class="colAction">Nro.</th>
-                                    <th>Tipo</th>
-                                    <th>Nombre</th>
-                                    <th>Distrito-Provincia-Departamento</th>
-                                    <th>Dirección</th>
-                                    <th>Recepción Documentaria</th>
-                                    <th>Horario de atención</th>
-                                    <th>Grupo</th>
-                                    <th class="colAction" style="width:50px"></th>
-                                    <th class="colAction" style="width:50px"></th>
-                                </tr>
-                                <tr>
-                                    <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
-                                    <td></td>
-                                    <th><input id="txtFilterNombre" type="text" class="form-control input-sm" /></th>
-                                    <td></td>
-                                    <th><input id="txtFilterDireccion" type="text" class="form-control input-sm" /></th>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                            <tfoot>
-                                <tr><td colspan="12"><div id="paginator"></div></td></tr>
-                            </tfoot>
-                        </table>
-                    </div>
-
-                </div>
+            <br />
+            <div class="table-responsive">
+                <table id="tblLista" class="table table-bordered table-striped table-hover"
+                       data-pagesize="20"
+                       data-page="1"
+                       data-totalrows="0"
+                       data-function="sut.Sede.listar"
+                       data-paginator="paginator">
+                    <thead>
+                        <tr>
+                            <th class="colAction">Nro.</th>
+                            <th>Tipo</th>
+                            <th>Nombre</th>
+                            <th>Distrito-Provincia-Departamento</th>
+                            <th>Dirección</th>
+                            <th>Recepción Documentaria</th>
+                            <th>Horario de atención</th>
+                            <th>Grupo</th>
+                            <th class="colAction" style="width:50px"></th>
+                            <th class="colAction" style="width:50px"></th>
+                        </tr>
+                        <tr>
+                            <th><button class="btn btn-default btn-xs" title="Borrar Filtros" data-toggle="tooltip" data-placement="right"><i class="fa fa-filter"></i></button></th>
+                            <td></td>
+                            <th><input id="txtFilterNombre" type="text" class="form-control input-sm" /></th>
+                            <td></td>
+                            <th><input id="txtFilterDireccion" type="text" class="form-control input-sm" /></th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot>
+                        <tr><td colspan="12"><div id="paginator"></div></td></tr>
+                    </tfoot>
+                </table>
             </div>
-        </div>
-    }
-    @if (ViewBag.TipoSede == 2)
-    {
-        <div class="table-responsive">
 
-            <div class="panel-group" id="accordion">
-            </div> 
         </div>
-    }
+    </div>
+</div>
+}
+@if (ViewBag.TipoSede == 2)
+{
+    <div class="table-responsive">
+
+        <div class="panel-group" id="accordion">
+        </div>
+    </div>
+}
 
 </div>
 
@@ -164,9 +158,9 @@
                             <div class="col-sm-6 col-xs-12" style="text-align: left;">
                                 <a class="btn btn-success" href="javascript:sut.Sede.Avanzar(0)" style="font-size: xx-large;"><i class="fa fa-arrow-left"></i> Retroceder</a>
                             </div>
-                        </div>  
+                        </div>
 
- 
+
 
                     </div>
 
@@ -199,7 +193,7 @@
                         </span>
                     </div>
 
-                    <div> 
+                    <div>
                         <div id="idtitulo1" style="text-align:left">
                             <div class="col-sm-3 col-xs-2">
                                 <a class="modalMinimize" title="Minimizar" style="color:black"> <i class='fa fa-minus fa-2x'></i> </a>
@@ -215,9 +209,9 @@
                                 <a id="clic" style="display: none;" class="btn btn-warning" href="javascript:sut.Sede.GuardarMenu(6)"><i class="fa fa-arrow-right"></i>Aqui</a>
                                 <l1 style="text-align: left;font-family: initial;"> Para continuar. ¡Tú puedes! </l1>
                             </div>
-                        </div> 
+                        </div>
                     </div>
-                </div> 
+                </div>
             </div>
         </div>
     </div>
@@ -260,6 +254,31 @@
     <script>
 
         sut.Sede = {
+            /*JJJMSP2 INI*/
+            editarlogo: (id) => {
+                $.ajax({
+                    type: "GET",
+                    //url: '/Seguridad/Entidad/Editar',
+                    url: '@Url.Content("~/Seguridad/Entidad/Editar")',
+                    data: { id: id, vertodo: 0 },
+                    cache: false,
+                    beforeSend: () => {
+                        sut.wait.modal('ventana-container');
+                        $('#modal-ventana').modal('show');
+                    },
+                    success: (data) => {
+                        $('#ventana-container').html(data);
+                    },
+                    error: (result) => {
+                        $('#modal-ventana').modal('hide');
+                        sut.error.show('mensajes', result.responseText);
+                    },
+                    statusCode: {
+                        203: () => { window.location.reload(); }
+                    }
+                });
+            },
+            /*JJJMSP2 FIN*/
             editar: function (id) {
                 $.ajax({
                     type: "GET",
@@ -330,7 +349,7 @@
                                     sut.Sede.listar(1);
                                 });
                             }
-                             
+
                         },
                         error: function (data) {
                             sut.error.show('mensajes', data.responseText);

@@ -654,13 +654,12 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                 };
 
 
-                ViewBag.activarcorreo = new List<SelectListItem>()
+                ViewBag.activacioncorreo = new List<SelectListItem>()
                 {
-                    new SelectListItem() { Text = "Activo", Value = "1" , Selected = item.Estado == EstadoUsuario.Activo ? true:false},
-                    new SelectListItem() { Text = "No Activo", Value = "2",  Selected = item.Estado == EstadoUsuario.Suspendido ? true:false },
+                    new SelectListItem() { Text = "No Activo", Value = "0",  Selected = item.ActivarCorreo == CorreoActivar.NoActivo ? true:false},
+                    new SelectListItem() { Text = "Activo", Value = "1" , Selected = item.ActivarCorreo == CorreoActivar.Activo ? true:false},
                 };
-
-
+                
                 ViewBag.asignarentidades = new List<SelectListItem>()
                 {
                     new SelectListItem() { Text = "Seleccionar", Value = "0" , Selected = item.AsigEntidad == AsignarEntidades.Seleccionar ? true:false},

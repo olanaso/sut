@@ -280,11 +280,11 @@
                     rows += sut.string.format('<td style="text-align: center;;width: 50px;" >{0}</td>', estadotitulo);
 
                     if (r.ActivarCorreo == 1) {
-                        var ActivarCorreo = 'Activo';
+                        var DActivarCorreo = 'Activo';
                     } else if (r.ActivarCorreo == 0) {
-                        var ActivarCorreo = 'No Activo';
+                        var DActivarCorreo = 'No Activo';
                     }
-                    rows += sut.string.format('<td style="text-align: center;;width: 50px;" >{0}</td>', ActivarCorreo);
+                    rows += sut.string.format('<td style="text-align: center;;width: 50px;" >{0}</td>', DActivarCorreo);
                     rows += '<td>';
                     rows += '<div class="btn-group">';
                     rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.Usuario.editar({0})" ><i class="fa fa-pencil"></i></a>', r.UsuarioId, r.UsuarioId);

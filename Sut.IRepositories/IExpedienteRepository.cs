@@ -29,7 +29,7 @@ namespace Sut.IRepositories
         
         List<Expediente> GetAllLikePaginSOLICITUDWORD();
         List<Procedimiento> GetAllLikePaginTodoConfigurar();
-        List<Procedimiento> GetAllLikePaginTodoConfigurarProce();
+        List<Procedimiento> GetAllLikePaginTodoConfigurarProce(Procedimiento filtro);
         List<Requisito> GetAllLikePaginTodorequisitos(long ProcedimientoId);
 
         List<Expediente> GetByEntidadFiscalizador(EstadoExpediente estadoExpediente);
@@ -42,8 +42,8 @@ namespace Sut.IRepositories
 
         List<Expediente> GetAllLikePaginEvaluadorMEFPCM(EstadoExpediente estadoExpediente);
         List<Expediente> GetAllBy(System.Linq.Expressions.Expression<Func<Expediente, bool>> predicate);
+        List<Expediente> GetByExpedienteCompara(long EntidadId);
         void Save(Expediente obj);
-        
         void EliminarProcesarCostos(long ExpedienteId);
         void ProcesaCostos(long ExpedienteId);
         void SaveOnlyExpediente(Expediente obj);

@@ -95,7 +95,8 @@
         <div class="form-group">
             <label class="control-label col-sm-3 col-xs-12">Activar Correo: </label>
             <div class="col-sm-9 col-xs-12">
-                @Html.DropDownListFor(model => model.ActivarCorreo, ViewBag.activarcorreo as List<SelectListItem>, new { @class = "form-control input-sm" })
+                @Html.DropDownListFor(model => model.ActivarCorreo, ViewBag.activacioncorreo as List<SelectListItem>, new { @class = "form-control input-sm" })
+            
             </div>
         </div>
         <div class="form-group">
@@ -108,8 +109,9 @@
                 }
                 else
                 {
-                    <input type="text" name="FechaSolicitud" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FechaSolicitud == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FechaSolicitud.Value.Day, Model.FechaSolicitud.Value.Month, Model.FechaSolicitud.Value.Year))" />
-
+                    string fechaSolicitud = Model.FechaSolicitud == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FechaSolicitud.Value.Day, Model.FechaSolicitud.Value.Month, Model.FechaSolicitud.Value.Year);
+                    //<input type="text" name="FechaSolicitud" class="form-control input-sm" value="@MvcHtmlString.Create(Model.FechaSolicitud == null ? "" : string.Format("{0:D2}/{1:D2}/{2}", Model.FechaSolicitud.Value.Day, Model.FechaSolicitud.Value.Month, Model.FechaSolicitud.Value.Year))" />
+                    <input type="text" name="FechaSolicitud" class="form-control input-sm" value="fechaSolicitud" />
                 }
 
             </div>

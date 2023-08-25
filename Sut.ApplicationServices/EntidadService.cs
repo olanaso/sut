@@ -358,5 +358,16 @@ namespace Sut.ApplicationServices
                 throw ex;
             }
         }
+        public List<Entidad> SearchEntidadesNombre(string term)
+        {
+            try
+            {
+                return _entidadRepository.SearchEntidadesNombre(term);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

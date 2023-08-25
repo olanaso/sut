@@ -15,174 +15,179 @@
             @Html.HiddenFor(model => model.SedeId)
             @Html.HiddenFor(model => model.EntidadId)
 
-            <div class="modal-body form-horizontal">
-                <div class="form-group">
-                    <label class="control-label col-sm-3 col-xs-12">Nombre</label>
-                    <div class="col-sm-9 col-xs-12">
-                        @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control input-sm" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-3 col-xs-12">Tipo</label>
-                    <div class="col-sm-9 col-xs-12">
-                        @Html.DropDownListFor(model => model.TipoSedeId, ViewBag.ListaTipos as List<SelectListItem>, new { @class = "form-control input-sm" })
-                    </div>
-                </div>
-                <hr />
-                <div class="form-group">
-                    <label class="control-label col-sm-3 col-xs-12">Departamento</label>
-                    <div class="col-sm-9 col-xs-12">
-                        @Html.DropDownList("DepartamentoId", ViewBag.ListaDepartamentos as List<SelectListItem>, new { @class = "form-control input-sm" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-3 col-xs-12">Provincia</label>
-                    <div class="col-sm-9 col-xs-12">
-                        @Html.DropDownList("ProvinciaId", ViewBag.ListaProvincias as List<SelectListItem>, new { @class = "form-control input-sm" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-3 col-xs-12">Distrito</label>
-                    <div class="col-sm-9 col-xs-12">
-                        @Html.DropDownListFor(model => model.DistritoId, ViewBag.ListaDistritos as List<SelectListItem>, new { @class = "form-control input-sm" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-3 col-xs-12">Dirección</label>
-                    <div class="col-sm-9 col-xs-12">
-                        @Html.TextBoxFor(model => model.Direccion, new { @class = "form-control input-sm" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-3 col-xs-12">Recepción Documentaria</label>
-                    <div class="col-sm-9 col-xs-12">
-                        @Html.HiddenFor(model => model.ListaUndOrganica)
-                        <div class="input-group">  
-                            @Html.TextAreaFor(model => model.TextoUndOrganica, new { @class = "form-control", @readonly = "readonly" })
-                            @*@Html.TextBoxFor(model => model.TextoUndOrganica, new { @class = "form-control", @readonly = "readonly" })*@
-                            @*<div class="input-group-btn">
-                                <a href="javascript:sut.EditarSede.deleteUndOrg('sut.EditarSede.setUndOrgDelete')" class="btn btn-danger"><i class="fa fa-minus"></i></a>
-                            </div>*@
-                            <div class="input-group-btn"> 
-                                <a href="javascript:sut.EditarSede.openSelectUndOrg('sut.EditarSede.setUndOrg')" class="btn btn-success"><i class="fa fa-plus"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <hr />
-                <h5 style="font-weight: bold">Días y horarios de atención</h5>
-                <h5 style="font-weight: bold">
-                    <label>@Html.CheckBoxFor(model => model.EsLunesViernes) Lunes a Viernes &nbsp;&nbsp;(</label>
-                    @*JJJMSP2*@
-                    <label>@Html.CheckBoxFor(model => model.EsLunes) Lunes &nbsp;&nbsp;</label>
-                    <label>@Html.CheckBoxFor(model => model.EsMartes) Martes &nbsp;&nbsp;</label>
-                    <label>@Html.CheckBoxFor(model => model.EsMiercoles) Miercoles &nbsp;&nbsp;</label>
-                    <label>@Html.CheckBoxFor(model => model.EsJueves) Jueves &nbsp;&nbsp;&nbsp;</label>
-                    <label>@Html.CheckBoxFor(model => model.EsViernes) Viernes &nbsp;)</label>
-                </h5>
-                <div class="form-group">
-                    <div class="col-sm-3 col-xs-12">
-                        <label>@Html.RadioButtonFor(model => model.TipoTurno, 'C') Horario Corrido</label>
-                    </div>
-                    <div class="col-sm-1 col-xs-3">De </div>
-                    <div class="col-sm-3 col-xs-9">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input name="CorridoHorIni" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.CorridoHorIni == null ? "__:__" : Model.CorridoHorIni.Value.ToString("HH:mm"))" />
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-1 col-xs-3"> A </div>
-                    <div class="col-sm-3 col-xs-9">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input name="CorridoHorFin" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.CorridoHorFin == null ? "__:__" : Model.CorridoHorFin.Value.ToString("HH:mm"))" />
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-12 col-xs-12 left">
-                        <label>@Html.RadioButtonFor(model => model.TipoTurno, 'T') Horario por turnos:</label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-3 col-xs-12">1er Turno:</label>
-                    <div class="col-sm-1 col-xs-3">De </div>
-                    <div class="col-sm-3 col-xs-9">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input name="Turno1HorIni" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.Turno1HorIni == null ? "__:__" : Model.Turno1HorIni.Value.ToString("HH:mm"))" />
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-1 col-xs-3"> A </div>
-                    <div class="col-sm-3 col-xs-9">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input name="Turno1HorFin" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.Turno1HorFin == null ? "__:__" : Model.Turno1HorFin.Value.ToString("HH:mm"))" />
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-3 col-xs-12">2do Turno:</label>
-                    <div class="col-sm-1 col-xs-3">De </div>
-                    <div class="col-sm-3 col-xs-9">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input name="Turno2HorIni" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.Turno2HorIni == null ? "__:__" : Model.Turno2HorIni.Value.ToString("HH:mm"))" />
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-1 col-xs-3"> A </div>
-                    <div class="col-sm-3 col-xs-9">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input name="Turno2HorFin" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.Turno2HorFin == null ? "__:__" : Model.Turno2HorFin.Value.ToString("HH:mm"))" />
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-3 col-xs-12">
-                        <label>@Html.CheckBoxFor(model => model.EsSabado) Sábado</label>
-                    </div>
-                    <div class="col-sm-1 col-xs-3">De </div>
-                    <div class="col-sm-3 col-xs-9">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input name="SabadoHorIni" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.SabadoHorIni == null ? "__:__" : Model.SabadoHorIni.Value.ToString("HH:mm"))" />
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-1 col-xs-3"> A </div>
-                    <div class="col-sm-3 col-xs-9">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input name="SabadoHorFin" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.SabadoHorFin == null ? "__:__" : Model.SabadoHorFin.Value.ToString("HH:mm"))" />
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-3 col-xs-12">
-                        <label>@Html.CheckBoxFor(model => model.EsDomingo) Domingo</label>
-                    </div>
-                    <div class="col-sm-1 col-xs-3">De </div>
-                    <div class="col-sm-3 col-xs-9">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input name="DomingoHorIni" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.DomingoHorIni == null ? "__:__" : Model.DomingoHorIni.Value.ToString("HH:mm"))" />
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                        </div>
-                    </div>
-                    <div class="col-sm-1 col-xs-3"> A </div>
-                    <div class="col-sm-3 col-xs-9">
-                        <div class="input-group bootstrap-timepicker timepicker">
-                            <input name="DomingoHorFin" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.DomingoHorFin == null ? "__:__" : Model.DomingoHorFin.Value.ToString("HH:mm"))" />
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-sm-3 col-xs-12">Grupo</label>
-                    <div class="col-sm-9 col-xs-12">
-                        @Html.DropDownListFor(model => model.Tipogrupo, ViewBag.TiposGrupo as List<SelectListItem>, new { @class = "form-control input-sm" })
+    <div class="modal-body form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Nombre</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Tipo</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.TipoSedeId, ViewBag.ListaTipos as List<SelectListItem>, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Departamento</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownList("DepartamentoId", ViewBag.ListaDepartamentos as List<SelectListItem>, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Provincia</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownList("ProvinciaId", ViewBag.ListaProvincias as List<SelectListItem>, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Distrito</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.DistritoId, ViewBag.ListaDistritos as List<SelectListItem>, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Dirección</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.TextBoxFor(model => model.Direccion, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Recepción Documentaria</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.HiddenFor(model => model.ListaUndOrganica)
+                <div class="input-group">
+                    @Html.TextAreaFor(model => model.TextoUndOrganica, new { @class = "form-control", @readonly = "readonly" })
+                    @*@Html.TextBoxFor(model => model.TextoUndOrganica, new { @class = "form-control", @readonly = "readonly" })*@
+                    @*<div class="input-group-btn">
+                        <a href="javascript:sut.EditarSede.deleteUndOrg('sut.EditarSede.setUndOrgDelete')" class="btn btn-danger"><i class="fa fa-minus"></i></a>
+                    </div>*@
+                    <div class="input-group-btn">
+                        <a href="javascript:sut.EditarSede.openSelectUndOrg('sut.EditarSede.setUndOrg')" class="btn btn-success"><i class="fa fa-plus"></i></a>
                     </div>
                 </div>
             </div>
+        </div>
+        <hr />
+        <h5 style="font-weight: bold">Días y horarios de atención</h5>
+        <h5 style="font-weight: bold">
+            <label>@Html.CheckBoxFor(model => model.EsLunesViernes) Lunes a Viernes &nbsp;&nbsp;(</label>
+            @*JJJMSP2*@
+            <label>@Html.CheckBoxFor(model => model.EsLunes) Lunes &nbsp;&nbsp;</label>
+            <label>@Html.CheckBoxFor(model => model.EsMartes) Martes &nbsp;&nbsp;</label>
+            <label>@Html.CheckBoxFor(model => model.EsMiercoles) Miercoles &nbsp;&nbsp;</label>
+            <label>@Html.CheckBoxFor(model => model.EsJueves) Jueves &nbsp;&nbsp;&nbsp;</label>
+            <label>@Html.CheckBoxFor(model => model.EsViernes) Viernes &nbsp;)</label>
+        </h5>
+        <div class="form-group">
+            <div class="col-sm-12 col-xs-12 left">
+                <label>@Html.RadioButtonFor(model => model.TipoTurno, 'D') 24 horas </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-3 col-xs-12">
+                <label>@Html.RadioButtonFor(model => model.TipoTurno, 'C') Horario Corrido</label>
+            </div>
+            <div class="col-sm-1 col-xs-3">De </div>
+            <div class="col-sm-3 col-xs-9">
+                <div class="input-group bootstrap-timepicker timepicker">
+                    <input name="CorridoHorIni" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.CorridoHorIni == null ? "__:__" : Model.CorridoHorIni.Value.ToString("HH:mm"))" />
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                </div>
+            </div>
+            <div class="col-sm-1 col-xs-3"> A </div>
+            <div class="col-sm-3 col-xs-9">
+                <div class="input-group bootstrap-timepicker timepicker">
+                    <input name="CorridoHorFin" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.CorridoHorFin == null ? "__:__" : Model.CorridoHorFin.Value.ToString("HH:mm"))" />
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12 col-xs-12 left">
+                <label>@Html.RadioButtonFor(model => model.TipoTurno, 'T') Horario por turnos:</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">1er Turno:</label>
+            <div class="col-sm-1 col-xs-3">De </div>
+            <div class="col-sm-3 col-xs-9">
+                <div class="input-group bootstrap-timepicker timepicker">
+                    <input name="Turno1HorIni" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.Turno1HorIni == null ? "__:__" : Model.Turno1HorIni.Value.ToString("HH:mm"))" />
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                </div>
+            </div>
+            <div class="col-sm-1 col-xs-3"> A </div>
+            <div class="col-sm-3 col-xs-9">
+                <div class="input-group bootstrap-timepicker timepicker">
+                    <input name="Turno1HorFin" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.Turno1HorFin == null ? "__:__" : Model.Turno1HorFin.Value.ToString("HH:mm"))" />
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">2do Turno:</label>
+            <div class="col-sm-1 col-xs-3">De </div>
+            <div class="col-sm-3 col-xs-9">
+                <div class="input-group bootstrap-timepicker timepicker">
+                    <input name="Turno2HorIni" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.Turno2HorIni == null ? "__:__" : Model.Turno2HorIni.Value.ToString("HH:mm"))" />
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                </div>
+            </div>
+            <div class="col-sm-1 col-xs-3"> A </div>
+            <div class="col-sm-3 col-xs-9">
+                <div class="input-group bootstrap-timepicker timepicker">
+                    <input name="Turno2HorFin" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.Turno2HorFin == null ? "__:__" : Model.Turno2HorFin.Value.ToString("HH:mm"))" />
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-3 col-xs-12">
+                <label>@Html.CheckBoxFor(model => model.EsSabado) Sábado</label>
+            </div>
+            <div class="col-sm-1 col-xs-3">De </div>
+            <div class="col-sm-3 col-xs-9">
+                <div class="input-group bootstrap-timepicker timepicker">
+                    <input name="SabadoHorIni" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.SabadoHorIni == null ? "__:__" : Model.SabadoHorIni.Value.ToString("HH:mm"))" />
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                </div>
+            </div>
+            <div class="col-sm-1 col-xs-3"> A </div>
+            <div class="col-sm-3 col-xs-9">
+                <div class="input-group bootstrap-timepicker timepicker">
+                    <input name="SabadoHorFin" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.SabadoHorFin == null ? "__:__" : Model.SabadoHorFin.Value.ToString("HH:mm"))" />
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-3 col-xs-12">
+                <label>@Html.CheckBoxFor(model => model.EsDomingo) Domingo</label>
+            </div>
+            <div class="col-sm-1 col-xs-3">De </div>
+            <div class="col-sm-3 col-xs-9">
+                <div class="input-group bootstrap-timepicker timepicker">
+                    <input name="DomingoHorIni" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.DomingoHorIni == null ? "__:__" : Model.DomingoHorIni.Value.ToString("HH:mm"))" />
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                </div>
+            </div>
+            <div class="col-sm-1 col-xs-3"> A </div>
+            <div class="col-sm-3 col-xs-9">
+                <div class="input-group bootstrap-timepicker timepicker">
+                    <input name="DomingoHorFin" type="text" class="form-control input-small" value="@MvcHtmlString.Create(Model.DomingoHorFin == null ? "__:__" : Model.DomingoHorFin.Value.ToString("HH:mm"))" />
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3 col-xs-12">Grupo</label>
+            <div class="col-sm-9 col-xs-12">
+                @Html.DropDownListFor(model => model.Tipogrupo, ViewBag.TiposGrupo as List<SelectListItem>, new { @class = "form-control input-sm" })
+            </div>
+        </div>
+    </div>
           
             <div id="msgEditar"></div>
             <div class="modal-footer">
@@ -319,19 +324,19 @@
             };
                 /*JJJMSP2*/
             if ($("#EsLunesViernes").prop("checked") == false && $("#EsLunes").prop("checked") == false && $("#EsMartes").prop("checked") == false && $("#EsMiercoles").prop("checked") == false && $("#EsJueves").prop("checked") == false && $("#EsViernes").prop("checked") == false && $("#EsSabado").prop("checked") == false && $("#EsDomingo").prop("checked") == false) {
-            
+
                 showNotification('top', 'right', 'Seleccionar Días y horarios de atención ', 2);
                 return;
             };
-          
+
                 /*JJJMSP2*/
             if ($("#EsLunes").prop("checked") == true || $("#EsMartes").prop("checked") == true || $("#EsMiercoles").prop("checked") == true || $("#EsJueves").prop("checked") == true || $("#EsViernes").prop("checked") == true )
-            { 
+            {
                 var proce = document.getElementsByName('TipoTurno');
                 for (cor = 0; cor < proce.length; cor++) {
                     var estado = cor;
 
-                    if (estado == 0 && proce[cor].checked == true) {
+                    if (estado == 1 && proce[cor].checked == true) {
 
                         var horaini1 = $("input[name='CorridoHorIni']").val()
                         var horafin1 = $("input[name='CorridoHorFin']").val()
@@ -346,7 +351,7 @@
                             return;
                         }
                     }
-                    if (cor == 1 && proce[cor].checked == true)
+                    if (cor == 2 && proce[cor].checked == true)
                     {
                         var horaini1 = $("input[name='Turno1HorIni']").val()
                         var horafin1 = $("input[name='Turno1HorFin']").val()
@@ -461,8 +466,8 @@
         });
 
         $("input[name='TipoTurno']").click(function () {
-          
-            if ($(this).val() === 'C') { 
+
+            if ($(this).val() === 'C') {
                 $("input[name='CorridoHorIni']").removeAttr("disabled")
                 $("input[name='CorridoHorFin']").removeAttr("disabled")
 
@@ -475,8 +480,9 @@
                 $("input[name='Turno1HorFin']").val('__:__');
                 $("input[name='Turno2HorIni']").val('__:__');
                 $("input[name='Turno2HorFin']").val('__:__');
+            }
 
-            } else { 
+            if ($(this).val() === 'T') {
                 $("input[name='CorridoHorIni']").attr('disabled', 'disabled');
                 $("input[name='CorridoHorFin']").attr('disabled', 'disabled');
 
@@ -487,35 +493,50 @@
 
                 $("input[name='CorridoHorIni']").val('__:__');
                 $("input[name='CorridoHorFin']").val('__:__');
-                 
             }
 
+            if ($(this).val() === 'D') {
+                $("input[name='CorridoHorIni']").attr('disabled', 'disabled');
+                $("input[name='CorridoHorFin']").attr('disabled', 'disabled');
+
+                $("input[name='Turno1HorIni']").attr('disabled', 'disabled');
+                $("input[name='Turno1HorFin']").attr('disabled', 'disabled');
+                $("input[name='Turno2HorIni']").attr('disabled', 'disabled');
+                $("input[name='Turno2HorFin']").attr('disabled', 'disabled');
+
+                $("input[name='CorridoHorIni']").val('__:__');
+                $("input[name='CorridoHorFin']").val('__:__');
+                $("input[name='Turno1HorIni']").val('__:__');
+                $("input[name='Turno1HorFin']").val('__:__');
+                $("input[name='Turno2HorIni']").val('__:__');
+                $("input[name='Turno2HorFin']").val('__:__');
+            }
         });
 
-       
+
         $("input[name='EsSabado']").click(function () {
-            if ($('#EsSabado').is(':checked') == true) { 
+            if ($('#EsSabado').is(':checked') == true) {
                 $("input[name='SabadoHorIni']").removeAttr("disabled")
-                $("input[name='SabadoHorFin']").removeAttr("disabled")   
+                $("input[name='SabadoHorFin']").removeAttr("disabled")
             }
             else
             {
                 $("input[name='SabadoHorIni']").attr('disabled', 'disabled');
-                $("input[name='SabadoHorFin']").attr('disabled', 'disabled'); 
+                $("input[name='SabadoHorFin']").attr('disabled', 'disabled');
                 $("input[name='SabadoHorIni']").val('__:__');
-                $("input[name='SabadoHorFin']").val('__:__'); 
-            } 
+                $("input[name='SabadoHorFin']").val('__:__');
+            }
         });
 
         $("input[name='EsDomingo']").click(function () {
             if ($('#EsDomingo').is(':checked') == true) {
 
                 $("input[name='DomingoHorIni']").removeAttr("disabled")
-                $("input[name='DomingoHorFin']").removeAttr("disabled")  
+                $("input[name='DomingoHorFin']").removeAttr("disabled")
             }
             else {
                 $("input[name='DomingoHorIni']").attr('disabled', 'disabled');
-                $("input[name='DomingoHorFin']").attr('disabled', 'disabled'); 
+                $("input[name='DomingoHorFin']").attr('disabled', 'disabled');
                 $("input[name='DomingoHorIni']").val('__:__');
                 $("input[name='DomingoHorFin']").val('__:__');
             }
@@ -532,7 +553,7 @@
 
         if ($('#EsDomingo').is(':checked') == true) {
             $("input[name='DomingoHorIni']").removeAttr("disabled")
-            $("input[name='DomingoHorFin']").removeAttr("disabled") 
+            $("input[name='DomingoHorFin']").removeAttr("disabled")
         }
         else {
             $("input[name='DomingoHorIni']").attr('disabled', 'disabled');
@@ -543,19 +564,37 @@
 
         if ($('#EsSabado').is(':checked') == true) {
             $("input[name='SabadoHorIni']").removeAttr("disabled")
-            $("input[name='SabadoHorFin']").removeAttr("disabled") 
+            $("input[name='SabadoHorFin']").removeAttr("disabled")
         }
         else {
             $("input[name='SabadoHorIni']").attr('disabled', 'disabled');
-            $("input[name='SabadoHorFin']").attr('disabled', 'disabled'); 
+            $("input[name='SabadoHorFin']").attr('disabled', 'disabled');
             $("input[name='SabadoHorIni']").val('__:__');
-            $("input[name='SabadoHorFin']").val('__:__'); 
+            $("input[name='SabadoHorFin']").val('__:__');
         }
         debugger;
 
-      
-        if ('@ViewBag.TipoTurno' === 'C') {
 
+         if ('@ViewBag.TipoTurno' === 'D') {
+            $("input[name='TipoTurno']")[0].click();
+            $("input[name='CorridoHorIni']").attr('disabled', 'disabled');
+            $("input[name='CorridoHorFin']").attr('disabled', 'disabled');
+
+            $("input[name='Turno1HorIni']").attr('disabled', 'disabled');
+            $("input[name='Turno1HorFin']").attr('disabled', 'disabled');
+            $("input[name='Turno2HorIni']").attr('disabled', 'disabled');
+            $("input[name='Turno2HorFin']").attr('disabled', 'disabled');
+
+            $("input[name='CorridoHorIni']").val('__:__');
+            $("input[name='CorridoHorFin']").val('__:__');
+            $("input[name='Turno1HorIni']").val('__:__');
+            $("input[name='Turno1HorFin']").val('__:__');
+            $("input[name='Turno2HorIni']").val('__:__');
+            $("input[name='Turno2HorFin']").val('__:__');
+        }
+
+        if ('@ViewBag.TipoTurno' === 'C') {
+            $("input[name='TipoTurno']")[1].click();
             $("input[name='CorridoHorIni']").removeAttr("disabled")
             $("input[name='CorridoHorFin']").removeAttr("disabled")
 
@@ -568,9 +607,10 @@
             $("input[name='Turno1HorFin']").val('__:__');
             $("input[name='Turno2HorIni']").val('__:__');
             $("input[name='Turno2HorFin']").val('__:__');
+        }
 
-        } else {
-            $("input[name='TipoTurno']")[1].click();
+        if ('@ViewBag.TipoTurno' === 'T') {
+            $("input[name='TipoTurno']")[2].click();
             $("input[name='CorridoHorIni']").attr('disabled', 'disabled');
             $("input[name='CorridoHorFin']").attr('disabled', 'disabled');
 
@@ -581,7 +621,6 @@
 
             $("input[name='CorridoHorIni']").val('__:__');
             $("input[name='CorridoHorFin']").val('__:__');
-
         }
 
         if (@Model.SedeId==0) {

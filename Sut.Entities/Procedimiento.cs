@@ -215,18 +215,14 @@ namespace Sut.Entities
         public int Estadodatos { get; set; }
         public int Estadostl { get; set; }
         public int Estadotablaasme { get; set; }
-
         public int EstadoInfoEva { get; set; }
         public int EstadodatosEva { get; set; }
         public int EstadostlEva { get; set; }
         public int EstadotablaasmeEva { get; set; }
         public int Activar { get; set; }
-
         public int Activar2 { get; set; }
         public int Activar3 { get; set; }
-
-
-
+        public int ActivarAtencionTlf { get; set; }
         public int EstadoNinguno { get; set; }
 
 
@@ -325,9 +321,7 @@ namespace Sut.Entities
 
         public int Calificaciones { get; set; }
         public int Bloque { get; set; }
-        [NotMapped]
-        public bool ChkAtencionTlf { get; set; }
-
+        
     }
 }
 

@@ -379,7 +379,7 @@
                     type: "GET",
                     //url: '/Seguridad/Entidad/Editar',
                     url: '@Url.Content("~/Seguridad/Entidad/Editar")',
-                    data: { id: id },
+                    data: { id: id, vertodo: 1 },
                     cache: false,
                     beforeSend: () => {
                         sut.wait.modal('ventana-container');

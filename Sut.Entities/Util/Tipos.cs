@@ -77,7 +77,11 @@
         No = 2
     }
 
-
+    public enum CorreoActivar : int
+    {
+        NoActivo = 0,
+        Activo = 1,
+    }
 
     public enum Correo : short
     {

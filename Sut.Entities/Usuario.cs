@@ -40,13 +40,9 @@ namespace Sut.Entities
         public DateTime? FecModificacion { get; set; }
 
         public int Ayuda { get; set; }
-        public int ActivarCorreo { get; set; }
-
-      
-       
+        public CorreoActivar ActivarCorreo { get; set; }
 
         public AsignarEntidades AsigEntidad { get; set; }
-         
 
         [NotMapped]
         public short FilterRol { get; set; }
@@ -54,13 +50,10 @@ namespace Sut.Entities
         [NotMapped]
         public long usurol { get; set; }
 
-
-
         [NotMapped]
         public long EstadoId { get; set; }
         [NotMapped]
         public string FecCreaciontexto { get; set; }
-
 
         [NotMapped]
         public long DepartamentoId { get; set; }

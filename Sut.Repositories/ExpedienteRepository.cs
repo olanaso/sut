@@ -66,6 +66,21 @@ namespace Sut.Repositories
             }
         }
 
+        public List<Expediente> GetByExpedienteCompara(long EntidadId)
+        {
+            try
+            {
+                SutContext ctx = Context.GetContext() as SutContext;
+
+                return ctx.Expediente
+                        .Where(x => x.EntidadId == EntidadId && x.Estado == 1 && x.EstadoExpediente != EstadoExpediente.Anulado)
+                        .ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public List<Expediente> GetByEntidadCompleto()
         {
             try
@@ -278,17 +293,22 @@ namespace Sut.Repositories
             }
         }
 
-        public List<Procedimiento> GetAllLikePaginTodoConfigurarProce()
+        public List<Procedimiento> GetAllLikePaginTodoConfigurarProce(Procedimiento filtro)
         {
             try
             {
                 SutContext ctx = Context.GetContext() as SutContext;
 
-
                 return ctx.Procedimiento
                         .Include(x => x.Expediente)
                         .Include("Expediente.Entidad")
-                         .Where(x => x.CodigoCorto != null && x.Estado!=3 && x.Operacion!= OperacionExpediente.Eliminacion)
+                         .Where(x => x.CodigoCorto != null && x.Estado!=3 && x.Operacion!= OperacionExpediente.Eliminacion
+                         && (x.Expediente.Codigo.ToUpper().Contains((string.IsNullOrEmpty(filtro.Expediente.Codigo) ? x.Expediente.Codigo : filtro.Expediente.Codigo).ToUpper())
+                         && (x.Expediente.Entidad.EntidadId == filtro.Expediente.Entidad.EntidadId)
+                         && x.CodigoCorto.ToUpper().Contains((string.IsNullOrEmpty(filtro.CodigoCorto) ? x.CodigoCorto : filtro.CodigoCorto).ToUpper())
+                         && x.Denominacion.ToUpper().Contains((string.IsNullOrEmpty(filtro.Denominacion) ? x.Denominacion : filtro.Denominacion).ToUpper())
+                         ))
+                        .OrderByDescending(x => x.ProcedimientoId)
                         .ToList();
             }
             catch (Exception ex)
@@ -296,7 +316,6 @@ namespace Sut.Repositories
                 throw ex;
             }
         }
-
 
         public List<Requisito> GetAllLikePaginTodorequisitos(long ProcedimientoId)
         {

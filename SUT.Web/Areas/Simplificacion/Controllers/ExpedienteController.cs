@@ -10,15 +10,19 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Web.Mvc;
+using System.Configuration;
 using System.Threading;
 using System.Web;
 using System.Web.Security;
+using System.Diagnostics;
+using System.Text;
 
 namespace Sut.Web.Areas.Simplificacion.Controllers
 {
     [Authorize]
     public class ExpedienteController : Controller
     {
+        string pathlogoQR = ConfigurationManager.AppSettings["Sut.PathNomQRCode"].ToString(); 
         private readonly ILogService<ExpedienteController> _log;
         private readonly IExpedienteService _expedienteService;
         private readonly ITupaService _tupaService;
@@ -127,7 +131,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
         /*JJJMSP2*/
         public ActionResult ListaComparar(UsuarioInfo user)
         {
-            List<Expediente> listaexpedientesCompara = _expedienteService.GetByEntidad(user.EntidadId);
+            List<Expediente> listaexpedientesCompara = _expedienteService.GetByExpedienteCompara(user.EntidadId);
             listaexpedientesCompara = listaexpedientesCompara.OrderByDescending(x => x.Codigo).ToList();
             listaexpedientesCompara.Insert(0, new Expediente() { ExpedienteId = 0, Codigo = " Seleccionar Expediente " });
             ViewBag.listaexpedientesCompara = listaexpedientesCompara.Select((x, i) => new SelectListItem()
@@ -244,7 +248,22 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 return PartialView("_Error");
             }
         }
+
         /*JJJMSP2 INI*/
+        public ActionResult GetBuscaEntidadNombre(string term)
+        {
+            var results = _entidadService.SearchEntidadesNombre(term);
+
+            var formattedResults = results.Select(entity => new
+            {
+                id = entity.EntidadId, // Id de la entidad
+                text = entity.Nombre // Texto a mostrar en el dropdown
+            });
+
+            return Json(formattedResults, JsonRequestBehavior.AllowGet);
+        }
+        /*JJJMSP2 FIN*/
+
         public ActionResult Lista(UsuarioInfo user)
         {
 
@@ -443,6 +462,15 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
 
         public ActionResult ListaConfigurarProcedimientos(UsuarioInfo user)
         {
+            List<Entidad> listaentidades = _entidadService.GetAll();
+            listaentidades = listaentidades.OrderByDescending(x => x.Codigo).ToList();
+            listaentidades.Insert(0, new Entidad() { EntidadId = 0, Nombre = " Seleccionar Entidad - " });
+            ViewBag.listaentidades = listaentidades.Select((x, i) => new SelectListItem()
+            {
+                Value = x.EntidadId.ToString(),
+                Text = x.Nombre
+            })
+           .ToList();
 
             UsuarioInfo model = new UsuarioInfo();
             model = user;
@@ -815,6 +843,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
             int rol = 0;
 
             List<Procedimiento> lista = _expedienteService.GetAllLikePaginTodoConfigurarProce(filtro, pageIndex, pageSize, ref totalRows);
+
             return JsonConvert.SerializeObject(new
             {
                 lista = lista.Select(x => new
@@ -835,18 +864,13 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                     sinnotas = x.sinnotas,
                     reclamacion = x.reclamacion,
                     revision = x.revision,
+                    ActivarAtencionTlf = x.ActivarAtencionTlf ,
                     Calificaciones = x.Calificaciones,
-                    ActivarTlf = x.ChkAtencionTlf
                 }),
                 rol = 1,
                 totalRows = totalRows
             });
-
-
-
         }
-
-
 
         public string GetAllLikePaginRequisitos(Requisito filtro, int pageIndex, int pageSize, UsuarioInfo user)
         {
@@ -936,14 +960,13 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 }
                 else if (tipo == 8)
                 {
-                    bool lb_chk = true;
-                    if (estado == 0) { lb_chk = false; }
-                    model.ChkAtencionTlf = lb_chk;
+                    model.ActivarAtencionTlf = estado;
                 }
+
                 _procedimientoService.Updateprocedimiento(model);
                 //VERIFICAR
 
-                return Json(new { valid = true, mensaje = "Los datos se copiaron correctamente." });
+                return Json(new { valid = true, mensaje = "Los cambios de configuración del procedimiento se guardaron correctamente." });
 
 
             }
@@ -954,7 +977,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
 
                 _log.Error(ex);
-                var error = "Ya Existe Información en la tabla Asme favor de eliminar las actividades para poder copiar";
+                var error = "Error al activar en el procedimiento seleccionado";
                 return PartialView("_Error");
             }
         }
@@ -1976,7 +1999,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                     if (listminis != null)
                     {
 
-                        List<Usuario> objent = _usuarioService.GetByEntidad(user.EntidadId).Where(x => x.Estado == EstadoUsuario.Activo && x.ActivarCorreo == 1).ToList();
+                        List<Usuario> objent = _usuarioService.GetByEntidad(user.EntidadId).Where(x => x.Estado == EstadoUsuario.Activo && x.ActivarCorreo == CorreoActivar.Activo).ToList();
                         NombreEntidadDestinatario = listminis.Nombre;
                         if (objent.Count() != 0)
                         {
@@ -2144,35 +2167,65 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
         {
             try
             {
-
-
                 _expedienteService.activarinfcondicion(model.ExpedienteId, model.OrdenPa);
                 //VERIFICAR
-
                 return Json(new { valid = true, mensaje = "Los datos se actuálizaron correctamente." });
-
-
             }
             catch (Exception ex)
             {
-
                 ModelState.AddModelError("", ex.Message);
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
-
                 _log.Error(ex);
                 var error = "Ya Existe Información en la tabla Asme favor de eliminar las actividades para poder copiar";
                 return PartialView("_Error");
             }
         }
+        public ActionResult activarLogoQR(Expediente model, UsuarioInfo user)
+        {
+            try
+            {
+                // Generar la imagen del código QR y actualizar el campo LogoQR en el modelo
+                string qrCodeImagePath = pathlogoQR + model.ExpedienteId + ".png";
+
+                if (!System.IO.File.Exists(qrCodeImagePath))
+                {
+                    var qrWriter = new ZXing.BarcodeWriterPixelData
+                    {
+                        Format = ZXing.BarcodeFormat.QR_CODE,
+                        Options = new ZXing.Common.EncodingOptions
+                        {
+                            Width = 200,
+                            Height = 200,
+                            Margin = 0
+                        }
+                    };
+
+                    var qrCodeData = qrWriter.Write("https://sut.pcm.gob.pe/Simplificacion/Expediente/" + model.ExpedienteId.ToString());
+                    var bitmap = qrCodeData.ToBitmap();
+                    bitmap.Save(qrCodeImagePath, System.Drawing.Imaging.ImageFormat.Png);
+                }
+
+                model.LogoQR = model.ExpedienteId + ".png";
+
+                // Actualizar el campo LogoQR en la base de datos a través del servicio
+                _expedienteService.activarLogoQR(model.ExpedienteId, model.LogoQR);
+
+                return Json(new { valid = true, mensaje = "El logo QR se guardo correctamente." });
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                ModelState.AddModelError("", ex.Message);
+                return PartialView("_Error");
+            }
+        }
+        
         public ActionResult InformacionAdicional(long id, UsuarioInfo user)
         {
             try
             {
                 Expediente model = new Expediente();
-
                 model = _expedienteService.GetOne(id);
-
-
                 ViewBag.ordenpas = new List<SelectListItem>()
                 {
                     new SelectListItem() { Text = "Sistema", Value = "1" },
@@ -2181,12 +2234,10 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                     new SelectListItem() { Text = "Unidad Organica y Bloque", Value = "4" }
                 };
 
-
-
                 ViewBag.User = user;
                 ViewBag.Estadisticas = _expedienteService.GetEstadisticas(id);
                 ViewBag.EstadoRepWord = model.EstadoReporteWord;
-
+                ViewBag.PathLogoQR = pathlogoQR;
                 return PartialView("_InformacionAdicional", model);
             }
             catch (Exception ex)
@@ -2707,7 +2758,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 if (listminis != null)
                 {
                     NombreEntidadDestinatario = listminis.Nombre;
-                    List<Usuario> objent = _usuarioService.GetByEntidad(listminis.EntidadId).Where(x => x.Estado == EstadoUsuario.Activo && x.ActivarCorreo == 1).ToList();
+                    List<Usuario> objent = _usuarioService.GetByEntidad(listminis.EntidadId).Where(x => x.Estado == EstadoUsuario.Activo && x.ActivarCorreo == CorreoActivar.Activo).ToList();
 
                     if (objent.Count() != 0)
                     {
@@ -2909,13 +2960,15 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
 
                 if (listaexpe[0].ExpedienteId == ExpedienteId)
                 {
-                    List<Expediente> listaexpeanulado = _expedienteService.GetByEntidadAnulado(obj.EntidadId);
-                    if (listaexpeanulado.Count > 1)
+                    if (listaexpe[0].EstadoExpediente != EstadoExpediente.Anulado)
                     {
-
-                        return Json(new { valid = false }, JsonRequestBehavior.AllowGet);
-
+                        List<Expediente> listaexpeanulado = _expedienteService.GetByEntidadAnulado(obj.EntidadId);
+                        if (listaexpeanulado.Count > 1)
+                        {
+                            return Json(new { valid = false }, JsonRequestBehavior.AllowGet);
+                        }
                     }
+
                 }
                 else
                 {
@@ -3033,7 +3086,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 if (listminis != null)
                 {
                     NombreEntidadDestinatario = listminis.Nombre;
-                    List<Usuario> objent = _usuarioService.GetByEntidad(listminis.EntidadId).Where(x => x.Estado == EstadoUsuario.Activo && x.ActivarCorreo == 1).ToList();
+                    List<Usuario> objent = _usuarioService.GetByEntidad(listminis.EntidadId).Where(x => x.Estado == EstadoUsuario.Activo && x.ActivarCorreo == CorreoActivar.Activo).ToList();
 
                     if (objent.Count() != 0)
                     {
@@ -3168,7 +3221,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 if (listminis != null)
                 {
 
-                    List<Usuario> objent = _usuarioService.GetByEntidad(objexp.EntidadId).Where(x => x.Estado == EstadoUsuario.Activo && x.ActivarCorreo == 1).ToList();
+                    List<Usuario> objent = _usuarioService.GetByEntidad(objexp.EntidadId).Where(x => x.Estado == EstadoUsuario.Activo && x.ActivarCorreo == CorreoActivar.Activo).ToList();
                     NombreEntidadDestinatario = listminis.Nombre;
                     if (objent.Count() != 0)
                     {
@@ -3498,7 +3551,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 if (listminis != null)
                 {
 
-                    List<Usuario> objent = _usuarioService.GetByEntidad(objexp.EntidadId).Where(x => x.Estado == EstadoUsuario.Activo && x.ActivarCorreo == 1).ToList();
+                    List<Usuario> objent = _usuarioService.GetByEntidad(objexp.EntidadId).Where(x => x.Estado == EstadoUsuario.Activo && x.ActivarCorreo == CorreoActivar.Activo).ToList();
                     NombreEntidadDestinatario = listminis.Nombre;
                     if (objent.Count() != 0)
                     {
@@ -3524,7 +3577,7 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
 
                         if (user.EntidadId == 4105)
                         {
-                            List<Usuario> objentMef = _usuarioService.GetByEntidad(18497).Where(x => x.Estado == EstadoUsuario.Activo && x.ActivarCorreo == 1).ToList();
+                            List<Usuario> objentMef = _usuarioService.GetByEntidad(18497).Where(x => x.Estado == EstadoUsuario.Activo && x.ActivarCorreo == CorreoActivar.Activo).ToList();
                             string NombreEntidad2 = objentMef[0].Entidad.Nombre;
                             destinatario = "";
                             foreach (var j in objentMef)
