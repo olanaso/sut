@@ -2,9 +2,11 @@
 function stringtoArray(myString) {
    return  myString.slice(1, -1).split(',').map(val => parseInt(val));
 }
+//const currentURL = window.location.href;
+//var { region, provincia, nivelgob } = obtenerParametrosURL(currentURL);
 
 $.ajax({
-    url: 'ObtenerDatosJson?iopsp=4',
+    url: `ObtenerDatosJson?iopsp=4&parameter1=${region}&parameter2=${provincia}&parameter3=${nivelgob}`,
     type: 'GET',
     success: function (response) {
         // Hacer algo con la respuesta

@@ -148,6 +148,8 @@ namespace Sut.Repositories.Procedimientos
         public static readonly string ListarDashboard = "Listar_Dashboard";
         public static readonly string ListarActividadesFechas = "Listar_ActividadesFechas";
         public static readonly string Actualizar_RolUsuario = "Actualizar_RolUsuario";
+        //videos
+        public static readonly string Mantener_Video = "Mantener_Video";
         //JJJMSP2 INI
         public static readonly string paSutProcedimientoComparar = "paSUT_Procedimiento_Comparar";
         #endregion

@@ -15,16 +15,19 @@ $(document).ajaxComplete(function (event, xhr, settings) {
 
 
 $.ajax({
-    url: 'ObtenerDatosJson?iopsp=2',
+    url: `ObtenerDatosJson?iopsp=2&parameter1=${region}&parameter2=${provincia}&parameter3=${nivelgob}`,
     type: 'GET',
     success: function (response) {
         // Hacer algo con la respuesta
         let result = JSON.parse(response.result);
+        console.log('--------------')
         console.log(result)
+        $('#exp_tupa_vigente').text(result[2].CANT.toLocaleString('en-US'));
+        $('#exp_en_proceso').text(result[1].CANT.toLocaleString('en-US'));
         $('#exp_publicados').text(result[0].CANT.toLocaleString('en-US'));
-        $('#exp_totales').text(result[1].CANT.toLocaleString('en-US'));
-        $('#exp_regulares').text(result[2].CANT.toLocaleString('en-US'));
-        $('#exp_inicial').text(result[3].CANT.toLocaleString('en-US'));
+        $('#exp_totales').text(result[3].CANT.toLocaleString('en-US'));
+        $('#exp_regulares').text(result[4].CANT.toLocaleString('en-US'));
+        $('#exp_inicial').text(result[5].CANT.toLocaleString('en-US'));
     },
     error: function (xhr, status, error) {
         // Manejar error

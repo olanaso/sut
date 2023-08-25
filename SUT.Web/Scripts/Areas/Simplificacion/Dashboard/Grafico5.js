@@ -1,6 +1,9 @@
 ﻿
+//const currentURL = window.location.href;
+//var { region, provincia, nivelgob } = obtenerParametrosURL(currentURL);
+
 $.ajax({
-    url: 'ObtenerDatosJson?iopsp=11',
+    url: `ObtenerDatosJson?iopsp=11&parameter1=${region}&parameter2=${provincia}&parameter3=${nivelgob}`,
     type: 'GET',
     success: function (response) {
         // Hacer algo con la respuesta
@@ -14,7 +17,12 @@ $.ajax({
             })
         }
 
-        $('#cant_usuarios').text(aresult[0].data.map(Number).reduce((a, b) => a + b, 0).toLocaleString('en-US'))
+        for (let i = 0; i < aresult.length; i++) {
+            aresult[i].data = completeWithZeros(aresult[0].data, aresult[i].data)
+        }
+
+
+        //$('#cant_usuarios').text(aresult[0].data.map(Number).reduce((a, b) => a + b, 0).toLocaleString('en-US'))
 
         crearGrafico5(aresult);
 
@@ -25,6 +33,19 @@ $.ajax({
         console.error(error);
     }
 });
+
+
+
+function completeWithZeros(array1, array2) {
+    const diffSize = array1.length - array2.length;
+
+    if (diffSize > 0) {
+        const zeros = new Array(diffSize).fill(0);
+        array2 = [...zeros, ...array2];
+    }
+
+    return array2;
+}
 
 function crearGrafico5(result) {
 

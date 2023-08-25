@@ -50,8 +50,12 @@ let mytable1 = $('#tabla1').DataTable({
 
 
 
+//const currentURL = window.location.href;
+//var { region, provincia, nivelgob } = obtenerParametrosURL(currentURL);
+
 $.ajax({
-    url: 'ObtenerDatosJson?iopsp=10',
+    url: `ObtenerDatosJson?iopsp=10&parameter1=${region}&parameter2=${provincia}&parameter3=${nivelgob}`,
+
     type: 'GET',
     success: function (response) {
         // Hacer algo con la respuesta
@@ -60,10 +64,12 @@ $.ajax({
 
         $.each(datos, function (index, value) {
             mytable1.row.add([
-                value['entidad'],
-                value['codigoexp'],
-                value['expediente'],
-                value['cantproc']
+                value['ENTIDAD'],
+              
+                value['TIPO_EXP'],
+                value['ESTADO'],
+                value['FECCREACION'],
+                value['CANTEXP']
             ]);
         });
 
@@ -131,7 +137,7 @@ let mytable1_1 = $('#tabla1_1').DataTable({
 
 
 $.ajax({
-    url: 'ObtenerDatosJson?iopsp=13',
+    url: `ObtenerDatosJson?iopsp=13&parameter1=${region}&parameter2=${provincia}&parameter3=${nivelgob}`,
     type: 'GET',
     success: function (response) {
         // Hacer algo con la respuesta
@@ -143,6 +149,7 @@ $.ajax({
                 value['ESTADO'],
                 value['CARGA INICIAL'],
                 value['EXPEDIENTE REGULAR'],
+                value['CARGA INICIAL'] + value['EXPEDIENTE REGULAR'],
             ]);
         });
 

@@ -323,6 +323,8 @@
     <Compile Include="Areas\Seguridad\SeguridadAreaRegistration.cs" />
     <Compile Include="Areas\Simplificacion\Controllers\ACRExanteController.cs" />
     <Compile Include="Areas\Simplificacion\Controllers\ConfiguracionController.cs" />
+    <Compile Include="Areas\Simplificacion\Controllers\MensajePrincipalController.cs" />
+    <Compile Include="Areas\Simplificacion\Controllers\VideoController.cs" />
     <Compile Include="Areas\Simplificacion\Controllers\EntidadGratuitoController.cs" />
     <Compile Include="Areas\Simplificacion\Controllers\DashboardController.cs" />
     <Compile Include="Areas\Simplificacion\Controllers\CalendarioActividadesController.cs" />
@@ -1344,6 +1346,7 @@
     </Content>
     <Content Include="Scripts\Areas\Simplificacion\Dashboard\Dashboard.js" />
     <Content Include="Scripts\Areas\Simplificacion\Dashboard\Grafico5.js" />
+    <Content Include="Scripts\Areas\Simplificacion\Dashboard\Mapa.js" />
     <Content Include="Scripts\Areas\Simplificacion\Dashboard\Pie1.js" />
     <Content Include="Scripts\Areas\Simplificacion\Dashboard\Grafico4.js" />
     <Content Include="Scripts\Areas\Simplificacion\Dashboard\Grafico3.js" />
@@ -1353,6 +1356,14 @@
     <Content Include="Scripts\Areas\Simplificacion\Dashboard\Tabla3.js" />
     <Content Include="Scripts\Areas\Simplificacion\Dashboard\Tabla2.js" />
     <Content Include="Scripts\Areas\Simplificacion\Dashboard\Tabla1.js" />
+    <Content Include="Scripts\Areas\Simplificacion\Video\Acciones.js" />
+    <Content Include="Scripts\Areas\Simplificacion\Video\grilla.js" />
+    <Content Include="Scripts\AyudaSUT\assets\icon-cerrar.png" />
+    <Content Include="Scripts\AyudaSUT\assets\icon-tiempo.png" />
+    <Content Include="Scripts\AyudaSUT\assets\icon-video.png" />
+    <Content Include="Scripts\AyudaSUT\assets\icons8-question-mark-25.png" />
+    <Content Include="Scripts\AyudaSUT\AyudaSUT.js" />
+    <Content Include="Scripts\AyudaSUT\Translate.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="plugins\ckeditor\CHANGES.md" />
@@ -1600,6 +1611,9 @@
     <Content Include="Areas\Simplificacion\Views\Dashboard\_Tabla3.cshtml" />
     <Content Include="Areas\Simplificacion\Views\Dashboard\_Tabla4.cshtml" />
     <Content Include="Areas\Simplificacion\Views\Dashboard\_Totales.cshtml" />
+    <Content Include="Areas\Simplificacion\Views\Video\Lista.cshtml" />
+    <Content Include="Areas\Simplificacion\Views\MensajePrincipal\Lista.cshtml" />
+    <Content Include="Areas\Simplificacion\Views\Dashboard\_Mapa.cshtml" />
     <None Include="bundleconfig.json" />
     <Content Include="bundleconfig.json.bindings">
       <DependentUpon>bundleconfig.json</DependentUpon>
@@ -1668,11 +1682,17 @@
     <None Include="Scripts\jquery-2.2.3-vsdoc.js" />
     <Content Include="Scripts\editar.js" />
     <Content Include="Scripts\jcd.js" />
+    <Content Include="Scripts\jqgrid\grid.css" />
+    <Content Include="Scripts\jqgrid\jqgrid-bootstrap.css" />
+    <Content Include="Scripts\jqgrid\jqgrid.locale-es.js" />
+    <Content Include="Scripts\jqgrid\jqGrid.min.js" />
+    <Content Include="Scripts\jqgrid\jquery-3.5.1.js" />
     <Content Include="Scripts\jquery-sortable.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.validate.additional.methods.js" />
     <Content Include="Scripts\jquery.validate.additional.methods.min.js" />
     <Content Include="Scripts\js-cookie.js" />
+    <Content Include="Scripts\MsjPrincipal\msjPrincipal.js" />
     <Content Include="Scripts\notify.js" />
     <Content Include="Scripts\notify.min.js" />
     <Content Include="Scripts\select2\select2.css" />

@@ -1,0 +1,258 @@
+﻿
+@using Sut.Entities
+@model Expediente
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+
+
+    ViewBag.Icon = "fa fa-video-camera";
+    ViewBag.Title = "Videos ";
+    ViewBag.Descripcion = "";
+
+}
+
+
+<div id="mensajes">
+    @{Html.RenderPartial("_Error");}
+</div>
+
+@Html.HiddenFor(model => model.ExpedienteId)
+
+@*@Html.Partial("_Filtros")*@
+
+<link ref="~/Content/Areas/Simplificacion/Dashboard/Dashboard.css" rel="stylesheet" />
+
+
+
+
+<div class="row">
+
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-12 col-xs-12">
+                <div class="box box-danger">
+                    <div class="box-header with-border">
+                        <div class="pull-left">
+
+                            <button id="btnagregar" type="button" class="btn btn-block btn-danger btn-sm">+ Agregar</button>
+                        </div>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
+                        </div>
+
+                    </div>
+
+                    <div class="box-body">
+
+                        <table id="grid" class="table table-bordered table-striped">
+                        </table>
+                        <div id="pager"></div>
+                    </div>
+
+                    <div class="box-footer">
+                        <p class="highcharts-description">
+                            Cantidad de Procedimientos activos.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="row">
+
+
+
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="row">
+
+
+
+        </div>
+    </div>
+
+  
+    <div class="col-sm-12">
+
+    </div>
+
+
+</div>
+
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Registro de Video</h4>
+            </div>
+            <form id="form" action="javascript:void(0)" method="post">
+                <div class="modal-body form-horizontal">
+
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">Título</label>
+                        <div class="col-sm-10">
+                            <input required type="text" class="form-control" name="parameter1" id="txttitulo" placeholder="Ingrese el título del vidéo">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">Descripción</label>
+                        <div class="col-sm-10">
+                            <input required type="text" class="form-control" name="parameter2" id="txtdescripcion" placeholder="Descripción de video">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">URL</label>
+                        <div class="col-sm-10">
+                            <input required type="url" class="form-control" name="parameter3" id="txturl" placeholder="Url del video">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">Path</label>
+                        <div class="col-sm-10">
+                            <input required type="text" class="form-control" name="parameter4" id="txtpath" placeholder="http://sut:54889/Simplificacion/Video/Lista">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">Duración</label>
+                        <div class="col-sm-10">
+                            <input required type="time" class="form-control" id="txtduracion" name="parameter5" placeholder="00:00">
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cerrar</button>
+                    <button id="btnGuardar" type="submit" class="btn btn-danger">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirmación de eliminación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este registro?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button id="btneliminar" type="button" class="btn btn-danger" id="confirmDelete">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="data"></div>
+@*<div id="loadingmodal" class=" modal-danger fade in" id="modal-danger" style="display: block; padding-right: 17px;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title">Cargando ...</h4>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>*@
+
+
+<!-- Para utilizacion del jqgrid -->
+<!-- The jQuery library is a prerequisite for all jqSuite products -->
+<script type="text/javascript" src="~/Scripts/jqgrid/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js" ></script>
+<!-- We support more than 40 localizations -->
+<script type="text/ecmascript" src="~/Scripts/jqgrid/jqgrid.locale-es.js"></script>
+<!-- This is the Javascript file of jqGrid -->
+<script type="text/ecmascript" src="~/Scripts/jqgrid/jqGrid.min.js"></script>
+
+@*<script src="~/Scripts/jqgrid/jqgrid.locale-es.js"></script>
+    <script src="~/Scripts/jqgrid/jqGrid.min.js"></script>*@
+
+<link href="~/Scripts/jqgrid/grid.css" rel="stylesheet" />
+<link href="~/Scripts/jqgrid/jqgrid-bootstrap.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+@section Style {
+    <style type="text/css">
+        table thead tr th {
+            text-align: center;
+            vertical-align: middle !important;
+        }
+
+        table td {
+            vertical-align: middle !important;
+        }
+
+        table tfoot .pagination {
+            margin: 5px 0px;
+        }
+
+        fieldset.scheduler-border {
+            border: 1px groove #ddd !important;
+            padding: 0 1.4em 0 1.4em !important;
+            margin: 0 0 1.5em 0 !important;
+            -webkit-box-shadow: 0px 0px 0px 0px #000;
+            box-shadow: 0px 0px 0px 0px #000;
+        }
+
+        .scheduler-border legend {
+            font-size: 1.2em !important;
+            font-weight: bold !important;
+            text-align: left !important;
+            width: auto !important;
+            margin-bottom: 0px !important;
+            padding: 0px !important;
+            border-bottom: none;
+        }
+
+        .selectfilter {
+            border-radius: 0px !important;
+        }
+
+        .ui-jqgrid-titlebar {
+            font-weight: normal;
+            min-height: 37px;
+            padding: 4px 8px;
+            position: relative;
+            margin-right: 2px;
+            border-bottom: 1px solid #ddd;
+            background: #EE0808;
+            color: #fff;
+        }
+    </style>
+}
+
+@*Importando a los scripts para la implementacion del dashboard*@
+<script src="~/Scripts/Areas/Simplificacion/Video/grilla.js"></script>
+<script src="~/Scripts/Areas/Simplificacion/Video/Acciones.js"></script>
+
+
+
