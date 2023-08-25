@@ -6,15 +6,12 @@
     Sut.Entities.Observacion obs = ViewBag.Observacion as Sut.Entities.Observacion;
     Sut.Security.Filtros fil = ViewBag.filtro as Sut.Security.Filtros;
 
-
-    List<Usuario>  usub = ViewBag.DatosUsuario as List<Usuario>;
+    List<Usuario> usub = ViewBag.DatosUsuario as List<Usuario>;
 
     ViewBag.Icon = "fa fa-file-text-o";
-    ViewBag.Title = "Expediente " + Model.Codigo + " - " + Model.Entidad.Provincia.Departamento.Nombre + " - " + Model.Entidad.Provincia.Nombre + " - " + Model.Entidad.Nombre;
-    ViewBag.Descripcion = "";
+    ViewBag.Title = "Expediente " + Model.Codigo + " - " + Model.Entidad.Provincia.Departamento.Nombre + " - " + Model.Entidad.Provincia.Nombre + " - " + Model.Entidad.Nombre; ViewBag.Descripcion = "";
     Sut.Entities.ExpedienteNorma Norma = ViewBag.expedientenorma as Sut.Entities.ExpedienteNorma;
 }
-
 <div id="mensajes">
     @{Html.RenderPartial("_Error");}
 </div>
@@ -229,218 +226,218 @@ else
     <div class="col-xs-12">
         <div id="boxLista" class="box box-danger">
             <div class="box-header with-border">
-    <div class="col-sm-11 col-xs-12">
-         <h3 class="box-title"> Procedimientos Administrativos y/o Servicios prestados en exclusividad</h3> 
-    </div>
-    @if (@user.Rol == 6 || @user.Rol != 7 || @user.Rol != 8)
-    {
-
-        <div style="position: absolute;right: -8px;top: -13px;  padding-top: 15px;  margin-bottom: 0;">
-            <div class="btn-group">
-                <div class="col-sm-12 col-xs-12">
-                    @if (ViewBag.desactivar != 0)
-                    {
-                        if (user.Rol == 6)
-                        {
-                            if (((Model.EstadoRactificador != EstadoExpediente.Aprobado && Model.EstadoExpediente != EstadoExpediente.Observado)))
-                            {
-                                <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
-                            }
-                        }
-                        else if (user.Rol == 8)
-                        {
-                            if (((Model.EstadoExpediente == EstadoExpediente.Publicado)) )
-                            {
-                                <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
-                            }
-                        }
-                        else if (user.Rol == 7)
-                        {
-                            if (((Model.EstadoExpediente != EstadoExpediente.Aprobado && Model.EstadoExpediente != EstadoExpediente.Publicado && Model.EstadoExpediente != EstadoExpediente.Observado)))
-                            {
-                                if (user.EstadoMinistrio == 1 && Model.EstadoEvaluadorMinisterio != EstadoExpediente.Aprobado)
-                                {
-                                    <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
-                                }
-                                else if (user.EntidadId == 4105 && Model.EstadoEvaluadorPCM != EstadoExpediente.Aprobado)
-                                {
-                                    <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
-                                }
-                                else if (user.EntidadId == 18497 && Model.EstadoEvaluadorMEF != EstadoExpediente.Aprobado)
-                                {
-                                    <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
-                                }
-                            }
-                            else if (user.EntidadId == 4105 && Model.EstadoExpediente == EstadoExpediente.Aprobado && Model.EstadoEvaluadorMinisterio == EstadoExpediente.Aprobado && Model.EstadoExpediente != EstadoExpediente.Publicado)
-                            {
-                                if (user.EntidadId == 4105 && Model.EstadoEvaluadorPCM != EstadoExpediente.Aprobado)
-                                {
-                                    <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
-                                }
-                            }
-                            else if (user.EntidadId == 18497 && Model.EstadoExpediente == EstadoExpediente.Aprobado && Model.EstadoEvaluadorMinisterio == EstadoExpediente.Aprobado && Model.EstadoExpediente != EstadoExpediente.Publicado)
-                            {
-                                if (user.EntidadId == 18497 && Model.EstadoEvaluadorMEF != EstadoExpediente.Aprobado)
-                                {
-                                    <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
-                                }
-                            }
-                        }
-                    }
-                    <a class="btn btn-facebook" id="filtro" href="javascript:sut.Procedimiento.filtro()"><i class="fa fa-filter"></i> Filtros</a>
-                    <a class="btn btn-facebook" id="quitarfiltro" href="javascript:sut.Procedimiento.quitarfiltro()"><i class="fa fa-filter"></i> Quitar Filtro</a>
-
+                <div class="col-sm-11 col-xs-12">
+                    <h3 class="box-title"> Procedimientos Administrativos y/o Servicios prestados en exclusividad</h3>
                 </div>
-            </div>
-        </div>
-        if (ViewBag.desactivar != 0)
-        {
+                @if (@user.Rol == 6 || @user.Rol != 7 || @user.Rol != 8)
+                {
 
-            <div style="position: absolute;right: 500px;top: -13px;  padding-top: 15px;  margin-bottom: 0;">
-                <div class="btn-group">
-                    <div class="col-sm-12 col-xs-12">
+                    <div style="position: absolute;right: -8px;top: -13px;  padding-top: 15px;  margin-bottom: 0;">
+                        <div class="btn-group">
+                            <div class="col-sm-12 col-xs-12">
+                                @if (ViewBag.desactivar != 0)
+                                {
+                                    if (user.Rol == 6)
+                                    {
+                                        if (((Model.EstadoRactificador != EstadoExpediente.Aprobado && Model.EstadoExpediente != EstadoExpediente.Observado)))
+                                        {
+                                            <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
+                                        }
+                                    }
+                                    else if (user.Rol == 8)
+                                    {
+                                        if (((Model.EstadoExpediente == EstadoExpediente.Publicado)))
+                                        {
+                                            <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
+                                        }
+                                    }
+                                    else if (user.Rol == 7)
+                                    {
+                                        if (((Model.EstadoExpediente != EstadoExpediente.Aprobado && Model.EstadoExpediente != EstadoExpediente.Publicado && Model.EstadoExpediente != EstadoExpediente.Observado)))
+                                        {
+                                            if (user.EstadoMinistrio == 1 && Model.EstadoEvaluadorMinisterio != EstadoExpediente.Aprobado)
+                                            {
+                                                <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
+                                            }
+                                            else if (user.EntidadId == 4105 && Model.EstadoEvaluadorPCM != EstadoExpediente.Aprobado)
+                                            {
+                                                <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
+                                            }
+                                            else if (user.EntidadId == 18497 && Model.EstadoEvaluadorMEF != EstadoExpediente.Aprobado)
+                                            {
+                                                <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
+                                            }
+                                        }
+                                        else if (user.EntidadId == 4105 && Model.EstadoExpediente == EstadoExpediente.Aprobado && Model.EstadoEvaluadorMinisterio == EstadoExpediente.Aprobado && Model.EstadoExpediente != EstadoExpediente.Publicado)
+                                        {
+                                            if (user.EntidadId == 4105 && Model.EstadoEvaluadorPCM != EstadoExpediente.Aprobado)
+                                            {
+                                                <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
+                                            }
+                                        }
+                                        else if (user.EntidadId == 18497 && Model.EstadoExpediente == EstadoExpediente.Aprobado && Model.EstadoEvaluadorMinisterio == EstadoExpediente.Aprobado && Model.EstadoExpediente != EstadoExpediente.Publicado)
+                                        {
+                                            if (user.EntidadId == 18497 && Model.EstadoEvaluadorMEF != EstadoExpediente.Aprobado)
+                                            {
+                                                <a class="btn btn-success" id="Estado" data-toggle="modal" data-target="#AddDate"><i class="fa fa-check-circle"></i> Concluir Sección</a>
+                                            }
+                                        }
+                                    }
+                                }
+                                <a class="btn btn-facebook" id="filtro" href="javascript:sut.Procedimiento.filtro()"><i class="fa fa-filter"></i> Filtros</a>
+                                <a class="btn btn-facebook" id="quitarfiltro" href="javascript:sut.Procedimiento.quitarfiltro()"><i class="fa fa-filter"></i> Quitar Filtro</a>
 
-                        @if (ViewBag.RevInfCdno == 1)
-                        {
-                            <label class="btn btn-primary btn-xs" style="width:120px" id="Inf"><i class="fa fa-spinner"></i> Inf.Cdno. <br> En Proceso</label>
-                        }
-                        else if (ViewBag.RevInfCdno == 2)
-                        {
-                            <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> Inf.Cdno. <br> Terminado</label>
-                        }
-                        else if (ViewBag.RevInfCdno == 3)
-                        {
-                            <label class="btn btn-danger btn-xs" style="width:120px" id="Inf"><i class="fa fa-stop"></i> Inf.Cdno. <br> Detenido</label>
-                        }
+                            </div>
+                        </div>
+                    </div>
+                    if (ViewBag.desactivar != 0)
+                    {
 
-                        @if (ViewBag.RevDatosGenerales == 1)
-                        {
-                            <label class="btn btn-primary btn-xs" style="width:120px" id="Inf"><i class="fa fa-spinner"></i>  Datos Generales <br> En Proceso</label>
-                        }
-                        else if (ViewBag.RevDatosGenerales == 2)
-                        {
-                            <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> Datos Generales <br> Terminado</label>
-                        }
-                        else if (ViewBag.RevDatosGenerales == 3)
-                        {
-                            <label class="btn btn-danger btn-xs" style="width:120px" id="Inf"><i class="fa fa-stop"></i> Datos Generales <br> Detenido</label>
-                        }
+                        <div style="position: absolute;right: 500px;top: -13px;  padding-top: 15px;  margin-bottom: 0;">
+                            <div class="btn-group">
+                                <div class="col-sm-12 col-xs-12">
 
-                        @if (ViewBag.RevSutentoTecnico == 1)
-                        {
-                            <label class="btn btn-primary btn-xs" style="width:120px" id="Inf"><i class="fa fa-spinner"></i> STL <br> En Proceso</label>
-                        }
-                        else if (ViewBag.RevSutentoTecnico == 2)
-                        {
-                            <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> STL <br> Terminado</label>
-                        }
-                        else if (ViewBag.RevSutentoTecnico == 3)
-                        {
-                            <label class="btn btn-danger btn-xs" style="width:120px" id="Inf"><i class="fa fa-stop"></i> STL <br> Detenido</label>
-                        }
+                                    @if (ViewBag.RevInfCdno == 1)
+                                    {
+                                        <label class="btn btn-primary btn-xs" style="width:120px" id="Inf"><i class="fa fa-spinner"></i> Inf.Cdno. <br> En Proceso</label>
+                                    }
+                                    else if (ViewBag.RevInfCdno == 2)
+                                    {
+                                        <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> Inf.Cdno. <br> Terminado</label>
+                                    }
+                                    else if (ViewBag.RevInfCdno == 3)
+                                    {
+                                        <label class="btn btn-danger btn-xs" style="width:120px" id="Inf"><i class="fa fa-stop"></i> Inf.Cdno. <br> Detenido</label>
+                                    }
 
-                        @if (ViewBag.RevTablaAsme == 1)
-                        {
-                            <label class="btn btn-primary btn-xs" style="width:120px" id="Inf"><i class="fa fa-spinner"></i> Tabla Asme <br> En Proceso</label>
-                        }
-                        else if (ViewBag.RevTablaAsme == 2)
-                        {
-                            <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> Tabla Asme <br> Terminado</label>
-                        }
-                        else if (ViewBag.RevTablaAsme == 3)
-                        {
-                            <label class="btn btn-danger btn-xs" style="width:120px" id="Inf"><i class="fa fa-stop"></i> Tabla Asme <br> Detenido</label>
-                        }
+                                    @if (ViewBag.RevDatosGenerales == 1)
+                                    {
+                                        <label class="btn btn-primary btn-xs" style="width:120px" id="Inf"><i class="fa fa-spinner"></i>  Datos Generales <br> En Proceso</label>
+                                    }
+                                    else if (ViewBag.RevDatosGenerales == 2)
+                                    {
+                                        <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> Datos Generales <br> Terminado</label>
+                                    }
+                                    else if (ViewBag.RevDatosGenerales == 3)
+                                    {
+                                        <label class="btn btn-danger btn-xs" style="width:120px" id="Inf"><i class="fa fa-stop"></i> Datos Generales <br> Detenido</label>
+                                    }
 
-                        @if (ViewBag.RevSustentoCosto == 1)
-                        {
-                            <label class="btn btn-primary btn-xs" style="width:120px" id="Inf"><i class="fa fa-spinner"></i> Sustento Costo <br> En Proceso</label>
-                        }
-                        else if (ViewBag.RevSustentoCosto == 2)
-                        {
-                            <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> Sustento Costo <br> Terminado</label>
-                        }
-                        else if (ViewBag.RevSustentoCosto == 3)
-                        {
-                            <label class="btn btn-danger btn-xs" style="width:120px" id="Inf"><i class="fa fa-stop"></i> Sustento Costo <br> Detenido</label>
-                        }
+                                    @if (ViewBag.RevSutentoTecnico == 1)
+                                    {
+                                        <label class="btn btn-primary btn-xs" style="width:120px" id="Inf"><i class="fa fa-spinner"></i> STL <br> En Proceso</label>
+                                    }
+                                    else if (ViewBag.RevSutentoTecnico == 2)
+                                    {
+                                        <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> STL <br> Terminado</label>
+                                    }
+                                    else if (ViewBag.RevSutentoTecnico == 3)
+                                    {
+                                        <label class="btn btn-danger btn-xs" style="width:120px" id="Inf"><i class="fa fa-stop"></i> STL <br> Detenido</label>
+                                    }
+
+                                    @if (ViewBag.RevTablaAsme == 1)
+                                    {
+                                        <label class="btn btn-primary btn-xs" style="width:120px" id="Inf"><i class="fa fa-spinner"></i> Tabla Asme <br> En Proceso</label>
+                                    }
+                                    else if (ViewBag.RevTablaAsme == 2)
+                                    {
+                                        <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> Tabla Asme <br> Terminado</label>
+                                    }
+                                    else if (ViewBag.RevTablaAsme == 3)
+                                    {
+                                        <label class="btn btn-danger btn-xs" style="width:120px" id="Inf"><i class="fa fa-stop"></i> Tabla Asme <br> Detenido</label>
+                                    }
+
+                                    @if (ViewBag.RevSustentoCosto == 1)
+                                    {
+                                        <label class="btn btn-primary btn-xs" style="width:120px" id="Inf"><i class="fa fa-spinner"></i> Sustento Costo <br> En Proceso</label>
+                                    }
+                                    else if (ViewBag.RevSustentoCosto == 2)
+                                    {
+                                        <label class="btn btn-success btn-xs" style="width:120px" id="Inf"><i class="fa fa-check-square-o"></i> Sustento Costo <br> Terminado</label>
+                                    }
+                                    else if (ViewBag.RevSustentoCosto == 3)
+                                    {
+                                        <label class="btn btn-danger btn-xs" style="width:120px" id="Inf"><i class="fa fa-stop"></i> Sustento Costo <br> Detenido</label>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                    <div class="col-sm-12 col-xs-12" id="idFiltros">
+                        <br />
+                        <label class="col-sm-3 col-xs-3 control-label">Calificación :</label>
+                        <div class="col-sm-3 col-xs-3">
+                            @Html.DropDownListFor(model => @fil.Clasificacion, ViewBag.Calificacion as List<SelectListItem>, new { @class = "form-control " })
+                        </div>
+
+                        <label class="col-sm-2 col-xs-2 control-label">Prestaciones anuales :</label>
+                        <div class="col-sm-2 col-xs-2">
+                            @Html.DropDownListFor(model => @fil.Prestacionesanuales, ViewBag.OrdenarPrestacionesanuales as List<SelectListItem>, new { @class = "form-control " })
+                        </div>
+
+                        <label class="col-sm-3 col-xs-3 control-label">Derecho Tramitación :</label>
+                        <div class="col-sm-3 col-xs-3">
+                            @Html.DropDownListFor(model => @fil.PrestacionesCosto, ViewBag.OrdenarPrestacionesCosto as List<SelectListItem>, new { @class = "form-control " })
+                        </div>
+
+                        @*<label class="col-sm-2 col-xs-2 control-label">Duracion :</label>
+                            <div class="col-sm-2 col-xs-2">
+                                @Html.DropDownListFor(model => @fil.Duracion, ViewBag.OrdenarDuracion as List<SelectListItem>, new { @class = "form-control " })
+                            </div>*@
+
+                        <label class="col-sm-2 col-xs-2 control-label">Requisitos :</label>
+                        <div class="col-sm-2 col-xs-2">
+                            @Html.DropDownListFor(model => @fil.Requisitos, ViewBag.OrdenarRequisitos as List<SelectListItem>, new { @class = "form-control " })
+                        </div>
+
+                        <label class="col-sm-3 col-xs-3 control-label">Plazo Atencion :</label>
+                        <div class="col-sm-3 col-xs-3">
+                            @Html.DropDownListFor(model => @fil.PlazoAtencion, ViewBag.OrdenarPlazoAtencion as List<SelectListItem>, new { @class = "form-control " })
+                        </div>
+
+                        <a class="btn btn-facebook" id="aplicarfiltro" href="javascript:sut.Procedimiento.aplicarfiltro()"><i class="fa fa-filter"></i> Aplicar</a>
 
                     </div>
-                </div>
-            </div>
+                    if (@fil != null)
+                    {
+                        if (@fil.estado != "1")
+                        {
+                            <script>
+                                window.addEventListener("load", function () {
+                                    $("#idFiltros").hide();
+                                    $("#quitarfiltro").hide();
+                                    $("#filtro").show();
+                                });
+                            </script>
+                        }
+                        else
+                        {
+                            <script>
 
-        }
-            <div class="col-sm-12 col-xs-12" id="idFiltros">
-                <br />
-                <label class="col-sm-3 col-xs-3 control-label">Calificación :</label>
-                <div class="col-sm-3 col-xs-3">
-                    @Html.DropDownListFor(model => @fil.Clasificacion, ViewBag.Calificacion as List<SelectListItem>, new { @class = "form-control " })
-                </div>
+                                window.addEventListener("load", function () {
+                                    $("#idFiltros").show();
+                                    $("#quitarfiltro").show();
+                                    $("#filtro").hide();
+                                });
+                            </script>
+                        }
+                    }
+                    else
+                    {
+                        <script>
 
-                <label class="col-sm-2 col-xs-2 control-label">Prestaciones anuales :</label>
-                <div class="col-sm-2 col-xs-2">
-                    @Html.DropDownListFor(model => @fil.Prestacionesanuales, ViewBag.OrdenarPrestacionesanuales as List<SelectListItem>, new { @class = "form-control " })
-                </div>
-
-                <label class="col-sm-3 col-xs-3 control-label">Derecho Tramitación :</label>
-                <div class="col-sm-3 col-xs-3">
-                    @Html.DropDownListFor(model => @fil.PrestacionesCosto, ViewBag.OrdenarPrestacionesCosto as List<SelectListItem>, new { @class = "form-control " })
-                </div>
-
-                @*<label class="col-sm-2 col-xs-2 control-label">Duracion :</label>
-                <div class="col-sm-2 col-xs-2">
-                    @Html.DropDownListFor(model => @fil.Duracion, ViewBag.OrdenarDuracion as List<SelectListItem>, new { @class = "form-control " })
-                </div>*@
-
-                <label class="col-sm-2 col-xs-2 control-label">Requisitos :</label>
-                <div class="col-sm-2 col-xs-2">
-                    @Html.DropDownListFor(model => @fil.Requisitos, ViewBag.OrdenarRequisitos as List<SelectListItem>, new { @class = "form-control " })
-                </div>
-
-                <label class="col-sm-3 col-xs-3 control-label">Plazo Atencion :</label>
-                <div class="col-sm-3 col-xs-3">
-                    @Html.DropDownListFor(model => @fil.PlazoAtencion, ViewBag.OrdenarPlazoAtencion as List<SelectListItem>, new { @class = "form-control " })
-                </div>
-
-                <a class="btn btn-facebook" id="aplicarfiltro" href="javascript:sut.Procedimiento.aplicarfiltro()"><i class="fa fa-filter"></i> Aplicar</a>
-
-            </div>
-            if (@fil != null)
-            {
-                if (@fil.estado != "1")
-                {
-                <script>
-                    window.addEventListener("load", function () {
-                        $("#idFiltros").hide();
-                        $("#quitarfiltro").hide();
-                        $("#filtro").show();
-                    });
-                </script>
+                            window.addEventListener("load", function () {
+                                $("#idFiltros").hide();
+                                $("#quitarfiltro").hide();
+                                $("#filtro").show();
+                            });
+                        </script>
+                    }
                 }
-                else
-                {
-                <script>
-
-                    window.addEventListener("load", function () {
-                        $("#idFiltros").show();
-                        $("#quitarfiltro").show();
-                        $("#filtro").hide();
-                        });
-                </script>
-                }
-            }
-            else
-            {
-                <script>
-
-                    window.addEventListener("load", function () {
-                        $("#idFiltros").hide();
-                        $("#quitarfiltro").hide();
-                        $("#filtro").show();
-                    });
-                </script>
-                }
-            }
             </div>
 
             <div class="box-body">
@@ -459,8 +456,8 @@ else
                                     {
                                         if (Model.TipoExpediente != TipoExpediente.CargaInicial)
                                         {
-                                        <li class="divider"></li>
-                                        <li><a href="javascript:sut.Procedimiento.Estandar.openSelect()">Procedimiento Estándar</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="javascript:sut.Procedimiento.Estandar.openSelect()">Procedimiento Estándar</a></li>
                                         }
                                     }
                                 </ul>
@@ -481,7 +478,7 @@ else
                             <tr>
                                 @*<th colspan="2" style="width:60px">
 
-        </th>*@
+                                    </th>*@
                                 <th style="width:30px">
                                     Nro.
                                 </th>
@@ -504,8 +501,8 @@ else
                                     Categoría
                                 </th>
                                 @*<th style="width:60px">
-            Copiar<br />Procedimiento
-        </th>*@
+                                        Copiar<br />Procedimiento
+                                    </th>*@
                                 <th style="width:40px">
                                     Inf.<br /> Cdno.
                                 </th>
@@ -535,8 +532,8 @@ else
                                     </th>
                                 }
                                 @*<th style="width:40px">
-            Tasa
-        </th>*@
+                                        Tasa
+                                    </th>*@
                                 @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
                                 {
                                     <th style="width:40px">
@@ -549,8 +546,8 @@ else
                                 }
 
                                 @*<th style="width:40px">
-            Duracion
-        </th>*@
+                                        Duracion
+                                    </th>*@
 
                                 <th style="width:40px">
                                     Requisitos
@@ -653,30 +650,30 @@ else
                         </thead>
                         <tbody></tbody>
                         @*<tfoot>
-                            <tr>
-                                <td colspan="4">
-                                    <div class="col-sm-6 col-xs-12">
-                                        <span class="control-label">Filas por Página</span>
-                                    </div>
-                                    <div class="col-sm-6 col-xs-12">
-                                        <select id="cbCantFilas" class="form-control input-sm">
-                                            <option value="25">25</option>
-                                            <option value="50">50</option>
-                                            <option value="75">75</option>
-                                            <option value="100">100</option>
-                                        </select>
-                                    </div>
-                                </td>
-                                <td colspan="18">
-                                    <div id="paginator"></div>
-                                </td>
-                            </tr>
-                        </tfoot>*@
+                                <tr>
+                                    <td colspan="4">
+                                        <div class="col-sm-6 col-xs-12">
+                                            <span class="control-label">Filas por Página</span>
+                                        </div>
+                                        <div class="col-sm-6 col-xs-12">
+                                            <select id="cbCantFilas" class="form-control input-sm">
+                                                <option value="25">25</option>
+                                                <option value="50">50</option>
+                                                <option value="75">75</option>
+                                                <option value="100">100</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td colspan="18">
+                                        <div id="paginator"></div>
+                                    </td>
+                                </tr>
+                            </tfoot>*@
                     </table>
                 </div>
             </div>
         </div>
-        </div>
+    </div>
 </div>
 
 <div class="modal fade" id="AddDate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" data-keyboard="false">
@@ -684,23 +681,23 @@ else
         <div class="modal-content">
             <div class="modal-header">
                 @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>*@
+                        <span aria-hidden="true">&times;</span>
+                    </button>*@
                 <h4 class="modal-title">Concluir Sección</h4>
-            </div> 
+            </div>
             <div class="modal-body form-horizontal">
                 <div class="form-group">
                     <label class="control-label col-sm-3 col-xs-12">Sección</label>
                     <div class="col-sm-9 col-xs-12">
                         @Html.DropDownListFor(model => @fil.seccion, ViewBag.seccion as List<SelectListItem>, new { @class = "form-control " })
                     </div>
-                </div> 
+                </div>
                 <div class="form-group">
                     <label class="control-label col-sm-3 col-xs-12">Estado</label>
                     <div class="col-sm-9 col-xs-12">
                         @Html.DropDownListFor(model => @fil.estadoseccion, ViewBag.estadoseccion as List<SelectListItem>, new { @class = "form-control " })
                     </div>
-                </div> 
+                </div>
             </div>
             <div id="msgEditar"></div>
             <div class="modal-footer">
@@ -724,34 +721,34 @@ else
             <div class="modal-body form-horizontal">
                 @for (int i = 0; i < @usub.Count; i++)
                 {
-                <div class="form-group">
-                    <label class="control-label col-sm-3 col-xs-12">Nombres - @i </label>
-                    <div class="col-sm-9 col-xs-12">
-                        <label rows="3" class="form-control" id="txtaComentarioExp"> @usub[i].MiembroEquipo.NombreCompleto</label>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3 col-xs-12">Nombres - @i </label>
+                        <div class="col-sm-9 col-xs-12">
+                            <label rows="3" class="form-control" id="txtaComentarioExp"> @usub[i].MiembroEquipo.NombreCompleto</label>
+                        </div>
+                        <label class="control-label col-sm-3 col-xs-12">Rol</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <label rows="3" class="form-control" id="txtaComentarioExp">@usub[i].Rol</label>
+                        </div>
+                        <label class="control-label col-sm-3 col-xs-12">Correo</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <label rows="3" class="form-control" id="txtaComentarioExp"> @usub[i].MiembroEquipo.Correo</label>
+                        </div>
+                        <label class="control-label col-sm-3 col-xs-12">Contacto</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <label class="form-control" id="txtaComentarioExp"> @usub[i].MiembroEquipo.TelefonoFijo - @usub[i].MiembroEquipo.TelefonoMovil </label>
+                        </div>
+                        <label class="control-label col-sm-3 col-xs-12">Entidad</label>
+                        <div class="col-sm-9 col-xs-12">
+                            <label class="form-control" id="txtaComentarioExp"> @usub[i].Entidad.Nombre - @usub[i].Entidad.Acronimo </label>
+                        </div>
                     </div>
-                    <label class="control-label col-sm-3 col-xs-12">Rol</label>
-                    <div class="col-sm-9 col-xs-12">
-                        <label rows="3" class="form-control" id="txtaComentarioExp">@usub[i].Rol</label>
-                    </div>
-                    <label class="control-label col-sm-3 col-xs-12">Correo</label>
-                    <div class="col-sm-9 col-xs-12">
-                        <label rows="3" class="form-control" id="txtaComentarioExp"> @usub[i].MiembroEquipo.Correo</label>
-                    </div>
-                    <label class="control-label col-sm-3 col-xs-12">Contacto</label>
-                    <div class="col-sm-9 col-xs-12">
-                        <label class="form-control" id="txtaComentarioExp"> @usub[i].MiembroEquipo.TelefonoFijo - @usub[i].MiembroEquipo.TelefonoMovil </label>
-                    </div>
-                    <label class="control-label col-sm-3 col-xs-12">Entidad</label>
-                    <div class="col-sm-9 col-xs-12">
-                        <label class="form-control" id="txtaComentarioExp"> @usub[i].Entidad.Nombre - @usub[i].Entidad.Acronimo </label>
-                    </div>
-                </div>
                     <hr>
 
                 }
             </div>
             <div id="msgEditar"></div>
-            <div class="modal-footer"> 
+            <div class="modal-footer">
                 @*<button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" onclick="sut.Procedimiento.CancelarSeccion()"><i class="fa fa-close"></i> Cancelar</button>*@
                 <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i class="fa fa-close"></i> Cancelar</button>
             </div>
@@ -760,95 +757,95 @@ else
 </div>
 
 @*<div class="box box-default">
-    <div class="box-body">
-        <div class="col-sm-12 col-xs-12">
-              <a href="javascript:sut.Procedimiento.ReporteTupa(@Model.ExpedienteId,0,1)" class="btn btn-default"><i class="fa  fa-file-pdf-o"></i> Reporte TUPA</a>
-           
-           
+        <div class="box-body">
+            <div class="col-sm-12 col-xs-12">
+                  <a href="javascript:sut.Procedimiento.ReporteTupa(@Model.ExpedienteId,0,1)" class="btn btn-default"><i class="fa  fa-file-pdf-o"></i> Reporte TUPA</a>
 
-            @if (Model.TipoExpediente == TipoExpediente.ExpedienteRegular)
-            {
-                if (Model.SustCostosTerminado)
+
+
+                @if (Model.TipoExpediente == TipoExpediente.ExpedienteRegular)
                 {
-                   
-                    if (Model.ObsCOSTO==0)
+                    if (Model.SustCostosTerminado)
                     {
-                        <a href="@Url.Content("~/Simplificacion/Configuracion/Resumen/")@Model.ExpedienteId" class="btn btn-primary pull-right"><i class="fa fa-money"></i> Sustento de Costos</a>
+
+                        if (Model.ObsCOSTO==0)
+                        {
+                            <a href="@Url.Content("~/Simplificacion/Configuracion/Resumen/")@Model.ExpedienteId" class="btn btn-primary pull-right"><i class="fa fa-money"></i> Sustento de Costos</a>
+                        }
+                        else
+                        {
+                        <a href="@Url.Content("~/Simplificacion/Configuracion/Resumen/")@Model.ExpedienteId" class="btn btn-danger pull-right"><i class="fa fa-money"></i> Sustento de Costos</a>
+                        }
+
                     }
                     else
                     {
-                    <a href="@Url.Content("~/Simplificacion/Configuracion/Resumen/")@Model.ExpedienteId" class="btn btn-danger pull-right"><i class="fa fa-money"></i> Sustento de Costos</a>
-                    }
 
+                        <a href="@Url.Content("~/Simplificacion/Configuracion/Resumen/")@Model.ExpedienteId" class="btn btn-success pull-right"><i class="fa fa-money"></i> Sustento de Costos</a>
+                    }
                 }
-                else
+
+                @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
                 {
-              
-                    <a href="@Url.Content("~/Simplificacion/Configuracion/Resumen/")@Model.ExpedienteId" class="btn btn-success pull-right"><i class="fa fa-money"></i> Sustento de Costos</a>
+
+
+                    <a href="javascript:sut.Procedimiento.FSLT(1,@Model.ExpedienteId)" class="btn btn-default"><i class="fa fa-download"></i>   Reporte  STL</a>
                 }
-            }
-         
-            @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
-            {
-
-               
-                <a href="javascript:sut.Procedimiento.FSLT(1,@Model.ExpedienteId)" class="btn btn-default"><i class="fa fa-download"></i>   Reporte  STL</a>
-            }
-        </div>
-        <br />
-        <hr />
-        <div class="col-sm-4 col-xs-12">
-            <table class="table table-bordered table-condensed">
-                <tbody>
-                    <tr>
-                        <td>Total de Procedimientos/Servicios :</td>
-                        <td class="text-right">@ViewBag.Estadisticas["total"]</td>
-                    </tr>
-                    <tr>
-                        <td>Información Ciudadana terminados :</td>
-                        <td class="text-right">@ViewBag.Estadisticas["Informacion_ciudadano"] / @ViewBag.Estadisticas["total_dg"]</td>
-                    </tr>
-                    <tr>
-                        <td>Datos Generales registrados :</td>
-                        <td class="text-right">@ViewBag.Estadisticas["datos_generales"] / @ViewBag.Estadisticas["total_dg"]</td>
-                    </tr>
-                    @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
-                    {
-                        <tr>
-                            <td>Sustentos Técnico y Legal terminados :</td>
-                            <td class="text-right">@ViewBag.Estadisticas["sustento_tecnico"] / @ViewBag.Estadisticas["total_st"]</td>
-                        </tr>
-                        <tr>
-                            <td>Tabla Asme terminados :</td>
-                            <td class="text-right">@ViewBag.Estadisticas["tabla_asme"] / @ViewBag.Estadisticas["total_st"]</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="col-sm-2 col-xs-12 text-center">
-            <input type="text" class="knob" value="@ViewBag.Estadisticas["Informacion_ciudadano_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
-            <div class="knob-label">Información Ciudadana </div>
-        </div>
-        <div class="col-sm-2 col-xs-12 text-center">
-            <input type="text" class="knob" value="@ViewBag.Estadisticas["datos_generales_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
-            <div class="knob-label">Datos Generales</div>
-        </div>
-        @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
-                    {
-            <div class="col-sm-2 col-xs-12 text-center">
-                <input type="text" class="knob" value="@ViewBag.Estadisticas["sustento_tecnico_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
-                <div class="knob-label">Sustento Técnico</div>
             </div>
-                    <div class="col-sm-2 col-xs-12 text-center">
-                        <input type="text" class="knob" value="@ViewBag.Estadisticas["tabla_asme_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
-                        <div class="knob-label">Tabla Asme</div>
-                    </div>
-        }
+            <br />
+            <hr />
+            <div class="col-sm-4 col-xs-12">
+                <table class="table table-bordered table-condensed">
+                    <tbody>
+                        <tr>
+                            <td>Total de Procedimientos/Servicios :</td>
+                            <td class="text-right">@ViewBag.Estadisticas["total"]</td>
+                        </tr>
+                        <tr>
+                            <td>Información Ciudadana terminados :</td>
+                            <td class="text-right">@ViewBag.Estadisticas["Informacion_ciudadano"] / @ViewBag.Estadisticas["total_dg"]</td>
+                        </tr>
+                        <tr>
+                            <td>Datos Generales registrados :</td>
+                            <td class="text-right">@ViewBag.Estadisticas["datos_generales"] / @ViewBag.Estadisticas["total_dg"]</td>
+                        </tr>
+                        @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
+                        {
+                            <tr>
+                                <td>Sustentos Técnico y Legal terminados :</td>
+                                <td class="text-right">@ViewBag.Estadisticas["sustento_tecnico"] / @ViewBag.Estadisticas["total_st"]</td>
+                            </tr>
+                            <tr>
+                                <td>Tabla Asme terminados :</td>
+                                <td class="text-right">@ViewBag.Estadisticas["tabla_asme"] / @ViewBag.Estadisticas["total_st"]</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
 
-    </div>
-</div>*@
+            <div class="col-sm-2 col-xs-12 text-center">
+                <input type="text" class="knob" value="@ViewBag.Estadisticas["Informacion_ciudadano_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
+                <div class="knob-label">Información Ciudadana </div>
+            </div>
+            <div class="col-sm-2 col-xs-12 text-center">
+                <input type="text" class="knob" value="@ViewBag.Estadisticas["datos_generales_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
+                <div class="knob-label">Datos Generales</div>
+            </div>
+            @if (Model.TipoExpediente != TipoExpediente.CargaInicial)
+                        {
+                <div class="col-sm-2 col-xs-12 text-center">
+                    <input type="text" class="knob" value="@ViewBag.Estadisticas["sustento_tecnico_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
+                    <div class="knob-label">Sustento Técnico</div>
+                </div>
+                        <div class="col-sm-2 col-xs-12 text-center">
+                            <input type="text" class="knob" value="@ViewBag.Estadisticas["tabla_asme_pct"]" data-width="90" data-height="90" data-fgColor="#dd4b39" data-readonly="true">
+                            <div class="knob-label">Tabla Asme</div>
+                        </div>
+            }
+
+        </div>
+    </div>*@
 
 <div style="position: fixed;right: 15px;top: 60px; margin-bottom: 0;">
 
@@ -860,7 +857,7 @@ else
     }
     @*<a href="@Url.Content("~/General/Reporte/TablaAsmeTotal")?ExpedienteId=@Model.ExpedienteId" target="_blank" class="btn btn-success"><i class="fa fa-download"></i> Descarga Total - Tabla ASME</a>*@
 
-    @if (((Model.EstadoExpediente == EstadoExpediente.Publicado && Model.TipoExpediente==TipoExpediente.ExpedienteRegular)))
+    @if (((Model.EstadoExpediente == EstadoExpediente.Publicado && Model.TipoExpediente == TipoExpediente.ExpedienteRegular)))
     {
         <a href="javascript:sut.Procedimiento.NormaAprobacion.publicacionarchivo(@Norma.NormaId)" class="btn btn-facebook"> Información de Publicación</a>
 
@@ -1444,10 +1441,10 @@ else
                     if ($('#txtaObservarExp').val().trim() == "") {
                         document.querySelector('#mensajedatos').innerText = '';
                     } else {
-                        document.querySelector('#mensajedatos').innerText = 'Se valido con éxito'; 
+                        document.querySelector('#mensajedatos').innerText = 'Se valido con éxito';
                         }
 
-                   
+
                 }
             },
             copiar: (id) => {

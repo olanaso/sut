@@ -1,4 +1,7 @@
-﻿@model Sut.Entities.Expediente
+﻿@using ZXing;
+@using ZXing.Common;
+@using System.Drawing;
+@model Sut.Entities.Expediente
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
@@ -11,44 +14,68 @@
             @using (Html.BeginForm("GuardarOpcion", "Simplificacion/Expediente", FormMethod.Post, new { @id = "form-modal-editar" }))
             {
                 @Html.HiddenFor(model => model.ExpedienteId)
-                    <div class="table-responsive">
-                        <table id="tblCanales" class="table table-condensed table-bordered table-striped">
-                            <tbody>
+                @Html.HiddenFor(model => model.LogoQR)
+                <div class="table-responsive">
+                    <table id="tblCanales" class="table table-condensed table-bordered table-striped">
+                        <tbody>
 
+                            <tr>
+                                <td>
+                                </td>
+                                <td width="130px">Descripción :</td>
 
-                                <tr>
-                                    <td>
-                                    </td>
-                                    <td width="100px">Descripción :</td>
+                                <td>
+                                    @Model.Descripcion
+                                    @*<textarea class="form-control input-sm" disabled="disabled" style="height:170px;width: 400px">@Model.Descripcion</textarea>*@
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                </td>
+                                <td>Fecha Creación :</td>
+                                <td>@Model.FecCreacion  </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                </td>
+                                <td>Ordenar PA :</td>
+                                <td>
+                                    <div class="col-sm-7 col-xs-3" style="white-space: nowrap;">
+                                        @Html.DropDownListFor(model => model.OrdenPa, ViewBag.ordenpas as List<SelectListItem>, new { @class = "form-control" })
+                                    </div>
+                                </td>
 
-                                    <td>
-                                        @Model.Descripcion
-                                        @*<textarea class="form-control input-sm" disabled="disabled" style="height:170px;width: 400px">@Model.Descripcion</textarea>*@
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                    </td>
-                                    <td>Fecha Creación :</td>
+                            </tr>
+                            @*JJJMSP4 INI*@
+                            <tr>
+                                <td>
+                                </td>
+                                <td>Codigo QR de Expediente:</td>
+                                <td>
+                                    <div class="col-sm-7 col-xs-3" style="white-space: nowrap;">
+                                        <img src="file:///D:/Aplicaciones/sut/QRCodeImages/2240.png" style="width: 215px; height: 215px;" />
+                                    </div>
+                                </td>
+                            </tr>
 
-                                    <td>@Model.FecCreacion  </td>
-
-                                </tr>
-                                <tr>
-                                    <td>
-                                    </td>
-                                    <td>Ordenar PA :</td>
-                                    <td>
-                                        <div class="col-sm-7 col-xs-3">
-                                            @Html.DropDownListFor(model => model.OrdenPa, ViewBag.ordenpas as List<SelectListItem>, new { @class = "form-control" })
-                                        </div>
-                                    </td>
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-            }
+                            <tr>
+                                <td>
+                                </td>
+                                <td>Logo Entidad:</td>
+                                <td>
+                                    <div class="col-sm-7 col-xs-3" style="white-space: nowrap;">
+                                        <img src="~/dist/img/Logosentidades/@Model.Entidad.Logoentidad" alt="Imagen de entidad" width="215" height="215" class="img-responsive center-block" />
+                                        @Html.TextBoxFor(model => model.Entidad.Logoentidad, new { @class = "form-control input-sm", @readonly = "readonly", id = "Logoentidad" })
+                                        <input type="file" id="fileInput" class="form-control input-sm" accept="image/*">
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarEntidad.subirlogo()"><i class="fa fa-save"></i> Subir Imagen</button>
+                                        <p> (Tamaño max < = 02 MB, Forma: 215 px / 215 px) </p>
+                                    </div>
+                                </td>
+                            </tr>
+                            @*JJJMSP4 FIN*@
+                        </tbody>
+                    </table>
+                </div>}
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarInfCondicion.activarOrden()"><i class="fa fa-save"></i> Guardar</button>
@@ -57,7 +84,6 @@
     </div>
 </div>
 <script>
-
     sut.editarInfCondicion = {
         activarOrden: () => {
             debugger;
@@ -66,8 +92,7 @@
                 var model = $('#form-modal-editar').serialize();
                 $.ajax({
                     type: "POST",
-                    //url: "/Seguridad/Miembro/Guardar",
-                    url:'@Url.Content("~/Simplificacion/Expediente/activarinfcondicion")',
+                    url: '@Url.Content("~/Simplificacion/Expediente/activarinfcondicion")',
                     data: model,
                     dataType: 'json',
                     beforeSend: () => {
@@ -92,26 +117,95 @@
                         $('#form-modal-editar button').eq(0).removeAttr("disabled");
                         $('#form-modal-editar button').eq(1).removeAttr("disabled");
                         sut.error.show('msgEditar', result.responseText);
-
                     },
                     statusCode: {
-                        203: () => { window.location.reload(); }
+                        203: () => {
+                            window.location.reload();
+                        }
                     }
                 });
             }
+        },
+        /*JJJMSP4 INI*/
+        subirLogoQR: () => {
+                var model = $('#form-modal-editar').serialize();
+                $.ajax({
+                    url: "@Url.Content("~/Seguridad/Entidad/activarLogoQR")",
+                    type: "POST",
+                    data: model,
+                    success: function (data) {
+                        if (data.success) {
+                            console.log("Se guardó logoQR.");
+                        } else {
+                            console.log("No se cargó archivo.");
+                        }
+                    },
+                    error: function (data) {
+                        sut.wait.removeProgress('.modal-footer');
+                        sut.error.show('msgLogoQRsubir', data.responseText);
+                    }
+                });
+        },
+        /*JJJMSP4 FIN*/
+        /*JJJMSP2 INI*/
+        subirlogo: () => {
+            var fileInput = document.getElementById("fileInput");
+            var logoEntidadInput = document.getElementById("Logoentidad");
+            var file = fileInput.files[0]; // Obtener el archivo seleccionado
+            sut.error.show('msgEditar', "");
+            if (file) {
+                var maxFileSize = 2 * 1024 * 1024; // 2MB en bytes
+                if (file.size > maxFileSize) {
+                    console.log("El archivo es demasiado grande. El tamaño máximo permitido es 2MB.");
+                    sut.error.show('msgEditar', ".  El archivo es demasiado grande. El tamaño máximo permitido es 2MB.");
+                    return;
+                }
+
+                // Validar las dimensiones de la imagen (215x215 píxeles)
+                var image = new Image();
+                image.src = window.URL.createObjectURL(file);
+
+                image.onload = function () {
+                    if (image.width !== 215 || image.height !== 215) {
+                        console.log("La imagen debe tener un tamaño de 215 x 215 píxeles.");
+                        sut.error.show('msgEditar', ".  La imagen debe tener un tamaño de 215x215 píxeles.");
+                        return;
+                    }
+                    var formData = new FormData();
+                    formData.append("logoFile", file);
+                    formData.append("entidadid", @Model.EntidadId);
+                    $.ajax({
+                        url: "@Url.Content("~/Seguridad/Entidad/SubirLogoEntidad")",
+                        type: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            //console.log("Se guardo archivo.");
+                            if (data.success) {
+                                var rutaLogo = data.message;
+                                logoEntidadInput.value = rutaLogo;
+                                //console.log("Se guardo logoentidad.");
+                            } else {
+                                console.log("No cargo archivo.");
+                            }
+                        },
+                        error: function (data) {
+                            sut.wait.removeProgress('.modal-footer');
+                            sut.error.show('msgsubir', result.responseText);
+                        }
+                    });
+                }
+            } else {
+                // No se seleccionó ningún archivo
+                console.log("No se seleccionó ningún archivo.");
+            }
         }
+        /*JJJMSP2 FIN*/
     };
 
     $(() => {
-
-
-
+        sut.editarInfCondicion.subirLogoQR();
     });
-
-
 </script>
-
-
-
-
 
