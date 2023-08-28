@@ -102,6 +102,7 @@
     <Compile Include="ProcedimientoCargos.cs" />
     <Compile Include="InformeDocumentos.cs" />
     <Compile Include="Informe.cs" />
+    <Compile Include="UsuarioEntidad.cs" />
     <Compile Include="UsuarioRol.cs" />
     <Compile Include="VCalidadEXANTE.cs" />
     <Compile Include="VCalidad.cs" />
