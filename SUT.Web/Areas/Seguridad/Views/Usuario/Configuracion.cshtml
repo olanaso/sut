@@ -1,10 +1,7 @@
-﻿@model Sut.Entities.Usuario
+﻿@model Sut.Entities.UsuarioEntidad
 @{
-    ViewBag.Title = "Actualizar Contraseña";
+    ViewBag.Title = "Configuración";
 }
-
-
-
 
 <div id="mensajes">
     @{Html.RenderPartial("_Error");}
@@ -55,11 +52,29 @@
         </div>
         <div class="tab-pane" id="tab2">
             <a href="@Url.Action("ChangeLanguage", "Usuario", new { lang = "en" })">Español</a> |
-            <a href="@Url.Action("ChangeLanguage", "Usuario", new { lang = "quz" })">Quechua</a> 
+            <a href="@Url.Action("ChangeLanguage", "Usuario", new { lang = "quz" })">Quechua</a>
             <br />
         </div>
-
-    </div>
+        @if (Model.Rol == Sut.Entities.Rol.Administrador || Model.Rol == Sut.Entities.Rol.Coordinador)
+        {
+            <div class="tab-pane" id="tab3">
+                <div class="col-sm-7 col-xs-3" style="white-space: nowrap;">
+                    @if (Model.Entidad.Logoentidad != null)
+                    {
+                        <img src="~/dist/img/Logosentidades/@Model.Entidad.Logoentidad" alt="Imagen de entidad" width="215" height="215" class="img-responsive center-block" />
+                    }
+                    else
+                    {
+                        <img src="~/dist/img/Logosentidades/sin-logo.jpg" alt="Sin Imagen de entidad" width="215" height="215" class="img-responsive center-block" />
+                    }
+                    @Html.TextBoxFor(model => model.Entidad.Logoentidad, new { @class = "form-control input-sm", @readonly = "readonly", id = "Logoentidad" })
+                    <input type="file" id="fileInput" class="form-control input-sm" accept="image/*">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarEntidad.subirlogo()"><i class="fa fa-save"></i> Subir Imagen</button>
+                    <p> (Tamaño max < = 02 MB, Forma: 215 px / 215 px) </p>
+                </div>
+            </div>
+        }
+        </div>
 </div>
 
 

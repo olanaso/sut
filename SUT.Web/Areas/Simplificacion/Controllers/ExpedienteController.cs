@@ -16,6 +16,7 @@ using System.Web;
 using System.Web.Security;
 using System.Diagnostics;
 using System.Text;
+using System.IO;
 
 namespace Sut.Web.Areas.Simplificacion.Controllers
 {
@@ -2180,12 +2181,12 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 return PartialView("_Error");
             }
         }
-        public ActionResult activarLogoQR(Expediente model, UsuarioInfo user)
+        public ActionResult ActivarLogoQR(Expediente model, UsuarioInfo user)
         {
             try
             {
-                // Generar la imagen del código QR y actualizar el campo LogoQR en el modelo
-                string qrCodeImagePath = pathlogoQR + model.ExpedienteId + ".png";
+                string qrCodeImagePath = Path.Combine(pathlogoQR, model.ExpedienteId + ".png");
+                string qrCodeImagePath2 = Path.Combine("~/dist/img/QRCodeImages/", model.ExpedienteId + ".png");
 
                 if (!System.IO.File.Exists(qrCodeImagePath))
                 {
@@ -2194,32 +2195,64 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                         Format = ZXing.BarcodeFormat.QR_CODE,
                         Options = new ZXing.Common.EncodingOptions
                         {
-                            Width = 200,
-                            Height = 200,
+                            Width = 215,
+                            Height = 215,
                             Margin = 0
                         }
                     };
-
-                    var qrCodeData = qrWriter.Write("https://sut.pcm.gob.pe/Simplificacion/Expediente/" + model.ExpedienteId.ToString());
+                    var qrCodeData = qrWriter.Write("/img/QRCodeImages/" + model.ExpedienteId.ToString() + ".pdf");
                     var bitmap = qrCodeData.ToBitmap();
                     bitmap.Save(qrCodeImagePath, System.Drawing.Imaging.ImageFormat.Png);
+                    bitmap.Save(qrCodeImagePath2, System.Drawing.Imaging.ImageFormat.Png);
                 }
 
                 model.LogoQR = model.ExpedienteId + ".png";
-
-                // Actualizar el campo LogoQR en la base de datos a través del servicio
                 _expedienteService.activarLogoQR(model.ExpedienteId, model.LogoQR);
 
-                return Json(new { valid = true, mensaje = "El logo QR se guardo correctamente." });
+                return Json(new { success = true, message = "El logo QR se guardó correctamente." });
             }
             catch (Exception ex)
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                ModelState.AddModelError("", ex.Message);
-                return PartialView("_Error");
+                return Json(new { success = false, message = ex.Message });
             }
         }
-        
+
+        public ActionResult ActivarLogoQRExpediente(long idexpediente, UsuarioInfo user)
+        {
+            try
+            {
+                string qrCodeImagePath = Path.Combine(pathlogoQR, idexpediente + ".png");
+                string qrCodeImagePath2 = Server.MapPath("~/dist/img/QRCodeImages/") + idexpediente + ".png";
+
+                if (!System.IO.File.Exists(qrCodeImagePath))
+                {
+                    var qrWriter = new ZXing.BarcodeWriterPixelData
+                    {
+                        Format = ZXing.BarcodeFormat.QR_CODE,
+                        Options = new ZXing.Common.EncodingOptions
+                        {
+                            Width = 215,
+                            Height = 215,
+                            Margin = 0
+                        }
+                    };
+                    var qrCodeData = qrWriter.Write("/img/QRCodeImages/" + idexpediente.ToString() + ".pdf");
+                    var bitmap = qrCodeData.ToBitmap();
+                    bitmap.Save(qrCodeImagePath, System.Drawing.Imaging.ImageFormat.Png);
+                    bitmap.Save(qrCodeImagePath2, System.Drawing.Imaging.ImageFormat.Png);
+                }
+
+                var s_LogoQR = idexpediente + ".png";
+                _expedienteService.activarLogoQR(idexpediente, s_LogoQR);
+
+                return Json(new { success = true, message = "El logo QR se guardó correctamente." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
         public ActionResult InformacionAdicional(long id, UsuarioInfo user)
         {
             try
@@ -2939,6 +2972,9 @@ namespace Sut.Web.Areas.Simplificacion.Controllers
                 /*auditoria Grabar*/
                 _AuditoriaService.Save(objauditoria);
                 /*auditoria Grabar*/
+                ActivarLogoQRExpediente(id, user);
+                /*generar el codigo QR del expediente publicado*/
+
                 return Json(new { valid = true }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

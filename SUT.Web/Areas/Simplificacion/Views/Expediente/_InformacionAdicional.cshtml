@@ -47,28 +47,37 @@
 
                             </tr>
                             @*JJJMSP4 INI*@
+                            @if(Model.EstadoExpediente == Sut.Entities.EstadoExpediente.Publicado)
+                            { 
                             <tr>
                                 <td>
                                 </td>
                                 <td>Codigo QR de Expediente:</td>
                                 <td>
                                     <div class="col-sm-7 col-xs-3" style="white-space: nowrap;">
-                                        <img src="file:///D:/Aplicaciones/sut/QRCodeImages/2240.png" style="width: 215px; height: 215px;" />
+                                        <img src="~/dist/img/QRCodeImages/@Model.LogoQR" alt="Imagen de QR" width="215" height="215" class="img-responsive center-block" />
                                     </div>
                                 </td>
                             </tr>
-
+                            }
                             <tr>
                                 <td>
                                 </td>
                                 <td>Logo Entidad:</td>
                                 <td>
                                     <div class="col-sm-7 col-xs-3" style="white-space: nowrap;">
-                                        <img src="~/dist/img/Logosentidades/@Model.Entidad.Logoentidad" alt="Imagen de entidad" width="215" height="215" class="img-responsive center-block" />
-                                        @Html.TextBoxFor(model => model.Entidad.Logoentidad, new { @class = "form-control input-sm", @readonly = "readonly", id = "Logoentidad" })
-                                        <input type="file" id="fileInput" class="form-control input-sm" accept="image/*">
-                                        <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarEntidad.subirlogo()"><i class="fa fa-save"></i> Subir Imagen</button>
-                                        <p> (Tamaño max < = 02 MB, Forma: 215 px / 215 px) </p>
+                                        @if (Model.Entidad.Logoentidad != null)
+                                        {
+                                            <img src="~/dist/img/Logosentidades/@Model.Entidad.Logoentidad" alt="Imagen de entidad" width="215" height="215" class="img-responsive center-block" />
+                                            @*/*Html.TextBoxFor(model => model.Entidad.Logoentidad, new { @class = "form-control input-sm", @readonly = "readonly", id = "Logoentidad" })
+                                            <input type="file" id="fileInput" class="form-control input-sm" accept="image/*">
+                                            <button type="button" class="btn btn-primary btn-sm" onclick="sut.editarEntidad.subirlogo()"><i class="fa fa-save"></i> Subir Imagen</button>
+                                            <p> (Tamaño max < = 02 MB, Forma: 215 px / 215 px) </p>*/*@
+                                        }
+                                        else
+                                        { 
+                                            <img src="~/dist/img/Logosentidades/sin-logo.jpg" alt="Sin Imagen de entidad" width="215" height="215" class="img-responsive center-block" />
+                                        }
                                     </div>
                                 </td>
                             </tr>
@@ -129,15 +138,16 @@
         /*JJJMSP4 INI*/
         subirLogoQR: () => {
                 var model = $('#form-modal-editar').serialize();
+                var user = '@(ViewBag.Usuario as Sut.Security.UsuarioInfo)';
                 $.ajax({
-                    url: "@Url.Content("~/Seguridad/Entidad/activarLogoQR")",
+                    url: "@Url.Content("~/Simplificacion/Expediente/ActivarLogoQRExpediente")",
                     type: "POST",
-                    data: model,
+                    data: { idexpediente: @Model.ExpedienteId, user: user },
                     success: function (data) {
                         if (data.success) {
                             console.log("Se guardó logoQR.");
                         } else {
-                            console.log("No se cargó archivo.");
+                            console.log("No se cargó archivo QR.");
                         }
                     },
                     error: function (data) {

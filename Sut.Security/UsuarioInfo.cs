@@ -22,7 +22,7 @@ namespace Sut.Security
 
 
         public int Sexo { get; set; }
-
+        public Entidad Entidad { get; set; }
         public long EntidadId { get; set; }
         public string CodEntidad { get; set; }
         public string NomEntidad { get; set; }

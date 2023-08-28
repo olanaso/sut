@@ -89,6 +89,7 @@
                 @Html.DropDownListFor(model => model.Bandeja, ViewBag.lstBandeja as List<SelectListItem>, new { @class = "form-control input-sm" })
             </div>
         </div>
+        @Html.HiddenFor(model => model.EntidadId);
         }
         else
         {

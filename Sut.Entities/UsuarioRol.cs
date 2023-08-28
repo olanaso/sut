@@ -12,23 +12,20 @@ namespace Sut.Entities
     {
         [Key]
         public long UsuarioRolId { get; set; }
- 
+
         public long UsuarioId { get; set; }
         public Usuario Usuario { get; set; }
-
-    
-        public Rol Rol { get; set; }
-
-        public int valor { get; set; }
-
+        public Entidad Entidad { get; set; }
         public long EntidadId { get; set; }
+
+
+        public Rol Rol { get; set; }
+        public int valor { get; set; }
 
         [NotMapped]
         public MiembroEquipo MiembroEquipo { get; set; }
 
         [NotMapped]
         public int chekActivar { get; set; }
-
-
     }
 }

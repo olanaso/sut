@@ -1,12 +1,12 @@
 ﻿@*@model List<Sut.Entities.Expediente>*@
-@using Sut.Security
-@model UsuarioInfo 
+@using Sut.Entities
+@model Sut.Security.UsuarioInfo
 
 @{
     ViewBag.Title = "Expedientes";
     var expestado = 0;
     var is_refresh = 0;
-} 
+}
 @if (Model.Rol == 6)
 {
     ViewBag.Descripcion = "Ractificar expedientes de la entidad";
@@ -55,12 +55,12 @@ else
 </div>
 <div id="mensajes"></div>
 
- 
+
 <div class="row">
     <div class="col-xs-12">
         <div id="boxLista" class="box box-danger">
             <div class="box-body">
-                
+
                 <div class="table-responsive">
                     <table id="tblLista" class="table table-bordered table-striped table-hover"
                            data-pagesize="999999"
@@ -384,7 +384,7 @@ else
     <div id="ventana-container">
 
     </div>
-</div> 
+</div>
 
 <div class="minmaxConayuda">
     <div class="modal fade mymodal" id="modalAyudaAvatar1">
@@ -398,7 +398,7 @@ else
                         </span>
                     </div>
 
-                    <div>                         
+                    <div>
                         <div id="idtitulo1" style="text-align:left">
                             <div class="col-sm-3 col-xs-2">
                                 <a class="modalMinimize" title="Minimizar" style="color:black"> <i class='fa fa-minus fa-2x'></i> </a>
@@ -413,13 +413,13 @@ else
                                 <j2 style="text-align: left;font-family: initial;"> ¡Felicidades! Termina de Completar tu expediente y podrás Publicar Clic en </j2>
                                 <a id="clic" style="display: none;" class="btn btn-success btn-xs" href="#"><i class="fa fa-pencil"></i></a>
                                 <l1 style="text-align: left;font-family: initial;"> para continuar. ¡Tú puedes! </l1>
-                            </div> 
+                            </div>
                             <div class="caja col-sm-5" id="mensaje3" style="display: none; width:440px;height:100%;top:103px">
                                 <j2 style="text-align: left;font-family: initial;"> ¡Felicidades! Tienes tu primer TUPA Vigente. Cuando necesites modificar, debes crear un nuevo epediente dando clic en </j2>
-                                <a id="clic"   class="btn btn-success btn-xs" href="#"><i class="fa fa-plus"></i> Nuevo</a>
+                                <a id="clic" class="btn btn-success btn-xs" href="#"><i class="fa fa-plus"></i> Nuevo</a>
                                 <l1 style="text-align: left;font-family: initial;"> para crear otro Epediente. ¡Tú puedes! </l1>
-                            </div> 
-                        </div>  
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -453,7 +453,6 @@ else
         #tblLista tfoot .pagination {
             margin: 0px 0px;
         }
-         
     </style>
 }
 
@@ -976,7 +975,7 @@ else
                             {
                                 rows += sut.string.format('<a class="btn btn-dropbox btn-xs" data-placement="left" title="Volver estado anterior" href="javascript:sut.Expediente.despublicarcargainicial({0})" title="Despublicar Expediente" ><i class="fa fa-history"></i></a>', r.ExpedienteId);
                             }
-                            
+
                             if(r.GenerarPDF==0 && r.EstadoExpediente == 7 && nombre !="usuariolocador")
                             {
                                 rows += sut.string.format('<a class="btn btn-danger btn-xs" data-placement="left" title="Generar Tupa individual" href="javascript:sut.Expediente.generartupaindividual({0})" title="Generar Tupa" ><i class="fa fa-book"></i></a>', r.ExpedienteId);
