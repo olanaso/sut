@@ -27,7 +27,7 @@ jQuery2(document).ready(function () {
             }
             if ($('#btnGuardar').text() === 'Actualizar') {
                 actualizar($('#btnGuardar'));
-            }
+            }  
         })
 
 

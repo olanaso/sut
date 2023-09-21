@@ -26,6 +26,9 @@ packages/
 *.exe
 *.pdb
 
+# Archivos generados por el compilador
+*.zip
+
 # Carpeta de publicación
 publish/
 

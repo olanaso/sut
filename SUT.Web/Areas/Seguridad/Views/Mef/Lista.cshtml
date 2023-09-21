@@ -1,0 +1,738 @@
+﻿@model List<Sut.Entities.Comunicado>
+@using Sut.Entities
+@{
+    Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
+    List<Bandeja> bandejausu = ViewBag.lstbandeja as List<Bandeja>;
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <div id="boxLista" class="box box-danger">
+
+            
+            <div class="table-responsive">
+
+                @if (@user.EntidadId == 18497)
+                {
+                    <h4>Autorización Mef</h4>
+                    <div id="boxLista" class="box box-danger">
+                        <table id="tblListaMef" class="table table-bordered table-striped table-hover" 
+                               data-pagesize="1000"
+                               data-page="1"
+                               data-totalrows="0"
+                               data-function="sut.Mef.listarmef"
+                               data-paginator="paginator">
+                            <thead>
+                                <tr>
+                                    <th>Nro.</th>
+                                    <th>Expediente</th>
+                                    <th>Monto</th>
+                                    <th>UIT</th>
+                                    <th>Sustento</th>
+                                    <th>Fecha</th>
+                                    <th>Sustento</th>
+                                    <th>Estado</th>
+                                    <th class="colAction"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            @*<tfoot>
+                                <tr><td colspan="4"><div id="paginator"></div></td></tr>
+                            </tfoot>*@
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <h4>Sin autorización</h4>
+                }
+                <br />
+            </div> 
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-ventana" data-backdrop="static" data-keyboard="false">
+    <div id="ventana-container">
+    </div>
+</div> 
+
+
+
+@section Style {
+
+    <style type="text/css">
+
+
+        .highlight_date a {
+            background-color: #ffffff !important;
+            color: blue !important;
+            font-weight: bold !important;
+        }
+
+
+        .carousel-inner > .item > img,
+        .carousel-inner > .item > a > img {
+            width: 70%;
+            margin: auto;
+        }
+
+        table#tblListaComunicado thead tr th {
+            text-align: center;
+        }
+
+        table#tblListaComunicado tbody tr td[colspan="6"] {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tblListaComunicado .colNro {
+            width: 40px;
+            text-align: center;
+        }
+
+        #tblListaComunicado .colAction {
+            width: 30px;
+        }
+
+        #tblListaComunicado tfoot .pagination {
+            margin: 0px 0px;
+        }
+
+
+        .container {
+            width: 800px;
+            height: auto;
+            margin: auto;
+        }
+
+        .notice {
+            position: relative;
+            top: 50%;
+            width: 90%;
+            height: 200px;
+            border-radius: 15px;
+            background: #fff;
+            margin: auto;
+            z-index: 1;
+        }
+
+            .notice p {
+                padding: 15px 40px;
+            }
+
+        .close {
+            width: 25px;
+            height: 25px;
+            background: #fff;
+            position: absolute;
+            text-align: center;
+            right: -7px;
+            top: -7px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+            .close img {
+                margin-top: 6px;
+                margin-left: 1px;
+                width: 12px;
+            }
+
+        .modal {
+            position: fixed;
+            background: rgba(0,0,0,0.7);
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+        }
+
+        .modal,
+        .notice {
+            display: none;
+        }
+
+
+        .bar-title {
+            width: 100%;
+            background: #ec4b4b;
+            border-radius: 40px 40px 0 0;
+            /*padding: 15px 0*/
+        }
+
+            .bar-title span {
+                color: #fff;
+                margin-left: 30px;
+                font-weight: 700;
+            }
+
+
+        .boton_1 {
+            text-decoration: none;
+            padding: 3px;
+            padding-left: 10px;
+            padding-right: 10px;
+            font-family: helvetica;
+            font-weight: 300;
+            font-size: 25px;
+            font-style: italic;
+            color: white;
+            background-color: #ec4b4bcc;
+            border-radius: 15px;
+            border: 1px double #ec4b4b57;
+        }
+
+        /**/ /*******/
+
+
+        /*----------- CAJA ----------- */
+        .caja {
+            font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 400;
+            text-align: center;
+            background: #889ccf;
+            /*margin: 0 0 25px;
+                    overflow: hidden;
+                    padding: 20px;*/
+            border-radius: 50px 1px 60px 0px;
+            -moz-border-radius: 50px 1px 60px 0px;
+            -webkit-border-radius: 50px 1px 60px 0px;
+            /*border: 2px solid #5878ca;*/
+        }
+
+        /*minimizar un modal */
+        .modal-header .btnGrp {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+        }
+
+
+        .min {
+            width: 250px;
+            height: 65px;
+            overflow: hidden !important;
+            padding: 0px !important;
+            margin: 0px;
+            float: left;
+            position: static !important;
+        }
+
+            .min .modal-dialog, .min .modal-content {
+                height: 100%;
+                width: 100%;
+                margin: 0px !important;
+                padding: 0px !important;
+            }
+
+            .min .modal-header {
+                height: 100%;
+                width: 100%;
+                margin: 0px !important;
+                padding: 3px 5px !important;
+            }
+
+        .display-none {
+            display: none;
+        }
+
+        button .fa {
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .min .fa {
+            font-size: 14px;
+        }
+
+        .min .menuTab {
+            display: none;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .minmaxCon {
+            height: 65px;
+            bottom: 1px;
+            /*left: 1px;*/
+            position: fixed;
+            right: 1px;
+            z-index: 9999;
+        }
+
+        .modal-open {
+            overflow-y: initial !important;
+            height: 250px;
+            overflow-y: auto;
+        }
+
+        /*----------------------------
+                The Navigation Menu Principal
+            -----------------------------*/
+
+
+        #colorNavPrincipal > ul {
+            width: 100%; /* Increase when adding more menu items */
+            margin: 0 auto;
+        }
+
+            #colorNavPrincipal > ul > li { /* will style only the top level li */
+                list-style: none;
+                box-shadow: 0 0 10px rgba(100, 100, 100, 0.2) inset,1px 1px 1px #CCC;
+                display: inline-block;
+                line-height: 1;
+                margin: 1px;
+                border-radius: 3px;
+                position: relative;
+            }
+
+                #colorNavPrincipal > ul > li > a {
+                    color: inherit;
+                    text-decoration: none !important;
+                    font-size: 50px;
+                    /*font-size:60px;*/
+                    padding: 25px;
+                }
+
+        #colorNavPrincipal li ul {
+            position: absolute;
+            list-style: none;
+            text-align: left;
+            width: 230px;
+            left: 20%;
+            margin-left: -90px;
+            /*top:70px; modificado*/
+            font: bold 12px 'Open Sans Condensed', sans-serif;
+            /* This is important for the show/hide CSS animation */
+            max-height: 0px;
+            overflow: hidden;
+            -webkit-transition: max-height 0.4s linear;
+            -moz-transition: max-height 0.4s linear;
+            transition: max-height 0.4s linear;
+        }
+
+            #colorNavPrincipal li ul li {
+                background-color: #313131;
+            }
+
+                #colorNavPrincipal li ul li a {
+                    padding: 12px;
+                    color: #fff !important;
+                    text-decoration: none !important;
+                    display: block;
+                }
+
+                #colorNavPrincipal li ul li:nth-child(odd) { /* zebra stripes */
+                    /*background-color:#363636;*/
+                }
+
+                #colorNavPrincipal li ul li:hover {
+                    /*background-color:#444;*/
+                }
+
+                #colorNavPrincipal li ul li:first-child {
+                    border-radius: 3px 3px 0 0;
+                    margin-top: 5px;
+                    position: relative;
+                }
+
+                    #colorNavPrincipal li ul li:first-child:before { /* the pointer tip */
+                        content: '';
+                        position: absolute;
+                        width: 1px;
+                        height: 1px;
+                        border: 5px solid transparent;
+                        border-bottom-color: #313131;
+                        left: 50%;
+                        top: -10px;
+                        margin-left: -5px;
+                    }
+
+                #colorNavPrincipal li ul li:last-child {
+                    border-bottom-left-radius: 3px;
+                    border-bottom-right-radius: 3px;
+                }
+
+        /* This will trigger the CSS */
+        /* transition animation on hover */
+
+        #colorNavPrincipal li:hover ul {
+            max-height: 500px; /* Increase when adding more dropdown items */
+        }
+
+
+        /*----------------------------
+                Color Themes
+            -----------------------------*/
+
+
+        #colorNavPrincipal li.green {
+            /* This is the color of the menu item */
+            background-color: #00c08b;
+            /* This is the color of the icon */
+            color: #127a5d;
+        }
+
+        #colorNavPrincipal li.red {
+            background-color: #ea5080;
+            color: #aa2a52;
+        }
+
+        #colorNavPrincipal li.blue {
+            background-color: #53bfe2;
+            color: #2884a2;
+        }
+
+        #colorNavPrincipal li.yellow {
+            background-color: #f8c54d;
+            color: #ab8426;
+        }
+
+        #colorNavPrincipal li.purple {
+            background-color: #df6dc2;
+            color: #9f3c85;
+        }
+
+
+        /*----------------------------
+                The Navigation Menu
+            -----------------------------*/
+
+
+        #colorNav > ul {
+            width: 100%; /* Increase when adding more menu items */
+            margin: 0 auto;
+        }
+
+            #colorNav > ul > li { /* will style only the top level li */
+                list-style: none;
+                box-shadow: 0 0 10px rgba(100, 100, 100, 0.2) inset,1px 1px 1px #CCC;
+                display: inline-block;
+                line-height: 1;
+                margin: 1px;
+                border-radius: 3px;
+                position: relative;
+            }
+
+                #colorNav > ul > li > a {
+                    color: inherit;
+                    text-decoration: none !important;
+                    font-size: 50px;
+                    /*font-size:60px;*/
+                    padding: 25px;
+                }
+
+        #colorNav li ul {
+            position: absolute;
+            list-style: none;
+            text-align: left;
+            width: 230px;
+            left: 20%;
+            margin-left: -90px;
+            /*top:70px; modificado*/
+            font: bold 12px 'Open Sans Condensed', sans-serif;
+            /* This is important for the show/hide CSS animation */
+            max-height: 0px;
+            overflow: hidden;
+            -webkit-transition: max-height 0.4s linear;
+            -moz-transition: max-height 0.4s linear;
+            transition: max-height 0.4s linear;
+        }
+
+            #colorNav li ul li {
+                background-color: #313131;
+            }
+
+                #colorNav li ul li a {
+                    padding: 12px;
+                    color: #fff !important;
+                    text-decoration: none !important;
+                    display: block;
+                }
+
+                #colorNav li ul li:nth-child(odd) { /* zebra stripes */
+                    /*background-color:#363636;*/
+                }
+
+                #colorNav li ul li:hover {
+                    /*background-color:#444;*/
+                }
+
+                #colorNav li ul li:first-child {
+                    border-radius: 3px 3px 0 0;
+                    margin-top: 5px;
+                    position: relative;
+                }
+
+                    #colorNav li ul li:first-child:before { /* the pointer tip */
+                        content: '';
+                        position: absolute;
+                        width: 1px;
+                        height: 1px;
+                        border: 5px solid transparent;
+                        border-bottom-color: #313131;
+                        left: 50%;
+                        top: -10px;
+                        margin-left: -5px;
+                    }
+
+                #colorNav li ul li:last-child {
+                    border-bottom-left-radius: 3px;
+                    border-bottom-right-radius: 3px;
+                }
+
+        /* This will trigger the CSS */
+        /* transition animation on hover */
+
+        #colorNav li:hover ul {
+            max-height: 500px; /* Increase when adding more dropdown items */
+        }
+
+
+        /*----------------------------
+                Color Themes
+            -----------------------------*/
+
+
+        #colorNav li.green {
+            /* This is the color of the menu item */
+            background-color: #00c08b;
+            /* This is the color of the icon */
+            color: #127a5d;
+        }
+
+        #colorNav li.red {
+            background-color: #ea5080;
+            color: #aa2a52;
+        }
+
+        #colorNav li.blue {
+            background-color: #53bfe2;
+            color: #2884a2;
+        }
+
+        #colorNav li.yellow {
+            background-color: #f8c54d;
+            color: #ab8426;
+        }
+
+        #colorNav li.purple {
+            background-color: #df6dc2;
+            color: #9f3c85;
+        }
+    </style>
+}
+@section Script {
+     
+
+    <script>
+         
+
+
+            sut.Mef = {
+                estadoExpColor: ['label-danger', 'label-primary'],
+                estado: ['INACTIVO', 'ACTIVO'],
+                estadoExpColormef: ['label-danger','label-primary', 'label-success'],
+                estadomef: ['NO AUTORIZADO','ESPERA', 'AUTORIZADO'],
+                estadoExpColor: ['', 'label-primary', 'label-warning', 'label-success', 'label-danger', 'bg-gray-active', 'label-info', 'label-public'],
+                estadoExpediente: ['', 'EN PROCESO', 'PRESENTADO', 'APROBADO', 'OBSERVADO', 'ANULADO', 'SUBSANADO', 'PUBLICADO'],
+
+                estadoRevColor: ['bg-gray-active', 'label-primary', 'label-success', 'label-danger'],
+                estadoRevision: ['SIN ACCIÓN', 'EN PROCESO', 'TERMINADO', 'DETENIDO'],
+
+               
+                 
+                editarmef: function (id) {
+                    $.ajax({
+                        type: "GET",
+                        //url: '/Seguridad/Mef/EditarMef',
+                        url: '@Url.Content("~/Seguridad/Mef/EditarMef")',
+                        data: { id: id },
+                        cache: false,
+                        beforeSend: function () {
+                            sut.wait.modal('ventana-container');
+                            $('#modal-ventana').modal('show');
+                        },
+                        success: function (data) {
+                            $('#ventana-container').html(data);
+                        },
+                        error: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                }, 
+
+                listarmef: function (page) {
+
+                    table = $('#tblListaMef');
+                    var model = {
+                        pageIndex: page,
+                        pageSize: table.data('pagesize')
+                    };
+                    $.ajax({
+                        //url: "/Seguridad/Mef/GetAllLikePaginMef",
+                        url: '@Url.Content("~/Seguridad/Mef/GetAllLikePaginMef")',
+                        type: "GET",
+                        data: model,
+                        dataType: "json",
+                        beforeSend: function () {
+                            sut.wait.appendOverlay('#boxLista');
+                        },
+                        success: function (data) {
+                            sut.wait.removeOverlay('#boxLista');
+                            table.data('page', page);
+                            table.data('totalrows', data.totalRows);
+                            sut.Mef.generarmef(data.lista);
+                            if (data.totalRows == 0) $('#tblListaMef tbody').append("<tr><td colspan='4' class='text-center text-bold'>NO SE ENCONTRARON REGISTROS.</td></td>");
+                        },
+                        error: function (data) {
+                            sut.error.show('mensajes', data.responseText);
+                        }
+                    });
+                },
+
+
+                generarmef: function (lista) {
+                    var table = $('#tblListaMef');
+                    var tabla = table.children('tbody');
+                    tabla.children('tr').remove();
+                    var rows = '';
+                    var numero = (table.data('pagesize') * table.data('page')) - table.data('pagesize');
+                    $.each(lista, function (i, r) {
+                        rows += sut.string.format('<tr><td class="colNro" >{0}</td>', ++numero);
+                        rows += sut.string.format('<td>{0}</td>', r.expediente);
+                        rows += sut.string.format('<td>{0}</td>', r.derechoTramitacion);
+                        rows += sut.string.format('<td>{0}</td>', r.UIT);
+                        rows += sut.string.format('<td>{0}</td>', r.descripcionSusustento);
+                        rows += sut.string.format('<td>{0}</td>', r.fecEnvioMef);
+                        rows += '<td>';
+                        rows += '<div class="btn-group">';
+                        if (r.ArMotivoAdjuntoId != null) {
+                            //rows += sut.string.format('<a class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="left" title="Archivo" href="/General/Adjunto/Descargar/{0}" ><i class="fa fa-download"></i></a>', r.ArchivoAdjuntoId);
+                            rows += sut.string.format('<a class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="left" title="Descargar" href="@Url.Content("~/General/MotivoAdjunto/Descargar/{0}")" ><i class="fa fa-download"></i></a>', r.ArMotivoAdjuntoId);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';
+                        @*rows += '<td>';
+                        rows += '<div class="btn-group">';
+                        if (r.ArchivoAdjuntoId != null) {
+                             rows += sut.string.format('<a class="btn btn-primary btn-xs" data-toggle="tooltip" data-placement="left" title="Descargar" href="@Url.Content("~/General/Adjunto/Descargar/{0}")" ><i class="fa fa-download"></i></a>', r.ArchivoAdjuntoId);
+                        }
+                        rows += '</div>';
+                        rows += '</td>';*@
+                        rows += sut.string.format('<td class = "text-center"><small class="label {0}">{1}</small></td>', sut.Mef.estadoExpColormef[r.autorizacionMEF], sut.Mef.estadomef[r.autorizacionMEF]);
+                        rows += '<td>';
+                        rows += '<div class="btn-group">';
+                        rows += sut.string.format('<a class="btn btn-success btn-xs" data-toggle="tooltip" data-placement="left" title="Editar" href="javascript:sut.Mef.editarmef({0})" ><i class="fa fa-pencil"></i></a>', r.tablaAsmeId);
+                        rows += '</div>';
+                        rows += '</td>';
+                        rows += '</tr>';
+                    });
+                    sut.pagination.update(table);
+                    tabla.append(rows);
+                },
+
+
+                enviarautorizacion: () => {
+                    $('#form-editar-autorizacion input[name="ArchivoAdjuntoId"]').val($('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val());
+
+
+                    var valorarchivo = $('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val();
+                    debugger;
+                    if (valorarchivo == 0) {
+                        showNotification('top', 'right', 'Adjuntar Respuesta', 2);
+                        return;
+                    }
+                    var model = $('#form-editar-autorizacion').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Seguridad/Mef/EnviarAutorizacionMef',
+                        url: '@Url.Content("~/Seguridad/Mef/EnviarAutorizacionMef")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                            sut.wait.appendProgress('.modal-footer');
+                        },
+                        complete: function () {
+                            sut.wait.removeProgress('.modal-footer');
+                        },
+                        success: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.msg.success(result.mensaje, function () {
+                                sut.Mef.listarmef(1);
+                                sut.Mef.listaractividades(1);
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                },
+
+                 enviarBandeja: (id) => {
+                    $('#form-editar-autorizacion input[name="ArchivoAdjuntoId"]').val($('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val());
+
+                     debugger;
+                     var data = [];
+                     $('input[type=checkbox]:checked').each(function () {
+                         console.log("Checkbox " + $(this).prop("id") + " (" + $(this).val() + ") Seleccionado");
+                         var n = $(this).prop("id").replace("Checked", "MetaDatoId");
+                         var n = $('#' + n).val();
+
+                         data.push({ SedeId: n });
+                     });
+
+
+                    var valorarchivo = $('#form-archivo-adjunto input[name="ArchivoAdjuntoId"]').val();
+                    debugger;
+                    if (valorarchivo == 0) {
+                        showNotification('top', 'right', 'Adjuntar Respuesta', 2);
+                        return;
+                    }
+                    var model = $('#form-editar-autorizacion').serialize();
+                    $.ajax({
+                        type: 'POST',
+                        //url: '/Seguridad/Mef/EnviarAutorizacionMef',
+                        url: '@Url.Content("~/Seguridad/Mef/EnviarAutorizacionMef")',
+                        data: model,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#mensajes").hide();
+                            sut.wait.appendProgress('.modal-footer');
+                        },
+                        complete: function () {
+                            sut.wait.removeProgress('.modal-footer');
+                        },
+                        success: function (result) {
+                            $('#modal-ventana').modal('hide');
+                            sut.msg.success(result.mensaje, function () {
+                                sut.Mef.listarmef(1);
+                                sut.Mef.listaractividades(1);
+                            });
+                        },
+                        error: function (result) {
+                            sut.error.show('mensajes', result.responseText);
+                        }
+                    });
+                } 
+
+            };
+
+            $(function () {
+                 
+               
+                if (@user.EntidadId== 18497){
+
+                    sut.Mef.listarmef(1);
+                } 
+                  
+            });
+    </script>
+}

@@ -309,6 +309,7 @@
     <Compile Include="Areas\Seguridad\Controllers\IncentivosController.cs" />
     <Compile Include="Areas\Seguridad\Controllers\AuditoriaController.cs" />
     <Compile Include="Areas\Seguridad\Controllers\DistritoController.cs" />
+    <Compile Include="Areas\Seguridad\Controllers\MefController.cs" />
     <Compile Include="Areas\Seguridad\Controllers\MetadatoController.cs" />
     <Compile Include="Areas\Seguridad\Controllers\NotificacionController.cs" />
     <Compile Include="Areas\Seguridad\Controllers\MantenimientoController.cs" />
@@ -1614,6 +1615,10 @@
     <Content Include="Areas\Simplificacion\Views\Video\Lista.cshtml" />
     <Content Include="Areas\Simplificacion\Views\MensajePrincipal\Lista.cshtml" />
     <Content Include="Areas\Simplificacion\Views\Dashboard\_Mapa.cshtml" />
+    <Content Include="Areas\Seguridad\Views\Mef\Lista.cshtml" />
+    <Content Include="Areas\Seguridad\Views\Mef\Lista.cshtml.bak" />
+    <Content Include="Areas\Seguridad\Views\Mef\Lista.cshtml.bak.bak" />
+    <Content Include="Areas\Seguridad\Views\Mef\_EditarMef.cshtml" />
     <None Include="bundleconfig.json" />
     <Content Include="bundleconfig.json.bindings">
       <DependentUpon>bundleconfig.json</DependentUpon>

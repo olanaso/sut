@@ -1,14 +1,10 @@
-﻿`@model List<Sut.Entities.Comunicado>
+﻿@model List<Sut.Entities.Comunicado>
 @using Sut.Entities
 @{
     Sut.Security.UsuarioInfo user = ViewBag.Usuario as Sut.Security.UsuarioInfo;
     List<Bandeja> bandejausu = ViewBag.lstbandeja as List<Bandeja>;
 }
-
-
-
-
-
+ 
 @if (@user.Rol != 1 && @user.Rol != 6 && @user.Rol != 7 && @user.Rol != 12 && @user.Rol != 14)
 {
     <div id="myCarousel" class="carousel slide" data-ride="carousel" style="position: relative;height:410px; top: -30px;display: flex;justify-content: center;align-items: center;background: url('../../dist/img/fondo1.jpg');-webkit-background-size: cover;">
@@ -81,9 +77,8 @@
                         </table>
                     }
 
-                    @*@if (@user.Rol == 7)
-                        {*@
-                    @if (@user.EntidadId == 18497)
+                   
+                    @*@if (@user.EntidadId == 18497)
                     {
                         <h4>Autorización Mef</h4>
                         <div id="boxLista" class="box box-danger">
@@ -112,8 +107,7 @@
                                 </tfoot>
                             </table>
                         </div>
-                    }
-                    @*}*@
+                    }*@ 
 
                     @if (@user.Rol == 6 || @user.Rol == 7)
                     {
@@ -537,7 +531,7 @@
                                 }
                                 else if (user.CodPadre == "1")
                                 {
-                                    <li class="pulse3-button red" style="width: 130px;height: 130px; text-align:center;">
+                                    <li class="pulse3-button red" style="width: 130px;height: 130px; text-align:center;"> 
                                         <button class="pulse4-button" style="font-size:20px">11</button><br>
                                         <span style="font-size: 15px;color: white;"> Evaluación </span> <br>
                                         <a href="#" class="fa fa-th-large"></a>
