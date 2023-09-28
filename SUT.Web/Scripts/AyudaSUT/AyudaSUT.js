@@ -301,8 +301,14 @@ function AbrirModal() {
 }
 
 function obtenerRutaCompleta(url) {
-    var ruta = new URL(url).pathname;
-    return ruta;
+    const pathSegments = new URL(url).pathname.split('/');
+    const lastSegment = pathSegments[pathSegments.length - 1];
+
+    const pathWithoutNumber = (!isNaN(lastSegment) && isFinite(lastSegment))
+        ? pathSegments.slice(0, -1).join('/')
+        : pathSegments.join('/');
+
+    return pathWithoutNumber;
 }
 
 //Llamando
@@ -331,8 +337,12 @@ function fetchData() {
                 $('#ayudaSUT').hide()
 
             } else {
+               
                 let processdata = JSON.parse(data.result)
-                mostrarNavLinks(processdata)
+                if (processdata.length > 0) {
+                    mostrarNavLinks(processdata)
+                }
+               
             }
 
 

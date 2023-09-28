@@ -1431,7 +1431,7 @@ font-size:12px;
         }
         return { areEqual: false, diff: diff };
     }
-   , subirExcel: function (file,cabecerasdefinidas) {
+   , subirExcel: function (file,cabecerasdefinidas,page=0) {
 
 
         return new Promise((resolve, reject) => {
@@ -1450,7 +1450,7 @@ font-size:12px;
                     const workbook = XLSX.read(data, { type: 'array' });
 
                     // Leer la primera hoja de cálculo
-                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const sheet = workbook.Sheets[workbook.SheetNames[page]];
 
                     // Convertir los datos a un arreglo de objetos
                     const jsonData = XLSX.utils.sheet_to_json(sheet);
