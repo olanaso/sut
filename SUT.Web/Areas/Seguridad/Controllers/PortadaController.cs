@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using LinqToExcel.Extensions;
+using Newtonsoft.Json;
 using Sut.Entities;
 using Sut.IApplicationServices;
 using Sut.Log;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Policy;
 using System.Web.Mvc;
 
 namespace Sut.Web.Areas.Seguridad.Controllers
@@ -30,8 +32,9 @@ namespace Sut.Web.Areas.Seguridad.Controllers
         private readonly IMetaDatoService _metaDatoService;
         private readonly IBandejaService _bandejaService;
         private readonly IUsuarioRolService _usuarioRolService;
+        private readonly IArchivoAdjuntoService _archivoAdjuntoService;
         Auditoria objauditoria = new Auditoria();
-        public PortadaController(IUsuarioService usuarioService, IPreguntasFrecuentesService PreguntasFrecuentesService, IComunicadoService ComunicadoService,IDocumentosNormaService DocumentosNormaService,IAuditoriaService AuditoriaService, ITablaAsmeService TablaAsmeService, IMenuService MenuService, IMenuayudaService menuayudaService, INotificacionExpedientesService notificacionExpedientesService, IMetaDatoService metaDatoService, IBandejaService bandejaService, IUsuarioRolService usuarioRolService, IFeriadosAnualesService feriadosAnualesService)
+        public PortadaController(IArchivoAdjuntoService archivoAdjuntoService, IUsuarioService usuarioService, IPreguntasFrecuentesService PreguntasFrecuentesService, IComunicadoService ComunicadoService, IDocumentosNormaService DocumentosNormaService, IAuditoriaService AuditoriaService, ITablaAsmeService TablaAsmeService, IMenuService MenuService, IMenuayudaService menuayudaService, INotificacionExpedientesService notificacionExpedientesService, IMetaDatoService metaDatoService, IBandejaService bandejaService, IUsuarioRolService usuarioRolService, IFeriadosAnualesService feriadosAnualesService)
         {
             _log = new LogService<PortadaController>();
             _PreguntasFrecuentesService = PreguntasFrecuentesService;
@@ -46,7 +49,8 @@ namespace Sut.Web.Areas.Seguridad.Controllers
             _metaDatoService = metaDatoService;
             _bandejaService = bandejaService;
             _usuarioRolService = usuarioRolService;
-            _feriadosAnualesService = feriadosAnualesService; 
+            _archivoAdjuntoService = archivoAdjuntoService;
+            _feriadosAnualesService = feriadosAnualesService;
         }
 
         //[AutorizacionRol(Roles = "Administrador")]
@@ -229,6 +233,22 @@ namespace Sut.Web.Areas.Seguridad.Controllers
             });
         }
 
+        public string GetAllLikePaginmensaje(int id, UsuarioInfo user)
+        {
+            int totalRows = 0;
+
+
+
+
+
+            Comunicado list = _ComunicadoService.GetOne(id);
+
+            return JsonConvert.SerializeObject(new
+            {
+                descripcion = list.Descripcion
+            });
+        }
+
         public string GetAllLikePagincomunicadobaner(Comunicado filtro, int pageIndex, int pageSize, UsuarioInfo user)
         {
             int totalRows = 0;
@@ -242,7 +262,8 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                     comunicadoID = x.ComunicadoID,
                     descripcion = x.Descripcion.ToUpper(),
                     estado = x.Estado,
-                    documentosNorma = x.DocumentosNorma
+                    documentosNorma = x.DocumentosNorma,
+                    Url = x.url
 
                 }),
                 totalRows = totalRows
@@ -279,7 +300,7 @@ namespace Sut.Web.Areas.Seguridad.Controllers
         public string GetAllLikePaginentidadevaluacion(NotificacionExpedientes filtro, int pageIndex, int pageSize, UsuarioInfo user)
         {
             int totalRows = 0;
-             filtro.EntidadId = user.EntidadId;
+            filtro.EntidadId = user.EntidadId;
             int rol = 0;
 
             DateTime Ini;
@@ -287,37 +308,17 @@ namespace Sut.Web.Areas.Seguridad.Controllers
 
             MetaDato objmeta = _metaDatoService.GetOne(user.Sector);
 
-            if ((user.Sector == 80 || user.Sector == 79) && user.Rol == 6)
+            if ((user.Sector == 80 || user.Sector == 79) && (user.Rol == 6 || user.Rol == 12))
             {
-
+                List<NotificacionExpedientes> lista = new List<NotificacionExpedientes>();
 
                 filtro.ProvinciaId = user.Provincia;
-                List<NotificacionExpedientes> lista = _notificacionExpedientesService.GetAllLikePaginRatificadorEval(filtro, pageIndex, pageSize, ref totalRows);
+                lista = _notificacionExpedientesService.GetAllLikePaginRatificadorEval(filtro, pageIndex, pageSize, ref totalRows);
 
-                //for (var j = 0; j < lista.Count(); j++)
-                //{
-                //    int dias = 0;
-
-                //    Ini = lista[j].FecEnvio.Value.Date;
-                //    Fin = DateTime.Now.Date;
-                //    while (Ini != Fin)
-                //    {
-                //        if (!(Ini.DayOfWeek == DayOfWeek.Sunday | Ini.DayOfWeek == DayOfWeek.Saturday))
-                //        {
-                //            dias = dias + 1;
-                //        }
-                //        Ini = Ini.AddDays(1);
-                //    }
-
-                //    lista[j].DiasTranscurrido = dias;
-                //}
 
 
                 List<DateTime> FestivosDias = new List<DateTime>();
-                //listaDiasFestivos.Add(Convert.ToDateTime("24/04/2023"));
 
-
-                //filtro.EstadoEvaluadorMinisterio = EstadoExpediente.Aprobado;
                 List<FeriadosAnuales> listaDiasFestivos = _feriadosAnualesService.GetByLista();
 
                 for (var j = 0; j < listaDiasFestivos.Count(); j++)
@@ -325,7 +326,6 @@ namespace Sut.Web.Areas.Seguridad.Controllers
 
                     FestivosDias.Add(Convert.ToDateTime(listaDiasFestivos[j].Fecha.Value.Date));
                 }
-
 
                 //Fin de lista FECHAS DE FERIADOS
 
@@ -387,7 +387,93 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                 });
 
             }
-            else if (user.CodPadre == "2" && user.Rol == 7 || (user.EntidadId == 4105 && user.Rol == 7) || (user.EntidadId == 18497 && user.Rol == 7) || user.Rol == 12)
+            else if (user.Rol == 19)
+            {
+                //List<NotificacionExpedientes> lista = new List<NotificacionExpedientes>();
+                //filtro.ProvinciaId = user.Provincia;
+                //lista = _notificacionExpedientesService.GetAllLikePaginRatificadorEvalmultiple(filtro, pageIndex, pageSize, ref totalRows);
+
+
+
+                //List<DateTime> FestivosDias = new List<DateTime>();
+
+                //List<FeriadosAnuales> listaDiasFestivos = _feriadosAnualesService.GetByLista();
+
+                //for (var j = 0; j < listaDiasFestivos.Count(); j++)
+                //{
+
+                //    FestivosDias.Add(Convert.ToDateTime(listaDiasFestivos[j].Fecha.Value.Date));
+                //}
+
+
+
+
+
+
+
+                ////Fin de lista FECHAS DE FERIADOS
+
+
+                //for (var j = 0; j < lista.Count(); j++)
+                //{
+                //    int dias = 0;
+
+                //    Ini = lista[j].FecEnvio.Value.Date;
+                //    Fin = DateTime.Now.Date;
+                //    while (Ini != Fin)
+                //    {
+                //        if (!(Ini.DayOfWeek == DayOfWeek.Sunday | Ini.DayOfWeek == DayOfWeek.Saturday))
+                //        {
+                //            dias = dias + 1;
+
+                //            foreach (var fecha in FestivosDias)
+                //            {
+                //                if (Ini == fecha)
+                //                {
+                //                    dias = dias - 1;
+                //                }
+                //            }
+
+                //        }
+                //        Ini = Ini.AddDays(1);
+                //    }
+
+                //    lista[j].DiasTranscurrido = dias;
+                //}
+
+
+                //return JsonConvert.SerializeObject(new
+                //{
+                //    lista = lista.Select(x => new
+                //    {
+                //        NotificacionExpedientesId = x.NotificacionExpedientesId,
+                //        ExpedienteId = x.ExpedienteId,
+                //        Codigo = x.Expediente.Codigo,
+                //        NomEntidad = x.Entidad.Nombre,
+                //        SectorId = x.SectorId,
+                //        ProvinciaId = x.ProvinciaId,
+                //        FecEnvio = x.FecEnvio.Value.ToString("dd/MM/yyyy hh:mm:ss tt"),
+                //        DiasTranscurrido = x.DiasTranscurrido,
+                //        FecUltimaRevision = x.FecUltimaRevision == null ? "" : x.FecUltimaRevision.Value.ToString("dd/MM/yyyy hh:mm:ss tt"),
+                //        EstadoExpediente = x.EstadoExpediente,
+                //        Tomar = x.Tomar,
+                //        RevEstado = x.RevEstado,
+                //        RevInfCdno = x.RevInfCdno,
+                //        RevDatosGenerales = x.RevDatosGenerales,
+                //        RevSutentoTecnico = x.RevSutentoTecnico,
+                //        RevTablaAsme = x.RevTablaAsme,
+                //        RevSustentoCosto = x.RevSustentoCosto,
+                //        Estado = x.Estado,
+
+                //    }),
+                //    rol = 6,
+                //    totalRows = totalRows
+                //});
+                return null;
+
+            }
+            //else if (user.CodPadre == "2" && user.Rol == 7 || (user.EntidadId == 4105 && user.Rol == 7) || (user.EntidadId == 18497 && user.Rol == 7) || user.Rol == 12)
+            else if (user.CodPadre == "2" && user.Rol == 7 || (user.EntidadId == 4105 && user.Rol == 7) || (user.EntidadId == 18497 && user.Rol == 7))
             {
                 if (user.EntidadId == 4105 || user.EntidadId == 18497)
                 {
@@ -405,11 +491,11 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                     List<FeriadosAnuales> listaDiasFestivos = _feriadosAnualesService.GetByLista();
 
                     for (var j = 0; j < listaDiasFestivos.Count(); j++)
-                    { 
-                         
+                    {
+
                         FestivosDias.Add(Convert.ToDateTime(listaDiasFestivos[j].Fecha.Value.Date));
                     }
-                     
+
 
                     //Fin de lista FECHAS DE FERIADOS
 
@@ -441,7 +527,7 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                         lista[j].DiasTranscurrido = dias;
                     }
 
-                    
+
 
 
                     return JsonConvert.SerializeObject(new
@@ -574,8 +660,8 @@ namespace Sut.Web.Areas.Seguridad.Controllers
             else
             {
                 //if (user.Rol == 8)
-                    //filtro.EstadoExpediente = EstadoExpediente.Publicado;
-                    List<NotificacionExpedientes> lista = _notificacionExpedientesService.GetAllLikePaginFiscalizadorEval(filtro, pageIndex, pageSize, ref totalRows);
+                //filtro.EstadoExpediente = EstadoExpediente.Publicado;
+                List<NotificacionExpedientes> lista = _notificacionExpedientesService.GetAllLikePaginFiscalizadorEval(filtro, pageIndex, pageSize, ref totalRows);
                 //for (var j = 0; j < lista.Count(); j++)
                 //{
                 //    int dias = 0;
@@ -713,6 +799,21 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                     lstNotifiexp = lista;
                 }
 
+
+
+                List<DateTime> FestivosDias = new List<DateTime>();
+                //listaDiasFestivos.Add(Convert.ToDateTime("24/04/2023"));
+
+
+                //filtro.EstadoEvaluadorMinisterio = EstadoExpediente.Aprobado;
+                List<FeriadosAnuales> listaDiasFestivos = _feriadosAnualesService.GetByLista();
+
+                for (var j = 0; j < listaDiasFestivos.Count(); j++)
+                {
+
+                    FestivosDias.Add(Convert.ToDateTime(listaDiasFestivos[j].Fecha.Value.Date));
+                }
+
                 for (var j = 0; j < lstNotifiexp.Count(); j++)
                 {
                     int dias = 0;
@@ -724,6 +825,14 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                         if (!(Ini.DayOfWeek == DayOfWeek.Sunday | Ini.DayOfWeek == DayOfWeek.Saturday))
                         {
                             dias = dias + 1;
+
+                            foreach (var fecha in FestivosDias)
+                            {
+                                if (Ini == fecha)
+                                {
+                                    dias = dias - 1;
+                                }
+                            }
                         }
                         Ini = Ini.AddDays(1);
                     }
@@ -760,7 +869,7 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                 });
 
             }
-            else if (user.CodPadre == "2" && user.Rol == 7 || (user.EntidadId == 4105 && user.Rol == 7) || (user.EntidadId == 18497 && user.Rol == 7) || user.Rol == 12)
+            else if (user.CodPadre == "2" && user.Rol == 7 || (user.EntidadId == 4105 && user.Rol == 7) || (user.EntidadId == 18497 && user.Rol == 7) || user.Rol == 12 || user.Rol == 19)
             {
                 if (user.EntidadId == 4105 || user.EntidadId == 18497)
                 {
@@ -792,6 +901,18 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                         lstNotifiexp = lista;
                     }
 
+                    List<DateTime> FestivosDias = new List<DateTime>();
+                    //listaDiasFestivos.Add(Convert.ToDateTime("24/04/2023"));
+
+
+                    //filtro.EstadoEvaluadorMinisterio = EstadoExpediente.Aprobado;
+                    List<FeriadosAnuales> listaDiasFestivos = _feriadosAnualesService.GetByLista();
+
+                    for (var j = 0; j < listaDiasFestivos.Count(); j++)
+                    {
+
+                        FestivosDias.Add(Convert.ToDateTime(listaDiasFestivos[j].Fecha.Value.Date));
+                    }
 
                     for (var j = 0; j < lstNotifiexp.Count(); j++)
                     {
@@ -804,6 +925,13 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                             if (!(Ini.DayOfWeek == DayOfWeek.Sunday | Ini.DayOfWeek == DayOfWeek.Saturday))
                             {
                                 dias = dias + 1;
+                                foreach (var fecha in FestivosDias)
+                                {
+                                    if (Ini == fecha)
+                                    {
+                                        dias = dias - 1;
+                                    }
+                                }
                             }
                             Ini = Ini.AddDays(1);
                         }
@@ -869,6 +997,20 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                         lstNotifiexp = lista;
                     }
 
+
+                    List<DateTime> FestivosDias = new List<DateTime>();
+                    //listaDiasFestivos.Add(Convert.ToDateTime("24/04/2023"));
+
+
+                    //filtro.EstadoEvaluadorMinisterio = EstadoExpediente.Aprobado;
+                    List<FeriadosAnuales> listaDiasFestivos = _feriadosAnualesService.GetByLista();
+
+                    for (var j = 0; j < listaDiasFestivos.Count(); j++)
+                    {
+
+                        FestivosDias.Add(Convert.ToDateTime(listaDiasFestivos[j].Fecha.Value.Date));
+                    }
+
                     for (var j = 0; j < lstNotifiexp.Count(); j++)
                     {
                         int dias = 0;
@@ -880,6 +1022,14 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                             if (!(Ini.DayOfWeek == DayOfWeek.Sunday | Ini.DayOfWeek == DayOfWeek.Saturday))
                             {
                                 dias = dias + 1;
+
+                                foreach (var fecha in FestivosDias)
+                                {
+                                    if (Ini == fecha)
+                                    {
+                                        dias = dias - 1;
+                                    }
+                                }
                             }
                             Ini = Ini.AddDays(1);
                         }
@@ -947,6 +1097,18 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                     lstNotifiexp = lista;
                 }
 
+                List<DateTime> FestivosDias = new List<DateTime>();
+                //listaDiasFestivos.Add(Convert.ToDateTime("24/04/2023"));
+
+
+                //filtro.EstadoEvaluadorMinisterio = EstadoExpediente.Aprobado;
+                List<FeriadosAnuales> listaDiasFestivos = _feriadosAnualesService.GetByLista();
+
+                for (var j = 0; j < listaDiasFestivos.Count(); j++)
+                {
+
+                    FestivosDias.Add(Convert.ToDateTime(listaDiasFestivos[j].Fecha.Value.Date));
+                }
 
                 for (var j = 0; j < lstNotifiexp.Count(); j++)
                 {
@@ -959,6 +1121,15 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                         if (!(Ini.DayOfWeek == DayOfWeek.Sunday | Ini.DayOfWeek == DayOfWeek.Saturday))
                         {
                             dias = dias + 1;
+
+
+                            foreach (var fecha in FestivosDias)
+                            {
+                                if (Ini == fecha)
+                                {
+                                    dias = dias - 1;
+                                }
+                            }
                         }
                         Ini = Ini.AddDays(1);
                     }
@@ -1105,7 +1276,7 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                 _notificacionExpedientesService.Save(objnot);
                 /*auditoria Grabar*/
                 _AuditoriaService.Save(objauditoria);
-                /*auditoria Grabar*/  
+                /*auditoria Grabar*/
 
                 return Json(new { valid = true }, JsonRequestBehavior.AllowGet);
             }
@@ -1120,6 +1291,57 @@ namespace Sut.Web.Areas.Seguridad.Controllers
 
 
 
+        [HttpPost, ValidateInput(false)]
+        public ActionResult guardarmensaje(string Mensaje, UsuarioInfo user)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    string mensaje = "registro satisfactoriamente.";
+                    /*auditoria agregar*/
+                    objauditoria.EntidadId = user.EntidadId;
+                    objauditoria.SectorId = user.Sector;
+                    objauditoria.ProvinciaId = user.Provincia;
+                    objauditoria.Usuario = user.NombreCompleto;
+                    objauditoria.Actividad = "Mensaje";
+                    objauditoria.Pantalla = "Portada";
+                    objauditoria.UserCreacion = user.NroDocumento;
+                    objauditoria.FecCreacion = DateTime.Now;
+                    /*auditoria*/
+
+                    Comunicado objcom = _ComunicadoService.GetOne(7);
+                    objcom.Descripcion = Mensaje;
+
+                    _ComunicadoService.Save(objcom);
+                    /*auditoria Grabar*/
+                    _AuditoriaService.Save(objauditoria);
+
+                    return Json(new
+                    {
+                        mensaje = mensaje
+                    });
+                }
+                else
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return PartialView("_Error");
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                ModelState.Clear();
+                ModelState.AddModelError("", ex.Message);
+
+                _log.Error(ex);
+                return PartialView("_Error");
+            }
+        }
+
+
+
+
         public ActionResult ActualizarRevision(long Id, int Expediente, UsuarioInfo user)
         {
             try
@@ -1128,7 +1350,7 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                 objauditoria.EntidadId = user.EntidadId;
                 objauditoria.SectorId = user.Sector;
                 objauditoria.ProvinciaId = user.Provincia;
-                objauditoria.Usuario = user.NombreCompleto;  
+                objauditoria.Usuario = user.NombreCompleto;
                 objauditoria.Pantalla = "Expediente: " + Expediente;
                 objauditoria.UserCreacion = user.NroDocumento;
                 objauditoria.FecCreacion = DateTime.Now;
@@ -1137,7 +1359,7 @@ namespace Sut.Web.Areas.Seguridad.Controllers
 
                 NotificacionExpedientes objnot = _notificacionExpedientesService.GetByone(Id);
 
-                objnot.FecUltimaRevision= DateTime.Now;
+                objnot.FecUltimaRevision = DateTime.Now;
 
                 _notificacionExpedientesService.Save(objnot);
                 /*auditoria Grabar*/
@@ -1260,7 +1482,7 @@ namespace Sut.Web.Areas.Seguridad.Controllers
 
                 var lstbandeja = _bandejaService.GetAll(id);
                 long usuid;
-                ViewBag.DatosUsuario = _usuarioService.GetByEntidadROL(user.EntidadId).Where(x => x.EntidadId == user.EntidadId && (x.Rol == Rol.Evaluador || x.Rol == Rol.Ratificador)).ToList();
+                ViewBag.DatosUsuario = _usuarioService.GetByEntidadROL(user.EntidadId).Where(x => x.EntidadId == user.EntidadId && (x.Rol == Rol.Evaluador || x.Rol == Rol.Ratificador)).Distinct().ToList();
 
 
 
@@ -1500,6 +1722,7 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                     obj.Estado = model.Estado;
                     obj.UserModificacion = user.NroDocumento;
                     obj.FecModificacion = DateTime.Now;
+                    obj.ArchivoAdjuntoId = model.ArchivoAdjuntoId;
                     if (model.DocumentosNormaID == 0)
                     {
                         obj.DocumentosNormaID = null;
@@ -1509,6 +1732,23 @@ namespace Sut.Web.Areas.Seguridad.Controllers
                         obj.DocumentosNormaID = model.DocumentosNormaID;
 
                     }
+
+                    if (model.ArchivoAdjuntoId == 0)
+                    {
+                        obj.url = null;
+                    }
+                    else
+                    {
+                        ArchivoAdjunto objad = new ArchivoAdjunto();
+                        objad = _archivoAdjuntoService.GetOne(Convert.ToInt32(model.ArchivoAdjuntoId));
+
+
+                        obj.url = objad.Ruta + objad.Extension;
+
+                    }
+
+
+
 
                     _ComunicadoService.Save(obj);
 

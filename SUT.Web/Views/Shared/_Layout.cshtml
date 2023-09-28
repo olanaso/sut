@@ -34,6 +34,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="https://cdn.anychart.com/releases/v8/js/anychart-exports.min.js"></script>
     <link href="https://cdn.anychart.com/releases/v8/css/anychart-ui.min.css" type="text/css" rel="stylesheet">
     <link href="https://cdn.anychart.com/releases/v8/fonts/css/anychart-font.min.css" type="text/css" rel="stylesheet">
+
+
+  
     <!-- Ionicons -->
     @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">*@
     <!-- Theme style -->
@@ -80,51 +83,51 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
-<body   class="hold-transition skin-red fixed layout-top-nav">
+<body class="hold-transition skin-red fixed layout-top-nav">
     <div class="wrapper">
 
         <header class="main-header">
             <nav class="navbar navbar-static-top" style="font-size: 15px;">
                 @*<div class="container">*@
-                    <div class="navbar-header">  
-                        @*<a href="../../Seguridad/Portada/Lista" class="navbar-brand"><b>SUT</b></a>*@
-                        <a href='@Url.Content("~/Seguridad/Portada/Lista")' class="navbar-brand"><b>SUT</b></a>
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
-                            <i class="fa fa-bars"></i>
-                        </button>
-                    </div>
+                <div class="navbar-header">
+                    @*<a href="../../Seguridad/Portada/Lista" class="navbar-brand"><b>SUT</b></a>*@
+                    <a href='@Url.Content("~/Seguridad/Portada/Lista")' class="navbar-brand"><b>SUT</b></a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div>
 
-                    @{Html.RenderAction("TopMenu", "Inicio", new { area = "" });}
+                @{Html.RenderAction("TopMenu", "Inicio", new { area = "" });}
 
-                    <!-- /.navbar-custom-menu -->
+                <!-- /.navbar-custom-menu -->
                 @*</div>*@
                 <!-- /.container-fluid -->
             </nav>
             <div class="menu-fijo"></div>
         </header>
-        
+
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             @*<div class="container">*@
-                <!-- Content Header (Page header) -->
-                <section class="content-header">
-                    <h1>
-                        <i class="@ViewBag.Icon"></i> @ViewBag.Title
-                        <small>@ViewBag.Descripcion</small>
-                    </h1>
-                    @{Html.RenderAction("Breadcrumbs", "Inicio", new { area = "" });}
-                </section>
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    <i class="@ViewBag.Icon"></i> @ViewBag.Title
+                    <small>@ViewBag.Descripcion</small>
+                </h1>
+                @{Html.RenderAction("Breadcrumbs", "Inicio", new { area = "" });}
+            </section>
 
-                <div id="MainError"></div>
+            <div id="MainError"></div>
 
-                <!-- Main content -->
-                <section class="content">
+            <!-- Main content -->
+            <section class="content">
 
-                    <!-- Your Page Content Here -->
-                    @RenderBody()
+                <!-- Your Page Content Here -->
+                @RenderBody()
 
-                </section>
-                <!-- /.content -->
+            </section>
+            <!-- /.content -->
             @*</div>*@
         </div>
         <!-- /.content-wrapper -->
@@ -132,10 +135,11 @@ desired effect
         @{Html.RenderAction("Footer", "Inicio", new { area = "" });}
 
     </div>
+    <div id="ayudaSUT"></div>
 
     @Scripts.Render("~/bundles/script")
 
-<script>
+    <script>
         $(function () {
             sut.TopMenu = {
                 Salir: function () {
@@ -172,7 +176,7 @@ desired effect
                             Cookies.remove('topMenu');
                         },
                         success: function (data) {
-                            //window.location.href = "/Account/Login"; 
+                            //window.location.href = "/Account/Login";
                             window.location.href = 'http://desa210.pcm.gob.pe:4200';
                         },
                         error: function (result) {
@@ -301,8 +305,9 @@ desired effect
             //});
 
         });
-</script>
+    </script>
 
     @RenderSection("Script", false)
+    <script src="~/Scripts/AyudaSUT/AyudaSUT.js"></script>
 </body>
 </html>

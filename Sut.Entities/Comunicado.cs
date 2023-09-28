@@ -20,15 +20,22 @@ namespace Sut.Entities
         public long EntidadId { get; set; }
         public long SectorId { get; set; }
         public long ProvinciaId { get; set; }
-        public string Descripcion { get; set; }  
-        public Respuesta Estado { get; set; }  
+        public string Descripcion { get; set; }
+        public Respuesta Estado { get; set; }
         public string UserCreacion { get; set; }
         public string UserModificacion { get; set; }
         public DateTime? FecCreacion { get; set; }
         public DateTime? FecModificacion { get; set; }
 
+        public string url { get; set; }
 
-        
+        [ForeignKey("ArchivoAdjunto")]
+        public long? ArchivoAdjuntoId { get; set; }
+        public ArchivoAdjunto ArchivoAdjunto { get; set; }
+
+
+
+
 
     }
 }
